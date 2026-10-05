@@ -10263,11 +10263,16 @@ function accrueDailyLiabilities(state, shop, content) {
   const clerkRate = shopWage(state, shop, content);
   const merchantAssignments = jobAssignments(state, merchantJobKey(shop));
   const clerkAssignments = jobAssignments(state, clerkJobKey(shop));
-  const merchantWage = Math.round(merchantAssignments.reduce((sum, row) => sum + row.count, 0) * merchantRate * scale);
+  // 基线清理：店主本人兼任商人不领固定工资，拿利润而非工资；只有外聘商人才领工资。
+  const ownerId = shop.ownerHouseholdId;
+  const merchantWage = Math.round(merchantAssignments
+    .filter(row => row.householdId !== ownerId)
+    .reduce((sum, row) => sum + row.count, 0) * merchantRate * scale);
   const clerkWage = Math.round(clerkAssignments.reduce((sum, row) => sum + row.count, 0) * clerkRate * scale);
   const wage = merchantWage + clerkWage;
   const rent = Math.round((state.policy?.shopRentVoucher ?? content.rules.shopRentDefaultVoucher ?? 1) * scale);
-  accrueWageClaims(state, shop.liabilities, merchantAssignments, merchantWage, content);
+  // 基线清理：店主本人的商人岗位不产生工资债权（拿利润）。
+  accrueWageClaims(state, shop.liabilities, merchantAssignments.filter(row => row.householdId !== shop.ownerHouseholdId), merchantWage, content);
   accrueWageClaims(state, shop.liabilities, clerkAssignments, clerkWage, content);
   shop.liabilities.wageVoucherUnits = claimTotal(shop.liabilities) + (shop.liabilities.legacyUnattributedWageVoucherUnits || 0);
   shop.liabilities.rentVoucherUnits += rent;
