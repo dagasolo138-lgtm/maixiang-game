@@ -161,7 +161,18 @@ function protectedClerkCount(state, shop, content) {
 export function shopDailyCustomerCapacity(state, shop, content) {
   if (!shop || shop.status !== "open" || !shopMerchantOnDuty(state, shop)) return 0;
   const def = shopDefinition(content, shop.typeId);
-  if (def?.id !== "general") return shopIsService(shop, content) ? serviceShopCapacityUses(state, shop, content) : 0;
+  if (def?.id !== "general") {
+    if (shopIsService(shop, content)) return serviceShopCapacityUses(state, shop, content);
+    // 非综合商店零售店：按销售能力折算客流（商人60斤/店员120斤，每客2斤），避免恒0导致永远拒售。
+    if (def?.kind === "retail") {
+      const perCustomerJin = content.rules.foodPerPersonDay || 2;
+      const merchants = shopMerchantCount(state, shop);
+      const clerks = shopClerkCount(state, shop);
+      const jin = merchants * (content.rules.shopMerchantSalesCapacityJin || 60) + clerks * (content.rules.shopClerkSalesCapacityJin || 120);
+      return Math.max(0, Math.floor(jin / Math.max(1, perCustomerJin)));
+    }
+    return 0;
+  }
   // 基线清理：商人也是员工，计入接待能力（之前只算店员，0 店员时客流为 0）。
   const clerks = shopClerkCount(state, shop);
   const merchants = shopMerchantCount(state, shop);
@@ -271,9 +282,14 @@ export function openShop(state, buildingId, typeId, content, preferredHouseholdI
   shop.initialCapital.wheatValueUnits = payment.wheatPaidValueUnits || 0;
   const assignment = setHouseholdJobCount(state, household.id, `shop:${shopId}:merchant`, 1, content);
   if (!assignment.ok) {
-    settleMonetaryPayment(state, `shop:${shopId}`, `household:${household.id}`, {
+    const refund = settleMonetaryPayment(state, `shop:${shopId}`, `household:${household.id}`, {
       valueUnits: startupUnits, voucherValueUnits: payment.voucherPaidValueUnits || 0, wheatValueUnits: payment.wheatPaidValueUnits || 0
     }, content, "shop_capital_refund", "开店失败退回资金", { requireFull: true, allowVoucherFallback: false, countsForReform: false });
+    // 退款失败也要删店，但把未退金额记为店铺对家庭的负债，避免启动资金无声消失。
+    if (!refund.ok) {
+      shop.liabilities.refundVoucherUnits = (shop.liabilities.refundVoucherUnits || 0) + startupUnits;
+      recordEvent(state, `${shop.name}开店失败，${Math.round(startupUnits / content.precision.currencyUnitsPerVoucher)}券启动资金暂欠家庭。`, content);
+    }
     delete state.shops[shopId];
     return assignment;
   }
@@ -377,7 +393,8 @@ function shopWorkingCapitalReserve(state, shop, content) {
   const def = shopDefinition(content, shop.typeId);
   if (def?.kind === "service") {
     const service = content.rules.serviceTypes?.[def.serviceId];
-    return Math.round(serviceShopCapacityUses(state, shop, content) * (service?.priceVoucher || 0) * days * currencyScale(content) * 0.25);
+    // 与零售店口径一致：全额日销能力×单价×天数（之前无故打25折）。
+    return Math.round(serviceShopCapacityUses(state, shop, content) * (service?.priceVoucher || 0) * days * currencyScale(content));
   }
   const itemIds = shopRetailItemIds(shop, content);
   if (!itemIds.length) return 0;
@@ -769,7 +786,9 @@ function autoAdjustShopClerks(state, shop, content) {
       const fundsVoucher = maximumPayableValueUnits(state, `shop:${shop.id}`, content) / scale;
       const merchantWage = state.employment?.wageRates?.merchants ?? content.rules.shopMerchantDefaultWageVoucher ?? 10;
       const headsAfter = current + 1 + merchants;
-      const wageAfter = (current + 1) * wage + merchants * merchantWage;
+      // 店主商人不领工资，只算非店主商人（之前含店主，高估3天工资需求）。
+      const nonOwnerMerchants = Math.max(0, merchants - (shop.ownerHouseholdId ? 1 : 0));
+      const wageAfter = (current + 1) * wage + nonOwnerMerchants * merchantWage;
       const funded = fundsVoucher >= headsAfter * marginalJin * avgWholesale + wageAfter * 3;
       if (history.length >= observation && avgRejected > 0 && desiredClerks > current && profitable && funded) {
         target = Math.min(current + 1, desiredClerks);
@@ -896,10 +915,21 @@ export function closeShop(state, shopId, content, automatic = false) {
     setJobCount(state, merchantJobKey(shop), 0, null);
     setJobCount(state, clerkJobKey(shop), 0, null);
     shop.status = "liquidating";
+    shop.liquidatingSinceSerial = shopSerial(state, content);
     shop.statusReason = automatic ? "自动停业，待清算" : "已停业，待清算";
     recordEvent(state, `${shop.name}${automatic ? "长期无法经营，进入清算" : "停业并进入清算"}。`, content, { day: state.day + 1 });
   }
   payDailyLiabilities(state, shop, content);
+  // 清算超过30天仍有负债，核销坏账强制关闭（之前无破产路径，会永久僵死）。
+  const liquidatingDays = shopSerial(state, content) - (shop.liquidatingSinceSerial || 0);
+  if (shop.status === "liquidating" && shopLiabilityTotal(shop) > 0 && liquidatingDays >= 30) {
+    const writtenOff = shopLiabilityTotal(shop);
+    shop.liabilities.wageVoucherUnits = 0;
+    shop.liabilities.rentVoucherUnits = 0;
+    shop.liabilities.taxVoucherUnits = 0;
+    shop.liabilities.claimsVoucherUnits = {};
+    recordEvent(state, `${shop.name}清算${liquidatingDays}天仍资不抵债，${Math.round(writtenOff / content.precision.currencyUnitsPerVoucher)}券坏账核销，强制关闭。`, content);
+  }
   const finalized = finalizeShopLiquidation(state, shop, content);
   syncShopEmployment(state, content);
   return { ok: true, shopId, liquidationPending: !finalized, status: shop.status, liabilitiesVoucherUnits: shopLiabilityTotal(shop) };

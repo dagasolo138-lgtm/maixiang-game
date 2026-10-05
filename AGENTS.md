@@ -69,8 +69,14 @@ GitHub：`dagasolo138-lgtm/maixiang-game`（main 分支）。一个需求一个�
 ## 基线清零教训（2026-10-05 深夜，Kavi 亲自修）
 - 无批发市场时 `buyWholesaleForOwner` 回退到镇库直购（`buyTownDirectForOwner`）：多卖家聚合，镇库优先、不足时从其他住户买（小麦保留对方口粮，面粉等加工品不保留），返回 sellerRows。0.1.10 契约"生产原料优先从镇库供应"。
 - 镇库从批发市场付费采购（`procureTownInputFromWholesale` 非免费品类）必须真实入库到 `state.accounts.town`，否则镇库付钱收不到货（BUG A，木材）。
-- 镇营建造从市场领料走免费内部调拨（`allocateInputToTown`），不用 `procureTownInputFromWholesale`（后者对木材收费，与"不重复收费"注释矛盾）。
+- （2026-10-06 纠正：上一条"镇营建造从市场领料走免费内部调拨"是错的，已删除。正确的是第51条：镇营施工缺木材从批发市场采购，要付钱，别写成白嫖。）
 - `townMillWheatDemandUnits` 要算上市（listedLevels>0）的磨坊，否则公司磨坊永久断小麦。
 - 面粉/面包/盐 `generalStoreOnly` 是既定设计（0.2.2 起）：镇库/公司/住户不得直售居民，只能经综合商店。测试 fixture 须建商店。
 - 住户换券的粮券由"镇库现有余额支付"，测试须先 `issueGrainVouchers(state,"town",N)` 印制。
 - 综合商店 0 客容量（如无店员）时试进货给保底 20 斤/商品，否则永不进货空转；有客容量时仍按原公式。
+- 2026-10-06 d2 五路并行审计教训：商人是人，要计入接待能力（`shopDailyCustomerCapacity` 只算店员是 bug）；店主兼商人不领固定工资（拿利润），否则销量低时工资吃光毛利；`shopDailyCustomerCapacity` 对非 general 零售返回 0 会导致 `0>=0` 恒成立永远拒售。
+- 兑麦（`redeemVouchersForWheat`）必须先扣券后扣麦，否则扣券失败时镇库小麦凭空消失。
+- 批发市场工资"mixed"行：镇库兜底要实际支付，不能只记账。
+- 清算要加破产核销：30 天还不清就核销坏账强制关闭，否则永久僵死。
+- 主食购买要按户缺口分配（学盐的 `householdNeedsUnits`），不能按人口均分，否则富户囤粮穷户挨饿。
+- 需求弹性只在综合商店是实际卖家时才应用，避免误伤镇库/公司销量。

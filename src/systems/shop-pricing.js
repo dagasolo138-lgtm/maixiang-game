@@ -22,6 +22,10 @@ export const PRICING_DEVIATION_TOLERANCE_PERCENT = 3;
 export const PRICING_MAX_STEP_PERCENT = 10;
 export const LOSS_PROMOTION_DAYS = 30;
 export const LOSS_PROMOTION_TARGET_PERCENT = 5;
+export function promotionTargetMarginPercent(content) {
+  const v = Number(content.rules.generalStorePromotionTargetPercent);
+  return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : LOSS_PROMOTION_TARGET_PERCENT;
+}
 export const PRICE_HISTORY_WINDOW_DAYS = 30;
 
 export function isDynamicPricingShop(shop, content) {
@@ -33,7 +37,7 @@ export function isDynamicPricingShop(shop, content) {
 // 目标利润率（%）：店铺级设置，缺省取规则默认 20%。促销模式下临时降到 5%。
 export function shopTargetMarginPercent(state, shop, content) {
   const fallback = content.rules.generalStoreMarkupPercent ?? 20;
-  if (shop?.pricing?.promotion) return LOSS_PROMOTION_TARGET_PERCENT;
+  if (shop?.pricing?.promotion) return promotionTargetMarginPercent(content);
   const value = Number(shop?.pricing?.targetMarginPercent);
   if (Number.isFinite(value)) return Math.max(0, Math.min(100, value));
   return fallback;
@@ -258,7 +262,7 @@ export function updateShopLossProtection(state, shop, content, dailyProfitVouche
     pricing.promotionStartedSerial = (Math.max(1, state.year || 1) - 1) * (content.rules.daysPerYear || 365) + (state.day || 0);
     pricing.lastReviewSerial = -1;
     recordEvent(state,
-      `${shop.name}已连续${threshold}天亏损，转入促销模式：目标利润率临时降至${LOSS_PROMOTION_TARGET_PERCENT}%清库存。`,
+      `${shop.name}已连续${threshold}天亏损，转入促销模式：目标利润率临时降至${promotionTargetMarginPercent(content)}%清库存。`,
       content, { day: state.day + 1, mergeKey: `shop-promotion:${shop.id}`, mergeWindowDays: 30,
         amount: 1, mergedText: (times, total) => `${shop.name}等店铺近${times}次转入促销（共${total}次）。` });
     return { promotion: true, entered: true };
@@ -275,6 +279,9 @@ export function updateShopLossProtection(state, shop, content, dailyProfitVouche
       return { promotion: false, exited: true };
     }
   } else if (!pricing.promotion) {
+    pricing.profitStreakDays = 0;
+  } else {
+    // 促销中亏损则清零连盈天数（之前既不累加也不清零，盈亏交替也能攒满退出）。
     pricing.profitStreakDays = 0;
   }
   return { promotion: Boolean(pricing.promotion) };
@@ -293,8 +300,9 @@ export function setShopRetailPrice(state, shopId, itemId, value, content) {
   const pricing = ensureShopPricing(shop, content);
   pricing.retailPriceVoucherPerUnit ||= {};
   pricing.retailPriceVoucherPerUnit[itemId] = finalPrice;
-  // 手动调价后重置复核节拍，避免立刻被自动复核覆盖。
-  pricing.lastReviewSerial = -1;
+  // 手动调价后重置复核节拍为当前，避免次日立刻被自动复核覆盖（之前置-1反而导致立即复核）。
+  const serial = (Math.max(1, state.year || 1) - 1) * (content.rules.daysPerYear || 365) + (state.day || 0);
+  pricing.lastReviewSerial = serial;
   return { ok: true, shopId, itemId, value: finalPrice, clampedToCost: finalPrice > price };
 }
 

@@ -1,6 +1,7 @@
 import { itemQeqUnitsPerInventoryUnit } from "../economy/inventory.js";
 import { purchaseItemForResidents } from "./consumer-market.js";
 import { currentUnitPrice } from "../economy/prices.js";
+import { householdList, householdPopulation, isActiveHousehold } from "./households.js";
 
 export function breadDemandShare(price, content) {
   if (!Number.isFinite(price) || price <= 0) return 0;
@@ -21,7 +22,7 @@ export function stapleDemandShares(content) {
   };
 }
 
-// 单项主食按“净需求”购买：先扣减居民当日已持有量，再折算成购买单位数。
+// 单项主食按“净需求”购买：按户计算缺口（有粮户少买、无粮户多买），避免按人口均分导致富户囤粮穷户挨饿。
 function buyStapleItem(state, population, content, itemId, share) {
   const price = currentUnitPrice(state, itemId, content);
   const item = content.items[itemId];
@@ -32,9 +33,22 @@ function buyStapleItem(state, population, content, itemId, share) {
   const targetUnits = perUnitQeq > 0
     ? Math.max(0, Math.floor((targetQeq - currentQeq) / perUnitQeq)) : 0;
 
+  // 按户缺口：每户按人口分目标，减去自有库存。
+  const householdNeedsUnits = {};
+  if (perUnitQeq > 0 && targetUnits > 0) {
+    const households = householdList(state).filter(isActiveHousehold);
+    const totalPeople = Math.max(1, households.reduce((sum, h) => sum + householdPopulation(h), 0));
+    for (const h of households) {
+      const people = householdPopulation(h);
+      const familyTargetQeq = Math.floor(targetQeq * people / totalPeople);
+      const familyHasQeq = Math.floor((h.inventory?.[itemId] || 0) * perUnitQeq);
+      householdNeedsUnits[h.id] = Math.max(0, Math.floor((familyTargetQeq - familyHasQeq) / perUnitQeq));
+    }
+  }
+
   // Quote the town cost basis before the shared market moves inventory. Company sales account for their own COGS.
   const townBefore = state.accounts.town[itemId] || 0;
-  const result = purchaseItemForResidents(state, itemId, targetUnits, price, content, `居民以粮券购买${item?.name || itemId}`);
+  const result = purchaseItemForResidents(state, itemId, targetUnits, price, content, `居民以粮券购买${item?.name || itemId}`, { householdNeedsUnits });
   const soldJin = result.purchasedUnits / content.precision.inventoryUnitsPerJin;
   const voucher = result.paidVoucherUnits / content.precision.currencyUnitsPerVoucher;
   return {

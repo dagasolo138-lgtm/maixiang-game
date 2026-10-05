@@ -185,7 +185,8 @@ export function harvest(state, content) {
     return { skipped: true, reason: "本年已经收过麦" };
   }
   const acres = reclaimedAcres(state, content);
-  const capacity = acres / content.agriculture.acresPerFarmer;
+  // 与雇佣上限口径一致：取整，避免满员也达不到100%产量。
+  const capacity = Math.floor(acres / content.agriculture.acresPerFarmer);
   const maximum = acres * content.agriculture.yieldPerAcre;
   const workCapacity = capacity * content.rules.growingDays;
   const proportion = Math.max(0, Math.min(1, state.agriculture.workUnits / workCapacity));
@@ -201,10 +202,23 @@ export function harvest(state, content) {
   if (residentUnits > 0) {
     const weights = Object.fromEntries(householdList(state).map(h => [h.id, h.agricultureWorkUnits || 0]));
     const distributed = distributeResidentInventory(state, cropItemId, residentUnits, content, { weights, byMembers: false });
-    if (!distributed.ok) throw new Error("农业家庭分粮失败：" + distributed.reason);
-    for (const row of distributed.rows || []) {
-      const qeq = row.units * content.precision.qeqUnitsPerJin / content.precision.inventoryUnitsPerJin;
-      recordHouseholdInKind(state, row.householdId, "inKindIncomeQeqUnits", qeq, content);
+    // 极端情况（所有农户家庭无人口）不抛异常，改按全镇人口分配，避免整日结算崩溃。
+    if (!distributed.ok) {
+      const fallback = distributeResidentInventory(state, cropItemId, residentUnits, content, { byMembers: true });
+      if (!fallback.ok) {
+        recordEvent(state, `收获分粮失败（${distributed.reason}），${Math.round(residentUnits / content.precision.inventoryUnitsPerJin)}斤暂存镇库。`, content);
+        state.accounts.town[cropItemId] = (state.accounts.town[cropItemId] || 0) + residentUnits;
+      } else {
+        for (const row of fallback.rows || []) {
+          const qeq = row.units * content.precision.qeqUnitsPerJin / content.precision.inventoryUnitsPerJin;
+          recordHouseholdInKind(state, row.householdId, "inKindIncomeQeqUnits", qeq, content);
+        }
+      }
+    } else {
+      for (const row of distributed.rows || []) {
+        const qeq = row.units * content.precision.qeqUnitsPerJin / content.precision.inventoryUnitsPerJin;
+        recordHouseholdInKind(state, row.householdId, "inKindIncomeQeqUnits", qeq, content);
+      }
     }
     recordLedger(state, { type: "harvest", transactionId: txId, source: "field", destination: "residents",
       itemId: cropItemId, quantityUnits: residentUnits,

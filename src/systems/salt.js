@@ -45,13 +45,14 @@ export function buySaltForResidents(state, content) {
   const desiredUnits = households.length ? shortageUnits : Math.max(0, demandUnits - (state.accounts.residents.salt || 0));
   const price = currentUnitPrice(state, "salt", content);
   const result = purchaseItemForResidents(state, "salt", desiredUnits, price, content, "家庭购买当日所需食盐", { householdNeedsUnits });
-  const townRows = result.sellerRows.filter(row => row.seller === "town");
-  const townSold = townRows.reduce((sum, row) => sum + row.quantityUnits, 0);
-  const townRevenue = townRows.reduce((sum, row) => sum + row.paidVoucherUnits, 0);
-  if (townSold > 0) {
+  // 盐经综合商店零售（generalStoreOnly），镇库不直售；按商店卖家统计销量（之前只统计镇库，恒为0）。
+  const shopRows = result.sellerRows.filter(row => row.seller?.startsWith("shop:"));
+  const shopSold = shopRows.reduce((sum, row) => sum + row.quantityUnits, 0);
+  const shopRevenue = shopRows.reduce((sum, row) => sum + row.paidVoucherUnits, 0);
+  if (shopSold > 0) {
     for (const group of [state.industries.salt.day, state.industries.salt.year, state.industries.salt.cumulative]) {
-      group.soldUnits = (group.soldUnits || 0) + townSold;
-      group.revenueWheatUnits = (group.revenueWheatUnits || 0) + townRevenue;
+      group.soldUnits = (group.soldUnits || 0) + shopSold;
+      group.revenueWheatUnits = (group.revenueWheatUnits || 0) + shopRevenue;
     }
   }
   state.salt.day.purchasedUnits = result.purchasedUnits;

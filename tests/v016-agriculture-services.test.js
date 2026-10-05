@@ -210,7 +210,8 @@ test("服务成交、店员工资、店租与利润税均形成真实资金流",
   assert.equal(uses, 50, "扩容后1商人+1店员在50个买家场景下可全部接待");
   const townBeforeFinish = state.accounts.town.wheat;
   finishShopsDay(state, CONTENT, true);
-  assert.equal(shop.accounts.day.wageExpenseVoucherUnits, 20 * V);
+  // 基线清理：店主商人不领固定工资，仅1店员计 10*V。
+  assert.equal(shop.accounts.day.wageExpenseVoucherUnits, 10 * V);
   assert.equal(shop.accounts.day.rentExpenseVoucherUnits, 1 * V);
   assert.ok(shop.accounts.day.taxExpenseVoucherUnits > 0);
   assert.equal(shop.liabilities.wageVoucherUnits, 0);

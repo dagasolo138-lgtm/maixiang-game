@@ -306,8 +306,8 @@ export function payDailyWages(state, laborAtStart, content) {
     let paidKey = 0;
     let payer = payrollPayerFor(state, row);
     // 市场现金不足时，该行由镇库兜底（发放主体变化只发生在市场确实付得起的时候）。
+    const planned = payer === "wholesale" ? wageFunding.plan.get(row.payrollKey) : null;
     if (payer === "wholesale") {
-      const planned = wageFunding.plan.get(row.payrollKey);
       if (planned === "town") payer = "town";
     }
     const paidRows = (paidByHousehold[row.payrollKey] ||= {});
@@ -318,9 +318,22 @@ export function payDailyWages(state, laborAtStart, content) {
       const result = settleMonetaryPayment(state, payer, `household:${householdId}`, obligation, content,
         row.key === "builders" ? "construction_wage_payment" : "wage_payment", "支付具体债权家庭本日工资",
         { requireFull: false, trackUnpaid: true, shortfallKey: `${payer}-wage:${row.payrollKey}:${householdId}` });
-      const paid = result.paidValueUnits || 0;
+      let paid = result.paidValueUnits || 0;
+      // mixed 行：市场付完剩下的由镇库兜底（之前只记缺口不付，工人拿不到钱）。
+      if (planned === "mixed" && payer === "wholesale") {
+        const remaining = Math.max(0, amount - paid);
+        if (remaining > 0) {
+          const townResult = settleMonetaryPayment(state, "town", `household:${householdId}`,
+            normalizePaymentObligation(paymentClaims[householdId] || remaining, state), content,
+            row.key === "builders" ? "construction_wage_payment" : "wage_payment", "镇库兜底批发市场工资差额",
+            { requireFull: false, trackUnpaid: true, shortfallKey: `town-wage:${row.payrollKey}:${householdId}` });
+          paid += townResult.paidValueUnits || 0;
+          paymentClaims[householdId] = townResult.remainingComposition;
+        }
+      } else {
+        paymentClaims[householdId] = result.remainingComposition;
+      }
       claims[householdId] = Math.max(0, amount - paid);
-      paymentClaims[householdId] = result.remainingComposition;
       arrears[row.payrollKey] = Math.max(0, (arrears[row.payrollKey] || 0) - paid);
       paidKey += paid;
       if (paid > 0) paidRows[householdId] = (paidRows[householdId] || 0) + paid;

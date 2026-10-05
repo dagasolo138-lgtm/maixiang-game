@@ -252,11 +252,7 @@ export function redeemVouchersForWheat(state, owner, voucherUnits, content, reas
   if (owner !== "town" && (state.accounts?.town?.wheat || 0) < wheatUnits) return { ok: false, reason: "镇库可用小麦不足" };
 
   let householdRows = null;
-  if (owner !== "town") {
-    const quote = quoteTownCostRemoval(state, "wheat", wheatUnits, content);
-    applyTownCostRemoval(state, quote);
-    state.accounts.town.wheat -= wheatUnits;
-  }
+  // 先扣券后扣麦：若扣券失败，镇库小麦不受影响（之前先扣麦，扣券失败会导致小麦凭空消失）。
   if (hasHouseholds(state) && owner === "residents") {
     const taken = takeResidentVouchers(state, voucherUnits, content);
     if (!taken.ok) return taken;
@@ -280,6 +276,12 @@ export function redeemVouchersForWheat(state, owner, voucherUnits, content, reas
     setVoucherBalance(state, owner, voucherBalance(state, owner) - voucherUnits, content);
     state.wholesaleMarket ||= {};
     state.wholesaleMarket.cashWheatUnits = (state.wholesaleMarket.cashWheatUnits || 0) + wheatUnits;
+  }
+  // 扣券成功后才扣镇库小麦（之前先扣麦，若扣券失败麦会凭空消失）。
+  if (owner !== "town") {
+    const quote = quoteTownCostRemoval(state, "wheat", wheatUnits, content);
+    applyTownCostRemoval(state, quote);
+    state.accounts.town.wheat -= wheatUnits;
   }
   currency.reserveWheatUnits = 0;
   currency.reserveWheatCostVoucherUnits = 0;

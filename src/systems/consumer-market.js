@@ -63,7 +63,7 @@ function sellerRowsForItem(state, itemId, directPrice, content, options = {}) {
     if (stock > available && capped && def && prices) {
       capped.push({ shopId: shop.id, cappedUnits: stock - available, price: prices.retailVoucherPerUnit });
     }
-    if (available > 0 && def && prices) sellers.push({ id: `shop:${shop.id}`, type: "shop", shopId: shop.id, stockUnits: available, price: prices.retailVoucherPerUnit });
+    if (available > 0 && def && prices) sellers.push({ id: `shop:${shop.id}`, type: "shop", shopId: shop.id, shopTypeId: def.id, stockUnits: available, price: prices.retailVoucherPerUnit });
   }
   // Snapshot direct household suppliers once, before resident demand is processed.
   // This lets private producers sell without a shop while preventing goods bought
@@ -188,8 +188,12 @@ function registerCappedRejection(state, itemId, unmetUnits, capped, householdNee
 // 0.2.3 需求弹性：居民面对综合商店的实际售价，若相对该店过去 30 天均价更贵，
 // 则按"每贵 10% 少买 5%"缩减当日目标购买量。只对综合商店（动态加价店）生效，
 // 其他卖家/小店保持原行为。返回缩放后的目标单位数。
-function applyRetailElasticity(state, itemId, desiredUnits, content) {
+// 注意：调用方需确保综合商店是实际卖家之一，否则弹性会误伤其他卖家的销量。
+function applyRetailElasticity(state, itemId, desiredUnits, content, sellers) {
   if (!(desiredUnits > 0)) return desiredUnits;
+  // 若卖家列表里没有综合商店，不应用弹性（避免压低镇库/公司/住户的销量）。
+  const hasGeneral = (sellers || []).some(row => row.type === "shop" && row.shopTypeId === "general");
+  if (!hasGeneral) return desiredUnits;
   let multiplier = 1;
   for (const shop of Object.values(state.shops || {})) {
     if (shop.status !== "open") continue;
@@ -209,9 +213,10 @@ export function purchaseItemForResidents(state, itemId, desiredUnits, priceVouch
   if (!Number.isFinite(directPrice) || directPrice <= 0 || desiredUnits <= 0) {
     return { purchasedUnits: 0, paidVoucherUnits: 0, sellerRows: [], reason: desiredUnits <= 0 ? "需求已满足" : "售价无效" };
   }
-  desiredUnits = applyRetailElasticity(state, itemId, desiredUnits, content);
   const cappedSellers = [];
   const sellers = sellerRowsForItem(state, itemId, directPrice, content, { ...options, capped: cappedSellers });
+  // 弹性只在综合商店是卖家时才应用，避免误伤其他卖家。
+  desiredUnits = applyRetailElasticity(state, itemId, desiredUnits, content, sellers);
   if (!sellers.length) {
     // 用户 0.1.11（-5）：无可用卖家但有店铺被接待能力限流，记拒客并返回对应原因。
     registerCappedRejection(state, itemId, Math.max(0, Math.floor(desiredUnits)), cappedSellers, null, content);
