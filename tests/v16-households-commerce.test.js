@@ -154,7 +154,8 @@ test("店铺未售库存不计销售成本，正利润征税、亏损不征税",
   assert.equal(simulation.configureShopClerks(state, shop.id, 1).assigned, 1);
   prepareShopsForDay(state, CONTENT);
   const purchased = shop.accounts.day.purchasedUnits.bread || 0;
-  assert.equal(purchased, 20 * I);
+  // 基线清理：商人计入接待能力（1 店员 + 1 商人 = 2 人），试进货量相应翻倍。
+  assert.equal(purchased, 40 * I);
   assert.equal(shop.accounts.day.cogsVoucherUnits, 0, "未售库存不能直接计销售成本");
   assert.equal(shop.accounts.day.profitVoucherUnits, -1 * V, "进货不是费用，未销售时仅计租金");
 
