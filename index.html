@@ -7937,7 +7937,7 @@ const { currentUnitPrice } = __mxmod24;
 const { makeTransactionId, recordLedger } = __mxmod8;
 const { sellCompanyProduct } = __mxmod32;
 const { householdList, syncResidentAggregates } = __mxmod14;
-const { hasWholesaleMarket, allocateInputToTown } = __mxmod25;
+const { hasWholesaleMarket, procureTownInputFromWholesale } = __mxmod25;
 function paymentValueForQuantity(quantityUnits, price, content) {
   return Math.max(0, Math.round(quantityUnits / content.precision.inventoryUnitsPerJin * price * currencyScale(content)));
 }
@@ -8122,15 +8122,15 @@ function wholesaleStockUnits(state, itemId) {
   const sellerRows = [];
   let bought = 0;
   let paid = 0;
-  // 先从批发市场免费领用：市场里的本就是镇营产出（每日被扫入），建造领回走内部调拨，不重复收费
+  // 先从批发市场领用：按做市售价由镇库付费采购（AGENTS.md 铁律：要付钱，别写成白嫖）
   const wholesaleWanted = Math.min(preview.wholesaleUsableUnits || 0, preview.purchasableUnits);
   if (wholesaleWanted > 0) {
-    // 基线清理：建造领用走无偿内部调拨（allocateInputToTown），不用 procureTownInputFromWholesale（后者对木材收费，与"不重复收费"注释矛盾）。
-    const issued = allocateInputToTown(state, itemId, wholesaleWanted, content,
-      `镇营建造从批发市场领用${content.items[itemId]?.name || itemId}`);
-    if (issued.ok && issued.movedUnits > 0) {
-      sellerRows.push({ seller: "wholesale_market", quantityUnits: issued.movedUnits, paidVoucherUnits: 0 });
-      bought += issued.movedUnits;
+    const issued = procureTownInputFromWholesale(state, itemId, wholesaleWanted, content,
+      `镇营建造从批发市场采购${content.items[itemId]?.name || itemId}`);
+    if (issued.ok && issued.boughtUnits > 0) {
+      sellerRows.push({ seller: "wholesale_market", quantityUnits: issued.boughtUnits, paidVoucherUnits: issued.paidVoucherUnits || 0 });
+      bought += issued.boughtUnits;
+      paid += issued.paidVoucherUnits || 0;
     }
   }
   // 剩余部分走原有付费采购（家庭→公司轮换）
@@ -9716,7 +9716,7 @@ const { householdConvertibleWheatUnits, householdList, householdPopulation, hous
 const { shopTradePrices, recentAverage } = __mxmod31;
 const { currentUnitPrice } = __mxmod24;
 const { accrueWageClaims, attributeLegacyUnattributedWageClaims, claimTotal, payMonetaryWageClaims } = __mxmod22;
-const { buyWholesaleForOwner } = __mxmod25;
+const { buyWholesaleForOwner, hasWholesaleMarket } = __mxmod25;
 const { computeLaborMarket, poachWorkers, adjustShopWage, shopWage } = __mxmod27;
 const { ensureShopPricing, recordShopItemSale, recordShopDailyWageCost, recordPriceHistory, updateShopLossProtection, reviewShopPricing, selectShopPricingView, isDynamicPricingShop } = __mxmod41;
 function emptyShopInventory(content) {
@@ -10191,7 +10191,9 @@ function removeShopInventoryCost(shop, itemId, units) {
       const avgItemSales = history.length ? history.reduce((sum, row) => sum + Math.max(0, row.soldUnitsByItem?.[itemId] || 0), 0) / Math.max(1, Math.min(history.length, content.rules.operatingObservationDays || 7)) : 0;
       const hasItemSalesHistory = history.some(row => Math.max(0, row.soldUnitsByItem?.[itemId] || 0) > 0);
       // 试进货按商品独立判断：某商品开店首日缺货时，不能因为别的商品已有营业历史就永久放弃补货。
-      const trial = hasItemSalesHistory ? 0 : Math.floor(capacity / Math.max(1, itemIds.length) * 0.5);
+      // 基线清理：客容量为 0（如无店员）时给保底试进货（20 斤），否则商店空转永不进货。
+      const capacityTrial = Math.floor(capacity / Math.max(1, itemIds.length) * 0.5);
+      const trial = hasItemSalesHistory ? 0 : (capacityTrial > 0 ? capacityTrial : 20 * invScale);
       const expected = Math.max(avgItemSales, trial);
       itemTargets.push({ itemId, targetUnits: Math.max(trial, Math.round(expected * targetDays)) });
     }
@@ -10220,8 +10222,11 @@ function removeShopInventoryCost(shop, itemId, units) {
     purchasedByItem[row.itemId] = bought;
     purchasedTotal += bought;
   }
-  if (hadNeed && purchasedTotal <= 0) shop.statusReason = maximumPayableValueUnits(state, `shop:${shop.id}`, content) <= 0 ? "缺资金" : "批发市场缺货";
-  return { purchasedUnits: purchasedTotal, purchasedByItem, reason: !hadNeed ? "库存充足" : (purchasedTotal > 0 ? "已从批发市场补货" : shop.statusReason) };
+  if (hadNeed && purchasedTotal <= 0) {
+    // 基线清理：无批发市场时走镇库直购，缺货提示要准确。
+    shop.statusReason = maximumPayableValueUnits(state, `shop:${shop.id}`, content) <= 0 ? "缺资金" : (hasWholesaleMarket(state) ? "批发市场缺货" : "镇库缺货");
+  }
+  return { purchasedUnits: purchasedTotal, purchasedByItem, reason: !hadNeed ? "库存充足" : (purchasedTotal > 0 ? "已补货" : shop.statusReason) };
 }
 
 function attributeLegacyShopWageClaims(state, shop) {
