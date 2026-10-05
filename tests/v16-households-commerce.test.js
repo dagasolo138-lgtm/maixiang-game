@@ -1,0 +1,222 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { jobCount, householdEmploymentCount, householdIdleWorkers } from "../src/systems/households.js";
+import { simulation, CONTENT } from "../src/engine.js";
+import { maximumResidentExchangeWheatUnits, householdList } from "../src/systems/households.js";
+import { initializeBuildingJobs, reconcileEmployment } from "../src/systems/employment.js";
+import {
+  prepareShopsForDay, finishShopsDay, sellShopProduct, settleShopTaxAndDistribution
+} from "../src/systems/shops.js";
+import { transferVouchers } from "../src/economy/currency.js";
+import { transferTownToWholesale } from "../src/systems/wholesale-market.js";
+import { exportState, importState } from "../src/persistence/storage.js";
+import { grantResidentVouchers } from "./helpers-v16.js";
+import { legacyVoucherState } from "./helpers-monetary.js";
+
+const I = CONTENT.precision.inventoryUnitsPerJin;
+const V = CONTENT.precision.currencyUnitsPerVoucher;
+
+function addCompletedBuilding(state, typeId, id, level = 1) {
+  const def = CONTENT.buildings[typeId];
+  const plot = state.plots.find(row => (!def.requiredPlotFeature || row.feature === def.requiredPlotFeature) &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(plot, `missing plot for ${typeId}`);
+  const building = {
+    id, typeId, level,
+    ownership: { townLevels: level, privateLevels: 0, listedLevels: 0 },
+    plotId: plot.id, x: plot.x, y: plot.y,
+    materialInvestments: [], completed: { year: state.year, day: state.day + 1 }
+  };
+  state.buildings.push(building);
+  initializeBuildingJobs(state, building, CONTENT);
+  return building;
+}
+
+function fundedHousehold(state, amount = 1000, exclude = new Set()) {
+  const household = householdList(state).find(row => !exclude.has(row.id) && householdIdleWorkers(row) > 0);
+  assert.ok(household);
+  assert.equal(grantResidentVouchers(state, amount, CONTENT, household.id).ok, true);
+  return household;
+}
+
+test("v16初始家庭保持1000人口、600劳动力和居民总财富汇总一致", () => {
+  const state = legacyVoucherState();
+  const households = householdList(state);
+  assert.equal(households.length, 250);
+  assert.equal(state.households.members, undefined);
+  assert.equal(households.reduce((sum, h) => sum + h.ageBands.children + h.ageBands.workers + h.ageBands.elders, 0), 1000);
+  assert.equal(simulation.populationStats(state).children, 200);
+  assert.equal(simulation.populationStats(state).workers, 600);
+  assert.equal(simulation.populationStats(state).elders, 200);
+  const occupations = simulation.selectDashboard(state).households.occupations;
+  assert.equal(occupations["农民"], 400);
+  const summedWheat = households.reduce((sum, h) => sum + (h.inventory.wheat || 0), 0);
+  const summedVouchers = households.reduce((sum, h) => sum + (h.voucherUnits || 0), 0);
+  assert.equal(state.accounts.residents.wheat, summedWheat);
+  assert.equal(state.currency.balances.residents, summedVouchers);
+  assert.equal(simulation.validateState(state).valid, true, simulation.validateState(state).errors.join("；"));
+});
+
+test("就业换券额度按实际在岗成员每日生成，换岗不刷新，收入不占额度", () => {
+  const state = legacyVoucherState();
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 800);
+  assert.equal(simulation.issueGrainVouchers(state, "residents", 800).ok, true);
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0);
+  assert.equal(simulation.issueGrainVouchers(state, "residents", 1).ok, false);
+  simulation.setEmployment(state, "farmers", 399);
+  simulation.setEmployment(state, "farmers", 400);
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0, "同日离岗再入岗不得刷新额度");
+
+  const beforeIncome = state.currency.balances.residents;
+  assert.equal(grantResidentVouchers(state, 100, CONTENT).ok, true);
+  assert.equal(state.currency.balances.residents - beforeIncome, 100 * V);
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0, "工资/收入类转账不应消耗或刷新换券额度");
+
+  state.day += 1;
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 800, "额度次日重置且不累计");
+  assert.equal(simulation.setEmploymentExchangeQuota(state, 0).ok, true);
+  state.day += 1;
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0);
+  assert.equal(simulation.setEmploymentExchangeQuota(state, 10).ok, true);
+  state.day += 1;
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 4000);
+});
+
+test("公务员与警察需求按全镇人口计算，1000人为2、1001人为3且不按建筑重复", () => {
+  const state = legacyVoucherState();
+  const hallA = addCompletedBuilding(state, "town_hall", "hall-a");
+  addCompletedBuilding(state, "town_hall", "hall-b");
+  const policeA = addCompletedBuilding(state, "police_station", "police-a");
+  let jobs = simulation.selectJobRows(state);
+  assert.equal(jobs.publicServiceDemand, 2);
+  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 2);
+  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 2);
+  assert.equal(simulation.setEmployment(state, "hall-b::civil_servants", 10).assigned, 0, "第二栋不能再复制一份全镇需求");
+
+  const workerCohort = state.cohorts.find(row => row.age >= 18 && row.age < 65);
+  const extraHousehold = householdList(state)[0];
+  workerCohort.m += 1;
+  extraHousehold.ageBands.workers += 1;
+  jobs = simulation.selectJobRows(state);
+  assert.equal(jobs.publicServiceDemand, 3);
+  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 3);
+  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 3);
+
+  workerCohort.m -= 1;
+  extraHousehold.ageBands.workers -= 1;
+  reconcileEmployment(state, CONTENT);
+  jobs = simulation.selectJobRows(state);
+  assert.equal(jobs.publicServiceDemand, 2);
+  assert.equal(jobs.civilServants, 2);
+  assert.equal(jobs.police, 2);
+});
+
+test("商业街每级2铺、综合商店每铺最多50店员且所有岗位占用真实唯一劳动力", () => {
+  const state = legacyVoucherState();
+  const street = addCompletedBuilding(state, "commercial_street", "street-a");
+  const ownerA = fundedHousehold(state, 1000);
+  const ownerB = fundedHousehold(state, 1000, new Set([ownerA.id]));
+  const first = simulation.openResidentShop(state, street.id, "bakery", ownerA.id);
+  const second = simulation.openResidentShop(state, street.id, "salt", ownerB.id);
+  assert.equal(first.ok, true, first.reason);
+  assert.equal(second.ok, true, second.reason);
+  assert.equal(simulation.openResidentShop(state, street.id, "grain", null).ok, false);
+  assert.equal(simulation.configureShopClerks(state, first.shopId, 50).assigned, 50);
+  assert.equal(simulation.configureShopClerks(state, second.shopId, 50).assigned, 50);
+  assert.equal(simulation.configureShopClerks(state, first.shopId, 60).assigned, 50);
+
+  assert.equal(jobCount(state, `shop:${first.shopId}:merchant`) + jobCount(state, `shop:${second.shopId}:merchant`), 2);
+  assert.equal(jobCount(state, `shop:${first.shopId}:clerk`) + jobCount(state, `shop:${second.shopId}:clerk`), 100);
+  assert.ok(householdList(state).every(h => householdEmploymentCount(h) <= h.ageBands.workers));
+  const rows = simulation.selectJobRows(state).rows.filter(row => row.buildingId === street.id);
+  assert.equal(rows.find(row => row.roleId === "merchants").count, 2);
+  assert.equal(rows.find(row => row.roleId === "shop_clerks").count, 100);
+  assert.equal(simulation.validateState(state).valid, true, simulation.validateState(state).errors.join("；"));
+});
+
+test("店铺未售库存不计销售成本，正利润征税、亏损不征税", () => {
+  const state = legacyVoucherState();
+  const street = addCompletedBuilding(state, "commercial_street", "street-books");
+  const owner = fundedHousehold(state, 1000);
+  const buyer = fundedHousehold(state, 1000, new Set([owner.id]));
+  addCompletedBuilding(state, "wholesale_market", "wholesale-books");
+  state.accounts.town.bread = 1000 * I;
+  assert.ok(transferTownToWholesale(state, "bread", 1000 * I, CONTENT).movedUnits > 0);
+  const opened = simulation.openResidentShop(state, street.id, "bakery", owner.id);
+  assert.equal(opened.ok, true, opened.reason);
+  const shop = state.shops[opened.shopId];
+  state.employment.wageRates.merchants = 0;
+  state.employment.wageRates.shop_clerks = 0;
+  assert.equal(simulation.configureShopClerks(state, shop.id, 1).assigned, 1);
+  prepareShopsForDay(state, CONTENT);
+  const purchased = shop.accounts.day.purchasedUnits.bread || 0;
+  assert.equal(purchased, 20 * I);
+  assert.equal(shop.accounts.day.cogsVoucherUnits, 0, "未售库存不能直接计销售成本");
+  assert.equal(shop.accounts.day.profitVoucherUnits, -1 * V, "进货不是费用，未销售时仅计租金");
+
+  const sale = sellShopProduct(state, shop.id, `household:${buyer.id}`, 5 * I, CONTENT, "测试零售");
+  assert.equal(sale.ok, true, sale.reason);
+  assert.equal(sale.paidVoucherUnits, 12 * V);
+  assert.equal(sale.cogsVoucherUnits, 10 * V);
+  assert.equal(shop.accounts.day.profitVoucherUnits, 1 * V);
+  shop.settlement.days = 30;
+  const settlement = settleShopTaxAndDistribution(state, shop, CONTENT, false);
+  assert.equal(settlement.settled, true);
+  assert.ok(Math.abs(settlement.taxVoucherUnits - Math.floor(0.1 * V)) <= 1);
+
+  const lossState = legacyVoucherState();
+  const lossStreet = addCompletedBuilding(lossState, "commercial_street", "street-loss");
+  const lossOwner = fundedHousehold(lossState, 1000);
+  const lossOpen = simulation.openResidentShop(lossState, lossStreet.id, "bakery", lossOwner.id);
+  const lossShop = lossState.shops[lossOpen.shopId];
+  lossShop.settlement.profitVoucherUnits = -50 * V;
+  lossShop.settlement.days = 30;
+  const loss = settleShopTaxAndDistribution(lossState, lossShop, CONTENT, false);
+  assert.equal(loss.taxVoucherUnits, 0);
+  assert.equal(loss.lossCarryVoucherUnits, -50 * V);
+});
+
+test("店铺欠薪欠租会保留，长期无法经营自动停业并释放商人和店员", () => {
+  const state = legacyVoucherState();
+  const street = addCompletedBuilding(state, "commercial_street", "street-close");
+  const owner = fundedHousehold(state, 1000);
+  const opened = simulation.openResidentShop(state, street.id, "salt", owner.id);
+  assert.equal(opened.ok, true);
+  const shop = state.shops[opened.shopId];
+  assert.equal(simulation.configureShopClerks(state, shop.id, 2).assigned, 2);
+  assert.equal(jobCount(state, `shop:${shop.id}:merchant`), 1);
+  assert.equal(jobCount(state, `shop:${shop.id}:clerk`), 2);
+  if (shop.cashVoucherUnits > 0) {
+    const drained = transferVouchers(state, `shop:${shop.id}`, `household:${owner.id}`, shop.cashVoucherUnits, CONTENT, "test_drain", "测试抽干店铺现金");
+    assert.equal(drained.ok, true);
+  }
+  prepareShopsForDay(state, CONTENT);
+  assert.equal(shop.liabilities.wageVoucherUnits, 30 * V);
+  assert.equal(shop.liabilities.rentVoucherUnits, 1 * V);
+  shop.badDays = CONTENT.rules.shopClosureBadDays - 1;
+  const result = finishShopsDay(state, CONTENT).find(row => row.shopId === shop.id);
+  assert.equal(result.closed, true);
+  assert.equal(shop.status, "liquidating");
+  assert.ok(shop.liabilities.wageVoucherUnits > 0 || shop.liabilities.rentVoucherUnits > 0);
+  assert.equal(jobCount(state, `shop:${shop.id}:merchant`), 0);
+  assert.equal(jobCount(state, `shop:${shop.id}:clerk`), 0);
+  const streetRows = simulation.selectJobRows(state).rows.filter(row => row.buildingId === street.id);
+  assert.equal(streetRows.find(row => row.roleId === "merchants").count, 0);
+  assert.equal(streetRows.find(row => row.roleId === "shop_clerks").count, 0);
+});
+
+test("家庭、职业和店铺归属可保存恢复且恢复后仍通过一致性校验", () => {
+  const state = legacyVoucherState({ seed: 1600 });
+  const street = addCompletedBuilding(state, "commercial_street", "street-save");
+  const owner = fundedHousehold(state, 1000);
+  const opened = simulation.openResidentShop(state, street.id, "grain", owner.id);
+  assert.equal(opened.ok, true);
+  assert.equal(simulation.configureShopClerks(state, opened.shopId, 1).assigned, 1);
+  const restored = importState({ getItem() { return null; }, setItem() {} }, exportState(state), CONTENT);
+  const shop = restored.shops[opened.shopId];
+  assert.equal(shop.ownerHouseholdId, owner.id);
+  assert.equal(restored.households.byId[owner.id].jobs[`shop:${shop.id}:merchant`], 1);
+  assert.equal(jobCount(restored, `shop:${shop.id}:clerk`), 1);
+  assert.equal(restored.households.members, undefined);
+  assert.equal(simulation.validateState(restored).valid, true, simulation.validateState(restored).errors.join("；"));
+});
