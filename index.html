@@ -9864,8 +9864,11 @@ function protectedClerkCount(state, shop, content) {
   if (!shop || shop.status !== "open" || !shopMerchantOnDuty(state, shop)) return 0;
   const def = shopDefinition(content, shop.typeId);
   if (def?.id !== "general") return shopIsService(shop, content) ? serviceShopCapacityUses(state, shop, content) : 0;
+  // 基线清理：商人也是员工，计入接待能力（之前只算店员，0 店员时客流为 0）。
   const clerks = shopClerkCount(state, shop);
-  return Math.min(content.rules.generalStoreMaxDailyCustomers || 1000, clerks * (content.rules.generalStoreCustomersPerStaff || 20));
+  const merchants = shopMerchantCount(state, shop);
+  const staff = clerks + merchants;
+  return Math.min(content.rules.generalStoreMaxDailyCustomers || 1000, staff * (content.rules.generalStoreCustomersPerStaff || 20));
 }
 
 function releaseAllShopClerks(state, shop) {
