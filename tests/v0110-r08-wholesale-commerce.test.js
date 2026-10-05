@@ -68,7 +68,8 @@ test("综合商店50店员、2000客流上限，店员未满30日不能解雇", 
   assert.match(early.reason, /30天/);
   state.day = 30;
   assert.equal(simulation.configureShopClerks(state, shop.id, 49).ok, true);
-  assert.equal(shopDailyCustomerCapacity(state, shop, CONTENT), 1960, "49名店员只能承载1960客流");
+  // 基线清理：商人计入接待能力，49 店员 + 1 商人 = 50 人 × 40 = 2000（达上限）。
+  assert.equal(shopDailyCustomerCapacity(state, shop, CONTENT), 2000, "49名店员加商人达2000客流上限");
   assert.equal(simulation.selectDashboard(state, { panel: "site" }).shops.find(row => row.id === shop.id).maxClerks, 50);
 });
 

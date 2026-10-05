@@ -97,7 +97,7 @@ export const RULES = Object.freeze({
   shopMaxClerks: 20,
   generalStoreMaxClerks: 50,
   generalStoreMarkupPercent: 20,
-  generalStoreCustomersPerStaff: 40, // 用户 0.1.11 调优（原 20）
+  generalStoreCustomersPerStaff: 60, // 基线清理：从40提到60，缓解小额多笔时的接待笔数瓶颈
   generalStoreMaxDailyCustomers: 2000, // 用户 0.1.11 调优（原 1000）
   // 0.2.3 流通改革：综合商店动态加价（v1 只做综合商店，其他小店保持固定加价）。
   generalStorePricingReviewDays: 7,        // 7 天复核一次
