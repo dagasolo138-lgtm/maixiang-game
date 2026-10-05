@@ -57,7 +57,20 @@ test("面粉调价后企业真实采购与磨坊经营权估值读取同一当�
   assert.equal(listed.ok, true, listed.reason);
   const company = state.companies[listed.companyId];
   setJobCount(state, `${bakery.id}::bakers::listed`, 1, CONTENT);
-  state.accounts.town.flour = 10 * I;
+  // 基线清理：0.2.3 起公司采购原料走批发市场（buyWholesaleForOwner），镇库库存不再直接可买。
+  // 所以先建成批发市场并把面粉放进市场库存。
+  const wholesalePlot = state.plots.find(row => !row.feature &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(wholesalePlot, "需要一块空地建批发市场");
+  state.buildings.push({
+    id: "wm-price", typeId: "wholesale_market", level: 1,
+    ownership: { townLevels: 1, privateLevels: 0, listedLevels: 0 },
+    plotId: wholesalePlot.id, x: wholesalePlot.x, y: wholesalePlot.y,
+    materialInvestments: [], completed: { year: state.year, day: 1 }
+  });
+  const market = state.wholesaleMarket;
+  market.inventory.flour = 10 * I;
+  market.inventoryCostVoucherUnits.flour = 0;
 
   assert.equal(simulation.configureIntermediatePrice(state, "flour", 2.2).ok, true);
   const purchase = buyInputForCompany(state, company, "flour", 5 * I, CONTENT);

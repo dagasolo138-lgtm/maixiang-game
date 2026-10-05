@@ -59,6 +59,10 @@ test("v16初始家庭保持1000人口、600劳动力和居民总财富汇总一�
 
 test("就业换券额度按实际在岗成员每日生成，换岗不刷新，收入不占额度", () => {
   const state = legacyVoucherState();
+  // 基线清理：居民换券是把小麦交给镇库、换回镇库**已发行**的粮券
+  // （issueVouchersFromWheat 要求 voucherBalance(town) >= 兑换额）。本用例原先没印券，
+  // 镇库余额为 0，换券必然被"镇库已发行粮券余额不足"挡下——是测试夹具缺前置，不是逻辑退化。
+  assert.equal(simulation.issueGrainVouchers(state, "town", 5000).ok, true);
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 800);
   assert.equal(simulation.issueGrainVouchers(state, "residents", 800).ok, true);
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0);

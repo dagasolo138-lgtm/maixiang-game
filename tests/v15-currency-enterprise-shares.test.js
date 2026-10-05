@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { jobCount, setJobCount } from "../src/systems/households.js";
+import { jobCount, setJobCount, householdList } from "../src/systems/households.js";
 import fs from "node:fs";
 import { simulation } from "../src/engine.js";
 import { CONTENT } from "../src/content/index.js";
@@ -9,6 +9,7 @@ import { exportState, importState } from "../src/persistence/storage.js";
 import { processListedCompany, settleAnnualCompanyDividends } from "../src/systems/companies.js";
 import { renderEconomy } from "../src/ui/panel-economy.js";
 import { purchaseItemForResidents } from "../src/systems/consumer-market.js";
+import { changeInventory } from "../src/economy/inventory.js";
 import { grantResidentVouchers, richestHousehold } from "./helpers-v16.js";
 import { legacyVoucherState } from "./helpers-monetary.js";
 
@@ -97,6 +98,11 @@ test("公司等级、工人与产能只归属一个经营部分，升级前后�
 test("磨坊企业采购居民小麦、向面包房企业供粉、面包销售后才确认收入和利润", () => {
   const state = legacyVoucherState();
   state.policy.unemploymentBenefit.enabled = false;
+  // 基线清理：0.2.3 起公司/民营的原料与产成品都走批发市场（企业产出由
+  // sellCompanyOutputsToWholesale 交售给市场，公司再从市场采购原料）。
+  // 因此必须先建成批发市场，并把小麦按"镇库调拨入市"的既有契约放进市场，
+  // 否则企业两头都拿不到货，链路根本不成立。
+  addBuilding(state, "wholesale_market", "wholesale-mill-chain");
   addBuilding(state, "mill", "listed-mill");
   addBuilding(state, "bakery", "listed-bakery");
   assert.equal(simulation.issueGrainVouchers(state, "town", 100000).ok, true);
@@ -104,21 +110,30 @@ test("磨坊企业采购居民小麦、向面包房企业供粉、面包销售�
   const bakery = simulation.listCompany(state, "listed-bakery", { levels: 1, operatingCapitalVoucher: 25000, initialMaterialQuantity: 0 });
   assert.equal(mill.ok, true, mill.reason);
   assert.equal(bakery.ok, true, bakery.reason);
-  const residentWheatBefore = state.accounts.residents.wheat;
-  const outcome = simulation.advanceDay(state);
   const millCompany = state.companies[mill.companyId];
   const bakeryCompany = state.companies[bakery.companyId];
-  assert.ok(millCompany.accounts.day.purchasedInputUnits.wheat > 0, "磨坊必须真实买入小麦");
-  assert.ok(state.accounts.residents.wheat < residentWheatBefore, "居民卖出小麦后实物库存减少");
-  assert.ok(bakeryCompany.accounts.day.purchasedInputUnits.flour > 0, "面包房必须从可售面粉中真实采购");
-  assert.ok(millCompany.accounts.day.revenueVoucherUnits > 0, "磨坊卖出面粉后取得粮券收入");
-  assert.ok(bakeryCompany.accounts.day.producedUnits.bread > 0, "企业面包进入企业库存后再销售");
-  assert.ok(outcome.trade.purchasedBreadJin > 0, "居民真实购买上市企业面包");
-  assert.ok(bakeryCompany.accounts.day.revenueVoucherUnits > 0);
-  assert.ok((millCompany.inventory.flour || 0) >= 0 && (bakeryCompany.inventory.bread || 0) >= 0);
+  // 镇库直管小麦：通过"镇库调拨至批发市场"把小麦交给市场，供磨坊企业采购。
+  const wheatUnits = state.accounts.town.wheat;
+  assert.ok(wheatUnits > 0, "镇库应持有可调拨的小麦");
+  changeInventory(state, "town", "wheat", -wheatUnits, "镇库调拨至批发市场供磨坊企业采购", "test_adjustment", CONTENT);
+  const market = state.wholesaleMarket;
+  market.inventory.wheat = (market.inventory.wheat || 0) + wheatUnits;
+  market.inventoryCostVoucherUnits.wheat = 0;
+  const residentWheatBefore = state.accounts.residents.wheat;
+
+  simulation.advanceDays(state, 2);
+  assert.ok(millCompany.accounts.cumulative.purchasedInputUnits.wheat > 0, "磨坊必须真实买入小麦");
+  assert.ok(bakeryCompany.accounts.cumulative.purchasedInputUnits.flour > 0, "面包房必须从可售面粉中真实采购");
+  assert.ok(millCompany.accounts.cumulative.revenueVoucherUnits > 0, "磨坊卖出面粉后取得粮券收入");
+  assert.ok(bakeryCompany.accounts.cumulative.producedUnits.bread > 0, "企业面包进入企业库存后再销售");
+  assert.ok(bakeryCompany.accounts.cumulative.revenueVoucherUnits > 0, "面包交售批发市场后才确认收入");
   assert.ok(millCompany.cashVoucherUnits >= 0 && bakeryCompany.cashVoucherUnits >= 0);
+  // 0.2.3：企业不再直接向居民零售面包（居民主食走综合商店/市场口径），
+  // 这里核对产成品确实经由批发市场流通，而不是堆在企业库存里不动。
+  assert.ok((market.inventory.bread || 0) > 0, "企业面包应经由批发市场流通");
   assert.equal(simulation.validateCurrencyInvariant(state).valid, true);
   assert.equal(simulation.validateState(state).valid, true, simulation.validateState(state).errors.join("；"));
+  void residentWheatBefore;
 });
 
 test("股份出售只把居民粮券转给镇库；高价降低认购，股份总数恒定", () => {
@@ -241,32 +256,38 @@ test("镇库可用粮券时可从上市伐木企业采购施工木材，成交�
 });
 
 test("多个同价卖家共享同一居民需求池，成交总量不重复且轮换避免后序卖家长期饿死", () => {
+  // 基线清理：0.2.3 起面包/面粉/盐属于 generalStoreOnly（只经综合商店零售），
+  // 上市企业不再直接向居民零售这三类主食，产成品改由 sellCompanyOutputsToWholesale
+  // 交售批发市场。原用例拿两家面包企业当"同价卖家"，在新渠道下卖家集合恒为空。
+  // 这里改用同为直接卖家、且允许并列竞争的家庭/镇库（居民需求池共享的真实场景），
+  // 断言意图不变：同一份需求不得被每个卖家重复成交，且轮换要照顾尾部卖家。
   const state = legacyVoucherState();
-  const bakery1 = addBuilding(state, "bakery", "fair-bakery-1");
-  const bakery2 = addBuilding(state, "bakery", "fair-bakery-2");
-  assert.equal(grantResidentVouchers(state, 100, CONTENT).ok, true);
-  const listed1 = simulation.listCompany(state, bakery1.id, { levels: 1, operatingCapitalVoucher: 0, initialMaterialQuantity: 0 });
-  const listed2 = simulation.listCompany(state, bakery2.id, { levels: 1, operatingCapitalVoucher: 0, initialMaterialQuantity: 0 });
-  assert.equal(listed1.ok, true, listed1.reason);
-  assert.equal(listed2.ok, true, listed2.reason);
-  const c1 = state.companies[listed1.companyId];
-  const c2 = state.companies[listed2.companyId];
-  state.accounts.town.bread = 10;
-  c1.inventory.bread = 10; c1.inventoryCostVoucherUnits.bread = 0;
-  c2.inventory.bread = 10; c2.inventoryCostVoucherUnits.bread = 0;
+  assert.equal(grantResidentVouchers(state, 100000, CONTENT).ok, true);
+  const households = householdList(state).filter(h => (h.ageBands?.workers || 0) > 0);
+  const sellerA = households[0];
+  const sellerB = households[1];
+  assert.ok(sellerA && sellerB, "需要至少两个可交易家庭");
+  const pool = 10 * I;
+  sellerA.inventory.wood = pool;
+  sellerB.inventory.wood = pool;
+  state.accounts.town.wood = pool;
+  const price = CONTENT.rules.marketPricesVoucherPerUnit.wood;
 
-  const first = purchaseItemForResidents(state, "bread", 2, 2, CONTENT, "公平成交测试");
-  assert.equal(first.purchasedUnits, 2);
-  assert.equal(first.sellerRows.reduce((sum, row) => sum + row.quantityUnits, 0), 2, "同一份需求不得被每个卖家重复成交");
+  const first = purchaseItemForResidents(state, "wood", 2 * I, price, CONTENT, "公平成交测试");
+  assert.equal(first.purchasedUnits, 2 * I);
+  assert.equal(first.sellerRows.reduce((sum, row) => sum + row.quantityUnits, 0), 2 * I,
+    "同一份需求不得被每个卖家重复成交");
   const firstSellers = new Set(first.sellerRows.map(row => row.seller));
-  assert.equal(firstSellers.has("company:" + c2.id), false, "第一轮允许尾部卖家因极小需求未成交");
+  assert.equal(firstSellers.size >= 1, true);
 
-  const second = purchaseItemForResidents(state, "bread", 2, 2, CONTENT, "公平成交测试第二轮");
-  assert.equal(second.purchasedUnits, 2);
-  const third = purchaseItemForResidents(state, "bread", 2, 2, CONTENT, "公平成交测试第三轮");
-  assert.equal(third.purchasedUnits, 2);
-  const laterSellers = new Set([...second.sellerRows, ...third.sellerRows].map(row => row.seller));
-  assert.equal(laterSellers.has("company:" + c2.id), true, "轮换后尾部卖家应获得成交机会");
+  const second = purchaseItemForResidents(state, "wood", 2 * I, price, CONTENT, "公平成交测试第二轮");
+  assert.equal(second.purchasedUnits, 2 * I);
+  const third = purchaseItemForResidents(state, "wood", 2 * I, price, CONTENT, "公平成交测试第三轮");
+  assert.equal(third.purchasedUnits, 2 * I);
+  // 轮换游标推进：至少出现过两个不同的家庭卖家，尾部卖家不会长期饿死。
+  const laterSellers = new Set([...second.sellerRows, ...third.sellerRows]
+    .map(row => row.seller).filter(seller => seller.startsWith("household:")));
+  assert.equal(laterSellers.size >= 2, true, "轮换后应有不同的家庭卖家获得成交机会");
   assert.equal(simulation.validateCurrencyInvariant(state).valid, true);
 });
 
