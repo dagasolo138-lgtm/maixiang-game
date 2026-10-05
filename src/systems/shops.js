@@ -10,7 +10,7 @@ import {
 import { shopTradePrices, recentAverage } from "../economy/operating-plan.js";
 import { currentUnitPrice } from "../economy/prices.js";
 import { accrueWageClaims, attributeLegacyUnattributedWageClaims, claimTotal, payMonetaryWageClaims } from "./wage-claims.js";
-import { buyWholesaleForOwner } from "./wholesale-market.js";
+import { buyWholesaleForOwner, hasWholesaleMarket } from "./wholesale-market.js";
 import { computeLaborMarket, poachWorkers, adjustShopWage, shopWage } from "./labor-market.js";
 import {
   ensureShopPricing, recordShopItemSale, recordShopDailyWageCost, recordPriceHistory,
@@ -489,7 +489,9 @@ export function procureShopInventory(state, shop, content) {
       const avgItemSales = history.length ? history.reduce((sum, row) => sum + Math.max(0, row.soldUnitsByItem?.[itemId] || 0), 0) / Math.max(1, Math.min(history.length, content.rules.operatingObservationDays || 7)) : 0;
       const hasItemSalesHistory = history.some(row => Math.max(0, row.soldUnitsByItem?.[itemId] || 0) > 0);
       // 试进货按商品独立判断：某商品开店首日缺货时，不能因为别的商品已有营业历史就永久放弃补货。
-      const trial = hasItemSalesHistory ? 0 : Math.floor(capacity / Math.max(1, itemIds.length) * 0.5);
+      // 基线清理：客容量为 0（如无店员）时给保底试进货（20 斤），否则商店空转永不进货。
+      const capacityTrial = Math.floor(capacity / Math.max(1, itemIds.length) * 0.5);
+      const trial = hasItemSalesHistory ? 0 : (capacityTrial > 0 ? capacityTrial : 20 * invScale);
       const expected = Math.max(avgItemSales, trial);
       itemTargets.push({ itemId, targetUnits: Math.max(trial, Math.round(expected * targetDays)) });
     }
@@ -518,8 +520,11 @@ export function procureShopInventory(state, shop, content) {
     purchasedByItem[row.itemId] = bought;
     purchasedTotal += bought;
   }
-  if (hadNeed && purchasedTotal <= 0) shop.statusReason = maximumPayableValueUnits(state, `shop:${shop.id}`, content) <= 0 ? "缺资金" : "批发市场缺货";
-  return { purchasedUnits: purchasedTotal, purchasedByItem, reason: !hadNeed ? "库存充足" : (purchasedTotal > 0 ? "已从批发市场补货" : shop.statusReason) };
+  if (hadNeed && purchasedTotal <= 0) {
+    // 基线清理：无批发市场时走镇库直购，缺货提示要准确。
+    shop.statusReason = maximumPayableValueUnits(state, `shop:${shop.id}`, content) <= 0 ? "缺资金" : (hasWholesaleMarket(state) ? "批发市场缺货" : "镇库缺货");
+  }
+  return { purchasedUnits: purchasedTotal, purchasedByItem, reason: !hadNeed ? "库存充足" : (purchasedTotal > 0 ? "已补货" : shop.statusReason) };
 }
 
 function attributeLegacyShopWageClaims(state, shop) {

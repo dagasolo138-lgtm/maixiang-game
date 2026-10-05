@@ -5,7 +5,7 @@ import { currentUnitPrice } from "../economy/prices.js";
 import { makeTransactionId, recordLedger } from "../economy/ledger.js";
 import { sellCompanyProduct } from "./companies.js";
 import { householdList, syncResidentAggregates } from "./households.js";
-import { hasWholesaleMarket, allocateInputToTown } from "./wholesale-market.js";
+import { hasWholesaleMarket, procureTownInputFromWholesale } from "./wholesale-market.js";
 
 
 function paymentValueForQuantity(quantityUnits, price, content) {
@@ -192,15 +192,15 @@ export function procureTownMaterial(state, itemId, wantedUnits, content) {
   const sellerRows = [];
   let bought = 0;
   let paid = 0;
-  // 先从批发市场免费领用：市场里的本就是镇营产出（每日被扫入），建造领回走内部调拨，不重复收费
+  // 先从批发市场领用：按做市售价由镇库付费采购（AGENTS.md 铁律：要付钱，别写成白嫖）
   const wholesaleWanted = Math.min(preview.wholesaleUsableUnits || 0, preview.purchasableUnits);
   if (wholesaleWanted > 0) {
-    // 基线清理：建造领用走无偿内部调拨（allocateInputToTown），不用 procureTownInputFromWholesale（后者对木材收费，与"不重复收费"注释矛盾）。
-    const issued = allocateInputToTown(state, itemId, wholesaleWanted, content,
-      `镇营建造从批发市场领用${content.items[itemId]?.name || itemId}`);
-    if (issued.ok && issued.movedUnits > 0) {
-      sellerRows.push({ seller: "wholesale_market", quantityUnits: issued.movedUnits, paidVoucherUnits: 0 });
-      bought += issued.movedUnits;
+    const issued = procureTownInputFromWholesale(state, itemId, wholesaleWanted, content,
+      `镇营建造从批发市场采购${content.items[itemId]?.name || itemId}`);
+    if (issued.ok && issued.boughtUnits > 0) {
+      sellerRows.push({ seller: "wholesale_market", quantityUnits: issued.boughtUnits, paidVoucherUnits: issued.paidVoucherUnits || 0 });
+      bought += issued.boughtUnits;
+      paid += issued.paidVoucherUnits || 0;
     }
   }
   // 剩余部分走原有付费采购（家庭→公司轮换）
