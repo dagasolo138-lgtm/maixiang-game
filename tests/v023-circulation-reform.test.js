@@ -277,7 +277,8 @@ test("0.2.3 动态加价面板：每商品一行 + 商店总览", () => {
   assert.equal(view.dynamic, true);
   assert.equal(view.targetMarginPercent, 20);
   assert.equal(view.rows.length, 4, "综合商店经营 4 种商品");
-  assert.deepEqual(view.rows.map(r => r.itemId).sort(), ["bread", "flour", "salt", "wheat"]);
+  // 0.2.3-hotfix：小麦归镇库直管，综合商店不再经营小麦，改经营木材。
+  assert.deepEqual(view.rows.map(r => r.itemId).sort(), ["bread", "flour", "salt", "wood"]);
   for (const row of view.rows) {
     assert.ok("wholesaleVoucherPerUnit" in row && "retailVoucherPerUnit" in row && "actualMarginPercent" in row && "soldJin7d" in row);
   }

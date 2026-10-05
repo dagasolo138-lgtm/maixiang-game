@@ -149,7 +149,7 @@ export const RULES = Object.freeze({
   shopClerkUtilizationHireThreshold: 0.85,
   shopClerkUtilizationReleaseThreshold: 0.45,
   shopTypes: Object.freeze({
-    general: Object.freeze({ id: "general", name: "综合商店", kind: "retail", itemIds: Object.freeze(["wheat", "flour", "bread", "salt"]) }),
+    general: Object.freeze({ id: "general", name: "综合商店", kind: "retail", itemIds: Object.freeze(["flour", "bread", "salt", "wood"]) }),
     haircut: Object.freeze({ id: "haircut", name: "理发店", kind: "service", serviceId: "haircut" }),
     repair: Object.freeze({ id: "repair", name: "修补铺", kind: "service", serviceId: "repair" }),
     tea: Object.freeze({ id: "tea", name: "茶馆", kind: "service", serviceId: "tea" }),

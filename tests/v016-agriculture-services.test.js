@@ -106,20 +106,20 @@ test("综合商店三种商品共用接待能力，库存与成本按商品独�
   assert.equal(opened.ok, true, opened.reason);
   const shop = state.shops[opened.shopId];
   assert.equal(simulation.configureShopClerks(state, shop.id, 1).ok, true);
-  for (const itemId of ["wheat", "bread", "salt"]) shop.inventory[itemId] = 100 * I;
-  shop.inventoryCostVoucherUnits.wheat = 100 * V;
+  for (const itemId of ["flour", "bread", "salt"]) shop.inventory[itemId] = 100 * I;
+  shop.inventoryCostVoucherUnits.flour = 100 * V;
   shop.inventoryCostVoucherUnits.bread = 200 * V;
   shop.inventoryCostVoucherUnits.salt = 300 * V;
-  const first = sellShopProduct(state, shop.id, `household:${buyer.id}`, 30 * I, CONTENT, "测试小麦零售", "wheat");
+  const first = sellShopProduct(state, shop.id, `household:${buyer.id}`, 30 * I, CONTENT, "测试面粉零售", "flour");
   const second = sellShopProduct(state, shop.id, `household:${buyer.id}`, 50 * I, CONTENT, "测试面包零售", "bread");
   const third = sellShopProduct(state, shop.id, `household:${buyer.id}`, 1 * I, CONTENT, "测试盐零售", "salt");
   assert.equal(first.ok, true);
   assert.equal(second.ok, true);
   assert.equal(third.ok, false);
   assert.match(third.reason, /接待能力/);
-  assert.equal(shop.accounts.day.soldUnits.wheat, 30 * I);
+  assert.equal(shop.accounts.day.soldUnits.flour, 30 * I);
   assert.equal(shop.accounts.day.soldUnits.bread, 50 * I, "1名店员的80斤折算承载量由多商品共用");
-  assert.equal(shop.inventoryCostVoucherUnits.wheat, 70 * V);
+  assert.equal(shop.inventoryCostVoucherUnits.flour, 70 * V);
   assert.equal(shop.inventoryCostVoucherUnits.bread, 100 * V);
   assert.equal(shop.inventoryCostVoucherUnits.salt, 300 * V);
   assert.equal(shop.accounts.day.cogsVoucherUnits, 130 * V);
@@ -244,7 +244,8 @@ test("v12旧粮店/面包店/盐铺迁移为综合商店并保留ID、资产、�
   assert.equal(next.id, shop.id);
   assert.equal(next.ownerHouseholdId, owner.id);
   assert.equal(next.typeId, "general");
-  assert.deepEqual(next.itemIds, ["wheat", "flour", "bread", "salt"]);
+  // 0.2.3-hotfix：小麦归镇库直管，综合商店不再经营小麦，改经营木材。
+  assert.deepEqual(next.itemIds, ["flour", "bread", "salt", "wood"]);
   assert.equal(next.inventory.bread, 17 * I);
   assert.equal(next.inventoryCostVoucherUnits.bread, 29 * V);
   assert.equal(next.liabilities.wageVoucherUnits, 7 * V);

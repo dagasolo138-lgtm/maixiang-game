@@ -24,6 +24,8 @@ import { householdConvertibleWheatUnits, syncResidentAggregates } from "./househ
 export const WHOLESALE_ITEM_IDS = Object.freeze(["wheat", "flour", "bread", "wood", "salt"]);
 
 // 镇营统购统销的商品（不含小麦——小麦继续归镇库直管）。
+// 同时也是做市商可挂牌买卖的商品清单：小麦不在批发市场买卖，
+// 只走镇库调拨（磨坊免费领用）与单次调运。
 export const WHOLESALE_MONOPOLY_ITEM_IDS = Object.freeze(["flour", "bread", "wood", "salt"]);
 
 // 默认做市价（小麦斤等价/单位）：收购 1.4 / 售出 1.8 等，用户拍板。
@@ -69,12 +71,17 @@ export function ensureWholesaleMarket(state, content) {
     market.inventory[itemId] = Math.max(0, Math.floor(market.inventory[itemId] || 0));
     market.inventoryCostVoucherUnits[itemId] = Math.max(0, Math.floor(market.inventoryCostVoucherUnits[itemId] || 0));
     market.dailyTownAllocationUnits[itemId] = Math.max(0, Math.floor(market.dailyTownAllocationUnits[itemId] || 0));
+    // 做市挂价只针对可买卖的 4 种商品；小麦归镇库直管：只保留镇库价出售（公司/民营买原料），
+    // 不设做市收购价（市场不向任何人收购小麦，小麦只走镇库调拨入市）。
     if (!(Number.isFinite(market.pricesVoucherPerUnit[itemId]) && market.pricesVoucherPerUnit[itemId] > 0)) {
       // 0.2.3：批发市场做成市商后有自己的挂价，取做市商默认售价而非全局官价。
-      const fallback = content.rules.wholesaleDefaultSalePrices?.[itemId]
-        ?? content.rules.marketPricesVoucherPerUnit?.[itemId] ?? DEFAULT_SALE_PRICES[itemId] ?? 1;
+      const fallback = itemId === "wheat"
+        ? (content.rules.marketPricesVoucherPerUnit?.[itemId] ?? DEFAULT_SALE_PRICES[itemId] ?? 1)
+        : (content.rules.wholesaleDefaultSalePrices?.[itemId]
+          ?? content.rules.marketPricesVoucherPerUnit?.[itemId] ?? DEFAULT_SALE_PRICES[itemId] ?? 1);
       market.pricesVoucherPerUnit[itemId] = fallback;
     }
+    if (itemId === "wheat") continue;
     if (!(Number.isFinite(market.purchasePricesVoucherPerUnit[itemId]) && market.purchasePricesVoucherPerUnit[itemId] > 0)) {
       market.purchasePricesVoucherPerUnit[itemId] = content.rules.wholesaleDefaultPurchasePrices?.[itemId]
         ?? DEFAULT_PURCHASE_PRICES[itemId] ?? market.pricesVoucherPerUnit[itemId];
@@ -169,16 +176,18 @@ export function purchasePriceFeedback(market, itemId, content) {
 // 刷新所有商品的「当前收购价」，并把反馈系数记录到 purchasePriceIndex 供面板展示。
 export function refreshWholesalePurchasePrices(state, content) {
   const market = ensureWholesaleMarket(state, content);
-  for (const itemId of WHOLESALE_ITEM_IDS) {
+  // 只刷新可买卖商品的收购价：小麦不挂牌，不参与价格反馈。
+  for (const itemId of WHOLESALE_MONOPOLY_ITEM_IDS) {
     market.purchasePriceIndex[itemId] = purchasePriceFeedback(market, itemId, content);
     market.purchasePricesVoucherPerUnit[itemId] = wholesalePurchasePrice(state, itemId, content);
   }
   return { ...market.purchasePricesVoucherPerUnit };
 }
 
-// 玩家命令：设做市售价（沿用旧字段/旧命令语义）。
+// 玩家命令：设做市售价（沿用旧字段/旧命令语义）。小麦归镇库直管，不在批发市场挂价。
 export function setWholesalePrice(state, itemId, value, content) {
-  if (!WHOLESALE_ITEM_IDS.includes(itemId)) return { ok: false, reason: "批发市场不经营这种商品" };
+  if (itemId === "wheat") return { ok: false, reason: "小麦归镇库直管，不在批发市场挂价买卖" };
+  if (!WHOLESALE_MONOPOLY_ITEM_IDS.includes(itemId)) return { ok: false, reason: "批发市场不经营这种商品" };
   const price = Math.round(Number(value) * 1000) / 1000;
   if (!Number.isFinite(price) || price <= 0 || price > 1e6) return { ok: false, reason: "批发价须为正的有限数值" };
   const result = setCurrentUnitPrice(state, itemId, price, content);
@@ -188,9 +197,10 @@ export function setWholesalePrice(state, itemId, value, content) {
   return { ok: true, itemId, value: result.value, clamped: result.clamped };
 }
 
-// 玩家命令：设做市收购价（0.2.3 新增）。收购价同时成为价格反馈的基准。
+// 玩家命令：设做市收购价（0.2.3 新增）。收购价同时成为价格反馈的基准。小麦归镇库直管，不挂收购价。
 export function setWholesalePurchasePrice(state, itemId, value, content) {
-  if (!WHOLESALE_ITEM_IDS.includes(itemId)) return { ok: false, reason: "批发市场不经营这种商品" };
+  if (itemId === "wheat") return { ok: false, reason: "小麦归镇库直管，不在批发市场挂价买卖" };
+  if (!WHOLESALE_MONOPOLY_ITEM_IDS.includes(itemId)) return { ok: false, reason: "批发市场不经营这种商品" };
   const price = Math.round(Number(value) * 1000) / 1000;
   if (!Number.isFinite(price) || price <= 0 || price > 1e6) return { ok: false, reason: "收购价须为正的有限数值" };
   const market = ensureWholesaleMarket(state, content);
@@ -387,6 +397,8 @@ function readBuildingJobCount(state, buildingId, jobId) {
 // ---------------------------------------------------------------- 收购（做市商买入）
 
 function buyPrivateOutput(state, householdId, itemId, requestedUnits, content) {
+  // 小麦归镇库直管：批发市场不向民营收购小麦。
+  if (itemId === "wheat" || !WHOLESALE_MONOPOLY_ITEM_IDS.includes(itemId)) return 0;
   const household = state.households?.byId?.[householdId];
   const market = ensureWholesaleMarket(state, content);
   if (!household) return 0;
@@ -502,6 +514,11 @@ export function procureTownInputFromWholesale(state, itemId, requestedUnits, con
 export function buyWholesaleForOwner(state, buyerOwner, itemId, requestedUnits, content, reason = "从批发市场采购") {
   const market = ensureWholesaleMarket(state, content);
   if (!hasWholesaleMarket(state)) return { ok: false, boughtUnits: 0, paidVoucherUnits: 0, reason: "尚未建成批发市场" };
+  // 小麦归镇库直管：批发市场不做小麦的做市买卖，但公司/民营仍可按镇库价采购小麦当生产原料
+  //（0.1.1 面包链既有契约）；镇营磨坊走免费内部调拨，不走这里。
+  if (itemId !== "wheat" && !WHOLESALE_MONOPOLY_ITEM_IDS.includes(itemId)) {
+    return { ok: false, boughtUnits: 0, paidVoucherUnits: 0, reason: "批发市场不经营这种商品" };
+  }
   const available = Math.max(0, market.inventory[itemId] || 0);
   let units = Math.min(available, Math.max(0, Math.floor(requestedUnits)));
   if (units <= 0) return { ok: false, boughtUnits: 0, paidVoucherUnits: 0, reason: "批发市场缺货" };
