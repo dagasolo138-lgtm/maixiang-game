@@ -3405,11 +3405,7 @@ function currencyAccessCheck(state, owner) {
   if (owner !== "town" && (state.accounts?.town?.wheat || 0) < wheatUnits) return { ok: false, reason: "镇库可用小麦不足" };
 
   let householdRows = null;
-  if (owner !== "town") {
-    const quote = quoteTownCostRemoval(state, "wheat", wheatUnits, content);
-    applyTownCostRemoval(state, quote);
-    state.accounts.town.wheat -= wheatUnits;
-  }
+  // 先扣券后扣麦：若扣券失败，镇库小麦不受影响（之前先扣麦，扣券失败会导致小麦凭空消失）。
   if (hasHouseholds(state) && owner === "residents") {
     const taken = takeResidentVouchers(state, voucherUnits, content);
     if (!taken.ok) return taken;
@@ -3433,6 +3429,12 @@ function currencyAccessCheck(state, owner) {
     setVoucherBalance(state, owner, voucherBalance(state, owner) - voucherUnits, content);
     state.wholesaleMarket ||= {};
     state.wholesaleMarket.cashWheatUnits = (state.wholesaleMarket.cashWheatUnits || 0) + wheatUnits;
+  }
+  // 扣券成功后才扣镇库小麦（之前先扣麦，若扣券失败麦会凭空消失）。
+  if (owner !== "town") {
+    const quote = quoteTownCostRemoval(state, "wheat", wheatUnits, content);
+    applyTownCostRemoval(state, quote);
+    state.accounts.town.wheat -= wheatUnits;
   }
   currency.reserveWheatUnits = 0;
   currency.reserveWheatCostVoucherUnits = 0;
@@ -4262,7 +4264,8 @@ function payReclaimWages(state, wageRows, workers, workDays, dueVoucherUnits, co
     return { skipped: true, reason: "本年已经收过麦" };
   }
   const acres = reclaimedAcres(state, content);
-  const capacity = acres / content.agriculture.acresPerFarmer;
+  // 与雇佣上限口径一致：取整，避免满员也达不到100%产量。
+  const capacity = Math.floor(acres / content.agriculture.acresPerFarmer);
   const maximum = acres * content.agriculture.yieldPerAcre;
   const workCapacity = capacity * content.rules.growingDays;
   const proportion = Math.max(0, Math.min(1, state.agriculture.workUnits / workCapacity));
@@ -4278,10 +4281,23 @@ function payReclaimWages(state, wageRows, workers, workDays, dueVoucherUnits, co
   if (residentUnits > 0) {
     const weights = Object.fromEntries(householdList(state).map(h => [h.id, h.agricultureWorkUnits || 0]));
     const distributed = distributeResidentInventory(state, cropItemId, residentUnits, content, { weights, byMembers: false });
-    if (!distributed.ok) throw new Error("农业家庭分粮失败：" + distributed.reason);
-    for (const row of distributed.rows || []) {
-      const qeq = row.units * content.precision.qeqUnitsPerJin / content.precision.inventoryUnitsPerJin;
-      recordHouseholdInKind(state, row.householdId, "inKindIncomeQeqUnits", qeq, content);
+    // 极端情况（所有农户家庭无人口）不抛异常，改按全镇人口分配，避免整日结算崩溃。
+    if (!distributed.ok) {
+      const fallback = distributeResidentInventory(state, cropItemId, residentUnits, content, { byMembers: true });
+      if (!fallback.ok) {
+        recordEvent(state, `收获分粮失败（${distributed.reason}），${Math.round(residentUnits / content.precision.inventoryUnitsPerJin)}斤暂存镇库。`, content);
+        state.accounts.town[cropItemId] = (state.accounts.town[cropItemId] || 0) + residentUnits;
+      } else {
+        for (const row of fallback.rows || []) {
+          const qeq = row.units * content.precision.qeqUnitsPerJin / content.precision.inventoryUnitsPerJin;
+          recordHouseholdInKind(state, row.householdId, "inKindIncomeQeqUnits", qeq, content);
+        }
+      }
+    } else {
+      for (const row of distributed.rows || []) {
+        const qeq = row.units * content.precision.qeqUnitsPerJin / content.precision.inventoryUnitsPerJin;
+        recordHouseholdInKind(state, row.householdId, "inKindIncomeQeqUnits", qeq, content);
+      }
     }
     recordLedger(state, { type: "harvest", transactionId: txId, source: "field", destination: "residents",
       itemId: cropItemId, quantityUnits: residentUnits,
@@ -5879,8 +5895,8 @@ function planWholesaleWageFunding(state, workerPay, content) {
     let paidKey = 0;
     let payer = payrollPayerFor(state, row);
     // 市场现金不足时，该行由镇库兜底（发放主体变化只发生在市场确实付得起的时候）。
+    const planned = payer === "wholesale" ? wageFunding.plan.get(row.payrollKey) : null;
     if (payer === "wholesale") {
-      const planned = wageFunding.plan.get(row.payrollKey);
       if (planned === "town") payer = "town";
     }
     const paidRows = (paidByHousehold[row.payrollKey] ||= {});
@@ -5891,9 +5907,22 @@ function planWholesaleWageFunding(state, workerPay, content) {
       const result = settleMonetaryPayment(state, payer, `household:${householdId}`, obligation, content,
         row.key === "builders" ? "construction_wage_payment" : "wage_payment", "支付具体债权家庭本日工资",
         { requireFull: false, trackUnpaid: true, shortfallKey: `${payer}-wage:${row.payrollKey}:${householdId}` });
-      const paid = result.paidValueUnits || 0;
+      let paid = result.paidValueUnits || 0;
+      // mixed 行：市场付完剩下的由镇库兜底（之前只记缺口不付，工人拿不到钱）。
+      if (planned === "mixed" && payer === "wholesale") {
+        const remaining = Math.max(0, amount - paid);
+        if (remaining > 0) {
+          const townResult = settleMonetaryPayment(state, "town", `household:${householdId}`,
+            normalizePaymentObligation(paymentClaims[householdId] || remaining, state), content,
+            row.key === "builders" ? "construction_wage_payment" : "wage_payment", "镇库兜底批发市场工资差额",
+            { requireFull: false, trackUnpaid: true, shortfallKey: `town-wage:${row.payrollKey}:${householdId}` });
+          paid += townResult.paidValueUnits || 0;
+          paymentClaims[householdId] = townResult.remainingComposition;
+        }
+      } else {
+        paymentClaims[householdId] = result.remainingComposition;
+      }
       claims[householdId] = Math.max(0, amount - paid);
-      paymentClaims[householdId] = result.remainingComposition;
       arrears[row.payrollKey] = Math.max(0, (arrears[row.payrollKey] || 0) - paid);
       paidKey += paid;
       if (paid > 0) paidRows[householdId] = (paidRows[householdId] || 0) + paid;
@@ -9363,6 +9392,10 @@ const PRICING_REVIEW_INTERVAL_DAYS = 7;
        const PRICING_MAX_STEP_PERCENT = 10;
        const LOSS_PROMOTION_DAYS = 30;
        const LOSS_PROMOTION_TARGET_PERCENT = 5;
+       function promotionTargetMarginPercent(content) {
+  const v = Number(content.rules.generalStorePromotionTargetPercent);
+  return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : LOSS_PROMOTION_TARGET_PERCENT;
+}
        const PRICE_HISTORY_WINDOW_DAYS = 30;
 
        function isDynamicPricingShop(shop, content) {
@@ -9374,7 +9407,7 @@ const PRICING_REVIEW_INTERVAL_DAYS = 7;
 // 目标利润率（%）：店铺级设置，缺省取规则默认 20%。促销模式下临时降到 5%。
        function shopTargetMarginPercent(state, shop, content) {
   const fallback = content.rules.generalStoreMarkupPercent ?? 20;
-  if (shop?.pricing?.promotion) return LOSS_PROMOTION_TARGET_PERCENT;
+  if (shop?.pricing?.promotion) return promotionTargetMarginPercent(content);
   const value = Number(shop?.pricing?.targetMarginPercent);
   if (Number.isFinite(value)) return Math.max(0, Math.min(100, value));
   return fallback;
@@ -9599,7 +9632,7 @@ function shopRetailItemIdsSafe(shop, content) {
     pricing.promotionStartedSerial = (Math.max(1, state.year || 1) - 1) * (content.rules.daysPerYear || 365) + (state.day || 0);
     pricing.lastReviewSerial = -1;
     recordEvent(state,
-      `${shop.name}已连续${threshold}天亏损，转入促销模式：目标利润率临时降至${LOSS_PROMOTION_TARGET_PERCENT}%清库存。`,
+      `${shop.name}已连续${threshold}天亏损，转入促销模式：目标利润率临时降至${promotionTargetMarginPercent(content)}%清库存。`,
       content, { day: state.day + 1, mergeKey: `shop-promotion:${shop.id}`, mergeWindowDays: 30,
         amount: 1, mergedText: (times, total) => `${shop.name}等店铺近${times}次转入促销（共${total}次）。` });
     return { promotion: true, entered: true };
@@ -9616,6 +9649,9 @@ function shopRetailItemIdsSafe(shop, content) {
       return { promotion: false, exited: true };
     }
   } else if (!pricing.promotion) {
+    pricing.profitStreakDays = 0;
+  } else {
+    // 促销中亏损则清零连盈天数（之前既不累加也不清零，盈亏交替也能攒满退出）。
     pricing.profitStreakDays = 0;
   }
   return { promotion: Boolean(pricing.promotion) };
@@ -9634,8 +9670,9 @@ function shopRetailItemIdsSafe(shop, content) {
   const pricing = ensureShopPricing(shop, content);
   pricing.retailPriceVoucherPerUnit ||= {};
   pricing.retailPriceVoucherPerUnit[itemId] = finalPrice;
-  // 手动调价后重置复核节拍，避免立刻被自动复核覆盖。
-  pricing.lastReviewSerial = -1;
+  // 手动调价后重置复核节拍为当前，避免次日立刻被自动复核覆盖（之前置-1反而导致立即复核）。
+  const serial = (Math.max(1, state.year || 1) - 1) * (content.rules.daysPerYear || 365) + (state.day || 0);
+  pricing.lastReviewSerial = serial;
   return { ok: true, shopId, itemId, value: finalPrice, clampedToCost: finalPrice > price };
 }
 
@@ -9703,7 +9740,7 @@ function shopRetailItemIdsSafe(shop, content) {
     totals: { ...totals, overallMarginPercent: overallMargin }
   };
 }
-return { PRICING_REVIEW_INTERVAL_DAYS, PRICING_DEVIATION_TOLERANCE_PERCENT, PRICING_MAX_STEP_PERCENT, LOSS_PROMOTION_DAYS, LOSS_PROMOTION_TARGET_PERCENT, PRICE_HISTORY_WINDOW_DAYS, isDynamicPricingShop, shopTargetMarginPercent, setShopTargetMarginPercent, setAllShopsTargetMarginPercent, ensureShopPricing, recordShopItemSale, recordShopDailyWageCost, shopItemActualMarginPercent, recordPriceHistory, shopItemAveragePrice, priceElasticityDemandMultiplier, reviewShopPricing, resetPricingWindow, clampPriceStep, updateShopLossProtection, setShopRetailPrice, selectShopPricingView };
+return { PRICING_REVIEW_INTERVAL_DAYS, PRICING_DEVIATION_TOLERANCE_PERCENT, PRICING_MAX_STEP_PERCENT, LOSS_PROMOTION_DAYS, LOSS_PROMOTION_TARGET_PERCENT, promotionTargetMarginPercent, PRICE_HISTORY_WINDOW_DAYS, isDynamicPricingShop, shopTargetMarginPercent, setShopTargetMarginPercent, setAllShopsTargetMarginPercent, ensureShopPricing, recordShopItemSale, recordShopDailyWageCost, shopItemActualMarginPercent, recordPriceHistory, shopItemAveragePrice, priceElasticityDemandMultiplier, reviewShopPricing, resetPricingWindow, clampPriceStep, updateShopLossProtection, setShopRetailPrice, selectShopPricingView };
 })();
 
 // ===== systems/shops.js =====
@@ -9863,7 +9900,18 @@ function protectedClerkCount(state, shop, content) {
        function shopDailyCustomerCapacity(state, shop, content) {
   if (!shop || shop.status !== "open" || !shopMerchantOnDuty(state, shop)) return 0;
   const def = shopDefinition(content, shop.typeId);
-  if (def?.id !== "general") return shopIsService(shop, content) ? serviceShopCapacityUses(state, shop, content) : 0;
+  if (def?.id !== "general") {
+    if (shopIsService(shop, content)) return serviceShopCapacityUses(state, shop, content);
+    // 非综合商店零售店：按销售能力折算客流（商人60斤/店员120斤，每客2斤），避免恒0导致永远拒售。
+    if (def?.kind === "retail") {
+      const perCustomerJin = content.rules.foodPerPersonDay || 2;
+      const merchants = shopMerchantCount(state, shop);
+      const clerks = shopClerkCount(state, shop);
+      const jin = merchants * (content.rules.shopMerchantSalesCapacityJin || 60) + clerks * (content.rules.shopClerkSalesCapacityJin || 120);
+      return Math.max(0, Math.floor(jin / Math.max(1, perCustomerJin)));
+    }
+    return 0;
+  }
   // 基线清理：商人也是员工，计入接待能力（之前只算店员，0 店员时客流为 0）。
   const clerks = shopClerkCount(state, shop);
   const merchants = shopMerchantCount(state, shop);
@@ -9973,9 +10021,14 @@ function chooseMerchantHousehold(state, content, preferredId = null) {
   shop.initialCapital.wheatValueUnits = payment.wheatPaidValueUnits || 0;
   const assignment = setHouseholdJobCount(state, household.id, `shop:${shopId}:merchant`, 1, content);
   if (!assignment.ok) {
-    settleMonetaryPayment(state, `shop:${shopId}`, `household:${household.id}`, {
+    const refund = settleMonetaryPayment(state, `shop:${shopId}`, `household:${household.id}`, {
       valueUnits: startupUnits, voucherValueUnits: payment.voucherPaidValueUnits || 0, wheatValueUnits: payment.wheatPaidValueUnits || 0
     }, content, "shop_capital_refund", "开店失败退回资金", { requireFull: true, allowVoucherFallback: false, countsForReform: false });
+    // 退款失败也要删店，但把未退金额记为店铺对家庭的负债，避免启动资金无声消失。
+    if (!refund.ok) {
+      shop.liabilities.refundVoucherUnits = (shop.liabilities.refundVoucherUnits || 0) + startupUnits;
+      recordEvent(state, `${shop.name}开店失败，${Math.round(startupUnits / content.precision.currencyUnitsPerVoucher)}券启动资金暂欠家庭。`, content);
+    }
     delete state.shops[shopId];
     return assignment;
   }
@@ -10079,7 +10132,8 @@ function shopWorkingCapitalReserve(state, shop, content) {
   const def = shopDefinition(content, shop.typeId);
   if (def?.kind === "service") {
     const service = content.rules.serviceTypes?.[def.serviceId];
-    return Math.round(serviceShopCapacityUses(state, shop, content) * (service?.priceVoucher || 0) * days * currencyScale(content) * 0.25);
+    // 与零售店口径一致：全额日销能力×单价×天数（之前无故打25折）。
+    return Math.round(serviceShopCapacityUses(state, shop, content) * (service?.priceVoucher || 0) * days * currencyScale(content));
   }
   const itemIds = shopRetailItemIds(shop, content);
   if (!itemIds.length) return 0;
@@ -10471,7 +10525,9 @@ function autoAdjustShopClerks(state, shop, content) {
       const fundsVoucher = maximumPayableValueUnits(state, `shop:${shop.id}`, content) / scale;
       const merchantWage = state.employment?.wageRates?.merchants ?? content.rules.shopMerchantDefaultWageVoucher ?? 10;
       const headsAfter = current + 1 + merchants;
-      const wageAfter = (current + 1) * wage + merchants * merchantWage;
+      // 店主商人不领工资，只算非店主商人（之前含店主，高估3天工资需求）。
+      const nonOwnerMerchants = Math.max(0, merchants - (shop.ownerHouseholdId ? 1 : 0));
+      const wageAfter = (current + 1) * wage + nonOwnerMerchants * merchantWage;
       const funded = fundsVoucher >= headsAfter * marginalJin * avgWholesale + wageAfter * 3;
       if (history.length >= observation && avgRejected > 0 && desiredClerks > current && profitable && funded) {
         target = Math.min(current + 1, desiredClerks);
@@ -10598,10 +10654,21 @@ function finalizeShopLiquidation(state, shop, content) {
     setJobCount(state, merchantJobKey(shop), 0, null);
     setJobCount(state, clerkJobKey(shop), 0, null);
     shop.status = "liquidating";
+    shop.liquidatingSinceSerial = shopSerial(state, content);
     shop.statusReason = automatic ? "自动停业，待清算" : "已停业，待清算";
     recordEvent(state, `${shop.name}${automatic ? "长期无法经营，进入清算" : "停业并进入清算"}。`, content, { day: state.day + 1 });
   }
   payDailyLiabilities(state, shop, content);
+  // 清算超过30天仍有负债，核销坏账强制关闭（之前无破产路径，会永久僵死）。
+  const liquidatingDays = shopSerial(state, content) - (shop.liquidatingSinceSerial || 0);
+  if (shop.status === "liquidating" && shopLiabilityTotal(shop) > 0 && liquidatingDays >= 30) {
+    const writtenOff = shopLiabilityTotal(shop);
+    shop.liabilities.wageVoucherUnits = 0;
+    shop.liabilities.rentVoucherUnits = 0;
+    shop.liabilities.taxVoucherUnits = 0;
+    shop.liabilities.claimsVoucherUnits = {};
+    recordEvent(state, `${shop.name}清算${liquidatingDays}天仍资不抵债，${Math.round(writtenOff / content.precision.currencyUnitsPerVoucher)}券坏账核销，强制关闭。`, content);
+  }
   const finalized = finalizeShopLiquidation(state, shop, content);
   syncShopEmployment(state, content);
   return { ok: true, shopId, liquidationPending: !finalized, status: shop.status, liabilitiesVoucherUnits: shopLiabilityTotal(shop) };
@@ -12548,7 +12615,7 @@ function sellerRowsForItem(state, itemId, directPrice, content, options = {}) {
     if (stock > available && capped && def && prices) {
       capped.push({ shopId: shop.id, cappedUnits: stock - available, price: prices.retailVoucherPerUnit });
     }
-    if (available > 0 && def && prices) sellers.push({ id: `shop:${shop.id}`, type: "shop", shopId: shop.id, stockUnits: available, price: prices.retailVoucherPerUnit });
+    if (available > 0 && def && prices) sellers.push({ id: `shop:${shop.id}`, type: "shop", shopId: shop.id, shopTypeId: def.id, stockUnits: available, price: prices.retailVoucherPerUnit });
   }
   // Snapshot direct household suppliers once, before resident demand is processed.
   // This lets private producers sell without a shop while preventing goods bought
@@ -12673,8 +12740,12 @@ function registerCappedRejection(state, itemId, unmetUnits, capped, householdNee
 // 0.2.3 需求弹性：居民面对综合商店的实际售价，若相对该店过去 30 天均价更贵，
 // 则按"每贵 10% 少买 5%"缩减当日目标购买量。只对综合商店（动态加价店）生效，
 // 其他卖家/小店保持原行为。返回缩放后的目标单位数。
-function applyRetailElasticity(state, itemId, desiredUnits, content) {
+// 注意：调用方需确保综合商店是实际卖家之一，否则弹性会误伤其他卖家的销量。
+function applyRetailElasticity(state, itemId, desiredUnits, content, sellers) {
   if (!(desiredUnits > 0)) return desiredUnits;
+  // 若卖家列表里没有综合商店，不应用弹性（避免压低镇库/公司/住户的销量）。
+  const hasGeneral = (sellers || []).some(row => row.type === "shop" && row.shopTypeId === "general");
+  if (!hasGeneral) return desiredUnits;
   let multiplier = 1;
   for (const shop of Object.values(state.shops || {})) {
     if (shop.status !== "open") continue;
@@ -12694,9 +12765,10 @@ function applyRetailElasticity(state, itemId, desiredUnits, content) {
   if (!Number.isFinite(directPrice) || directPrice <= 0 || desiredUnits <= 0) {
     return { purchasedUnits: 0, paidVoucherUnits: 0, sellerRows: [], reason: desiredUnits <= 0 ? "需求已满足" : "售价无效" };
   }
-  desiredUnits = applyRetailElasticity(state, itemId, desiredUnits, content);
   const cappedSellers = [];
   const sellers = sellerRowsForItem(state, itemId, directPrice, content, { ...options, capped: cappedSellers });
+  // 弹性只在综合商店是卖家时才应用，避免误伤其他卖家。
+  desiredUnits = applyRetailElasticity(state, itemId, desiredUnits, content, sellers);
   if (!sellers.length) {
     // 用户 0.1.11（-5）：无可用卖家但有店铺被接待能力限流，记拒客并返回对应原因。
     registerCappedRejection(state, itemId, Math.max(0, Math.floor(desiredUnits)), cappedSellers, null, content);
@@ -12779,6 +12851,7 @@ const __mxmod52 = (() => {
 const { itemQeqUnitsPerInventoryUnit } = __mxmod10;
 const { purchaseItemForResidents } = __mxmod51;
 const { currentUnitPrice } = __mxmod24;
+const { householdList, householdPopulation, isActiveHousehold } = __mxmod14;
 function breadDemandShare(price, content) {
   if (!Number.isFinite(price) || price <= 0) return 0;
   const base = content.rules.breadBasePriceWheatPerJin;
@@ -12798,7 +12871,7 @@ function breadDemandShare(price, content) {
   };
 }
 
-// 单项主食按“净需求”购买：先扣减居民当日已持有量，再折算成购买单位数。
+// 单项主食按“净需求”购买：按户计算缺口（有粮户少买、无粮户多买），避免按人口均分导致富户囤粮穷户挨饿。
 function buyStapleItem(state, population, content, itemId, share) {
   const price = currentUnitPrice(state, itemId, content);
   const item = content.items[itemId];
@@ -12809,9 +12882,22 @@ function buyStapleItem(state, population, content, itemId, share) {
   const targetUnits = perUnitQeq > 0
     ? Math.max(0, Math.floor((targetQeq - currentQeq) / perUnitQeq)) : 0;
 
+  // 按户缺口：每户按人口分目标，减去自有库存。
+  const householdNeedsUnits = {};
+  if (perUnitQeq > 0 && targetUnits > 0) {
+    const households = householdList(state).filter(isActiveHousehold);
+    const totalPeople = Math.max(1, households.reduce((sum, h) => sum + householdPopulation(h), 0));
+    for (const h of households) {
+      const people = householdPopulation(h);
+      const familyTargetQeq = Math.floor(targetQeq * people / totalPeople);
+      const familyHasQeq = Math.floor((h.inventory?.[itemId] || 0) * perUnitQeq);
+      householdNeedsUnits[h.id] = Math.max(0, Math.floor((familyTargetQeq - familyHasQeq) / perUnitQeq));
+    }
+  }
+
   // Quote the town cost basis before the shared market moves inventory. Company sales account for their own COGS.
   const townBefore = state.accounts.town[itemId] || 0;
-  const result = purchaseItemForResidents(state, itemId, targetUnits, price, content, `居民以粮券购买${item?.name || itemId}`);
+  const result = purchaseItemForResidents(state, itemId, targetUnits, price, content, `居民以粮券购买${item?.name || itemId}`, { householdNeedsUnits });
   const soldJin = result.purchasedUnits / content.precision.inventoryUnitsPerJin;
   const voucher = result.paidVoucherUnits / content.precision.currencyUnitsPerVoucher;
   return {
@@ -13503,13 +13589,14 @@ function maxPassing(limit, predicate) {
   const desiredUnits = households.length ? shortageUnits : Math.max(0, demandUnits - (state.accounts.residents.salt || 0));
   const price = currentUnitPrice(state, "salt", content);
   const result = purchaseItemForResidents(state, "salt", desiredUnits, price, content, "家庭购买当日所需食盐", { householdNeedsUnits });
-  const townRows = result.sellerRows.filter(row => row.seller === "town");
-  const townSold = townRows.reduce((sum, row) => sum + row.quantityUnits, 0);
-  const townRevenue = townRows.reduce((sum, row) => sum + row.paidVoucherUnits, 0);
-  if (townSold > 0) {
+  // 盐经综合商店零售（generalStoreOnly），镇库不直售；按商店卖家统计销量（之前只统计镇库，恒为0）。
+  const shopRows = result.sellerRows.filter(row => row.seller?.startsWith("shop:"));
+  const shopSold = shopRows.reduce((sum, row) => sum + row.quantityUnits, 0);
+  const shopRevenue = shopRows.reduce((sum, row) => sum + row.paidVoucherUnits, 0);
+  if (shopSold > 0) {
     for (const group of [state.industries.salt.day, state.industries.salt.year, state.industries.salt.cumulative]) {
-      group.soldUnits = (group.soldUnits || 0) + townSold;
-      group.revenueWheatUnits = (group.revenueWheatUnits || 0) + townRevenue;
+      group.soldUnits = (group.soldUnits || 0) + shopSold;
+      group.revenueWheatUnits = (group.revenueWheatUnits || 0) + shopRevenue;
     }
   }
   state.salt.day.purchasedUnits = result.purchasedUnits;
