@@ -105,7 +105,7 @@ function maximumAffordableUnits(state, household, price, content, reserveDays) {
   let high = Math.max(0, Math.floor((voucherAvailable + wheatValueAvailable) * inventoryScale / (price * scale)));
   while (low < high) {
     const mid = Math.ceil((low + high) / 2);
-    const cost = Math.round(mid / inventoryScale * price * scale);
+    const cost = Math.round(mid / inventoryScale * price * scale); // 用于canPay，非死变量
     if (canPay(cost)) low = mid; else high = mid - 1;
   }
   return low;
@@ -133,7 +133,7 @@ function transactSeller(state, seller, household, itemId, units, content, reason
       : sale;
   }
   if (seller.type === "household") {
-    if (seller.householdId === household.id) return { ok: false, reason: "家庭已有这批库存" };
+    if (seller.householdId === household.id) return { ok: false, reason: "不能购买自己挂牌的商品" };
     const source = state.households?.byId?.[seller.householdId];
     if (!source || (source.inventory?.[itemId] || 0) < units) return { ok: false, reason: "卖方库存不足" };
     const payment = settleMonetaryPayment(state, `household:${household.id}`, `household:${seller.householdId}`, currentPaymentComposition(state, cost), content,

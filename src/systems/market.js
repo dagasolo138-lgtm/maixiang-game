@@ -73,6 +73,7 @@ export function buyStaplesForResidents(state, population, content) {
   const rows = ["wheat", "flour", "bread"].map(itemId => buyStapleItem(state, population, content, itemId, shares[itemId]));
   const bread = rows.find(row => row.itemId === "bread");
   const purchasedBreadUnits = bread.purchasedUnits;
+  // 面包为 generalStoreOnly，镇库不直售；以下镇库面包记账恒为0，保留作兼容（死代码）。
   const townBreadSold = bread.sellerRows.filter(row => row.seller === "town").reduce((sum, row) => sum + row.quantityUnits, 0);
   const townBreadRevenue = bread.sellerRows.filter(row => row.seller === "town").reduce((sum, row) => sum + row.paidVoucherUnits, 0);
   const townBreadCogs = bread.sellerRows.filter(row => row.seller === "town")
@@ -101,7 +102,7 @@ export function buyStaplesForResidents(state, population, content) {
     targetBreadQeqJin: bread.targetQeqJin,
     purchasedBreadJin: bread.purchasedJin,
     paidVoucher: bread.paidVoucher,
-    paidWheatJin: bread.paidVoucher,
+    paidWheatJin: bread.paidVoucher, // 券值（1券=1斤麦等值），字段名历史遗留，含义为小麦等值
     townStockBeforeJin: bread.townStockBeforeJin,
     sellerRows: bread.sellerRows,
     limitReason: bread.limitReason,

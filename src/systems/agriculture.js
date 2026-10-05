@@ -67,6 +67,8 @@ export function reclaimFarmland(state, content, options = {}) {
   const estimate = reclaimCostEstimate(state, content, options.acres);
   if (estimate.requested <= 0) return { ok: false, reason: "开荒亩数须为正整数" };
   if (estimate.allowed <= 0) return { ok: false, reason: "已开荒耕地达到上限 " + estimate.maximum + " 亩" };
+  // 工资率为0时拒绝开荒，避免免费送地（之前不校验直接加亩数）。
+  if (!(estimate.wagePerWorkerDay > 0)) return { ok: false, reason: "开荒工资率未设定，无法开工" };
   const requestedWorkers = Math.max(0, Math.floor(Number(options.workers) || 0));
   if (requestedWorkers <= 0) return { ok: false, reason: "投入开荒人数须为正整数" };
   const workDays = estimate.workDays;

@@ -84,7 +84,6 @@ export function ensureShopPricing(shop, content) {
   shop.pricing.lastReviewSerial ??= -1;
   shop.pricing.promotion ??= false;
   shop.pricing.lossStreakDays ??= 0;
-  shop.pricing.lossCarryVoucherUnits ??= 0;
   // 按商品的 7 天经营窗口：收入 / 进货成本 / 店员工资 / 销量 / 售价历史。
   shop.pricing.itemWindows ||= {};
   shop.pricing.itemPrices ||= {};

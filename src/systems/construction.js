@@ -130,7 +130,14 @@ export function startConstruction(state, typeId, plotId, content, options = {}) 
     workers: 0,
     prepaidWageCreditUnits: 0,
     materialsConsumed: materialLines.map(line => ({ itemId: line.itemId, quantityUnits: line.quantityUnits, sourceOwner: line.sourceOwner, transactionId: materialTransactionId })),
-    started: { year: state.year, day: Math.min(content.rules.daysPerYear, state.day + 1) }
+    started: (() => {
+      // 年末最后一天开工，年份进位（之前只封顶天数，年份没进位）。
+      const nextDay = (state.day || 0) + 1;
+      const daysPerYear = content.rules.daysPerYear || 365;
+      return nextDay > daysPerYear
+        ? { year: (state.year || 1) + 1, day: 1 }
+        : { year: state.year, day: nextDay };
+    })()
   };
   state.projects.push(project);
   // 只按本工程设定人数招募；不再“有多少要多少”式全局招募其他工程的施工队。

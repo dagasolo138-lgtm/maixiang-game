@@ -56,6 +56,7 @@ export function buySaltForResidents(state, content) {
     }
   }
   state.salt.day.purchasedUnits = result.purchasedUnits;
+  // paidWheatUnits 存的是券单位（1券=1斤麦等值），字段名历史遗留，UI按小麦等值显示无误。
   state.salt.day.paidWheatUnits = result.paidVoucherUnits;
   for (const period of [state.salt.year, state.salt.lifetime]) {
     period.purchasedUnits = (period.purchasedUnits || 0) + result.purchasedUnits;

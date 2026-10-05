@@ -4146,6 +4146,8 @@ function ensureAgricultureState(state, content) {
   const estimate = reclaimCostEstimate(state, content, options.acres);
   if (estimate.requested <= 0) return { ok: false, reason: "开荒亩数须为正整数" };
   if (estimate.allowed <= 0) return { ok: false, reason: "已开荒耕地达到上限 " + estimate.maximum + " 亩" };
+  // 工资率为0时拒绝开荒，避免免费送地（之前不校验直接加亩数）。
+  if (!(estimate.wagePerWorkerDay > 0)) return { ok: false, reason: "开荒工资率未设定，无法开工" };
   const requestedWorkers = Math.max(0, Math.floor(Number(options.workers) || 0));
   if (requestedWorkers <= 0) return { ok: false, reason: "投入开荒人数须为正整数" };
   const workDays = estimate.workDays;
@@ -8120,7 +8122,7 @@ function wholesaleStockUnits(state, itemId) {
   const residentAvailableUnits = sellers.filter(row => row.id.startsWith("household:")).reduce((sum, row) => sum + row.stockUnits, 0);
   const companyAvailableUnits = sellers.filter(row => row.id.startsWith("company:")).reduce((sum, row) => sum + row.stockUnits, 0);
   const paidAvailableUnits = residentAvailableUnits + companyAvailableUnits;
-  // 批发市场里的本就是镇营产出（每日被扫入），建造领用走免费内部调拨，不占镇库支付能力
+  // 批发市场按售价由镇库付费采购（AGENTS.md 铁律：要付钱，别写成白嫖），计入成本。
   const wholesaleAvailableUnits = wholesaleStockUnits(state, itemId);
   const totalAvailableUnits = paidAvailableUnits + wholesaleAvailableUnits;
   if (wanted <= 0) return { wantedUnits: 0, residentAvailableUnits, companyAvailableUnits, wholesaleAvailableUnits, wholesaleUsableUnits: 0, totalAvailableUnits, purchasableUnits: 0, costVoucherUnits: 0, priceVoucherPerUnit: price, reason: "暂无采购需求" };
@@ -8365,7 +8367,14 @@ function totalProjectWorkers(state) {
     workers: 0,
     prepaidWageCreditUnits: 0,
     materialsConsumed: materialLines.map(line => ({ itemId: line.itemId, quantityUnits: line.quantityUnits, sourceOwner: line.sourceOwner, transactionId: materialTransactionId })),
-    started: { year: state.year, day: Math.min(content.rules.daysPerYear, state.day + 1) }
+    started: (() => {
+      // 年末最后一天开工，年份进位（之前只封顶天数，年份没进位）。
+      const nextDay = (state.day || 0) + 1;
+      const daysPerYear = content.rules.daysPerYear || 365;
+      return nextDay > daysPerYear
+        ? { year: (state.year || 1) + 1, day: 1 }
+        : { year: state.year, day: nextDay };
+    })()
   };
   state.projects.push(project);
   // 只按本工程设定人数招募；不再“有多少要多少”式全局招募其他工程的施工队。
@@ -8505,6 +8514,7 @@ return { totalProjectWorkers, staffProject, setProjectWorkers, startConstruction
 const __mxmod35 = (() => {
 const { transferFoodQeq } = __mxmod10;
 const { redeemVouchersForWheat } = __mxmod19;
+const { wheatUnitsForVoucherUnits } = __mxmod18;
 const { recordEvent } = __mxmod8;
 const { householdFoodQeqUnits, householdList, householdPopulation, isActiveHousehold, syncResidentAggregates } = __mxmod14;
 const { householdFoodDays, recordHouseholdInKind } = __mxmod16;
@@ -8527,7 +8537,9 @@ function redeemHouseholdTowardTarget(state, household, targetQeqUnits, content, 
     return { redeemedUnits: 0 };
   }
   const wantedUnits = wheatUnitsForQeqCeil(shortageQeq, content);
-  const units = Math.min(wantedUnits, household.voucherUnits || 0, state.accounts?.town?.wheat || 0);
+  // 显式换算券→麦再取 min（之前直接比，靠两边精度都是3000碰巧成立）。
+  const voucherWheatUnits = wheatUnitsForVoucherUnits(household.voucherUnits || 0, content, "floor");
+  const units = Math.min(wantedUnits, voucherWheatUnits, state.accounts?.town?.wheat || 0);
   if (units <= 0) return { redeemedUnits: 0 };
   const result = redeemVouchersForWheat(state, `household:${household.id}`, units, content, reason);
   return result.ok ? { redeemedUnits: units } : { redeemedUnits: 0 };
@@ -9454,7 +9466,6 @@ function emptyItemMap(content) {
   shop.pricing.lastReviewSerial ??= -1;
   shop.pricing.promotion ??= false;
   shop.pricing.lossStreakDays ??= 0;
-  shop.pricing.lossCarryVoucherUnits ??= 0;
   // 按商品的 7 天经营窗口：收入 / 进货成本 / 店员工资 / 销量 / 售价历史。
   shop.pricing.itemWindows ||= {};
   shop.pricing.itemPrices ||= {};
@@ -10030,6 +10041,8 @@ function chooseMerchantHousehold(state, content, preferredId = null) {
       recordEvent(state, `${shop.name}开店失败，${Math.round(startupUnits / content.precision.currencyUnitsPerVoucher)}券启动资金暂欠家庭。`, content);
     }
     delete state.shops[shopId];
+    // 回退店铺编号，避免出现空洞（之前只删店不回退编号）。
+    state.nextShopNumber = Math.max(1, (state.nextShopNumber || 2) - 1);
     return assignment;
   }
   household.shopIds ||= [];
@@ -10137,7 +10150,9 @@ function shopWorkingCapitalReserve(state, shop, content) {
   }
   const itemIds = shopRetailItemIds(shop, content);
   if (!itemIds.length) return 0;
-  const averageWholesale = itemIds.reduce((sum, itemId) => sum + (shopTradePrices(state, shop.typeId, content, itemId)?.wholesaleVoucherPerUnit || 0), 0) / itemIds.length;
+  const wholesalePrices = itemIds.map(itemId => shopTradePrices(state, shop.typeId, content, itemId)?.wholesaleVoucherPerUnit || 0).filter(p => p > 0);
+  // 排除0价，避免无批发价商品拉低均值（之前简单平均含0）。
+  const averageWholesale = wholesalePrices.length > 0 ? wholesalePrices.reduce((sum, p) => sum + p, 0) / wholesalePrices.length : 0;
   return Math.round(shopSalesCapacityUnits(state, shop, content) / content.precision.inventoryUnitsPerJin * averageWholesale * days * currencyScale(content));
 }
 
@@ -10324,7 +10339,8 @@ function accrueDailyLiabilities(state, shop, content) {
     .reduce((sum, row) => sum + row.count, 0) * merchantRate * scale);
   const clerkWage = Math.round(clerkAssignments.reduce((sum, row) => sum + row.count, 0) * clerkRate * scale);
   const wage = merchantWage + clerkWage;
-  const rent = Math.round((state.policy?.shopRentVoucher ?? content.rules.shopRentDefaultVoucher ?? 1) * scale);
+  // 负值保护：租金/工资取max(0)，避免负负债（之前无保护）。
+  const rent = Math.max(0, Math.round((state.policy?.shopRentVoucher ?? content.rules.shopRentDefaultVoucher ?? 1) * scale));
   // 基线清理：店主本人的商人岗位不产生工资债权（拿利润）。
   accrueWageClaims(state, shop.liabilities, merchantAssignments.filter(row => row.householdId !== shop.ownerHouseholdId), merchantWage, content);
   accrueWageClaims(state, shop.liabilities, clerkAssignments, clerkWage, content);
@@ -12657,7 +12673,7 @@ function maximumAffordableUnits(state, household, price, content, reserveDays) {
   let high = Math.max(0, Math.floor((voucherAvailable + wheatValueAvailable) * inventoryScale / (price * scale)));
   while (low < high) {
     const mid = Math.ceil((low + high) / 2);
-    const cost = Math.round(mid / inventoryScale * price * scale);
+    const cost = Math.round(mid / inventoryScale * price * scale); // 用于canPay，非死变量
     if (canPay(cost)) low = mid; else high = mid - 1;
   }
   return low;
@@ -12685,7 +12701,7 @@ function transactSeller(state, seller, household, itemId, units, content, reason
       : sale;
   }
   if (seller.type === "household") {
-    if (seller.householdId === household.id) return { ok: false, reason: "家庭已有这批库存" };
+    if (seller.householdId === household.id) return { ok: false, reason: "不能购买自己挂牌的商品" };
     const source = state.households?.byId?.[seller.householdId];
     if (!source || (source.inventory?.[itemId] || 0) < units) return { ok: false, reason: "卖方库存不足" };
     const payment = settleMonetaryPayment(state, `household:${household.id}`, `household:${seller.householdId}`, currentPaymentComposition(state, cost), content,
@@ -12922,6 +12938,7 @@ function buyStapleItem(state, population, content, itemId, share) {
   const rows = ["wheat", "flour", "bread"].map(itemId => buyStapleItem(state, population, content, itemId, shares[itemId]));
   const bread = rows.find(row => row.itemId === "bread");
   const purchasedBreadUnits = bread.purchasedUnits;
+  // 面包为 generalStoreOnly，镇库不直售；以下镇库面包记账恒为0，保留作兼容（死代码）。
   const townBreadSold = bread.sellerRows.filter(row => row.seller === "town").reduce((sum, row) => sum + row.quantityUnits, 0);
   const townBreadRevenue = bread.sellerRows.filter(row => row.seller === "town").reduce((sum, row) => sum + row.paidVoucherUnits, 0);
   const townBreadCogs = bread.sellerRows.filter(row => row.seller === "town")
@@ -12950,7 +12967,7 @@ function buyStapleItem(state, population, content, itemId, share) {
     targetBreadQeqJin: bread.targetQeqJin,
     purchasedBreadJin: bread.purchasedJin,
     paidVoucher: bread.paidVoucher,
-    paidWheatJin: bread.paidVoucher,
+    paidWheatJin: bread.paidVoucher, // 券值（1券=1斤麦等值），字段名历史遗留，含义为小麦等值
     townStockBeforeJin: bread.townStockBeforeJin,
     sellerRows: bread.sellerRows,
     limitReason: bread.limitReason,
@@ -13600,6 +13617,7 @@ function maxPassing(limit, predicate) {
     }
   }
   state.salt.day.purchasedUnits = result.purchasedUnits;
+  // paidWheatUnits 存的是券单位（1券=1斤麦等值），字段名历史遗留，UI按小麦等值显示无误。
   state.salt.day.paidWheatUnits = result.paidVoucherUnits;
   for (const period of [state.salt.year, state.salt.lifetime]) {
     period.purchasedUnits = (period.purchasedUnits || 0) + result.purchasedUnits;
@@ -13772,7 +13790,9 @@ function buyMissingPrivateInputs(state, household, definition, recipe, batches, 
     const current = readJobCount(state, key);
     const next = Math.min(desired, current + idle);
     setPrivateWorkers(state, building.id, role.id, next, content);
-    idle += current - next;
+    // 按实际招聘数扣减闲置（之前按请求值扣，招聘失败时多扣了）。
+    const actual = readJobCount(state, key);
+    idle -= Math.max(0, actual - current);
   }
 }
 
@@ -13817,7 +13837,9 @@ function ownerCapacity(state, building, content) {
     }
     payroll.arrearsVoucherUnits = claimTotal(payroll) + (payroll.legacyUnattributedArrearsVoucherUnits || 0); payroll.cumulativeAccruedVoucherUnits += due;
     const owners = privateOwners(building, state); const ownerLevels = new Map(); for (const householdId of owners) ownerLevels.set(householdId, (ownerLevels.get(householdId) || 0) + 1);
-    const payers = [...ownerLevels.keys()].map(ownerId => ({
+    // 过滤已消亡家庭，避免付款方失效导致欠薪永久挂账（之前不校验）。
+    const liveOwners = [...ownerLevels.keys()].filter(ownerId => isActiveHousehold(state, ownerId));
+    const payers = liveOwners.map(ownerId => ({
       id: `household:${ownerId}`,
       maxWheatUnits: householdConvertibleWheatUnits(state, state.households.byId[ownerId], content, content.rules.householdFoodReserveDays ?? 30)
     }));

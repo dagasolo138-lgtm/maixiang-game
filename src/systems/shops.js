@@ -291,6 +291,8 @@ export function openShop(state, buildingId, typeId, content, preferredHouseholdI
       recordEvent(state, `${shop.name}开店失败，${Math.round(startupUnits / content.precision.currencyUnitsPerVoucher)}券启动资金暂欠家庭。`, content);
     }
     delete state.shops[shopId];
+    // 回退店铺编号，避免出现空洞（之前只删店不回退编号）。
+    state.nextShopNumber = Math.max(1, (state.nextShopNumber || 2) - 1);
     return assignment;
   }
   household.shopIds ||= [];
@@ -398,7 +400,9 @@ function shopWorkingCapitalReserve(state, shop, content) {
   }
   const itemIds = shopRetailItemIds(shop, content);
   if (!itemIds.length) return 0;
-  const averageWholesale = itemIds.reduce((sum, itemId) => sum + (shopTradePrices(state, shop.typeId, content, itemId)?.wholesaleVoucherPerUnit || 0), 0) / itemIds.length;
+  const wholesalePrices = itemIds.map(itemId => shopTradePrices(state, shop.typeId, content, itemId)?.wholesaleVoucherPerUnit || 0).filter(p => p > 0);
+  // 排除0价，避免无批发价商品拉低均值（之前简单平均含0）。
+  const averageWholesale = wholesalePrices.length > 0 ? wholesalePrices.reduce((sum, p) => sum + p, 0) / wholesalePrices.length : 0;
   return Math.round(shopSalesCapacityUnits(state, shop, content) / content.precision.inventoryUnitsPerJin * averageWholesale * days * currencyScale(content));
 }
 
@@ -585,7 +589,8 @@ function accrueDailyLiabilities(state, shop, content) {
     .reduce((sum, row) => sum + row.count, 0) * merchantRate * scale);
   const clerkWage = Math.round(clerkAssignments.reduce((sum, row) => sum + row.count, 0) * clerkRate * scale);
   const wage = merchantWage + clerkWage;
-  const rent = Math.round((state.policy?.shopRentVoucher ?? content.rules.shopRentDefaultVoucher ?? 1) * scale);
+  // 负值保护：租金/工资取max(0)，避免负负债（之前无保护）。
+  const rent = Math.max(0, Math.round((state.policy?.shopRentVoucher ?? content.rules.shopRentDefaultVoucher ?? 1) * scale));
   // 基线清理：店主本人的商人岗位不产生工资债权（拿利润）。
   accrueWageClaims(state, shop.liabilities, merchantAssignments.filter(row => row.householdId !== shop.ownerHouseholdId), merchantWage, content);
   accrueWageClaims(state, shop.liabilities, clerkAssignments, clerkWage, content);

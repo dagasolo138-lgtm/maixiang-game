@@ -84,7 +84,9 @@ export function arrangePrivateWorkers(state, content) {
     const current = readJobCount(state, key);
     const next = Math.min(desired, current + idle);
     setPrivateWorkers(state, building.id, role.id, next, content);
-    idle += current - next;
+    // 按实际招聘数扣减闲置（之前按请求值扣，招聘失败时多扣了）。
+    const actual = readJobCount(state, key);
+    idle -= Math.max(0, actual - current);
   }
 }
 
@@ -129,7 +131,9 @@ export function payPrivateIndustryWages(state, content) {
     }
     payroll.arrearsVoucherUnits = claimTotal(payroll) + (payroll.legacyUnattributedArrearsVoucherUnits || 0); payroll.cumulativeAccruedVoucherUnits += due;
     const owners = privateOwners(building, state); const ownerLevels = new Map(); for (const householdId of owners) ownerLevels.set(householdId, (ownerLevels.get(householdId) || 0) + 1);
-    const payers = [...ownerLevels.keys()].map(ownerId => ({
+    // 过滤已消亡家庭，避免付款方失效导致欠薪永久挂账（之前不校验）。
+    const liveOwners = [...ownerLevels.keys()].filter(ownerId => isActiveHousehold(state, ownerId));
+    const payers = liveOwners.map(ownerId => ({
       id: `household:${ownerId}`,
       maxWheatUnits: householdConvertibleWheatUnits(state, state.households.byId[ownerId], content, content.rules.householdFoodReserveDays ?? 30)
     }));

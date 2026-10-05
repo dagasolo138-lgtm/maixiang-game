@@ -1,5 +1,6 @@
 import { transferFoodQeq } from "../economy/inventory.js";
 import { redeemVouchersForWheat } from "../economy/currency.js";
+import { wheatUnitsForVoucherUnits } from "../economy/money-units.js";
 import { recordEvent } from "../economy/ledger.js";
 import { householdFoodQeqUnits, householdList, householdPopulation, isActiveHousehold, syncResidentAggregates } from "./households.js";
 import { householdFoodDays, recordHouseholdInKind } from "./household-life.js";
@@ -23,7 +24,9 @@ function redeemHouseholdTowardTarget(state, household, targetQeqUnits, content, 
     return { redeemedUnits: 0 };
   }
   const wantedUnits = wheatUnitsForQeqCeil(shortageQeq, content);
-  const units = Math.min(wantedUnits, household.voucherUnits || 0, state.accounts?.town?.wheat || 0);
+  // 显式换算券→麦再取 min（之前直接比，靠两边精度都是3000碰巧成立）。
+  const voucherWheatUnits = wheatUnitsForVoucherUnits(household.voucherUnits || 0, content, "floor");
+  const units = Math.min(wantedUnits, voucherWheatUnits, state.accounts?.town?.wheat || 0);
   if (units <= 0) return { redeemedUnits: 0 };
   const result = redeemVouchersForWheat(state, `household:${household.id}`, units, content, reason);
   return result.ok ? { redeemedUnits: units } : { redeemedUnits: 0 };

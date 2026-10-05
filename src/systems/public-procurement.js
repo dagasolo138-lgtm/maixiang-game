@@ -161,7 +161,7 @@ export function previewTownMaterialProcurement(state, itemId, wantedUnits, conte
   const residentAvailableUnits = sellers.filter(row => row.id.startsWith("household:")).reduce((sum, row) => sum + row.stockUnits, 0);
   const companyAvailableUnits = sellers.filter(row => row.id.startsWith("company:")).reduce((sum, row) => sum + row.stockUnits, 0);
   const paidAvailableUnits = residentAvailableUnits + companyAvailableUnits;
-  // 批发市场里的本就是镇营产出（每日被扫入），建造领用走免费内部调拨，不占镇库支付能力
+  // 批发市场按售价由镇库付费采购（AGENTS.md 铁律：要付钱，别写成白嫖），计入成本。
   const wholesaleAvailableUnits = wholesaleStockUnits(state, itemId);
   const totalAvailableUnits = paidAvailableUnits + wholesaleAvailableUnits;
   if (wanted <= 0) return { wantedUnits: 0, residentAvailableUnits, companyAvailableUnits, wholesaleAvailableUnits, wholesaleUsableUnits: 0, totalAvailableUnits, purchasableUnits: 0, costVoucherUnits: 0, priceVoucherPerUnit: price, reason: "暂无采购需求" };
