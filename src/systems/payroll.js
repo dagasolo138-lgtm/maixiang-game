@@ -7,7 +7,7 @@ import { allocateIntegerByWeight } from "../core/allocation.js";
 import { recordHouseholdWageDue } from "./household-life.js";
 import { attributeLegacyUnattributedWageClaims } from "./wage-claims.js";
 import { collectSocialContributions, deductFromFund, ensureSocialSecurity } from "./social-security.js";
-import { hasWholesaleMarket } from "./wholesale-market.js";
+import { hasWholesaleMarket, splitWholesaleWageFunding, recordWholesaleWageSplit } from "./wholesale-market.js";
 
 function ensurePayroll(state) {
   state.payroll ||= { arrearsVoucherUnits: {}, totals: {}, year: {} };
@@ -144,7 +144,35 @@ function recordWholesaleWageExpense(state, voucherUnits, content) {
   for (const period of ["day", "year", "cumulative"]) {
     market.monopolyWages[period] = (market.monopolyWages[period] || 0) + voucherUnits;
   }
+  // 价值口径流水（小麦等值）：无论以粮券还是实物小麦发薪，口径一致可比。
+  market.valueFlow ||= { day: { sales: 0, purchases: 0, wages: 0 }, year: { sales: 0, purchases: 0, wages: 0 }, cumulative: { sales: 0, purchases: 0, wages: 0, injected: 0 } };
+  for (const period of ["day", "year", "cumulative"]) {
+    market.valueFlow[period].wages = (market.valueFlow[period].wages || 0) + voucherUnits;
+  }
   void content;
+}
+
+// 0.2.3 统购统销：把本日镇营建筑工资拆成"批发市场自付"与"镇库兜底"两部分。
+// 市场先用自己的销售回款发工资；不足差额由镇库补足，不让工人拿不到工资、
+// 也不让市场长期挂账失血。返回每个 scope=building 行的发放主体，供支付循环使用。
+function planWholesaleWageFunding(state, workerPay, content) {
+  const plan = new Map();
+  if (!hasWholesaleMarket(state)) return { plan, marketPaidUnits: 0, townCoveredUnits: 0 };
+  const marketRows = workerPay.filter(row => row.scope === "building");
+  if (!marketRows.length) return { plan, marketPaidUnits: 0, townCoveredUnits: 0 };
+  const dueUnits = marketRows.reduce((sum, row) => sum + Math.max(0, row.payable || 0), 0);
+  if (dueUnits <= 0) return { plan, marketPaidUnits: 0, townCoveredUnits: 0 };
+  const split = splitWholesaleWageFunding(state, content, dueUnits);
+  // 按行应付额顺序分配市场的可支付额度；额度用尽后的行由镇库承担。
+  let budget = split.marketPaidUnits;
+  const ordered = marketRows.slice().sort((a, b) => String(a.payrollKey).localeCompare(String(b.payrollKey)));
+  for (const row of ordered) {
+    const payable = Math.max(0, row.payable || 0);
+    const fromMarket = Math.min(payable, budget);
+    budget -= fromMarket;
+    plan.set(row.payrollKey, fromMarket >= payable && payable > 0 ? "wholesale" : (fromMarket > 0 ? "mixed" : "town"));
+  }
+  return { plan, marketPaidUnits: split.marketPaidUnits, townCoveredUnits: split.townCoveredUnits };
 }
 
 export function payDailyWages(state, laborAtStart, content) {
@@ -264,16 +292,24 @@ export function payDailyWages(state, laborAtStart, content) {
     arrears[payrollKey] = (arrears[payrollKey] || 0) + payable;
     recordWageExpense(state, row, payable, isConstruction ? "construction" : "operating", content);
     if (credit > 0) recordLedger(state, { type: "wage_prepaid_credit", transactionId: makeTransactionId(state), source: project.instanceId, destination: "construction_payroll", itemId: "legacy_prepaid_wage", quantityUnits: credit, qeqUnits: 0, reason: "旧版工程已预付工资抵扣本日应付；不再次支付" }, content);
-    workerPay.push({ key: row.key, payrollKey, roleId: row.roleId, buildingId: row.buildingId || (isConstruction ? project?.instanceId : null), buildingName: row.buildingName || (isConstruction ? "施工工程" : null), name: row.name, count: row.count, rate, due, credit, payable });
+    workerPay.push({ key: row.key, payrollKey, scope: row.scope, roleId: row.roleId, buildingId: row.buildingId || (isConstruction ? project?.instanceId : null), buildingName: row.buildingName || (isConstruction ? "施工工程" : null), name: row.name, count: row.count, rate, due, credit, payable });
   }
 
   // 再处理当日工资。若同一债权家庭仍有历史余额，统一债权表天然保持旧债在前一次偿付后留下的余额，且改革缺券键仍使用同一债权键。
+  // 0.2.3 统购统销：先算清本日镇营工资里"市场自付"与"镇库兜底"的比例，
+  // 再逐行决定发放主体（市场有回款就用回款，不足由镇库补足，工人不会拿不到工资）。
+  const wageFunding = planWholesaleWageFunding(state, workerPay, content);
   const paidByHousehold = {};
   for (const row of workerPay) {
     const claims = payroll.creditorClaims[row.payrollKey] || {};
     const paymentClaims = payroll.creditorPaymentClaims[row.payrollKey] ||= {};
     let paidKey = 0;
-    const payer = payrollPayerFor(state, row);
+    let payer = payrollPayerFor(state, row);
+    // 市场现金不足时，该行由镇库兜底（发放主体变化只发生在市场确实付得起的时候）。
+    if (payer === "wholesale") {
+      const planned = wageFunding.plan.get(row.payrollKey);
+      if (planned === "town") payer = "town";
+    }
     const paidRows = (paidByHousehold[row.payrollKey] ||= {});
     for (const householdId of Object.keys(claims).sort()) {
       const amount = claims[householdId] || 0;
@@ -296,6 +332,10 @@ export function payDailyWages(state, laborAtStart, content) {
     if (payer === "wholesale" && paidKey > 0) marketPaidWagesVoucherUnits += paidKey;
   }
   recordWholesaleWageExpense(state, marketPaidWagesVoucherUnits, content);
+  // 实际拆分以"真正由市场账户付出"的金额为准，镇库兜底为剩余部分。
+  const marketActuallyPaid = Math.min(marketPaidWagesVoucherUnits, wageFunding.marketPaidUnits);
+  const townActuallyCovered = Math.max(0, (wageFunding.marketPaidUnits + wageFunding.townCoveredUnits) - marketActuallyPaid);
+  recordWholesaleWageSplit(state, content, marketActuallyPaid, townActuallyCovered);
 
   // 社保收缴：基金开启时，从本日实际发放的工资中按人头代扣缴费。
   const socialCollected = collectSocialContributions(state, workerPay, currentPaidByKey, paidByHousehold, content);

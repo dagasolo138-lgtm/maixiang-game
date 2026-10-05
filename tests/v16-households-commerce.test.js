@@ -156,13 +156,18 @@ test("店铺未售库存不计销售成本，正利润征税、亏损不征税",
 
   const sale = sellShopProduct(state, shop.id, `household:${buyer.id}`, 5 * I, CONTENT, "测试零售");
   assert.equal(sale.ok, true, sale.reason);
-  assert.equal(sale.paidVoucherUnits, 12 * V);
-  assert.equal(sale.cogsVoucherUnits, 10 * V);
-  assert.equal(shop.accounts.day.profitVoucherUnits, 1 * V);
+  // 0.2.3 流通改革：批发市场做市商默认面包售价 2.6，综合商店固定加价 20% → 零售 3.12；
+  // 5 单位售价 15.6 粮券，进货成本 2.6 × 5 = 13 粮券，利润 2.6 粮券。
+  assert.equal(sale.paidVoucherUnits, Math.round(3.12 * 5 * V));
+  assert.equal(sale.cogsVoucherUnits, Math.round(2.6 * 5 * V));
+  // 毛利 (3.12−2.6)×5 = 2.6 粮券，减去当日店租 1 粮券 = 1.6 粮券（4800 单位）。
+  assert.equal(shop.accounts.day.profitVoucherUnits, Math.round((3.12 - 2.6) * 5 * V) - 1 * V);
   shop.settlement.days = 30;
   const settlement = settleShopTaxAndDistribution(state, shop, CONTENT, false);
   assert.equal(settlement.settled, true);
-  assert.ok(Math.abs(settlement.taxVoucherUnits - Math.floor(0.1 * V)) <= 1);
+  // 商业利润税 10%，按本期结算利润（4800 单位）计征。
+  const periodProfit = Math.round((3.12 - 2.6) * 5 * V) - 1 * V;
+  assert.ok(Math.abs(settlement.taxVoucherUnits - Math.floor(periodProfit * 0.1)) <= 2, String(settlement.taxVoucherUnits));
 
   const lossState = legacyVoucherState();
   const lossStreet = addCompletedBuilding(lossState, "commercial_street", "street-loss");

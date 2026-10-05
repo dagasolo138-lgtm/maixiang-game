@@ -214,7 +214,17 @@ export function createInitialState(options) {
     wholesaleMarket: {
       inventory: Object.fromEntries(Object.keys(content.items).map(itemId => [itemId, 0])),
       inventoryCostVoucherUnits: Object.fromEntries(Object.keys(content.items).map(itemId => [itemId, 0])),
-      pricesVoucherPerUnit: { ...(content.rules.marketPricesVoucherPerUnit || {}) },
+      // 0.2.3 做市商挂价：新档取做市商默认售价（面包 2.6 / 木材 16 / 盐 12）。
+      pricesVoucherPerUnit: { ...(content.rules.wholesaleDefaultSalePrices || {}) },
+      purchasePricesVoucherPerUnit: { ...(content.rules.wholesaleDefaultPurchasePrices || {}) },
+      purchasePriceReferenceVoucherPerUnit: { ...(content.rules.wholesaleDefaultPurchasePrices || {}) },
+      purchasePriceIndex: Object.fromEntries(Object.keys(content.items).map(itemId => [itemId, 1])),
+      cashVoucherUnits: 0,
+      cashWheatUnits: 0,
+      monopoly: { allocatedInValueUnits: 0, allocatedInputValueUnits: 0, wagesPaidVoucherUnits: 0, injectedVoucherUnits: 0, retainedVoucherUnits: 0 },
+      valueFlow: { day: { sales: 0, purchases: 0, wages: 0 }, year: { sales: 0, purchases: 0, wages: 0 }, cumulative: { sales: 0, purchases: 0, wages: 0, injected: 0 } },
+      monopolyWages: { day: 0, year: 0, cumulative: 0 },
+      purchaseSpend: { day: 0, year: 0, cumulative: 0 },
       dailyTownAllocationUnits: Object.fromEntries(Object.keys(content.items).map(itemId => [itemId, 0])),
       day: { intakeUnits: {}, soldUnits: {}, townAllocatedUnits: {}, purchaseVoucherUnits: 0, salesVoucherUnits: 0 },
       year: { intakeUnits: {}, soldUnits: {}, townAllocatedUnits: {}, purchaseVoucherUnits: 0, salesVoucherUnits: 0 },

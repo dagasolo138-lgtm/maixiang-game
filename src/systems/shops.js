@@ -39,7 +39,7 @@ function blankShopPeriod() {
   };
 }
 
-function ensureShopBooks(shop) {
+function ensureShopBooks(shop, content = null) {
   shop.accounts ||= { day: blankShopPeriod(), year: blankShopPeriod(), cumulative: blankShopPeriod() };
   for (const period of ["day", "year", "cumulative"]) {
     shop.accounts[period] ||= blankShopPeriod();
@@ -60,6 +60,8 @@ function ensureShopBooks(shop) {
   shop.plan ||= { lastAdjustedSerial: -1 };
   shop.staffing ||= { clerkHiredSerials: [] };
   shop.staffing.clerkHiredSerials ||= [];
+  // 0.2.3 动态加价：定价状态一律 ||= 补齐，旧档无需升版本。
+  if (content) ensureShopPricing(shop, content);
   return shop;
 }
 
@@ -77,7 +79,7 @@ export function ensureShops(state, content) {
     shop.itemId = shop.primaryItemId; // 保留旧测试/旧界面的主商品兼容字段。
     shop.itemIds = def?.kind === "retail" ? [...(def.itemIds || [])] : [];
     shop.serviceId = def?.kind === "service" ? def.serviceId : null;
-    ensureShopBooks(shop);
+    ensureShopBooks(shop, content);
   }
   return state.shops;
 }
@@ -141,7 +143,7 @@ function shopClerkLimit(shop, content) {
 }
 
 function syncClerkTenure(state, shop, content) {
-  ensureShopBooks(shop);
+  ensureShopBooks(shop, content);
   const current = shopClerkCount(state, shop);
   const serial = shopSerial(state, content);
   const matureFallback = serial - Math.max(0, content.rules.shopMinimumEmploymentDays || 30);
@@ -794,7 +796,7 @@ export function prepareShopsForDay(state, content) {
   syncShopEmployment(state, content);
   const rows = [];
   for (const shop of operating) {
-    ensureShopBooks(shop);
+    ensureShopBooks(shop, content);
     shop.settlement.days += 1;
     accrueDailyLiabilities(state, shop, content);
     payDailyLiabilities(state, shop, content);
@@ -1022,6 +1024,8 @@ export function shopSummaries(state, content) {
       nextClerkServiceCapacity: serviceId ? Math.max(0, content.rules.serviceTypes?.[serviceId]?.clerkCapacity || 0) : 0,
       staffingDiagnosis: shop.plan?.staffingDiagnosis || null, averageDailyProfitVoucher: avgProfitUnits / scale, inventoryDays,
       clerkWageVoucher: shopWage(state, shop, content),
+      // 0.2.3 综合商店动态加价：面板视图（只读，不回写 state）。
+      pricing: selectShopPricingView(state, source, content),
       wageTarget: shop.plan?.wageTarget ?? null,
       wageDiagnosis: shop.plan?.wageDiagnosis || null,
       revenueDayVoucher: (shop.accounts.day.revenueVoucherUnits || 0) / scale,

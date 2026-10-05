@@ -15,7 +15,7 @@ import {
   configureCompanyWage, configureCompanyTargetWorkers, configureCompanySalePrice, addCompanyOperatingLevel, removeCompanyOperatingLevel, liquidateCompany, buybackCompanyShares,
   setPublicProcurementIntent, clearPublicProcurementIntent, adoptRecommendedIndustryPrices, retainExistingIndustryPrices,
   setEmploymentExchangeQuota, setShopRent, setShopProfitTax, openResidentShop, configureShopMerchants, configureShopClerks, closeResidentShop, fundResidentShopLiquidation,
-  configureWholesalePrice, configureWholesaleTownAllocation, stockpileWholesale, releaseWholesale, setOutputTarget, configureServicePrice,
+  configureWholesalePrice, configureWholesaleTownAllocation, configureWholesalePurchasePrice, fundWholesaleMarket, configureShopTargetMargin, configureAllShopsTargetMargin, configureShopRetailPrice, stockpileWholesale, releaseWholesale, setOutputTarget, configureServicePrice,
   startCurrencyReform, configureVoucherPaymentTarget, configureResidentExchange, finishCurrencyReform,
   reclaimFarmland
 } from "./core/commands.js";
@@ -142,6 +142,12 @@ export function createSimulation(content) {
     closeResidentShop: function (state, shopId) { return closeResidentShop(state, shopId, definitions); },
     fundResidentShopLiquidation: function (state, shopId) { return fundResidentShopLiquidation(state, shopId, definitions); },
     configureWholesalePrice: function (state, itemId, value) { return configureWholesalePrice(state, itemId, value, definitions); },
+    // 0.2.3 流通改革：做市商收购价 / 镇库注资 / 综合商店目标利润率。
+    configureWholesalePurchasePrice: function (state, itemId, value) { return configureWholesalePurchasePrice(state, itemId, value, definitions); },
+    fundWholesaleMarket: function (state, amountJin) { return fundWholesaleMarket(state, amountJin, definitions); },
+    configureShopTargetMargin: function (state, shopId, percent) { return configureShopTargetMargin(state, shopId, percent, definitions); },
+    configureAllShopsTargetMargin: function (state, percent) { return configureAllShopsTargetMargin(state, percent, definitions); },
+    configureShopRetailPrice: function (state, shopId, itemId, value) { return configureShopRetailPrice(state, shopId, itemId, value, definitions); },
     configureWholesaleTownAllocation: function (state, itemId, value) { return configureWholesaleTownAllocation(state, itemId, value, definitions); },
     stockpileWholesale: function (state, itemId, quantityJin) { return stockpileWholesale(state, itemId, quantityJin, definitions); },
     releaseWholesale: function (state, itemId, quantityJin) { return releaseWholesale(state, itemId, quantityJin, definitions); },

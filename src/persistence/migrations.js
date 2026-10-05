@@ -701,6 +701,7 @@ function normalizeV15(raw, definitions, legacyCompleted = false) {
   }
   state.payroll.arrearsWheatUnits = state.payroll.arrearsVoucherUnits;
 
+  // 0.2.3 做市商：旧档若已有批发市场挂价则沿用（玩家可能已调过），缺项补做市商默认价。
   ensureWholesaleMarket(state, definitions);
   state.services ||= {};
   state.services.demandByHousehold ||= {};

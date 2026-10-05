@@ -161,7 +161,11 @@ export const RULES = Object.freeze({
     salt: Object.freeze({ id: "salt", name: "盐店", kind: "legacy_retail", itemId: "salt", aliasOf: "general" })
   }),
 
-  marketPricesVoucherPerUnit: Object.freeze({ wheat: 1, flour: 1.8, bread: 2, wood: 15, salt: 10 })
+  marketPricesVoucherPerUnit: Object.freeze({ wheat: 1, flour: 1.8, bread: 2, wood: 15, salt: 10 }),
+  // 0.2.3 流通改革：批发市场做市商默认挂价（小麦斤等价）。
+  // 售价 = 卖给综合商店/生产者的价；收购价 = 向公司/民营收购的价。可在批发市场面板调整。
+  wholesaleDefaultSalePrices: Object.freeze({ wheat: 1, flour: 1.8, bread: 2.6, wood: 16, salt: 12 }),
+  wholesaleDefaultPurchasePrices: Object.freeze({ wheat: 0.8, flour: 1.4, bread: 2, wood: 12, salt: 8 })
 });
 
 export const AGRICULTURE = Object.freeze({

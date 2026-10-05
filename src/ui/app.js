@@ -1516,6 +1516,39 @@ export function mountGame(root) {
       showToast(`${isStockpile ? "已从批发市场收储" : "已向批发市场投放"}${number(result.movedJin, 2)}${itemUnit}。`);
       return;
     }
+    // 0.2.3 流通改革：镇库向批发市场一次性注资。
+    const fundButton = closest(target, "[data-wholesale-fund]");
+    if (fundButton && state) {
+      const key = "wholesale-fund";
+      const input = numericInputFor(key);
+      const rawValue = numericDrafts.has(key) ? numericDrafts.get(key).value : input?.value;
+      const parsed = parseNumericDraft(rawValue, { label: "注资金额", minimum: 0, maximum: 1000000000, positive: true });
+      if (!parsed.ok) { setDraftError(key, parsed.reason, input); return; }
+      const result = simulation.fundWholesaleMarket(state, parsed.value);
+      if (!result?.ok) { setDraftError(key, result?.reason || "注资失败", input); return; }
+      numericDrafts.delete(key);
+      changed(true);
+      render(true);
+      showToast(`已向批发市场注资${number(result.injectedJin, 1)}斤小麦等值。`);
+      return;
+    }
+    // 0.2.3 流通改革：把目标利润率一键应用到所有综合商店。
+    const marginAllButton = closest(target, "[data-shop-margin-all]");
+    if (marginAllButton && state) {
+      const shopId = marginAllButton.dataset.shopMarginAll;
+      const key = `shop-margin:${shopId}`;
+      const input = numericInputFor(key);
+      const rawValue = numericDrafts.has(key) ? numericDrafts.get(key).value : input?.value;
+      const parsed = parseNumericDraft(rawValue, { label: "目标利润率", minimum: 0, maximum: 100 });
+      if (!parsed.ok) { setDraftError(key, parsed.reason, input); return; }
+      const result = simulation.configureAllShopsTargetMargin(state, parsed.value);
+      if (!result?.ok) { setDraftError(key, result?.reason || "设置失败", input); return; }
+      numericDrafts.delete(key);
+      changed(true);
+      render(true);
+      showToast(`已将${number(result.shops)}家综合商店的目标利润率设为${number(result.targetMarginPercent, 1)}%。`);
+      return;
+    }
     const buildCategoryTab = closest(target, "[data-build-category]");
     if (buildCategoryTab) {
       setBuildCategory(buildCategoryTab.dataset.buildCategory);

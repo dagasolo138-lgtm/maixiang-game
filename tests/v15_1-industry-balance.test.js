@@ -37,7 +37,9 @@ function assertFinitePreview(preview) {
 
 test("新版默认价下四行业满产满销人均日利润符合校验值", () => {
   const state = legacyVoucherState();
-  const expected = { mill: 13.68, bakery: 18.8, lumberyard: 3.5, saltworks: 35 };
+  // 0.2.3 流通改革：批发市场做成市商后默认挂价改为面包 2.6 / 木材 16 / 盐 12，
+  // 四行业人均日利润校验值随之上调（小麦/面粉价不变）。
+  const expected = { mill: 13.68, bakery: 70.64, lumberyard: 4.4, saltworks: 44 };
   assert.deepEqual(state.market.pricesVoucherPerUnit, { wheat: 1, flour: 1.8, bread: 2, wood: 15, salt: 10 });
   for (const [typeId, profit] of Object.entries(expected)) {
     const row = theoreticalFullSaleProfitPerWorker(state, typeId, CONTENT);
@@ -80,7 +82,8 @@ test("木材无需求、有需求、库存不足和资金不足均为有限估�
   assert.equal(simulation.setPublicProcurementIntent(state, { kind: "build", typeId: "public_housing" }).ok, true);
   preview = simulation.selectOperatingRightPreview(state, lumber.id);
   assertFinitePreview(preview);
-  assert.equal(preview.outputPriceVoucherPerUnit, 15);
+  // 0.2.3 流通改革：批发市场做市商默认木材售价为 16。
+  assert.equal(preview.outputPriceVoucherPerUnit, 16);
   assert.ok(preview.maximumPriceWheatJin > 0);
   assert.match(preview.demandReason, /公共建设|公租住宅区建设|采购/);
 

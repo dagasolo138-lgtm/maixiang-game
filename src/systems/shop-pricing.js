@@ -161,7 +161,8 @@ export function shopItemAveragePrice(pricing, itemId) {
 export function priceElasticityDemandMultiplier(state, shop, itemId, currentRetailVoucherUnits, content) {
   const coefficient = Math.max(0, Number(content.rules.generalStorePriceElasticity ?? 0.5));
   if (coefficient <= 0) return 1;
-  const pricing = ensureShopPricing(shop, content);
+  // 只读：优先用调用方传入的 pricing 快照；缺失时从 state 读，不写回。
+  const pricing = shop?.pricing || state.shops?.[shop?.id]?.pricing || {};
   const average = shopItemAveragePrice(pricing, itemId);
   if (!(average > 0) || !(currentRetailVoucherUnits > 0)) return 1;
   const relative = (currentRetailVoucherUnits - average) / average; // +10% => 0.1
@@ -192,18 +193,39 @@ export function reviewShopPricing(state, shop, content, options = {}) {
     if (Math.abs(deviation) <= tolerance) continue;
     const wholesale = currentUnitPrice(state, itemId, content) || 0;
     if (!(wholesale > 0)) continue;
-    const desiredPercent = target;
-    const desiredPrice = wholesale * (1 + desiredPercent / 100);
-    const currentPrice = Number(pricing.itemPrices?.[itemId]?.slice(-1)[0]?.price) > 0
-      ? Number(pricing.itemPrices[itemId].slice(-1)[0].price) / content.precision.currencyUnitsPerVoucher * content.precision.inventoryUnitsPerJin
-      : (shop.retailPriceVoucherPerUnit?.[itemId] ?? wholesale * (1 + (content.rules.generalStoreMarkupPercent ?? 20) / 100));
+    const currentPrice = currentEffectiveRetailPrice(shop, itemId, wholesale, pricing, content);
+    // 由本窗口的实际利润率反推目标售价：利润率 m = 1 − 成本/收入，故 成本/收入 = 1 − m。
+    // 达到目标利润率 t 需要 成本/收入 = 1 − t，即 收入 需放大 (1−m)/(1−t) 倍；
+    // 成本结构不变时，价格同比例放大即可。这就是"实际偏离多少就补多少"。
+    const targetFraction = Math.min(0.95, Math.max(0, target / 100));
+    const actualFraction = Math.min(0.95, Math.max(-10, actual / 100));
+    const desiredPrice = currentPrice * (1 - actualFraction) / (1 - targetFraction);
     const bounded = clampPriceStep(currentPrice, desiredPrice, maxStep, wholesale);
     if (Math.abs(bounded - currentPrice) < 1e-9) continue;
     pricing.retailPriceVoucherPerUnit ||= {};
     pricing.retailPriceVoucherPerUnit[itemId] = bounded;
     changes.push({ itemId, from: currentPrice, to: bounded, actualMarginPercent: actual, targetMarginPercent: target, deviationPercent: deviation });
   }
-  return { reviewed: true, changes, targetMarginPercent: target };
+  // 窗口滚动：本轮判断用过的数据清零，下一轮重新累计 7 天，
+  // 避免"连续偏离"被同一批陈旧样本反复触发。
+  resetPricingWindow(pricing, content);
+  const totalChanges = changes.length;
+  return { reviewed: true, changes, targetMarginPercent: target, changedItems: totalChanges };
+}
+
+function currentEffectiveRetailPrice(shop, itemId, wholesale, pricing, content) {
+  const explicit = Number(pricing.retailPriceVoucherPerUnit?.[itemId]);
+  if (Number.isFinite(explicit) && explicit > 0) return explicit;
+  const fallbackPercent = Number(pricing.targetMarginPercent);
+  const percent = Number.isFinite(fallbackPercent) ? fallbackPercent : (content.rules.generalStoreMarkupPercent ?? 20);
+  return wholesale * (1 + percent / 100);
+}
+
+// 把定价窗口（收入/成本/工资/销量）清零，价格历史保留（弹性需要 30 天）。
+export function resetPricingWindow(pricing, content) {
+  for (const key of ["itemRevenue", "itemCogs", "itemWageCost", "itemSoldUnits"]) {
+    pricing[key] = emptyItemMap(content);
+  }
 }
 
 function shopRetailItemIdsSafe(shop, content) {
@@ -258,9 +280,37 @@ export function updateShopLossProtection(state, shop, content, dailyProfitVouche
   return { promotion: Boolean(pricing.promotion) };
 }
 
-// 面板视图：每商品一行（进价/现售价/实际利润率/目标利润率/7天销量）+ 商店总览。
-export function selectShopPricingView(state, shop, content) {
+// 玩家命令：直接指定某商品的零售价（面板"现售价"可编辑）。售价下限不低于进货价。
+export function setShopRetailPrice(state, shopId, itemId, value, content) {
+  const shop = state.shops?.[shopId];
+  if (!shop) return { ok: false, reason: "店铺不存在" };
+  if (!isDynamicPricingShop(shop, content)) return { ok: false, reason: "只有综合商店支持自定义售价" };
+  if (!shopRetailItemIdsSafe(shop, content).includes(itemId)) return { ok: false, reason: "该店不经营这种商品" };
+  const price = Math.round(Number(value) * 1000) / 1000;
+  if (!Number.isFinite(price) || price <= 0 || price > 1e6) return { ok: false, reason: "售价须为正的有限数值" };
+  const wholesale = currentUnitPrice(state, itemId, content) || 0;
+  const finalPrice = Math.max(wholesale, price);
   const pricing = ensureShopPricing(shop, content);
+  pricing.retailPriceVoucherPerUnit ||= {};
+  pricing.retailPriceVoucherPerUnit[itemId] = finalPrice;
+  // 手动调价后重置复核节拍，避免立刻被自动复核覆盖。
+  pricing.lastReviewSerial = -1;
+  return { ok: true, shopId, itemId, value: finalPrice, clampedToCost: finalPrice > price };
+}
+
+// 面板视图：每商品一行（进价/现售价/实际利润率/目标利润率/7天销量）+ 商店总览。
+// 只读：把默认值作用在一份浅拷贝上，绝不回写 state（0.1.8 selector 纯度要求）。
+export function selectShopPricingView(state, shop, content) {
+  const source = shop?.pricing || {};
+  const pricing = {
+    ...source,
+    itemPrices: { ...(source.itemPrices || {}) },
+    retailPriceVoucherPerUnit: { ...(source.retailPriceVoucherPerUnit || {}) },
+    itemWageCost: { ...(source.itemWageCost || {}) },
+    itemRevenue: { ...(source.itemRevenue || {}) },
+    itemCogs: { ...(source.itemCogs || {}) },
+    itemSoldUnits: { ...(source.itemSoldUnits || {}) }
+  };
   const scale = content.precision.inventoryUnitsPerJin;
   const currency = content.precision.currencyUnitsPerVoucher;
   const target = shopTargetMarginPercent(state, shop, content);
@@ -273,7 +323,8 @@ export function selectShopPricingView(state, shop, content) {
     const wage = Math.max(0, pricing.itemWageCost?.[itemId] || 0);
     const soldUnits = Math.max(0, pricing.itemSoldUnits?.[itemId] || 0);
     const actual = shopItemActualMarginPercent(pricing, itemId);
-    const elasticity = priceElasticityDemandMultiplier(state, shop, itemId, retail, content);
+    const elasticity = priceElasticityDemandMultiplier(state, { ...shop, pricing }, itemId, retail, content);
+    const average = shopItemAveragePrice(pricing, itemId);
     return {
       itemId,
       name: content.items[itemId]?.name || itemId,
@@ -287,7 +338,7 @@ export function selectShopPricingView(state, shop, content) {
       cogsJin7d: cogs / currency,
       wageJin7d: wage / currency,
       demandMultiplier: elasticity,
-      averagePriceVoucherPerUnit: shopItemAveragePrice(pricing, itemId) / currency * scale
+      averagePriceVoucherPerUnit: average === null ? 0 : average / currency * scale
     };
   });
   const totals = rows.reduce((acc, row) => ({

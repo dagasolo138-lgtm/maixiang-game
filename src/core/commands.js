@@ -14,7 +14,8 @@ import { listCompanyOnExchange, configureListedShareOffer, executeTownBuyback } 
 import { setCurrentUnitPrice, applyRecommendedIndustryPrices, keepExistingIndustryPrices } from "../economy/prices.js";
 import { setPublicProcurementIntent as setPublicProcurementIntentSystem, clearPublicProcurementIntent as clearPublicProcurementIntentSystem } from "../systems/public-procurement.js";
 import { openShop, setShopMerchants, setShopClerks, closeShop, fundShopLiquidation } from "../systems/shops.js";
-import { setWholesalePrice, setWholesaleTownAllocation, stockpileWholesale as stockpileWholesaleSystem, releaseWholesale as releaseWholesaleSystem } from "../systems/wholesale-market.js";
+import { setWholesalePrice, setWholesaleTownAllocation, setWholesalePurchasePrice, fundWholesaleMarket as fundWholesaleMarketSystem, stockpileWholesale as stockpileWholesaleSystem, releaseWholesale as releaseWholesaleSystem } from "../systems/wholesale-market.js";
+import { setShopTargetMarginPercent, setAllShopsTargetMarginPercent, setShopRetailPrice } from "../systems/shop-pricing.js";
 import { setBuildingOutputTarget } from "../systems/production.js";
 import { setServiceUnitPrice } from "../systems/services.js";
 import { reclaimFarmland as reclaimFarmlandSystem } from "../systems/agriculture.js";
@@ -266,6 +267,30 @@ export function fundResidentShopLiquidation(state, shopId, content) {
 
 export function configureWholesalePrice(state, itemId, value, content) {
   return setWholesalePrice(state, itemId, value, content);
+}
+
+// 0.2.3 流通改革：批发市场做市商——收购价独立可调（售价沿用 configureWholesalePrice）。
+export function configureWholesalePurchasePrice(state, itemId, value, content) {
+  return setWholesalePurchasePrice(state, itemId, value, content);
+}
+
+// 0.2.3：镇库向批发市场一次性注资（允许启动注资，不允许长期失血）。
+export function fundWholesaleMarket(state, amountJin, content) {
+  return fundWholesaleMarketSystem(state, amountJin, content);
+}
+
+// 0.2.3 综合商店动态加价：单店或全镇统一设置目标利润率（0~100%）。
+export function configureShopTargetMargin(state, shopId, percent, content) {
+  return setShopTargetMarginPercent(state, shopId, percent, content);
+}
+
+export function configureAllShopsTargetMargin(state, percent, content) {
+  return setAllShopsTargetMarginPercent(state, percent, content);
+}
+
+// 0.2.3：直接指定某综合商店某商品的零售价（下限不低于进货价）。
+export function configureShopRetailPrice(state, shopId, itemId, value, content) {
+  return setShopRetailPrice(state, shopId, itemId, value, content);
 }
 
 export function configureWholesaleTownAllocation(state, itemId, quantity, content) {

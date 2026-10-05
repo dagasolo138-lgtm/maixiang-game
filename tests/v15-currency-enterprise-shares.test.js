@@ -225,7 +225,8 @@ test("镇库可用粮券时可从上市伐木企业采购施工木材，成交�
   const wood = option.materials.find(row => row.itemId === "wood");
   assert.equal(wood.missing, 0, "预览应把企业可售木材和镇库购买力计入可满足材料");
   assert.equal(wood.marketPurchasable, 2000);
-  assert.equal(wood.marketCostVoucher, 30000);
+  // 0.2.3 流通改革：批发市场做市商默认木材售价 16（原 15），2000 单位 = 32000 粮券。
+  assert.equal(wood.marketCostVoucher, 32000);
 
   const companyCashBefore = company.cashVoucherUnits;
   const townCashBefore = state.currency.balances.town;
@@ -233,8 +234,8 @@ test("镇库可用粮券时可从上市伐木企业采购施工木材，成交�
   assert.equal(started.ok, true, started.reason);
   assert.equal(company.inventory.wood, 0);
   assert.equal(state.accounts.town.wood, 0, "采购木材在同一次开工操作中进入工程，不重复保留在镇库可用库存");
-  assert.equal(company.cashVoucherUnits - companyCashBefore, 30000 * V);
-  assert.equal(townCashBefore - state.currency.balances.town, 30000 * V);
+  assert.equal(company.cashVoucherUnits - companyCashBefore, 32000 * V);
+  assert.equal(townCashBefore - state.currency.balances.town, 32000 * V);
   assert.equal(simulation.validateCurrencyInvariant(state).valid, true);
   assert.equal(simulation.validateState(state).valid, true, simulation.validateState(state).errors.join("；"));
 });

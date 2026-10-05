@@ -30,9 +30,11 @@ import { APP_VERSION } from "../src/content/version.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const { populationStats, selectJobRows } = await import(path.join(root, "src", "selectors", "labor.js"));
-const { householdList } = await import(path.join(root, "src", "systems", "households.js"));
-const { householdFoodQeqUnits } = await import(path.join(root, "src", "systems", "households.js"));
+const householdModule = await import(path.join(root, "src", "systems", "households.js"));
+const { householdList, householdFoodQeqUnits, householdIdleWorkers, householdPopulation, syncResidentAggregates } = householdModule;
 const { computeLaborMarket } = await import(path.join(root, "src", "systems", "labor-market.js"));
+const { shopTradePrices } = await import(path.join(root, "src", "economy", "operating-plan.js"));
+const currencyModule = await import(path.join(root, "src", "economy", "currency.js"));
 const { computeWealthStats } = await import(path.join(root, "src", "systems", "wealth-stats.js"));
 
 const QEQ = CONTENT.precision.qeqUnitsPerJin;
@@ -230,8 +232,7 @@ const ACTIONS = {
     },
   },
   // 测试辅助：直接给镇库发放材料（仅用于场景测试）
-  grantTownMaterial: {
-    desc: "镇库发放材料 {itemId, quantity}",
+  grantTownMaterial: {    desc: "镇库发放材料 {itemId, quantity}",
     run: (sim, state, a) => {
       if (!a.itemId || !CONTENT.items[a.itemId]) return { ok: false, reason: "未知物品" };
       const qty = Number(a.quantity);
@@ -240,6 +241,143 @@ const ACTIONS = {
       state.accounts.town ||= {};
       state.accounts.town[a.itemId] = (state.accounts.town[a.itemId] || 0) + Math.round(qty * CONTENT.precision.inventoryUnitsPerJin);
       return { ok: true };
+    },
+  },
+  // ---- 0.2.3 流通改革 ----
+  setWholesalePurchasePrice: {
+    desc: "批发市场收购价 {itemId, value}",
+    run: (sim, state, a) => sim.configureWholesalePurchasePrice(state, a.itemId, Number(a.value)),
+  },
+  setWholesaleSalePrice: {
+    desc: "批发市场售价 {itemId, value}",
+    run: (sim, state, a) => sim.configureWholesalePrice(state, a.itemId, Number(a.value)),
+  },
+  fundWholesaleMarket: {
+    desc: "镇库向批发市场一次性注资 {amountJin}",
+    run: (sim, state, a) => sim.fundWholesaleMarket(state, Number(a.amountJin)),
+  },
+  setShopTargetMargin: {
+    desc: "综合商店目标利润率 {percent}（全镇统一）",
+    run: (sim, state, a) => sim.configureAllShopsTargetMargin(state, Number(a.percent)),
+  },
+  issueTownVouchers: {
+    desc: "镇库印券 {amountVoucher}",
+    run: (sim, state, a) => sim.issueGrainVouchers(state, "town", Number(a.amountVoucher)),
+  },
+  // 场景辅助（仅模拟用）：直接把货币制度推进到粮券阶段。商业街零售、商店动态加价与
+  // 批发市场销售回款只在粮券经济下才完整运转；这条不是游戏内政策命令，
+  // 只是让 headless 场景不必手搓 7 天过渡期条件。
+  forceVoucherStage: {
+    desc: "直接进入粮券阶段 {}（仅模拟用）",
+    run: (sim, state) => {
+      state.monetaryReform ||= {};
+      state.monetaryReform.stage = "voucher";
+      state.monetaryReform.targetVoucherBps = 10000;
+      state.monetaryReform.residentExchangeEnabled = true;
+      state.monetaryReform.legacyBankAccess = true;
+      state.monetaryReform.completed ||= { year: state.year, day: Math.max(1, state.day + 1), simulated: true };
+      return { ok: true, stage: state.monetaryReform.stage };
+    },
+  },
+  // 场景辅助（仅模拟用）：开一家综合商店（需要商业街已建成、有合格业主家庭）。
+  openGeneralStore: {
+    desc: "在已建成商业街开综合商店 {buildingId|auto}",
+    run: (sim, state, a) => {
+      const street = a.buildingId && a.buildingId !== "auto"
+        ? state.buildings.find(b => b.id === a.buildingId)
+        : (state.buildings || []).find(b => b.typeId === "commercial_street");
+      if (!street) return { ok: false, reason: "没有已建成的商业街" };
+      return sim.openResidentShop(state, street.id, "general", null);
+    },
+  },
+  // 场景辅助（仅模拟用）：镇库发行粮券（银行以小麦为准备换券的等价操作）。
+  // 这是镇库在粮券经济下的真实财力来源，用来验证批发市场能长期覆盖镇营工资。
+  convertTownWheatToVouchers: {
+    desc: "镇库发行粮券 {amountVoucher}",
+    run: (sim, state, a) => sim.issueGrainVouchers(state, "town", Number(a.amountVoucher)),
+  },
+  // 场景辅助（仅模拟用）：给最近开的综合商店雇店员（新店需人工开张，与游戏内一致）。
+  hireShopClerks: {
+    desc: "给综合商店雇店员 {count}",
+    run: (sim, state, a) => {
+      const shops = Object.values(state.shops || {}).filter(s => s.typeId === "general" && s.status === "open");
+      if (!shops.length) return { ok: false, reason: "没有营业中的综合商店" };
+      let total = 0;
+      for (const shop of shops) {
+        const r = sim.configureShopClerks(state, shop.id, Number(a.count) || 6);
+        if (r.ok) total += r.assigned || 0;
+      }
+      return { ok: true, assigned: total };
+    },
+  },
+  // 场景辅助（仅模拟用）：给若干富裕家庭分别发放开店启动资金（集中发放，
+  // 避免全体平均分配后没有单个家庭达到启动门槛）。
+  fundShopOwners: {
+    desc: "给有闲置劳力的家庭各发开店资金 {amountVoucherPerHousehold, count}",
+    run: (sim, state, a) => {
+      const per = Math.round(Number(a.amountVoucherPerHousehold) * CONTENT.precision.currencyUnitsPerVoucher);
+      const count = Math.max(1, Math.floor(Number(a.count) || 2));
+      if (!Number.isSafeInteger(per) || per <= 0) return { ok: false, reason: "启动资金无效" };
+      const { householdList: list, householdIdleWorkers: idle } = householdModule;
+      const candidates = list(state).filter(h => !h.shopIds?.length).slice().sort((x, y) => idle(y) - idle(x) || x.id.localeCompare(y.id)).slice(0, count);
+      const issued = sim.issueGrainVouchers(state, "town", (per * candidates.length) / CONTENT.precision.currencyUnitsPerVoucher);
+      if (!issued.ok) return issued;
+      const { transferVouchers } = currencyModule;
+      let funded = 0;
+      for (const household of candidates) {
+        const r = transferVouchers(state, "town", `household:${household.id}`, per, CONTENT, "scenario_capital", "场景：开店启动资金");
+        if (r.ok) funded += 1;
+      }
+      return { ok: funded > 0, funded };
+    },
+  },
+  // 场景辅助（仅模拟用）：把家庭口粮压缩到 N 天，制造每日零售需求。
+  trimHouseholdFood: {
+    desc: "把家庭口粮压缩到每人 {days} 天",
+    run: (sim, state, a) => {
+      const days = Math.max(0, Number(a.days ?? 3));
+      const { householdList: list, householdPopulation: pop, syncResidentAggregates: sync } = householdModule;
+      const perPersonUnits = days * CONTENT.rules.foodPerPersonDay * CONTENT.precision.inventoryUnitsPerJin;
+      for (const household of list(state)) household.inventory.wheat = Math.round(pop(household) * perPersonUnits);
+      sync(state, CONTENT);
+      return { ok: true, days };
+    },
+  },
+  // 场景辅助（仅模拟用）：把镇库某商品投放进批发市场，用于验证"市场有货即可销售回款"。
+  seedWholesaleStock: {
+    desc: "镇库商品投放批发市场 {itemId, quantityJin}",
+    run: (sim, state, a) => {
+      const qty = Number(a.quantityJin);
+      if (!CONTENT.items[a.itemId] || !Number.isFinite(qty) || qty <= 0) return { ok: false, reason: "参数无效" };
+      const units = Math.round(qty * CONTENT.precision.inventoryUnitsPerJin);
+      state.accounts.town[a.itemId] = (state.accounts.town[a.itemId] || 0) + units;
+      return sim.releaseWholesale(state, a.itemId, qty);
+    },
+  },
+  // 场景辅助（仅模拟用）：给全体居民发放粮券（制造消费能力）。
+  grantResidentVouchers: {
+    desc: "给居民发放粮券 {amountVoucher}",
+    run: (sim, state, a) => {
+      const units = Math.round(Number(a.amountVoucher) * CONTENT.precision.currencyUnitsPerVoucher);
+      if (!Number.isSafeInteger(units) || units <= 0) return { ok: false, reason: "数量无效" };
+      const issued = sim.issueGrainVouchers(state, "town", Number(a.amountVoucher));
+      if (!issued.ok) return issued;
+      const { transferVouchers } = currencyModule;
+      return transferVouchers(state, "town", "residents", units, CONTENT, "scenario_income", "场景：居民收入");
+    },
+  },
+  // 场景辅助（仅模拟用）：抽干全体家庭的存粮（保留粮券），迫使居民每日向商店购买主食，
+  // 用来验证"居民零售 → 综合商店进货 → 批发市场销售回款 → 市场发镇营工资"这条完整链路。
+  drainAllHouseholdFood: {
+    desc: "抽干全体家庭存粮 {}（仅模拟用）",
+    run: (sim, state) => {
+      const { householdList: list } = householdModule;
+      let drained = 0;
+      for (const household of list(state)) {
+        household.inventory = {};
+        drained += 1;
+      }
+      return { ok: true, drained };
     },
   },
   // ---- 调试类（仅模拟用）：制造缺粮家庭，验证邻里互助/救济 ----
@@ -451,6 +589,207 @@ const METRICS = [
   {
     key: "neighbor_aid_needy_today",
     compute: (ctx) => ctx.state.neighborAid?.lastDay?.needyHouseholds || 0,
+  },
+  // ---- 0.2.3 流通改革：批发市场做市商 ----
+  {
+    key: "wholesale_cash_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.cashVoucherUnits || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    // 小麦阶段批发市场以实物小麦结算，故同时跟踪小麦现金余额（斤）。
+    key: "wholesale_cash_wheat_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.cashWheatUnits || 0) / CONTENT.precision.inventoryUnitsPerJin),
+  },
+  {
+    key: "monetary_stage",
+    compute: (ctx) => ctx.state.monetaryReform?.stage || "wheat",
+  },
+  {
+    key: "wholesale_purchase_flour",
+    compute: (ctx) => {
+      const market = ctx.state.wholesaleMarket || {};
+      const reference = Number(market.purchasePriceReferenceVoucherPerUnit?.flour || 0);
+      const stock = Number(market.inventory?.flour || 0);
+      const target = Math.max(1, (CONTENT.rules.wholesalePurchasePriceReferenceJin || 2000) * CONTENT.precision.inventoryUnitsPerJin);
+      const elasticity = Number(CONTENT.rules.wholesalePurchasePriceElasticity ?? 1);
+      const ratio = Math.max(0, stock / target - 1);
+      const feedback = 1 / (1 + elasticity * ratio);
+      return round2(reference * Math.max(0.25, feedback));
+    },
+  },
+  {
+    key: "wholesale_purchase_wood",
+    compute: (ctx) => {
+      const market = ctx.state.wholesaleMarket || {};
+      const reference = Number(market.purchasePriceReferenceVoucherPerUnit?.wood || 0);
+      const stock = Number(market.inventory?.wood || 0);
+      const target = Math.max(1, (CONTENT.rules.wholesalePurchasePriceReferenceJin || 2000) * CONTENT.precision.inventoryUnitsPerJin);
+      const elasticity = Number(CONTENT.rules.wholesalePurchasePriceElasticity ?? 1);
+      const ratio = Math.max(0, stock / target - 1);
+      const feedback = 1 / (1 + elasticity * ratio);
+      return round2(reference * Math.max(0.25, feedback));
+    },
+  },
+  {
+    key: "wholesale_inventory_flour_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.inventory?.flour || 0) / CONTENT.precision.inventoryUnitsPerJin),
+  },
+  // ---- 0.2.3 流通改革：镇营统购统销 ----
+  {
+    key: "wholesale_wages_paid_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.monopolyWages?.cumulative || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_sales_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.cumulative?.salesVoucherUnits || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_purchases_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.cumulative?.purchaseVoucherUnits || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_injected_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.monopoly?.injectedVoucherUnits || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    // 批发市场现金流覆盖倍数：累计销售回款 / (市场自付镇营工资 + 累计收购支出)。
+    // ≥1 表示市场靠自身销售回款即可覆盖其支出（允许一次性启动注资，不允许长期失血）。
+    key: "wholesale_coverage_ratio",
+    compute: (ctx) => {
+      const flow = ctx.state.wholesaleMarket?.valueFlow?.cumulative || {};
+      const split = ctx.state.wholesaleMarket?.monopoly?.wageSplit?.cumulative || {};
+      const inflow = flow.sales || 0;
+      const outflow = (split.market || 0) + (flow.purchases || 0);
+      return outflow > 0 ? round2(inflow / outflow) : 0;
+    },
+  },
+  {
+    // 市场自付工资占镇营工资总额的比例（%）：越高说明发放主体迁移得越彻底。
+    key: "wholesale_wage_self_pay_pct",
+    compute: (ctx) => {
+      const split = ctx.state.wholesaleMarket?.monopoly?.wageSplit?.cumulative || {};
+      const total = (split.market || 0) + (split.town || 0);
+      return total > 0 ? round2((split.market || 0) * 100 / total) : 0;
+    },
+  },
+  {
+    key: "wholesale_wages_market_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.monopoly?.wageSplit?.cumulative?.market || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_wages_town_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.monopoly?.wageSplit?.cumulative?.town || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_value_sales_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.valueFlow?.cumulative?.sales || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_value_wages_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.valueFlow?.cumulative?.wages || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    key: "wholesale_value_purchases_jin",
+    compute: (ctx) => round2((ctx.state.wholesaleMarket?.valueFlow?.cumulative?.purchases || 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  {
+    // 现金流是否长期失血：最近一年净现金流（销售 − 收购 − 工资，价值口径）。
+    key: "wholesale_year_net_jin",
+    compute: (ctx) => {
+      const flow = ctx.state.wholesaleMarket?.valueFlow?.year || {};
+      const net = (flow.sales || 0) - (flow.purchases || 0) - (flow.wages || 0);
+      return round2(net / CONTENT.precision.currencyUnitsPerVoucher);
+    },
+  },
+  {
+    // 欠薪按岗位键拆分，便于定位是哪一类岗位（镇营建筑 / 营造 / 公职）在累积。
+    key: "wage_arrears_keys",
+    compute: (ctx) => Object.entries(ctx.state.payroll?.arrearsVoucherUnits || {})
+      .filter(([, v]) => (v || 0) > 0)
+      .map(([k, v]) => `${k}=${Math.round(v / CONTENT.precision.currencyUnitsPerVoucher)}`)
+      .sort()
+      .join(";"),
+  },
+  {
+    key: "town_wage_arrears_jin",
+    compute: (ctx) => round2((ctx.state.payroll?.arrearsVoucherUnits
+      ? Object.values(ctx.state.payroll.arrearsVoucherUnits).reduce((a, b) => a + (b || 0), 0) : 0) / CONTENT.precision.currencyUnitsPerVoucher),
+  },
+  // ---- 0.2.3 流通改革：综合商店动态加价 ----
+  {
+    key: "shop_avg_target_margin",
+    compute: (ctx) => {
+      const shops = Object.values(ctx.state.shops || {}).filter(s => s.typeId === "general" && s.status !== "closed");
+      if (!shops.length) return 0;
+      const total = shops.reduce((sum, s) => sum + Number(s.pricing?.targetMarginPercent ?? CONTENT.rules.generalStoreMarkupPercent ?? 20), 0);
+      return round2(total / shops.length);
+    },
+  },
+  {
+    key: "shop_promotion_count",
+    compute: (ctx) => Object.values(ctx.state.shops || {}).filter(s => s.pricing?.promotion).length,
+  },
+  {
+    key: "shop_bread_retail",
+    compute: (ctx) => {
+      const shop = Object.values(ctx.state.shops || {}).find(s => s.typeId === "general" && s.status !== "closed");
+      if (!shop) return 0;
+      return round2(shopTradePrices(ctx.state, shop.typeId, CONTENT, "bread", shop)?.retailVoucherPerUnit || 0);
+    },
+  },
+  {
+    key: "shop_open_count",
+    compute: (ctx) => Object.values(ctx.state.shops || {}).filter(s => s.typeId === "general" && s.status === "open").length,
+  },
+  {
+    // 综合商店总数（含暂停/清算），用于观察定价设置是否生效。
+    key: "shop_general_count",
+    compute: (ctx) => Object.values(ctx.state.shops || {}).filter(s => s.typeId === "general" && s.status !== "closed").length,
+  },
+  {
+    // 全部综合商店本年零售额（粮券），用于判断零售需求是否真实存在。
+    key: "shop_year_revenue_jin",
+    compute: (ctx) => {
+      const total = Object.values(ctx.state.shops || {})
+        .filter(s => s.typeId === "general")
+        .reduce((sum, s) => sum + (s.accounts?.year?.revenueVoucherUnits || 0), 0);
+      return round2(total / CONTENT.precision.currencyUnitsPerVoucher);
+    },
+  },
+  {
+    key: "shop_bread_margin_pct",
+    compute: (ctx) => {
+      const shop = Object.values(ctx.state.shops || {}).find(s => s.typeId === "general" && s.status !== "closed");
+      const pricing = shop?.pricing;
+      if (!pricing) return 0;
+      const revenue = pricing.itemRevenue?.bread || 0;
+      if (revenue <= 0) return 0;
+      const cogs = pricing.itemCogs?.bread || 0;
+      const wage = pricing.itemWageCost?.bread || 0;
+      return round2((revenue - cogs - wage) / revenue * 100);
+    },
+  },
+  {
+    // 工资—物价螺旋监测：零售面包价（动态加价结果）
+    key: "spiral_bread_retail_price",
+    compute: (ctx) => {
+      const shop = Object.values(ctx.state.shops || {}).find(s => s.typeId === "general" && s.status !== "closed");
+      if (!shop) return 0;
+      return round2(shopTradePrices(ctx.state, shop.typeId, CONTENT, "bread", shop)?.retailVoucherPerUnit || 0);
+    },
+  },
+  {
+    // 工资—物价螺旋监测：综合商店店员日薪
+    key: "spiral_clerk_wage",
+    compute: (ctx) => {
+      const shop = Object.values(ctx.state.shops || {}).find(s => s.typeId === "general" && s.status !== "closed");
+      return shop ? round2(shop.clerkWageVoucher || 0) : 0;
+    },
+  },
+  {
+    // 工资—物价螺旋监测：批发市场面包售价（成本端）
+    key: "spiral_wholesale_bread_price",
+    compute: (ctx) => round2(ctx.state.wholesaleMarket?.pricesVoucherPerUnit?.bread || 0),
   },
 ];
 

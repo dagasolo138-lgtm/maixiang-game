@@ -19,6 +19,7 @@ import { qeqUnitsForInventoryUnits } from "../economy/inventory.js";
 import { removeTownInventoryWithCost } from "../economy/business.js";
 import { populationStats } from "../selectors/labor.js";
 import { allocateIntegerByWeight } from "../core/allocation.js";
+import { priceElasticityDemandMultiplier } from "./shop-pricing.js";
 
 function rotated(list, offset) {
   if (!list.length) return list;
@@ -184,11 +185,31 @@ function registerCappedRejection(state, itemId, unmetUnits, capped, householdNee
   }
 }
 
+// 0.2.3 需求弹性：居民面对综合商店的实际售价，若相对该店过去 30 天均价更贵，
+// 则按"每贵 10% 少买 5%"缩减当日目标购买量。只对综合商店（动态加价店）生效，
+// 其他卖家/小店保持原行为。返回缩放后的目标单位数。
+function applyRetailElasticity(state, itemId, desiredUnits, content) {
+  if (!(desiredUnits > 0)) return desiredUnits;
+  let multiplier = 1;
+  for (const shop of Object.values(state.shops || {})) {
+    if (shop.status !== "open") continue;
+    if (shopDefinition(content, shop.typeId)?.id !== "general") continue;
+    if (!shopRetailItemIds(shop, content).includes(itemId)) continue;
+    const prices = shopTradePrices(state, shop.typeId, content, itemId, shop);
+    if (!prices) continue;
+    const shopMultiplier = priceElasticityDemandMultiplier(state, shop, itemId, prices.retailVoucherPerUnit, content);
+    multiplier = Math.min(multiplier, shopMultiplier);
+  }
+  if (multiplier >= 1) return desiredUnits;
+  return Math.max(0, Math.round(desiredUnits * multiplier));
+}
+
 export function purchaseItemForResidents(state, itemId, desiredUnits, priceVoucherPerPhysicalUnit, content, reason, options = {}) {
   const directPrice = Number(priceVoucherPerPhysicalUnit);
   if (!Number.isFinite(directPrice) || directPrice <= 0 || desiredUnits <= 0) {
     return { purchasedUnits: 0, paidVoucherUnits: 0, sellerRows: [], reason: desiredUnits <= 0 ? "需求已满足" : "售价无效" };
   }
+  desiredUnits = applyRetailElasticity(state, itemId, desiredUnits, content);
   const cappedSellers = [];
   const sellers = sellerRowsForItem(state, itemId, directPrice, content, { ...options, capped: cappedSellers });
   if (!sellers.length) {
