@@ -12,10 +12,18 @@ const itemTotal = (state, item) => (state.accounts.town[item] || 0) + (state.acc
 
 test("upgrade keeps the instance, plot, existing roster and production; new capacity starts vacant", () => {
   const state = simulation.createInitialState();
+  // 基线清理：0.1.10-r08 起镇营生产的原料必须经过批发市场
+  // （production.js 走 procureTownInputFromWholesale，没有市场就 status=no_materials），
+  // 先建批发市场，磨坊才有小麦可磨、才会记 todayOutputUnits。
+  addInventory(state, "town", "wood", 1200, "test market stock", "test", CONTENT);
+  const market = simulation.buildAt(state, "wholesale_market", "village-01");
+  assert.equal(market.ok, true, market.reason);
+  simulation.advanceDays(state, 60);
+  assert.equal(state.project, null);
   addInventory(state, "town", "wood", 600, "test stock", "test", CONTENT);
   const built = simulation.buildAt(state, "mill", "east");
   simulation.advanceDays(state, 40);
-  const mill = state.buildings[0];
+  const mill = state.buildings.find(row => row.id === built.instanceId);
   assert.equal(mill.id, built.instanceId);
   simulation.setEmployment(state, `${mill.id}::millers`, 4);
   addInventory(state, "town", "wood", 600, "test upgrade stock", "test", CONTENT);
@@ -27,18 +35,18 @@ test("upgrade keeps the instance, plot, existing roster and production; new capa
   assert.equal(state.project.plotId, "east");
   assert.equal(simulation.selectJobRows(state).rows.find(row => row.key === `${mill.id}::millers`).capacity, 12);
   simulation.advanceDay(state);
-  assert.equal(state.buildings.length, 1);
-  assert.equal(state.buildings[0].level, 1);
+  assert.equal(state.buildings.length, 2);
+  assert.equal(mill.level, 1);
   assert.equal(jobCount(state, `${mill.id}::millers`), 4);
   assert.ok((state.business.buildings[mill.id].todayOutputUnits.flour || 0) > 0,
     "existing mill keeps producing during expansion");
   simulation.advanceDays(state, 39);
   assert.equal(state.project, null);
-  assert.equal(state.buildings[0].level, 2);
+  assert.equal(mill.level, 2);
   const row = simulation.selectJobRows(state).rows.find(item => item.key === `${mill.id}::millers`);
   assert.equal(row.capacity, 24);
   assert.equal(row.count, 4);
-  assert.equal(state.buildings[0].materialInvestments.reduce((sum, line) => sum + line.quantityUnits, 0), 1200 * SCALE);
+  assert.equal(mill.materialInvestments.reduce((sum, line) => sum + line.quantityUnits, 0), 1200 * SCALE);
   assert.equal(simulation.validateState(state).valid, true);
 });
 

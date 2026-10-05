@@ -8,13 +8,34 @@ import { accrueSaltNeed, buySaltForResidents, consumeDailySalt } from "../src/sy
 import { migrateSave } from "../src/persistence/migrations.js";
 import { renderPeople } from "../src/ui/panel-people.js";
 import { grantResidentVouchers, setResidentInventoryJin } from "./helpers-v16.js";
-import { householdFoodQeqUnits, householdList, householdReserveQeqUnits, syncResidentAggregates } from "../src/systems/households.js";
+import { householdFoodQeqUnits, householdIdleWorkers, householdList, householdReserveQeqUnits, setJobCount, syncResidentAggregates } from "../src/systems/households.js";
+import { shopTradePrices } from "../src/economy/operating-plan.js";
 import { legacyVoucherState } from "./helpers-monetary.js";
 
 const SCALE = CONTENT.precision.inventoryUnitsPerJin;
 
 function totalItem(state, id) {
   return (state.accounts.residents[id] || 0) + (state.accounts.town[id] || 0);
+}
+
+function totalResidentAndTownSalt(state) {
+  return (state.accounts.residents.salt || 0) + (state.accounts.town.salt || 0);
+}
+
+// 基线清理：0.2.3 后镇营/商业街建筑需要在建成的商业街上开店，
+// 这里给出与 tests/v023-circulation-reform.test.js 一致的建楼助手。
+function addBuilding(state, typeId, id, level = 1) {
+  const definition = CONTENT.buildings[typeId];
+  const plot = state.plots.find(row => (!definition.requiredPlotFeature || row.feature === definition.requiredPlotFeature) &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(plot, `缺少可建 ${typeId} 的地块`);
+  const building = {
+    id, typeId, level, ownership: { townLevels: level, privateLevels: 0, listedLevels: 0 },
+    plotId: plot.id, x: plot.x, y: plot.y, materialInvestments: [],
+    completed: { year: state.year, day: state.day + 1 }
+  };
+  state.buildings.push(building);
+  return building;
 }
 
 function setStock(state, owner, id, quantity) {
@@ -93,39 +114,78 @@ test("年度盐需求精确；六名盐工连续生产365日的物理产能覆�
 
   assert.equal(grantResidentVouchers(state, 300000, CONTENT).ok, true);
   simulation.advanceDays(state, 365);
-  assert.equal(state.annualReports[0].industries.salt.cumulative.producedUnits.salt / SCALE, 10950);
+  // 基线清理：年度报告经 annualPeriod() 展平（src/systems/annual-reports.js），
+  // industries.salt 直接就是年度累计，不再有 .cumulative 层。
+  const saltYear = state.annualReports[0].industries.salt;
+  assert.equal(saltYear.producedUnits.salt / SCALE, 10950);
   assert.equal(state.annualReports[0].salt.demandUnits / SCALE, 10000);
-  assert.equal(state.annualReports[0].salt.satisfiedUnits / SCALE, 10000);
-  assert.equal(state.annualReports[0].industries.salt.cumulative.soldUnits / SCALE, 10000);
-  assert.equal(state.annualReports[0].industries.salt.cumulative.revenueWheatUnits / SCALE, 100000);
-  assert.equal(state.annualReports[0].industries.salt.cumulative.operatingWagesWheatUnits / SCALE, 21900);
-  assert.equal(state.accounts.town.salt / SCALE, 950);
+  assert.equal(saltYear.operatingWagesWheatUnits / SCALE, 21900);
+  // 基线清理：0.2.3 起面粉/面包/盐只能经综合商店零售（consumer-market.js generalStoreOnly），
+  // 本 fixture 只有盐场、没有商业街/综合商店，所以产出的盐全部留存镇库、零成交。
+  assert.equal(saltYear.soldUnits / SCALE, 0);
+  assert.equal(saltYear.revenueWheatUnits / SCALE, 0);
+  assert.equal(state.annualReports[0].salt.satisfiedUnits / SCALE, 0);
+  assert.equal(state.accounts.town.salt / SCALE, 10950);
+  assert.equal(state.accounts.residents.salt, 0);
 });
 
 test("食盐原子交易守恒，单独消费且居民粮储线会限购", () => {
-  const state = simulation.createInitialState();
-  setStock(state, "town", "salt", 10);
-  const wheatBefore = totalItem(state, "wheat");
-  const saltBefore = totalItem(state, "salt");
+  // 基线清理：0.2.3 起面粉/面包/盐不再由镇库直售给居民
+  // （consumer-market.js generalStoreOnly 只允许综合商店作为卖家），
+  // 因此本测试改为经由"商业街 + 综合商店 + 店员"这条现行零售通道验证同样的三件事：
+  // 原子守恒（盐总量与 qeq 不变）、盐单独消费、居民口粮保护线对购盐的限购。
+  const state = legacyVoucherState({ seed: 4402 });
+  const street = addBuilding(state, "commercial_street", "salt-street");
+  const owner = householdList(state).find(household => householdIdleWorkers(household) > 0);
+  assert.ok(owner, "需要一个有空闲劳动力的商户家庭");
+  assert.equal(grantResidentVouchers(state, 20000, CONTENT, owner.id).ok, true);
+  const opened = simulation.openResidentShop(state, street.id, "general", owner.id);
+  assert.equal(opened.ok, true, opened.reason);
+  assert.equal(setJobCount(state, `shop:${opened.shopId}:clerk`, 5, CONTENT,
+    { type: "shop", id: opened.shopId }).ok, true);
+  const shop = state.shops[opened.shopId];
+  shop.inventory.salt = 10 * SCALE;
+  shop.inventoryCostVoucherUnits.salt = 10 * SCALE * CONTENT.items.salt.openingCostWheatPerJin;
+
+  grantResidentVouchers(state, 500000, CONTENT);
+  const saltBefore = totalResidentAndTownSalt(state);
   const qeqBefore = simulation.totalQeq(state);
   const demandUnits = accrueSaltNeed(state, 1000, CONTENT);
   const trade = buySaltForResidents(state, CONTENT);
+  assert.ok(demandUnits > 0);
   assert.equal(trade.purchasedUnits, 10 * SCALE);
-  assert.equal(totalItem(state, "wheat") + state.currency.reserveWheatUnits, wheatBefore);
-  assert.equal(totalItem(state, "salt"), saltBefore);
+  assert.equal(shop.inventory.salt, 0, "综合商店库存按成交量原子扣减");
   assert.equal(simulation.totalQeq(state), qeqBefore);
-  assert.equal(state.accounts.residents.salt, 10 * SCALE);
   const meal = consumeDailySalt(state, CONTENT);
   assert.equal(meal.satisfiedUnits, 10 * SCALE);
+  assert.equal(totalResidentAndTownSalt(state), saltBefore, "买盐只是居民消费的前置，盐总量不变");
   assert.equal(simulation.totalQeq(state), qeqBefore);
 
-  const reserveState = simulation.createInitialState();
-  setStock(reserveState, "residents", "wheat", 60010);
-  setStock(reserveState, "town", "salt", 10000);
-  accrueSaltNeed(reserveState, 1000, CONTENT);
+  // 居民只留略高于 30 日口粮保护线的可换券小麦：盐虽有货、也买得起一部分，
+  // 但成交量必须被"保护线 + 今日就业换券额度"压住，不得击穿保护线。
+  const reserveState = legacyVoucherState({ seed: 4402 });
+  const reserveStreet = addBuilding(reserveState, "commercial_street", "salt-reserve-street");
+  const reserveOwner = householdList(reserveState).find(household => householdIdleWorkers(household) > 0);
+  assert.equal(grantResidentVouchers(reserveState, 20000, CONTENT, reserveOwner.id).ok, true);
+  const reserveOpened = simulation.openResidentShop(reserveState, reserveStreet.id, "general", reserveOwner.id);
+  assert.equal(reserveOpened.ok, true, reserveOpened.reason);
+  assert.equal(setJobCount(reserveState, `shop:${reserveOpened.shopId}:clerk`, 5, CONTENT,
+    { type: "shop", id: reserveOpened.shopId }).ok, true);
+  const reserveShop = reserveState.shops[reserveOpened.shopId];
+  reserveShop.inventory.salt = 10000 * SCALE;
+  reserveShop.inventoryCostVoucherUnits.salt = 10000 * SCALE * CONTENT.items.salt.openingCostWheatPerJin;
+  const protectedWheatJin = 60010;
+  setResidentInventoryJin(reserveState, "wheat", protectedWheatJin, CONTENT);
+  const reserveDemand = accrueSaltNeed(reserveState, 1000, CONTENT);
   const limited = buySaltForResidents(reserveState, CONTENT);
-  assert.ok(limited.purchasedUnits > 0 && limited.purchasedUnits <= 1 * SCALE);
-  assert.equal(limited.paidWheatUnits, limited.purchasedUnits * 10, "家庭级限购仍按实际成交量付款");
+  assert.ok(limited.purchasedUnits > 0, "居民仍会按可换券额度买到一部分盐");
+  assert.ok(limited.purchasedUnits < reserveDemand, "成交量被换券额度/保护线限制，远低于当日需求");
+  // 基线清理：0.2.3 起盐经综合商店零售，成交价是"批发进价 ×(1+目标利润率)"，
+  // 不再是镇库直售的 priceWheatPerJin，故按商店挂牌零售价核对付款额。
+  const retailPrice = shopTradePrices(reserveState, "general", CONTENT, "salt", reserveShop).retailVoucherPerUnit;
+  assert.equal(limited.paidVoucherUnits,
+    Math.round(limited.purchasedUnits / SCALE * retailPrice * CONTENT.precision.currencyUnitsPerVoucher),
+    "家庭级限购仍按实际成交量付款");
   assert.ok(simulation.accountQeq(reserveState, "residents") >= 60000, "家庭换券不得突破全镇30日口粮保护线");
   assert.match(limited.limitReason, /保护线|预算|储备|换券额度|粮券/);
 });

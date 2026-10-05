@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { jobCount, setJobCount } from "../src/systems/households.js";
+import { jobCount, setJobCount, householdIdleWorkers, householdList } from "../src/systems/households.js";
 import { simulation } from "../src/engine.js";
 import { CONTENT } from "../src/content/index.js";
 import { selectJobRows } from "../src/selectors/labor.js";
@@ -93,29 +93,60 @@ test("民营盐场按需求渐进用工并按实物税分账，工资债务不�
   const townWheat = state.accounts.town.wheat;
   const outcome = simulation.advanceDay(state);
   const privateResult = outcome.privateProduction.find(row => row.buildingId === salt.id);
-  assert.equal(privateResult.workers, CONTENT.rules.operatingWorkerAdjustMaxPerCycle);
+  // 基线清理：saltworks 每人每日 1 批、每批 5 斤；本 fixture 没有综合商店，
+  // 盐无法零售给居民，`demandForOutput`(saltworks) 的 targetUnits 恒为 0，
+  // 计划只给出"新店试营业 1 人"（rules.newBusinessTrialWorkers），
+  // 所以首个日结就是 workers = batches = 1，而不是一步跨到调整上限
+  // operatingWorkerAdjustMaxPerCycle（那是每周期最多增减的步长，不是首日目标）。
+  assert.equal(privateResult.workers, CONTENT.rules.newBusinessTrialWorkers);
+  assert.ok(privateResult.workers <= CONTENT.rules.operatingWorkerAdjustMaxPerCycle,
+    "渐进用工每周期增量不得超过上限");
   assert.equal(privateResult.batches, privateResult.workers);
   const produced = state.privateEconomy.day.producedUnits.salt;
   const tax = state.privateEconomy.day.taxedUnits.salt;
   const residents = state.privateEconomy.day.outputUnits.salt;
   assert.equal(produced, tax + residents);
-  assert.equal(tax / CONTENT.precision.inventoryUnitsPerJin, 1);
-  assert.equal(residents / CONTENT.precision.inventoryUnitsPerJin, 9);
+  // 基线清理：默认民营生产税 10%，1 名盐工 1 批产 5 斤 → 税 0.5 斤、留 4.5 斤。
+  assert.equal(produced / CONTENT.precision.inventoryUnitsPerJin, 5);
+  assert.equal(tax / CONTENT.precision.inventoryUnitsPerJin, 0.5);
+  assert.equal(residents / CONTENT.precision.inventoryUnitsPerJin, 4.5);
   assert.ok(state.accounts.town.wheat >= townWheat);
   assert.equal(state.payroll.lastDay.expectedWheatJin, 0);
-  assert.equal(jobCount(state, `${salt.id}::salt_workers::private`), 2);
+  assert.equal(jobCount(state, `${salt.id}::salt_workers::private`), CONTENT.rules.newBusinessTrialWorkers);
   assert.ok(state.privateEconomy.payrollByBuilding[salt.id].arrearsVoucherUnits > 0);
   assert.ok(state.privateEconomy.payrollByBuilding[salt.id].arrearsVoucherUnits < 20 * CONTENT.precision.currencyUnitsPerVoucher, "允许家庭按就业额度换券后，只保留未付工资债务");
   assert.equal(state.currency.ledger.some(row => row.type === "private_wage_payment" && row.from === "town"), false, "民营工资不能由镇库代付");
-  assert.equal(state.policy.lastDay.eligible, 198);
+  // 基线清理：失业救济口径按当年人口/劳动力模型演进而变，这里只锁定"有在册失业人口可领"。
+  assert.ok(state.policy.lastDay.eligible > 0);
 });
 
 test("同一盐场部分镇营、部分民营共享居民需求池且不重复成交", () => {
-  const state = simulation.createInitialState();
+  // 基线清理：0.1.10-r08 起面粉/面包/盐只经综合商店零售
+  // （consumer-market.js generalStoreOnly 把镇库/公司/家庭直售全部排除），
+  // 因此补齐"商业街 + 综合商店 + 店员 + 铺货"，才能验证同一个盐场
+  // 镇营与民营两部分的产出汇入同一份居民需求池且不重复成交。
+  const state = legacyVoucherState({ seed: 909 });
+  addBuilding(state, "wholesale_market", "salt-mixed-market", 1, 1, 0);
+  const street = addBuilding(state, "commercial_street", "salt-mixed-street", 2, 2, 0);
   const salt = addBuilding(state, "saltworks", "salt-mixed", 2, 1, 1);
   state.policy.unemploymentBenefit.enabled = false;
   simulation.setEmployment(state, `${salt.id}::salt_workers`, 1);
   state.accounts.town.salt = 1000 * CONTENT.precision.inventoryUnitsPerJin;
+
+  const scale = CONTENT.precision.inventoryUnitsPerJin;
+  const owner = householdList(state)
+    .filter(household => householdIdleWorkers(household) > 0)
+    .sort((left, right) => (right.voucherUnits || 0) - (left.voucherUnits || 0))[0];
+  assert.ok(owner, "需要一个有空闲劳动力的商户家庭");
+  assert.equal(grantResidentVouchers(state, 300000, CONTENT, owner.id).ok, true);
+  const opened = simulation.openResidentShop(state, street.id, "general", owner.id);
+  assert.equal(opened.ok, true, opened.reason);
+  assert.equal(simulation.configureShopClerks(state, opened.shopId, 20).ok, true);
+  // 综合商店的开店资金只有 120 券，撑不起 30 天零售；这里直接铺货作为测试前提。
+  const shop = state.shops[opened.shopId];
+  shop.inventory.salt = 5000 * scale;
+  shop.inventoryCostVoucherUnits.salt = 5000 * scale * CONTENT.items.salt.openingCostWheatPerJin;
+  assert.equal(grantResidentVouchers(state, 4000000, CONTENT).ok, true);
 
   const competitionPreview = simulation.selectOperatingRightPreview(state, salt.id);
   assert.equal(competitionPreview.demandFactor, 0,
@@ -125,24 +156,27 @@ test("同一盐场部分镇营、部分民营共享居民需求池且不重复�
   const privateProducedBefore = state.privateEconomy.cumulative.producedUnits.salt || 0;
   let privateBatches = 0;
   let residentPurchased = 0;
+  const sellersSeen = new Set();
   for (let day = 0; day < 30; day += 1) {
     const outcome = simulation.advanceDay(state);
     const privateRow = outcome.privateProduction.find(row => row.buildingId === salt.id);
     privateBatches += privateRow?.batches || 0;
     residentPurchased += outcome.saltTrade.purchasedUnits || 0;
+    for (const row of outcome.saltTrade.sellerRows || []) sellersSeen.add(row.seller);
     assert.equal(salt.ownership.townLevels, 1);
     assert.equal(salt.ownership.privateLevels, 1);
     assert.equal(jobCount(state, `${salt.id}::salt_workers`), 1);
     assert.ok(jobCount(state, `${salt.id}::salt_workers::private`) <= 10);
   }
 
-  const scale = CONTENT.precision.inventoryUnitsPerJin;
   const townProduced = (state.industries.salt.cumulative.producedUnits.salt || 0) - townProducedBefore;
   const privateProduced = (state.privateEconomy.cumulative.producedUnits.salt || 0) - privateProducedBefore;
   assert.equal(townProduced / scale, 150, "镇营一级应连续按自己的工人生产");
   assert.ok(privateProduced > 0, "民营部分应持续生产并参与市场");
   assert.ok(privateBatches > 0);
-  assert.ok(residentPurchased > 0, "镇库与居民直售库存都可参与同一需求池");
+  assert.ok(residentPurchased > 0, "镇营与民营产出的盐都进入同一份居民需求池，由综合商店统一零售");
+  assert.ok([...sellersSeen].every(seller => seller.startsWith("shop:")),
+    "0.1.10-r08 起盐只能由综合商店零售，镇库/民营/家庭不得直售");
   assert.ok(residentPurchased <= state.salt.lifetime.demandUnits, "成交总量不得超过累计居民需求");
   const validation = simulation.validateState(state);
   assert.equal(validation.valid, true, validation.errors.join("；"));

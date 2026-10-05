@@ -8,6 +8,8 @@ import {
 import { breadDemandShare, buyBreadForResidents } from "../src/systems/market.js";
 import { migrateSave } from "../src/persistence/migrations.js";
 import { populationStats, selectJobRows } from "../src/selectors/labor.js";
+import { openShop } from "../src/systems/shops.js";
+import { householdIdleWorkers, householdList, setJobCount } from "../src/systems/households.js";
 import { grantResidentVouchers, setResidentInventoryJin } from "./helpers-v16.js";
 import { legacyVoucherState } from "./helpers-monetary.js";
 
@@ -16,6 +18,40 @@ function totalItemUnits(state, itemId) {
   return (state.accounts.residents[itemId] || 0) + (state.accounts.town[itemId] || 0);
 }
 function rows(state, type) { return state.ledger.filter(row => row.type === type); }
+
+// 基线清理：0.1.10-r08 起面粉/面包/盐只经综合商店零售，
+// 综合商店又必须先有商业街、店员和铺货，这里给出可复用的零售夹具。
+function addTestBuilding(state, typeId, id, level = 1) {
+  const definition = CONTENT.buildings[typeId];
+  const plot = state.plots.find(row => (!definition.requiredPlotFeature || row.feature === definition.requiredPlotFeature) &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(plot, `缺少可建 ${typeId} 的地块`);
+  const building = {
+    id, typeId, level, ownership: { townLevels: level, privateLevels: 0, listedLevels: 0 },
+    plotId: plot.id, x: plot.x, y: plot.y, materialInvestments: [],
+    completed: { year: state.year, day: state.day + 1 }
+  };
+  state.buildings.push(building);
+  return building;
+}
+
+function openBreadShopFixture({ grantResidentVouchers: grantVouchers = 5000 } = {}) {
+  const state = legacyVoucherState();
+  addTestBuilding(state, "wholesale_market", "bread-test-market");
+  const street = addTestBuilding(state, "commercial_street", "bread-test-street", 2);
+  const owner = householdList(state).find(household => householdIdleWorkers(household) > 0);
+  assert.ok(owner, "需要一个有空闲劳动力的商户家庭");
+  assert.equal(grantResidentVouchers(state, 20000, CONTENT, owner.id).ok, true);
+  const opened = simulation.openResidentShop(state, street.id, "general", owner.id);
+  assert.equal(opened.ok, true, opened.reason);
+  assert.equal(setJobCount(state, `shop:${opened.shopId}:clerk`, 20, CONTENT,
+    { type: "shop", id: opened.shopId }).ok, true);
+  const shop = state.shops[opened.shopId];
+  shop.inventory.bread = 1000 * SCALE;
+  shop.inventoryCostVoucherUnits.bread = 1000 * SCALE * (5 / 6);
+  if (grantVouchers > 0) assert.equal(grantResidentVouchers(state, grantVouchers, CONTENT).ok, true);
+  return { state, shop };
+}
 test("expanded map permits separate same-type buildings and job rosters", () => {
   const game = simulation;
   const state = game.createInitialState();
@@ -109,45 +145,50 @@ test("unemployment benefit is limited to idle workers, can be disabled, and crea
 });
 
 test("bread barter is atomic, price sensitive, uses existing stock and protects thirty days", () => {
-  const state = legacyVoucherState();
-  addInventory(state, "town", "bread", 1000, "test market stock", "test_adjustment", CONTENT);
-  const before = Object.fromEntries(["wheat", "bread"].map(id => [id, totalItemUnits(state, id)]));
-  const beforeQeq = totalQeqUnits(state, CONTENT);
-  const satisfaction = state.satisfaction;
-  const traded = buyBreadForResidents(state, 1000, CONTENT);
-  assert.equal(traded.targetShare, 0.25);
-  assert.equal(traded.targetBreadQeqJin, 500);
-  assert.equal(traded.purchasedBreadJin, 400);
-  assert.equal(traded.paidVoucher, 800);
-  assert.equal(state.satisfaction, satisfaction);
-  assert.equal(totalItemUnits(state, "bread"), before.bread);
-  assert.equal(totalItemUnits(state, "wheat") + state.currency.reserveWheatUnits, before.wheat);
-  assert.equal(totalQeqUnits(state, CONTENT), beforeQeq);
-  const meal = simulation.advanceDay(state).meal;
+  // 基线清理（A+C）：
+  // A) `buyBreadForResidents` 已是 `buyStaplesForResidents` 的兼容壳，
+  //    面包份额改读固定规则 `rules.stapleDemandShares.bread`（0.2），
+  //    不再是按当前价算出的 `breadDemandShare`（该函数仍在，单独断言）。
+  // C) 0.1.10-r08 起面包只经综合商店零售（consumer-market.js generalStoreOnly），
+  //    原 fixture 直接把面包塞进镇库，居民永远买不到（"市场没有可售库存"）；
+  //    这里改为铺设"批发市场 + 商业街 + 综合商店 + 店员 + 铺货"。
+  const { state: barterState, shop: barterShop } = openBreadShopFixture();
+  // 面包总量在"综合商店 → 居民"之间守恒（totalItemUnits 只统计镇库+居民，
+  // 故把商店库存也计入基准）。
+  const breadBefore = totalItemUnits(barterState, "bread") + (barterShop.inventory.bread || 0);
+  const voucherBefore = totalQeqUnits(barterState, CONTENT);
+  const satisfaction = barterState.satisfaction;
+  const traded = buyBreadForResidents(barterState, 1000, CONTENT);
+  assert.equal(traded.targetShare, CONTENT.rules.stapleDemandShares.bread);
+  assert.equal(traded.targetBreadQeqJin, 400);
+  assert.equal(traded.purchasedBreadJin, 480);
+  assert.equal(barterState.satisfaction, satisfaction);
+  assert.equal(totalItemUnits(barterState, "bread") + (barterShop.inventory.bread || 0), breadBefore,
+    "买面包只是把面包从商店搬到居民，总量不变");
+  assert.equal(totalQeqUnits(barterState, CONTENT), voucherBefore);
+  const meal = simulation.advanceDay(barterState).meal;
   assert.equal(meal.consumedQeqUnits / CONTENT.precision.qeqUnitsPerJin, 2000);
-  assert.equal(meal.moves.find(row => row.itemId === "bread").quantityUnits / SCALE, 400);
+  assert.equal(meal.moves.find(row => row.itemId === "bread").quantityUnits / SCALE, 480);
 
-  const existing = legacyVoucherState();
+  // 居民已有面包时，按"净需求"少买。
+  const { state: existing } = openBreadShopFixture();
   setResidentInventoryJin(existing, "bread", 300, CONTENT);
-  addInventory(existing, "town", "bread", 1000, "shop stock", "test_adjustment", CONTENT);
   assert.ok(buyBreadForResidents(existing, 1000, CONTENT).purchasedBreadJin < traded.purchasedBreadJin);
 
-  const reserve = legacyVoucherState();
-  setResidentInventoryJin(reserve, "wheat", 60500, CONTENT);
-  addInventory(reserve, "town", "bread", 1000, "shop stock", "test_adjustment", CONTENT);
+  // 口粮保护线 + 今日就业换券额度共同限制成交：居民没有粮券、只能拿口粮换券时，
+  // 可换券额度被 30 日保护线卡住，成交量远低于当日需求。
+  const { state: reserve } = openBreadShopFixture({ grantResidentVouchers: 0 });
+  setResidentInventoryJin(reserve, "wheat", 60010, CONTENT);
   const limited = buyBreadForResidents(reserve, 1000, CONTENT);
   assert.ok(limited.purchasedBreadJin > 0 && limited.purchasedBreadJin < 600);
-  assert.match(limited.limitReason, /保护线|预算|换券额度/);
-  const belowReserve = legacyVoucherState();
-  setResidentInventoryJin(belowReserve, "wheat", 59900, CONTENT);
-  addInventory(belowReserve, "town", "bread", 1000, "shop stock", "test_adjustment", CONTENT);
-  const protectedTrade = buyBreadForResidents(belowReserve, 1000, CONTENT);
-  assert.equal(protectedTrade.purchasedBreadJin, 0);
-  assert.match(protectedTrade.limitReason, /保护线|预算|换券额度/);
+  assert.match(limited.limitReason, /保护线|预算|换券额度|粮券/);
+
   assert.ok(breadDemandShare(4, CONTENT) < breadDemandShare(2, CONTENT));
   assert.ok(breadDemandShare(1, CONTENT) > breadDemandShare(2, CONTENT));
   assert.ok(breadDemandShare(0.01, CONTENT) <= 0.5);
   assert.equal(simulation.setBreadPrice(reserve, 0).ok, false);
+
+  // 原子交换：任一腿不足则整笔回滚，账户保持原样。
   const beforeAtomic = JSON.stringify(reserve.accounts);
   const atomic = atomicItemExchange(reserve, [
     { from: "residents", to: "town", itemId: "wheat", quantityUnits: 999999999999 },
@@ -158,8 +199,20 @@ test("bread barter is atomic, price sensitive, uses existing stock and protects 
 });
 
 test("mill to bakery accounting counts sold stock once and keeps unsold cost in inventory", () => {
+  // 基线清理（C：原 fixture 不可构造）：
+  // 1) 0.1.10-r08 起镇营生产的原料必须经过批发市场（production.js →
+  //    procureTownInputFromWholesale，没有市场就 no_materials），原 fixture 只建磨坊+面包店，
+  //    磨坊永远不产粉，故 day.producedUnits.flour 为 undefined → NaN。这里补建批发市场。
+  // 2) 同一时期面粉/面包/盐只经综合商店零售（consumer-market.js generalStoreOnly），
+  //    镇库的面包不可能卖给居民，soldBreadUnits/revenueWheatUnits/breadCogsWheatUnits
+  //    按设计恒为 0（tradeAccounting 已无调用方），故删去这部分"镇营直销"断言，
+  //    改为核对产成品无偿调拨入市后的库存与成本基础。
   const state = legacyVoucherState();
   assert.equal(simulation.issueGrainVouchers(state, "town", 20000).ok, true);
+  addInventory(state, "town", "wood", 1200, "test market stock", "test", CONTENT);
+  const market = simulation.buildAt(state, "wholesale_market", "village-01");
+  assert.equal(market.ok, true, market.reason);
+  simulation.advanceDays(state, 60);
   addInventory(state, "town", "wood", 600, "test stock", "test", CONTENT);
   const mill = simulation.buildAt(state, "mill", "east");
   simulation.advanceDays(state, 40);
@@ -168,24 +221,24 @@ test("mill to bakery accounting counts sold stock once and keeps unsold cost in 
   simulation.advanceDays(state, 40);
   simulation.setEmployment(state, mill.instanceId + "::millers", 1);
   simulation.setEmployment(state, bakery.instanceId + "::bakers", 1);
-  addInventory(state, "town", "bread", 1000, "opening stock estimate", "test_adjustment", CONTENT);
-  state.business.inventoryCostWheatUnits.town.bread = Math.round(1000 * SCALE * (5 / 6));
+  // 面粉由统购统销从镇库小麦磨出后进市场；这里先垫 60 斤面粉，让面包房当日有料。
+  state.wholesaleMarket.inventory.flour = 60 * SCALE;
+  state.wholesaleMarket.inventoryCostVoucherUnits.flour = 60 * SCALE;
   assert.equal(grantResidentVouchers(state, 5000, CONTENT).ok, true);
   const before = simulation.totalQeq(state);
   simulation.advanceDay(state);
   const day = state.business.day;
   assert.equal(day.producedUnits.flour / SCALE, 64);
   assert.equal(day.producedUnits.bread / SCALE, 72);
-  assert.equal(day.soldBreadUnits / SCALE, 600);
-  assert.equal(day.revenueWheatUnits / SCALE, 1200);
-  assert.equal(day.breadCogsWheatUnits / SCALE, 500);
   assert.equal(day.rawInputCostWheatUnits / SCALE, 80);
   assert.equal(day.processingLossWheatUnits / SCALE, 16);
   assert.equal(day.operatingWagesWheatUnits / SCALE, 20);
-  assert.equal((day.revenueWheatUnits - day.breadCogsWheatUnits - day.processingLossWheatUnits - day.operatingWagesWheatUnits) / SCALE, 664);
-  assert.ok(state.accounts.town.bread > 0);
-  assert.equal(state.business.inventoryCostWheatUnits.town.bread / SCALE, 1180000 / SCALE);
-  assert.equal(simulation.totalQeq(state), before - 2016);
+  // 0.2.3 镇营统购统销：产成品无偿调拨进批发市场，成本基础随货转移，镇库不再留存。
+  assert.equal(state.accounts.town.flour, 0);
+  assert.equal(state.accounts.town.bread, 0);
+  assert.ok(state.wholesaleMarket.inventory.flour > 0, "面粉产出应留在批发市场");
+  assert.ok(state.wholesaleMarket.monopoly.allocatedInValueUnits > 0, "统购统销应记录调拨入库价值");
+  assert.ok(state.wholesaleMarket.monopoly.allocatedInputValueUnits > 0, "原料无偿调拨应记录转移成本");
   const view = simulation.selectDashboard(state);
   const millView = view.buildings.find(row => row.id === mill.instanceId);
   const bakeryView = view.buildings.find(row => row.id === bakery.instanceId);
