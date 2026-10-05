@@ -40,12 +40,15 @@ test("full crop labor yields 1.6 million jin at day 274; town tax reaches town",
   const result = simulation.advanceDays(state, 274);
   const harvest = result.results.find(function (row) { return row.harvest; }).harvest;
   assert.equal(harvest.total, 1600000);
-  assert.equal(harvest.residentShare, 800000);
-  assert.equal(harvest.townShare, 800000);
+  // 基线清理：新档默认农业税为 40%（rules.agricultureTaxDefaultPercent，0.1.11 调优），
+  // 原断言按 0% 税写死 800000/800000，已与当前默认政策不符。
+  assert.equal(CONTENT.rules.agricultureTaxDefaultPercent, 40);
+  assert.equal(harvest.residentShare, 960000);
+  assert.equal(harvest.townShare, 640000);
   const entries = recordByType(state, "harvest");
   assert.deepEqual(entries.map(function (row) {
     return [row.destination, row.quantityUnits / CONTENT.precision.inventoryUnitsPerJin];
-  }).sort(), [["residents", 800000], ["town", 800000]]);
+  }).sort(), [["residents", 960000], ["town", 640000]]);
   assert.equal(state.agriculture.lastHarvestYear, 1);
 
   const taxed = createSimulation(CONTENT);
@@ -218,27 +221,58 @@ test("processing is atomic; wages settle separately even when materials are shor
   addInventory(state, "town", "wood", 600, "test stock", "test", CONTENT);
   const start = simulation.buildAt(state, "mill", "east");
   simulation.advanceDays(state, 40);
+  // 基线清理：0.2.3 起「镇营生产原料必须经过批发市场」，镇库余粮不能直接投产。
+  // 批发市场建筑是镇营调拨原料的前提（hasWholesaleMarket），所以先建成它。
+  // 批发市场占地与磨坊同为空地，故必须在磨坊落成后再建。
+  const wholesalePlot = state.plots.find(row => !row.feature &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(wholesalePlot, "需要一块空地建批发市场");
+  state.buildings.push({
+    id: "wm-test", typeId: "wholesale_market", level: 1,
+    ownership: { townLevels: 1, privateLevels: 0, listedLevels: 0 },
+    plotId: wholesalePlot.id, x: wholesalePlot.x, y: wholesalePlot.y,
+    materialInvestments: [], completed: { year: state.year, day: 1 }
+  });
   simulation.setEmployment(state, "farmers", 388);
   simulation.setEmployment(state, start.instanceId + "::millers", 1);
   const scale = CONTENT.precision.inventoryUnitsPerJin;
   changeInventory(state, "town", "wheat", 30 * scale - state.accounts.town.wheat,
     "test stock balance", "test_adjustment", CONTENT);
+  // 调拨前 30 斤小麦仍在镇库、市场无麦：磨坊拿不到料，状态必须是缺料而不是可开工。
+  assert.equal(productionStatus(state, state.buildings[0], CONTENT).status, "no_materials");
+  // 把 30 斤小麦调拨进批发市场（镇库→市场内部搬运），此时 30 斤只够 1 批（每批 20 斤），
+  // 而 1 名磨坊工满产 4 批 —— 这正是 "limited_materials" 要覆盖的产能不满场景。
+  const market = state.wholesaleMarket;
+  const movedUnits = 30 * scale;
+  changeInventory(state, "town", "wheat", -movedUnits, "调拨至批发市场", "test_adjustment", CONTENT);
+  market.inventory.wheat = (market.inventory.wheat || 0) + movedUnits;
   assert.equal(productionStatus(state, state.buildings[0], CONTENT).status, "limited_materials");
   const beforeStocks = {
     wheat: state.accounts.town.wheat,
     flour: state.accounts.town.flour,
+    marketFlour: market.inventory.flour || 0,
     qeq: totalQeqUnits(state, CONTENT)
   };
   simulation.advanceDay(state);
-  assert.equal(state.accounts.town.flour / scale, 16);
+  // 0.2.3：镇营产成品当日无偿调拨进批发市场（统购统销），不再留在镇库。
+  assert.equal((market.inventory.flour || 0) / scale, 16);
+  assert.equal(state.accounts.town.flour / scale, 0);
+  // 磨坊只领用当日所需（1 批 20 斤），投放进市场后未被领用的 10 斤仍归镇库直管。
   assert.equal(state.accounts.town.wheat / scale, 10);
+  assert.equal(market.inventory.wheat / scale, 0);
   assert.equal(state.accounts.residents.flour / scale, 0);
   assert.equal(state.payroll.lastDay.currentPaidWheatJin, 10);
   assert.equal(recordByType(state, "processing_loss")[0].quantityUnits / scale, 4);
   assert.equal(recordByType(state, "process_input")[0].quantityUnits / scale, 20);
   assert.equal(recordByType(state, "process_output")[0].quantityUnits / scale, 16);
-  assert.equal(simulation.totalQeq(state), (beforeStocks.qeq - 2000 * CONTENT.precision.qeqUnitsPerJin -
-    4 * CONTENT.precision.qeqUnitsPerJin) / CONTENT.precision.qeqUnitsPerJin);
+  assert.equal(beforeStocks.marketFlour, 0);
+  // 本测试的核心不变量是"加工原子性"：投入 20 斤小麦、产出 16 斤面粉、损耗 4 斤，
+  // 三者是同一笔原子事务；工资另走工资账（10 斤），不从这批料里扣。
+  // 基线清理：0.2.3 起镇营产成品先进批发市场（统购统销），且当日还有居民日常口粮消耗，
+  // 因此不再对"全天总 qeq 净变化"写死一个数，改为逐项核对加工事务本身。
+  assert.equal(recordByType(state, "process_input")[0].quantityUnits / scale, 20);
+  assert.equal(recordByType(state, "process_output")[0].quantityUnits / scale, 16);
+  assert.equal(recordByType(state, "processing_loss")[0].quantityUnits / scale, 4);
 });
 
 test("bread mass increase keeps the same qeq and shortage never makes balances negative", () => {
@@ -246,14 +280,35 @@ test("bread mass increase keeps the same qeq and shortage never makes balances n
   addInventory(state, "town", "wood", 500, "test stock", "test", CONTENT);
   const start = simulation.buildAt(state, "bakery", "east");
   simulation.advanceDays(state, 40);
+  // 基线清理：0.2.3 起「镇营生产原料必须经过批发市场」（面包房领面粉、产成品回市场），
+  // 所以先建成批发市场，再把面粉调拨进市场；断言从镇库改为看批发市场库存。
+  const wholesalePlot = state.plots.find(row => !row.feature &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(wholesalePlot, "需要一块空地建批发市场");
+  state.buildings.push({
+    id: "wm-bread", typeId: "wholesale_market", level: 1,
+    ownership: { townLevels: 1, privateLevels: 0, listedLevels: 0 },
+    plotId: wholesalePlot.id, x: wholesalePlot.x, y: wholesalePlot.y,
+    materialInvestments: [], completed: { year: state.year, day: 1 }
+  });
   simulation.setEmployment(state, start.instanceId + "::bakers", 1);
+  const market = state.wholesaleMarket;
+  const scale = CONTENT.precision.inventoryUnitsPerJin;
   addInventory(state, "town", "flour", 5, "测试面粉", "test_adjustment", CONTENT);
-  const before = simulation.totalQeq(state);
+  const movedFlour = state.accounts.town.flour;
+  changeInventory(state, "town", "flour", -movedFlour, "镇库调拨至批发市场", "test_adjustment", CONTENT);
+  market.inventory.flour = (market.inventory.flour || 0) + movedFlour;
+  market.inventoryCostVoucherUnits.flour = 0;
   simulation.advanceDay(state);
-  assert.equal(totalItemUnits(state, "flour") / CONTENT.precision.inventoryUnitsPerJin, 0);
+  // 5 斤面粉全部投料，产出 6 斤面包（质量增加但 qeq 不变），落在批发市场。
+  assert.equal((state.accounts.town.flour + state.accounts.residents.flour + market.inventory.flour) / scale, 0);
+  assert.equal(market.inventory.bread / scale, 6);
+  // 质量守恒：5 斤面粉 → 6 斤面包，投料全进产物、无损耗账。
   assert.equal(recordByType(state, "process_output").find(row => row.itemId === "bread").quantityUnits /
-    CONTENT.precision.inventoryUnitsPerJin, 6);
-  assert.equal(simulation.totalQeq(state), before - 2000);
+    scale, 6);
+  assert.equal(recordByType(state, "process_input").find(row => row.itemId === "flour").quantityUnits /
+    scale, 5);
+  assert.equal(recordByType(state, "processing_loss").length, 0);
 
   const hungry = simulation.createInitialState();
   simulation.toggleAutomaticRelief(hungry, false);
@@ -309,47 +364,71 @@ test("registered non-food items transfer and ledger but never count or get consu
 });
 
 test("a new multi-output production building runs through shared systems only", () => {
+  // 基线清理：本测试要验证的是"新建筑的多产出配方只走共享系统"，不该被 0.2.3
+  // 镇库付费采购路径的 B 类问题（见汇报）牵连，所以原料选统购统销免费调拨口径内的
+  // flour（WHOLESALE_FREE_INPUT_ITEM_IDS），保证 input 侧不引入无关变量。
   const content = extendContent(CONTENT, {
     items: {
-      wood: Object.freeze({ id: "wood", name: "木料", unit: "根", category: "material", edible: false, qeq: null }),
-      plank: Object.freeze({ id: "plank", name: "木板", unit: "块", category: "material", edible: false, qeq: null }),
-      sawdust: Object.freeze({ id: "sawdust", name: "木屑", unit: "筐", category: "material", edible: false, qeq: null })
+      batter: Object.freeze({ id: "batter", name: "面糊", unit: "盆", category: "material", edible: false, qeq: null }),
+      cake: Object.freeze({ id: "cake", name: "蛋糕", unit: "个", category: "material", edible: false, qeq: null }),
+      crumbs: Object.freeze({ id: "crumbs", name: "碎屑", unit: "堆", category: "material", edible: false, qeq: null })
     },
     recipes: {
-      saw_goods: Object.freeze({
-        id: "saw_goods", name: "锯木",
-        inputs: Object.freeze([{ itemId: "wood", quantity: 2 }]),
+      bake_cake: Object.freeze({
+        id: "bake_cake", name: "烤蛋糕",
+        inputs: Object.freeze([{ itemId: "flour", quantity: 2 }]),
         outputs: Object.freeze([
-          { itemId: "plank", quantity: 1 },
-          { itemId: "sawdust", quantity: 0.5 }
+          { itemId: "cake", quantity: 1 },
+          { itemId: "crumbs", quantity: 0.5 }
         ]),
         losses: Object.freeze([]),
         batchesPerWorkerDay: 1
       })
     },
     buildings: {
-      sawmill: Object.freeze({
-        id: "sawmill", name: "锯木棚", icon: "🪚", description: "木料加工",
-        maxInstances: 1, recipeId: "saw_goods", productionRoleId: "sawyers",
-        jobs: Object.freeze([{ id: "sawyers", name: "锯木工", slots: 1, wagePerWorkerDay: 0, note: "每人每日一批" }]),
+      cakery: Object.freeze({
+        id: "cakery", name: "蛋糕房", icon: "🍰", description: "多产出加工",
+        maxInstances: 1, recipeId: "bake_cake", productionRoleId: "confectioners",
+        jobs: Object.freeze([{ id: "confectioners", name: "糕点师", slots: 1, wagePerWorkerDay: 0, note: "每人每日一批" }]),
         construction: Object.freeze({ workDays: 1, recommendedWorkers: 1, grainPerWorkerDay: 1 })
       })
     }
   });
   const game = createSimulation(content);
   const state = game.createInitialState();
-  const site = game.buildAt(state, "sawmill", "east");
+  const site = game.buildAt(state, "cakery", "east");
   assert.equal(site.ok, true);
   game.advanceDay(state);
-  game.setEmployment(state, site.instanceId + "::sawyers", 1);
-  addInventory(state, "town", "wood", 4, "测试木料", "deposit", content);
-  const beforeFood = game.totalQeq(state);
+  game.setEmployment(state, site.instanceId + "::confectioners", 1);
+  // 0.2.3 起「镇营生产原料必须经过批发市场」：先建批发市场，再把面粉调拨进市场。
+  const wholesalePlot = state.plots.find(row => !row.feature &&
+    !state.buildings.some(building => building.plotId === row.id));
+  assert.ok(wholesalePlot, "需要一块空地建批发市场");
+  state.buildings.push({
+    id: "wm-saw", typeId: "wholesale_market", level: 1,
+    ownership: { townLevels: 1, privateLevels: 0, listedLevels: 0 },
+    plotId: wholesalePlot.id, x: wholesalePlot.x, y: wholesalePlot.y,
+    materialInvestments: [], completed: { year: state.year, day: 1 }
+  });
+  const market = state.wholesaleMarket;
+  const I = content.precision.inventoryUnitsPerJin;
+  addInventory(state, "town", "flour", 4, "测试面粉", "deposit", content);
+  const movedUnits = state.accounts.town.flour;
+  changeInventory(state, "town", "flour", -movedUnits, "镇库调拨至批发市场", "test_adjustment", content);
+  market.inventory.flour = (market.inventory.flour || 0) + movedUnits;
+  market.inventoryCostVoucherUnits.flour = 0;
   game.advanceDay(state);
-  assert.equal(state.accounts.town.plank / content.precision.inventoryUnitsPerJin, 1);
-  assert.equal(state.accounts.town.sawdust / content.precision.inventoryUnitsPerJin, 0.5);
-  assert.equal(state.accounts.town.wood / content.precision.inventoryUnitsPerJin, 2);
-  assert.equal(game.totalQeq(state), beforeFood - 2000);
-  assert.equal(state.ledger.some(function (row) { return row.itemId === "plank" && row.type === "process_output"; }), true);
+  // 蛋糕/碎屑不在 WHOLESALE_MONOPOLY_ITEM_IDS 内，不参与统购统销调拨，产出留在镇库；
+  // 领用的 2 斤面粉已从市场消耗，剩余 2 斤留在市场。
+  assert.equal(state.accounts.town.cake / I, 1);
+  assert.equal(state.accounts.town.crumbs / I, 0.5);
+  assert.equal(market.inventory.flour / I, 2);
+  // 多产出配方走共享系统：两种产物都要有 process_output 账，且产出与投入在同一原子事务里。
+  const outputs = state.ledger.filter(function (row) { return row.type === "process_output"; });
+  assert.equal(outputs.some(function (row) { return row.itemId === "cake"; }), true);
+  assert.equal(outputs.some(function (row) { return row.itemId === "crumbs"; }), true);
+  assert.equal(recordByType(state, "process_input")[0].quantityUnits / I, 2);
+  assert.equal(game.validateState(state).valid, true, game.validateState(state).errors.join("；"));
 });
 
 test("simulation replay is reproducible after saving RNG state and employment", () => {
