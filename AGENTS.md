@@ -73,3 +73,4 @@ GitHub：`dagasolo138-lgtm/maixiang-game`（main 分支）。一个需求一个�
 - `townMillWheatDemandUnits` 要算上市（listedLevels>0）的磨坊，否则公司磨坊永久断小麦。
 - 面粉/面包/盐 `generalStoreOnly` 是既定设计（0.2.2 起）：镇库/公司/住户不得直售居民，只能经综合商店。测试 fixture 须建商店。
 - 住户换券的粮券由"镇库现有余额支付"，测试须先 `issueGrainVouchers(state,"town",N)` 印制。
+- 综合商店 0 客容量（如无店员）时试进货给保底 20 斤/商品，否则永不进货空转；有客容量时仍按原公式。
