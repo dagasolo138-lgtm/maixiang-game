@@ -54,6 +54,12 @@
 - 按钮点击逻辑放 click 分支，别塞进 change 处理器（2026-10-05 真出过：建设页签点不动）。
 - `/tmp` 会被运行时不定期清空，重要中间文件放 `~/workspace/` 下。
 
+## d2 可用工具（除 bash/读写文件外）
+
+- 联网搜索：`~/workspace/skills/deepseek/bin/tavily_search.py --query "..." [--max-results 5]`（走用户自带 Tavily key，直接调，不用问）
+- 发版前必跑：`node --test tests/`、`node scripts/simulate.mjs`、`scripts/bundle-single.mjs` + `node --check` + 30 天 headless 冒烟
+- Git：本仓库 remote 配好（PAT 在系统 git 凭据里），可直接 `git push` 推分支；**推 main 前必须经 Kavi 验收**
+
 ## 版本
 
 当前：0.2.3 开发中（流通改革）。历史版本见 `CHANGELOG.md`。
