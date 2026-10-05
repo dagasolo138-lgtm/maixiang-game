@@ -2,7 +2,7 @@
   "name": "maixiang-village",
   "private": true,
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "scripts": {
     "test": "node --test",
     "build": "node scripts/build.mjs"

@@ -65,7 +65,10 @@ test("0.1.2店租对照：同店同销量只提高店租会增加实际成本并
 
 test("0.1.2就业兑换额度0/2/4严格约束实际存粮换券，工资福利不占额度", () => {
   const results=[];
-  for (const quota of [0,2,4]) { const s=cloneInitial(1205); const h=householdList(s)[0]; simulation.setEmploymentExchangeQuota(s,quota); const before=h.voucherUnits; const allowance=householdExchangeAllowanceUnits(s,h.id,CONTENT); if (allowance>0) simulation.issueGrainVouchers(s,`household:${h.id}`,allowance/I); results.push({quota,gain:h.voucherUnits-before}); }
+  for (const quota of [0,2,4]) { const s=cloneInitial(1205); const h=householdList(s)[0]; simulation.setEmploymentExchangeQuota(s,quota);
+  // 基线清理：住户换券的粮券由"镇库现有余额支付"（currency.js 设计），须先印制发行，镇库有余额换券路径才可用。
+  assert.equal(simulation.issueGrainVouchers(s,"town",100).ok, true);
+  const before=h.voucherUnits; const allowance=householdExchangeAllowanceUnits(s,h.id,CONTENT); if (allowance>0) simulation.issueGrainVouchers(s,`household:${h.id}`,allowance/I); results.push({quota,gain:h.voucherUnits-before}); }
   assert.equal(results[0].gain,0); assert.ok(results[1].gain>0); assert.ok(results[2].gain>=results[1].gain);
 });
 

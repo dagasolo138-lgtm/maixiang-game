@@ -100,27 +100,29 @@ test("0.1.9 能力上下文不进入state，真实成交仍按成交时余额重
 });
 
 test("0.1.9 同一家庭在同一市场轮次先收款再付款时仍按最新状态报价", () => {
+  // 基线清理：面包/面粉/盐只能经综合商店零售（consumer-market.js generalStoreOnly），住户不可直售；
+  // 本测试验证的是"同轮次内报价跟随最新状态"，改用住户可直售的木材，定价逻辑不变。
   const state = simulation.createInitialState({ seed: 19301 });
   const households = householdList(state).filter(row => householdIdleWorkers(row) > 0).slice(0, 2);
   assert.equal(households.length, 2);
   const [a, b] = households;
-  a.inventory.bread = 10 * I;
-  b.inventory.bread = 10 * I;
+  a.inventory.wood = 10 * I;
+  b.inventory.wood = 10 * I;
   syncResidentAggregates(state, CONTENT);
   const before = {
     aWheat: a.inventory.wheat,
     bWheat: b.inventory.wheat,
-    aBread: a.inventory.bread,
-    bBread: b.inventory.bread
+    aWood: a.inventory.wood,
+    bWood: b.inventory.wood
   };
-  const result = purchaseItemForResidents(state, "bread", 20 * I, 2, CONTENT, "双向家庭交易", {
+  const result = purchaseItemForResidents(state, "wood", 20 * I, 2, CONTENT, "双向家庭交易", {
     householdNeedsUnits: { [a.id]: 10 * I, [b.id]: 10 * I }
   });
   assert.equal(result.purchasedUnits, 20 * I);
   assert.equal(result.sellerRows.length, 2);
   assert.deepEqual(result.sellerRows.map(row => row.seller), [`household:${a.id}`, `household:${b.id}`]);
-  assert.equal(a.inventory.bread, before.aBread);
-  assert.equal(b.inventory.bread, before.bBread);
+  assert.equal(a.inventory.wood, before.aWood);
+  assert.equal(b.inventory.wood, before.bWood);
   assert.equal(a.inventory.wheat, before.aWheat);
   assert.equal(b.inventory.wheat, before.bWheat);
 });

@@ -58,7 +58,7 @@ function buyMissingPrivateInputs(state, household, definition, recipe, batches, 
         `${household.name}为经营${definition.name}从批发市场采购${content.items[input.itemId]?.name || input.itemId}`
       );
       if (purchase.boughtUnits > 0) creditHouseholdInventory(state, household.id, input.itemId, purchase.boughtUnits, content);
-      purchases.push({ itemId: input.itemId, requestedUnits: missingUnits, purchasedUnits: purchase.boughtUnits || 0, paidVoucherUnits: purchase.paidVoucherUnits || 0, reason: purchase.reason });
+      purchases.push({ itemId: input.itemId, requestedUnits: missingUnits, purchasedUnits: purchase.boughtUnits || 0, paidVoucherUnits: purchase.paidVoucherUnits || 0, reason: purchase.reason, sellerRows: purchase.sellerRows || [] });
       availableUnits = productionAvailableUnits(state, household, input.itemId, content);
       if (availableUnits < wantedUnits) shortages.push({
         itemId: input.itemId, missingUnits: wantedUnits - availableUnits, reason: purchase.reason

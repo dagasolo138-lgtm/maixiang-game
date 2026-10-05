@@ -1,0 +1,818 @@
+✔ clock stops within the same frame when a simulation step pauses it (1.422386ms)
+✔ a shortage on the final day of a year survives year-end rollover (67.274749ms)
+✔ events emitted before the daily increment use the visible calendar day (287.669462ms)
+✔ married couple count is aggregated across age cohorts (6.050178ms)
+✔ mobile build picking state is distinct from build preview state (1.616908ms)
+✔ fresh-game history starts on day 1 and harvest ledger matches harvest day (1172.269388ms)
+✔ construction metadata uses the visible calendar day (372.966451ms)
+✔ dismissed event bubble can be revealed again for a later event (0.641193ms)
+✔ settings error text is HTML-escaped (2.847807ms)
+✖ upgrade keeps the instance, plot, existing roster and production; new capacity starts vacant (327.128891ms)
+✔ demolition refunds only recorded materials once and preserves wages, arrears, stock and history (321.829962ms)
+✔ completed public-housing upgrade adds capacity and demolition is blocked if residents cannot fit (1177.472103ms)
+✔ in-progress buildings and upgrades cannot be demolished, legacy buildings have no inferred refunds (187.557569ms)
+✔ v4旧存档不再自动迁移 (2.737882ms)
+✔ building detail renders explicit upgrade and demolition confirmation actions (200.935814ms)
+✔ 可同时开工多个工程（不同地块），互不拒绝 (21.140804ms)
+✔ 多工程按各自人数同步推进，完工时间符合 workRequired/workers (678.14352ms)
+✔ 某工程完工后其工人回归待业，其他工程不受影响 (185.524356ms)
+✔ 同地块第二个工程被拒绝；地块冲突在数组内互斥 (229.857055ms)
+✔ 升级工程与新建工程可并行 (203.014367ms)
+✔ 旧存档 state.project 单对象幂等迁移为数组后行为正常 (53.868283ms)
+✔ 劳力不足时开工人数受约束，调整人数遵守待业余量 (52.707058ms)
+✔ 并行工程的建筑工工资按各自投入人数与相同日薪结算 (14.645628ms)
+✔ 并行工程各自保留材料隔离记录，完工后按各自工程结算 (5.238949ms)
+✔ 开荒规则：初始 4000 亩、上限 100000 亩、每 100 亩 100 工日 (7.680376ms)
+✔ 开荒成本：工日按亩数换算，工资由镇库承担并留下明确扣款记录 (30.097638ms)
+✔ 开荒工日消耗：投入人数分摊工日，人数不超过工日总量，日结后清零 (34.380511ms)
+✔ 开荒亩数上限 clamp：单次与累计都不超过 100000 亩 (12.729069ms)
+✔ 亩数提升后耕种人数上限按 10 亩/人 提升，并可直接安排到新上限 (16.992763ms)
+✔ 耕地图形固定大小：开荒不改变地图麦田所占格数与坐标 (3.456221ms)
+✔ 镇库不足时开荒工资只支付可支付部分，未付部分不形成居民债务而单独记录 (1.962808ms)
+✔ 开荒后存档往返与校验保持一致 (8.456382ms)
+✔ expanded map permits separate same-type buildings and job rosters (601.177334ms)
+✔ wage arrears keep their old amount and pay separately from current wages (35.344779ms)
+✔ unemployment benefit is limited to idle workers, can be disabled, and creates no debt (4693.325905ms)
+✖ bread barter is atomic, price sensitive, uses existing stock and protects thirty days (3.348269ms)
+✖ mill to bakery accounting counts sold stock once and keeps unsold cost in inventory (447.598111ms)
+✔ v2旧存档不再自动迁移 (2.385433ms)
+✔ fifteen-year headless run keeps age, job and inventory ledgers consistent (24771.956852ms)
+✔ 伐木场与盐场按岗位人数生产；行业工资不混入面包链 (529.019339ms)
+✖ 年度盐需求精确；六名盐工连续生产365日的物理产能覆盖居民需求 (3672.407052ms)
+✖ 食盐原子交易守恒，单独消费且居民粮储线会限购 (3.277083ms)
+✔ 公租房只在开工时扣木材；按真实入住计租并保护口粮储备 (454.489592ms)
+✔ v3旧存档不再自动迁移 (2.460616ms)
+✔ 可挖人数：待业>0 时 poachable 为 0；待业=0 时按出价统计低薪在岗者 (123.963568ms)
+✔ 手动增员：待业=0 且缺口>0 时从低薪岗位挖人（用户 0.1.11 O8 行为） (77.214379ms)
+✔ 挖人不碰农人：农人不计入 poachable (45.713473ms)
+✔ deployed v1 engine baseline remains reproducible (40.93778ms)
+✔ v1 one-year demographic and building replay matches recorded behavior (10.607763ms)
+✔ map display model follows real instance IDs, job rows and plot occupancy (4.550054ms)
+✔ map presentation includes the full land grid and restrained southern/western scenery (0.921094ms)
+✔ canvas backing dimensions respect CSS size and high-density screens (0.27959ms)
+✔ 手机建造：材料不足时直接进入确认页、显示缺口并禁用开工，预览不扣料 (47.434508ms)
+✔ 手机建造：材料充足时确认开工只扣一次，重复确认不会再次扣料 (13.008119ms)
+✔ 手机建造：重新选址与取消都保留正常导航语义 (0.417206ms)
+✔ 手机建造确认操作栏固定到底部并适配安全区域 (3.499817ms)
+✔ numeric drafts accept complete decimals, preserve intermediate text, and explain invalid submissions (2.39644ms)
+✔ numeric fields use text drafts, explicit confirmation, and mobile decimal/integer keyboards (0.749456ms)
+✔ a focused numeric field defers panel reconstruction while 16x simulation advances (120.794749ms)
+✔ submitted employment, wage, price, and policy settings survive save and reload (26.897051ms)
+✔ 农业税0%、50%、80%与年中调税按农事日平均分粮 (4668.710511ms)
+✔ 经营权成交守恒、保留总等级与总就业，镇营工资继续只按镇营工人支付 (11.625723ms)
+✔ 无正估值、超过接受价或居民90天口粮储备不足时拒绝经营权交易 (8.64159ms)
+✖ 民营盐场按需求渐进用工并按实物税分账，工资债务不由镇库承担 (12.345844ms)
+✖ 同一盐场部分镇营、部分民营共享居民需求池且不重复成交 (261.90322ms)
+✔ 民营产出税额余数跨小批次累计而不漏税 (13.14216ms)
+✔ 农业税设置和经营权与经营税在保存恢复后保留 (63.590676ms)
+✔ v5旧存档不再自动迁移 (2.138512ms)
+✔ 政策与建筑详情展示税率、经营权预览及民营经营状态 (26.23134ms)
+✔ r02 遗留扫描区分 r01 主档、旧单档、历史备份和目录，不读取无关键 (1.779613ms)
+✔ r02 localStorage 写入探测必须完成写入、读回、删除，不留下探测键 (1.149486ms)
+✔ r02 localStorage 写入被配额拒绝时探测失败，不能仅因读取成功判定恢复 (0.457408ms)
+✔ old local saves are detected without automatic migration or deletion (34.467041ms)
+✔ unreadable local save stays untouched (1.268845ms)
+✔ 旧存档拒绝迁移，当前版本仍补齐新增内容项 (53.38063ms)
+✔ export and import round-trip a resumable paused save and preserve replaced data (5212.248188ms)
+✔ auto-save and reload retain each workshop's assigned people through year end (2110.099819ms)
+✔ clock starts paused, pauses without advancing, and equal simulated days ignore speed (1056.628081ms)
+✔ 0.1.4 v11 存档按已完成改革接入，旧兑付储备释放回镇库并提供兼容银行入口 (21.300604ms)
+✔ 旧单存档安全接入，新游戏与刷新切回原局 (195.917126ms)
+✔ 另存、导出导入、删除当前局后保持选择界面 (188.823591ms)
+✔ 异常写入保留上一版本；损坏主槽回退自动备份 (83.171868ms)
+✔ 损坏文件和目录不覆盖可读存档 (17.848459ms)
+✔ 旧单存档损坏时原字节保留，仍能开启新局 (4.20107ms)
+✔ 空存储启动不落盘；确认新局后只写主槽，不提前复制同内容自动备份 (3.948651ms)
+✔ 首次主槽写入失败不留下目录索引或半成品槽 (3.804965ms)
+✔ 目录写入失败会回滚刚写的新槽，且不会生成首次备份 (3.791906ms)
+✔ 存储异常区分配额、访问拒绝、序列化、校验与程序错误 (17.723681ms)
+✔ initial population, jobs and both food accounts match the v1 start (10.110026ms)
+✖ full crop labor yields 1.6 million jin at day 274; town tax reaches town (1321.020369ms)
+✔ 365-day consumption is exact; the annual harvest and report are not duplicated (2848.723033ms)
+✔ agricultural output reflects labor put in before the harvest (1258.733522ms)
+✔ wages, relief and construction start preserve total food until workers are paid day by day (7.100586ms)
+✔ construction consumes worker-days, releases jobs, and rejects duplicate sites (236.21867ms)
+✔ staffed mill and bakery roles survive construction completion and annual reconciliation (1868.7951ms)
+✔ real worker shortage releases only the necessary roles and names the affected instances (363.095135ms)
+✖ processing is atomic; wages settle separately even when materials are short (283.867161ms)
+✖ bread mass increase keeps the same qeq and shortage never makes balances negative (189.953348ms)
+✔ recipe gates expose missing workers and materials and enforce job caps (184.926066ms)
+✔ registered non-food items transfer and ledger but never count or get consumed (60.428055ms)
+✖ a new multi-output production building runs through shared systems only (35.998531ms)
+✔ simulation replay is reproducible after saving RNG state and employment (1470.904071ms)
+✔ 5-year population history reconciles births, deaths, age limits, jobs and stocks (7850.830782ms)
+✔ first-year labor ledger counts survivors crossing ages 17 and 64 exactly once (1360.959779ms)
+✔ 居民主食需求按固定份额拆分，小麦、面粉、面包都会购买 (123.579472ms)
+✔ 主食购买采用净需求：已有库存会扣减当日购买量 (68.787011ms)
+✔ 面包需求份额保持弹性函数原样，旧入口按固定份额购买 (0.380612ms)
+✔ 修缮木材买入后即记为消耗，不在居民库存里堆积 (55.415887ms)
+✔ 居民原有木材库存不会被修缮消耗动用 (9.311567ms)
+✔ 市场没有木材库存时不产生虚假消耗 (352.349674ms)
+✔ 镇库木材属于建设储备，居民修缮不向镇库购买 (2.855129ms)
+✔ 0.1.1真实面包链：采购、生产、批发、零售分别记账且实物与粮券守恒 (411.277416ms)
+✔ 0.1.1多家企业共享同一需求，过剩库存后按周期缩减计划与用工 (9.357495ms)
+✔ 0.1.1高工资、高生产税和原料涨价都会压低利润，经营反馈能指出主要成本问题 (3.467238ms)
+✔ 0.1.1新企业可试生产；缺订单停产后，有预算木材订单会重新形成生产计划 (11.461095ms)
+✔ 0.1.1木材生产不等于销售：有订单可生产，但没有实际采购就不确认收入 (5.783176ms)
+✔ 0.1.1综合商店按真实客流增员，且新店员满30日后才允许缩员 (6.321555ms)
+✔ 0.1.1本金、未售库存和债务继续分开：本金不成利润，停业不抹掉既有欠薪 (5.205069ms)
+✔ 0.1.1保存恢复保持家庭、岗位、库存、股份与经营计划一致，使用v12货币改革结构 (32.38922ms)
+✔ 0.1.1综合商店售价固定为批发价加20% (3.865476ms)
+✔ 0.1.1修正：木材订单被现有企业库存完全覆盖时不再追加生产 (17.2635ms)
+✔ 0.1.1修正：木材订单部分被库存覆盖时只生产剩余缺口 (3.068609ms)
+✔ 0.1.1修正：木材订单取消后立即清零生产缺口 (24.716806ms)
+✔ 0.1.1修正：木材订单由镇库库存补足或完成后不再安排生产 (3.397934ms)
+✔ 0.1.10 自动保存单飞：保存中变化合并为一次最新快照，旧成功不清新dirty (2.998814ms)
+✔ 0.1.10 保存失败不立即无限重试；新修订或手动强制可恢复 (0.513641ms)
+✔ 0.1.10 切档/新建/删除屏障等待在途保存，旧槽任务不会在操作后复活或写入新槽 (0.548945ms)
+✔ 0.1.10 新v2容器只持久化一个规范state文本，并兼容读取v1容器 (150.906668ms)
+✔ 0.1.10 校验失败仍回退上一份可读备份，坏主档不覆盖备份 (44.363405ms)
+✔ 0.1.10 v14年报迁移为年度摘要，不嵌套公司店铺日史与历年分红史 (22.905064ms)
+✔ 0.1.10-r02 就业面板的公司岗位读取公司工资，并只提交到对应公司 (61.342669ms)
+✖ 0.1.10-r02 设置页显示唯一构建号和当前页面地址 (1.677289ms)
+✔ 0.1.10-r02 遗留归档失败不阻断现有IndexedDB读取或新建，原localStorage保留 (98.814073ms)
+✔ 0.1.10-r02 IndexedDB自身不可写时真实写入探测仍失败，不假报恢复 (13.5485ms)
+✖ 0.1.10-r03 民营磨坊会从镇库采购小麦，同时保留业主家庭口粮储备 (23.805647ms)
+✖ 0.1.10-r03 私营面包房会购买上游面粉，不要求老板家里预先囤面粉 (5.684338ms)
+✔ 0.1.10-r03 民营停工原因明确指出缺哪种原料 (3.104132ms)
+✖ 0.1.10-r03 完整日结中民营磨坊→面包房采购链能连续运转 (62.038184ms)
+✔ 0.1.10-r03 银行、交易所和公租房岗位容量与实际工资一致，旧档缺工资字段也不付0薪 (8.585105ms)
+✖ 0.1.10-r05 工资输入在手机 change/失焦时直接提交，构建号可识别 (0.387482ms)
+✔ 0.1.10-r03 银行、交易所、政务厅、警察局、商业街、面包房使用不同地图绘制签名 (1.548085ms)
+✔ r04 镇库余额充足时当日镇营工资到账且不新增欠薪；50%混合工资也可完整结算 (16.606594ms)
+✔ r04 商业街员工只由店铺支付一次；镇库清理r03聚合幽灵欠薪且不碰其他欠薪 (27.073115ms)
+✔ r04 单店可配置4商人/20店员，茶馆需求与服务容量按新规则扩容 (12.634518ms)
+✔ r04 服务收入只来自真实居民消费；无支付能力时记录未成交而不虚增收入 (14.31407ms)
+✔ r04 兑付储备为0仍可直接换券；小麦进入镇库且自动换券与直接换券使用同一汇率 (4.410475ms)
+✔ r04 过渡期50%混合支付可同时用自动换券与小麦支付，不产生储备或虚空货币 (3.129881ms)
+✔ r04 旧存档兑付储备只迁移一次回镇库，商业街聚合幽灵欠薪同时安全清理 (28.280449ms)
+✔ r04 公司估值不受库存直接影响；相同利润下投入资本利润率会改变估值 (0.898169ms)
+✔ r05 粮券必须先印入镇库；换券只转移镇库已有粮券，镇库可自由支出 (10.840593ms)
+✔ r05 旧档无债权人的店铺工资欠款会归属并偿还，不再永久卡住账本 (24.693291ms)
+✔ r05 公司旧档无债权人欠薪即使当前岗位为0也能偿还，不再永久阻塞分红 (12.221707ms)
+✔ r05 跨年立即归档第365天公司利润，新年Day0估值不会漏掉最后一天 (2.540456ms)
+✔ r06 过渡期家庭从公司直购也必须保护基本口粮 (12.209809ms)
+✔ r06 合法的4商人20店员商业街状态必须能通过存档校验并保存 (19.295944ms)
+✔ r06 上市公司划回一级后必须同步收缩未售出报价，不能制造不可保存状态 (25.277658ms)
+✔ r07 镇营历史总欠薪即使原岗位已消失，也必须恢复家庭债权并用镇库余额偿还 (49.543917ms)
+✔ r07 已进入清算的旧店铺总欠薪必须恢复债权并偿清，不能反复吞业主补资 (18.674901ms)
+✔ r07 人口归零家庭持有的上市股份仍必须可由镇库回购，避免永久锁死公司清算 (34.759491ms)
+✔ 居民购买面粉、面包、盐只认综合商店，综合商店按批发价固定加价20% (10.898399ms)
+✔ 综合商店50店员、2000客流上限，店员未满30日不能解雇 (29.179609ms)
+✔ 镇营生产原料必须经过批发市场；固定调拨后才可生产 (5.667853ms)
+✔ 学堂100儿童上限且学费可调；饭店每餐耗2斤小麦并抵1人当日口粮 (16.941687ms)
+✔ 民营、公司与综合商店的原料采购统一经过批发市场 (24.83944ms)
+✔ 0.1.2农业税对照：只改变税率，秋收家庭实物收入与镇库税粮方向相反 (2804.94698ms)
+✔ 0.1.2工资对照：提高工资增加员工应收与雇主成本，资金不足形成具体家庭欠薪 (20.646983ms)
+✔ 0.1.2失业金对照：实际失业劳动力获得家庭到账，镇库不足明确显示未覆盖人数 (27.81523ms)
+✔ 0.1.2店租对照：同店同销量只提高店租会增加实际成本并压低商人经营结果 (45.298289ms)
+✖ 0.1.2就业兑换额度0/2/4严格约束实际存粮换券，工资福利不占额度 (10.919401ms)
+✔ 0.1.2全镇有粮但个别家庭缺粮时，自动救济按户到达而不是被全镇平均掩盖 (11.097108ms)
+✔ 0.1.2家庭有券无食物时先按1:1正常兑付，避免虚假饥饿且不消耗就业换券额度 (7.950532ms)
+✔ 0.1.2欠薪偿付进入原债权家庭，换岗后不把旧债转给后来上岗者 (11.709878ms)
+✔ 0.1.2家庭生活账区分收入、生活支出、消费、投资与资产兑换，不重复记账 (6.575107ms)
+✔ 0.1.2保存恢复保留家庭生活、舒心值、债权与政策记录，不伪造旧历史 (51.278001ms)
+✔ 0.1.2-r02家庭近期汇总从0初始化：空历史、缺字段和多历史日均返回有限金额 (14.570786ms)
+✔ 0.1.2-r02足额粮券：5人无粮家庭自费兑到14日目标，不领取免费口粮 (5.716717ms)
+✔ 0.1.2-r02部分粮券：先注销自有粮券兑付，再由镇库只补剩余救济缺口 (2.673596ms)
+✔ 0.1.2-r02无粮券：不发生兑付，镇库按14日目标承担全部免费救济 (2.193404ms)
+✔ 0.1.2-r02镇库救济粮不足：只拨实际库存并保留剩余缺口，守恒不透支 (1.753895ms)
+✔ 0.1.2-r02手动与自动救济共用资格判断：部分粮券场景得到相同兑付与救济结果 (3.88809ms)
+✔ r03 商业街商人岗位失效后暂停经营，可保存、读取并继续一天 (110.438363ms)
+✔ r03 读取当前版本 paused 存档时清理残留店员岗位，再执行正常校验 (20.192109ms)
+✖ r03 负债店铺停业进入待清算，停止新增费用，补资按工资→租金→税款清偿后才返还资产 (9.023884ms)
+✖ r03 镇库销售统一同步移除库存成本：企业连续采购、店铺进货、居民购买与失败交易 (3.493017ms)
+✔ r03 建设预览与实际分配共用真实就业：5名待业只安排5人，0待业显示等待用工 (93.813873ms)
+✔ r04 商人岗位失效暂停时立即遣散店员，旧欠薪保留，保存读取后继续一天一致 (107.648092ms)
+✔ r04 读取已有 paused 存档会清理残留店员岗位，不绕过校验 (22.631624ms)
+✔ r04 每日口粮只吸收最小库存单位取整残差，planFoodTransfer 转账语义保持不变 (0.526581ms)
+✔ r04 真实库存不足仍保留正缺口，极小缺口显示不足0.01斤而不是0斤 (10.422655ms)
+✔ r04 连续多日消费按实际库存扣减守恒，取整超额只在需要时产生 (7.662008ms)
+✔ r04 转账与自动救济继续使用不超额的 planFoodTransfer 语义 (5.558369ms)
+✔ 0.1.3 新局只保留 cohort + 家庭年龄段 + 家庭岗位三层聚合权威 (14.413911ms)
+✔ 固定种子五年推进中家庭三年龄段始终与 cohort 一致，就业不超过劳动力 (8810.87645ms)
+✔ 家庭劳动力减少时稳定释放超额岗位；新增成年劳动力可再次就业 (4.258997ms)
+✔ 换岗后旧欠薪仍属于形成欠薪时的原债权家庭 (6.363518ms)
+✔ 无人家庭停止生活消费和福利，但资产与应收欠薪继续保留 (23.416563ms)
+✖ v10→v12 迁移以 cohort 校准人口、保留资产店铺债权并接入货币改革；失败时原存档不变 (71.865045ms)
+✔ 0.1.5 新局从小麦制度开始，粮券与储备均为0；无银行不能改革 (13.503283ms)
+✔ 银行能在无粮券新局施工，建筑工资使用小麦支付 (458.34946ms)
+✔ 0%、30%、100% 应付构成由统一支付层固定形成 (5.120111ms)
+✔ 过渡期缺券由付款人自己的小麦补付；两种资产都不足时不产生半笔交易 (2.680336ms)
+✔ 全粮券阶段新交易不自动回退小麦；旧粮食债务仍按原构成偿付 (2.246655ms)
+✔ r05 镇库直接印制粮券且不建立独立兑付储备 (3.485635ms)
+✔ 居民换券开关只控制粮食换券，不影响已有粮券兑回 (4.644095ms)
+✔ 结束过渡期不能被无交易绕过；连续7日真实粮券支付后才可确认 (6.716679ms)
+✔ 改革启动后银行不可拆除 (2.17698ms)
+✔ 农业目标与实际在岗分离：退休缺员自动补足、无人可补保留缺员、主动减员不反弹 (37.266967ms)
+✔ 真实年度人口结算释放退休农人后，会在下一用工快照前按目标自动补员 (7.721448ms)
+✔ 综合商店三种商品共用接待能力，库存与成本按商品独立 (22.830592ms)
+✔ 服务需求在店铺间共享且家庭共用一份服务预算，成交后不会被第二家重复满足 (19.694833ms)
+✔ 服务交易完整复用小麦、30%混合、全粮券三阶段统一支付层 (19.282423ms)
+✔ 服务成交、店员工资、店租与利润税均形成真实资金流 (21.065722ms)
+✔ v12旧粮店/面包店/盐铺迁移为综合商店并保留ID、资产、债权和历史，农业目标取迁移时实际人数 (15.118518ms)
+✔ 同人口同种子下，可支配收入提高会增加服务消费与可持续服务就业，但不会强制吸收全部失业 (744.65974ms)
+✔ 成立公司与上市彻底分离，未上市公司可在粮食阶段独立持有资金并经营 (20.681635ms)
+✔ 没有交易所或未完成货币改革时不能上市；完成后代码与整除规则生效 (22.219134ms)
+✔ 部分认购可分批出售，售股款只进镇库且总股本守恒 (142.734803ms)
+✔ 每级等量股份：划入增发给镇库，镇库股份不足时禁止划回，回购后可划回 (20.484228ms)
+✔ 360日周转金按目标经营规模计算，停工不会把储备目标压成零 (14.958418ms)
+✔ 年度利润只在新年首日结算上一年，保存恢复不会重复结算 (144.97564ms)
+✔ 365日实际利润估值包含停工日，不只按有生产日期年化 (2.515558ms)
+✔ 公司经营资金在过渡期复用统一混合支付层，不另写粮券专用路径 (2.059393ms)
+✔ 有上市公司时交易所禁止拆除 (2.506986ms)
+✔ v13旧上市公司迁移为v14上市状态，不可整除股本用整数拆股保持持股比例 (11.586463ms)
+✔ r02 历史镇营欠薪在岗位归零后仍先偿付原家庭，并准确减少改革缺券记录 (34.666501ms)
+✔ r02 历史欠薪覆盖部分偿还、退休释放岗位与建筑撤销后继续追偿 (13.651174ms)
+✔ r02 股票认购与界面估值共用日历日实际利润窗口，停工日不会被排除 (83.813622ms)
+✔ r02 无经营记录仍可挂牌且认购明确显示暂无实际业绩 (24.949425ms)
+✔ r02 360日周转金尊重显式0人目标，目标3人即使缺料停工仍按3人计划保留 (2.660346ms)
+✔ r02 年度居民利润分配经过完整新年日结进入日/近期/年度/累计收入，并能形成后续服务预算 (103.740273ms)
+✔ r02 回购与上市公司等级变动预览不改状态，并给出执行所需关键结果 (3.144753ms)
+✔ r02 操作面板使用预览确认并在确认前重算；沿用移动端44px按钮与安全区操作栏 (14.085847ms)
+✔ 0.1.8 当前面板视图与全量视图对实际面板渲染字段保持一致 (348.821604ms)
+✔ 0.1.8 selector按面板读取不修改游戏状态，且岗位索引与原查询结果一致 (56.381247ms)
+✔ 0.1.8 公司与店铺摘要对缺省旧字段只读归一化，不回写游戏状态 (31.433715ms)
+✔ 0.1.8 家庭观察窗与近期汇总口径相同时直接复用结果且数值一致 (122.214902ms)
+✔ 0.1.8 Dashboard运行期缓存：静止帧只构造一次，失效、面板、速度和换档会刷新 (3.329932ms)
+✔ 0.1.8 地图签名覆盖状态文字、等级、选择和施工进度 (0.664859ms)
+✔ 0.1.8 动画帧不再直接构造Dashboard，数字草稿不进入经济视图缓存键 (3.976793ms)
+✔ 0.1.9 支付能力上下文在小麦、混合、全粮券阶段与逐次报价完全一致 (19.785088ms)
+✔ 0.1.9 二分搜索只复用搜索期间不变能力，最大可付整数结果不变 (7.312154ms)
+✔ 0.1.9 能力上下文不进入state，真实成交仍按成交时余额重新核对 (3.807489ms)
+✖ 0.1.9 同一家庭在同一市场轮次先收款再付款时仍按最新状态报价 (4.983655ms)
+✔ 0.2.3 批发市场做市商：收购价与售价分离且可分别调整，默认价符合用户口径 (18.275781ms)
+✔ 0.2.3 收购价随库存自动下调（价格反馈），防止大公司抽干批发市场粮券 (2.412964ms)
+✔ 0.2.3 公司/民营从批发市场采购原料并支付粮券（统一入口） (20.353041ms)
+✔ 0.2.3 统购统销：镇营产成品无偿调拨入市，销售利润留在批发市场 (7.056319ms)
+✔ 0.2.3 统购统销：批发市场统一发放镇营建筑工资，镇库不再承担 (7.992966ms)
+✔ 0.2.3 统购统销：镇营原料（磨坊小麦、面包房面粉）内部无偿调拨 (6.515827ms)
+✔ 0.2.3 综合商店动态加价：目标利润率默认20%，售价=进货价×(1+目标) (5.830618ms)
+✔ 0.2.3 动态加价：目标利润率可调，且售价下限不低于进货价 (4.208992ms)
+✔ 0.2.3 动态加价：单次涨跌幅限制 ±10%，且不低于进货价 (0.283226ms)
+✔ 0.2.3 动态加价：7天复核，偏离目标超过±3%才调价 (4.698317ms)
+✔ 0.2.3 动态加价：需求弹性——售价每贵10%购买量降5% (4.574881ms)
+✔ 0.2.3 动态加价：连续30天亏损进入促销模式并向玩家预警 (3.361349ms)
+✔ 0.2.3 动态加价面板：每商品一行 + 商店总览 (4.290975ms)
+✔ 0.2.3 动态加价不影响其他小店（保持固定加价） (3.443292ms)
+✔ 0.2.3 批发市场现金账户纳入粮券守恒，注资不凭空造券 (3.596141ms)
+✔ 0.2.3 存档兼容：新字段一律 ||= 初始化，SAVE_VERSION 保持 v15 (3.254578ms)
+✔ 0.2.3 流通改革端到端：建市场+商店跑30天，状态与粮券守恒 (342.110495ms)
+✔ r04 粮券发行、转账与兑回严格守恒且不再建立兑付储备 (9.54683ms)
+✔ 公司等级、工人与产能只归属一个经营部分，升级前后总等级不重叠 (16.381295ms)
+✖ 磨坊企业采购居民小麦、向面包房企业供粉、面包销售后才确认收入和利润 (51.934037ms)
+✔ 股份出售只把居民粮券转给镇库；高价降低认购，股份总数恒定 (77.599337ms)
+✔ 年度分红不超过未分配利润和可支付现金，未偿清欠薪阻止分红且同年不重复 (8.531274ms)
+✔ v6旧存档不再自动迁移 (5.8583ms)
+✔ 经营面板分开公司成立与交易所上市，并保留安全区固定操作栏 (52.048919ms)
+✔ 镇库可用粮券时可从上市伐木企业采购施工木材，成交后再一次性开工扣料 (15.947213ms)
+✖ 多个同价卖家共享同一居民需求池，成交总量不重复且轮换避免后序卖家长期饿死 (4.574551ms)
+✔ 上市企业缺工停摆日不计入经营观察天数 (2.091051ms)
+✔ 上市企业缺料停摆日不计入经营观察天数 (1.836228ms)
+✔ 上市企业正常生产日才累计经营观察天数 (2.972214ms)
+✔ 企业初始材料投入同步转移镇库库存成本基数 (1.670789ms)
+✔ 上市企业实物生产税入镇库时同步转入对应库存成本基数 (1.863258ms)
+✔ 新版默认价下四行业满产满销人均日利润符合校验值 (8.778526ms)
+✖ 面粉调价后企业真实采购与磨坊经营权估值读取同一当前价 (21.792604ms)
+✔ 木材无需求、有需求、库存不足和资金不足均为有限估值并给出明确原因 (33.713059ms)
+✔ 木材调价后公共建设采购与经营权估值同价，民营和上市卖家共享同一需求 (94.284419ms)
+✔ v7旧存档不再自动迁移 (5.211228ms)
+✔ 0权重家庭不参与库存分配，余数只给有资格家庭且总量严格守恒 (10.983178ms)
+✔ 农业收获实际路径只按正劳动权重分粮，250户复现严格增加100斤 (28.033197ms)
+✔ 粮券加权分配保持0权重，整数余数只落到有资格接收者 (7.835129ms)
+✔ 总权重为0时明确拒绝分配且不修改家庭库存或粮券 (3.645546ms)
+✔ 店铺追加2000粮券本金不形成未分配利润，也不会在结算时被分配 (20.268735ms)
+✖ 正式版本号与存档结构版本独立：应用0.2.1，存档结构v15 (39.045048ms)
+✔ v16初始家庭保持1000人口、600劳动力和居民总财富汇总一致 (46.86902ms)
+✖ 就业换券额度按实际在岗成员每日生成，换岗不刷新，收入不占额度 (10.367693ms)
+✔ 公务员与警察需求按全镇人口计算，1000人为2、1001人为3且不按建筑重复 (13.093988ms)
+✔ 商业街每级2铺、综合商店每铺最多50店员且所有岗位占用真实唯一劳动力 (59.31253ms)
+✔ 店铺未售库存不计销售成本，正利润征税、亏损不征税 (20.427252ms)
+✔ 店铺欠薪欠租会保留，长期无法经营自动停业并释放商人和店员 (14.966049ms)
+✔ 家庭、职业和店铺归属可保存恢复且恢复后仍通过一致性校验 (29.18024ms)
+ℹ tests 292
+ℹ suites 0
+ℹ pass 266
+ℹ fail 26
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 101937.656523
+
+✖ failing tests:
+
+test at tests/building-development.test.js:13:1
+✖ upgrade keeps the instance, plot, existing roster and production; new capacity starts vacant (327.128891ms)
+  TypeError: Cannot read properties of undefined (reading 'todayOutputUnits')
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/building-development.test.js:33:48)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at tests/feature-round.test.js:111:1
+✖ bread barter is atomic, price sensitive, uses existing stock and protects thirty days (3.348269ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0.2 !== 0.25
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/feature-round.test.js:118:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0.2,
+    expected: 0.25,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/feature-round.test.js:160:1
+✖ mill to bakery accounting counts sold stock once and keeps unsold cost in inventory (447.598111ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  NaN !== 64
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/feature-round.test.js:177:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: NaN,
+    expected: 64,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/forestry-housing-salt.test.js:62:1
+✖ 年度盐需求精确；六名盐工连续生产365日的物理产能覆盖居民需求 (3672.407052ms)
+  TypeError: Cannot read properties of undefined (reading 'producedUnits')
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/forestry-housing-salt.test.js:96:66)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/forestry-housing-salt.test.js:105:1
+✖ 食盐原子交易守恒，单独消费且居民粮储线会限购 (3.277083ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 30000
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/forestry-housing-salt.test.js:113:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 30000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/ownership-tax.test.js:89:1
+✖ 民营盐场按需求渐进用工并按实物税分账，工资债务不由镇库承担 (12.345844ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/ownership-tax.test.js:96:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/ownership-tax.test.js:113:1
+✖ 同一盐场部分镇营、部分民营共享居民需求池且不重复成交 (261.90322ms)
+  AssertionError [ERR_ASSERTION]: 镇库与居民直售库存都可参与同一需求池
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/ownership-tax.test.js:145:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/simulation.test.js:38:1
+✖ full crop labor yields 1.6 million jin at day 274; town tax reaches town (1321.020369ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  960000 !== 800000
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/simulation.test.js:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 960000,
+    expected: 800000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/simulation.test.js:215:1
+✖ processing is atomic; wages settle separately even when materials are short (283.867161ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'no_materials'
+  - 'limited_materials'
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/simulation.test.js:226:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'no_materials',
+    expected: 'limited_materials',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/simulation.test.js:244:1
+✖ bread mass increase keeps the same qeq and shortage never makes balances negative (189.953348ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  5 !== 0
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/simulation.test.js:253:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/simulation.test.js:311:1
+✖ a new multi-output production building runs through shared systems only (35.998531ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/simulation.test.js:348:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v0110-r02-targeted.test.js:163:1
+✖ 0.1.10-r02 设置页显示唯一构建号和当前页面地址 (1.677289ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '0203-r01-b001'
+  - '0110-r07-b001'
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v0110-r02-targeted.test.js:164:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0203-r01-b001',
+    expected: '0110-r07-b001',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v0110-r03-private-ui-employment.test.js:37:1
+✖ 0.1.10-r03 民营磨坊会从镇库采购小麦，同时保留业主家庭口粮储备 (23.805647ms)
+  AssertionError [ERR_ASSERTION]: 缺小麦：尚未建成批发市场
+  + actual - expected
+  
+  + 'no_materials'
+  - 'ready'
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v0110-r03-private-ui-employment.test.js:50:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'no_materials',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v0110-r03-private-ui-employment.test.js:62:1
+✖ 0.1.10-r03 私营面包房会购买上游面粉，不要求老板家里预先囤面粉 (5.684338ms)
+  AssertionError [ERR_ASSERTION]: 缺小麦：尚未建成批发市场
+  + actual - expected
+  
+  + 'no_materials'
+  - 'ready'
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v0110-r03-private-ui-employment.test.js:76:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'no_materials',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v0110-r03-private-ui-employment.test.js:104:1
+✖ 0.1.10-r03 完整日结中民营磨坊→面包房采购链能连续运转 (62.038184ms)
+  AssertionError [ERR_ASSERTION]: 完整日结中民营磨坊应能采购小麦并生产
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v0110-r03-private-ui-employment.test.js:127:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/v0110-r03-private-ui-employment.test.js:167:1
+✖ 0.1.10-r05 工资输入在手机 change/失焦时直接提交，构建号可识别 (0.387482ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '0203-r01-b001'
+  - '0110-r07-b001'
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v0110-r03-private-ui-employment.test.js:168:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0203-r01-b001',
+    expected: '0110-r07-b001',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v012-policy-household-life.test.js:66:1
+✖ 0.1.2就业兑换额度0/2/4严格约束实际存粮换券，工资福利不占额度 (10.919401ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(results[1].gain>0)
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v012-policy-household-life.test.js:69:43)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/v012-r03-stability.test.js:104:1
+✖ r03 负债店铺停业进入待清算，停止新增费用，补资按工资→租金→税款清偿后才返还资产 (9.023884ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  60000 !== 30000
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v012-r03-stability.test.js:122:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 60000,
+    expected: 30000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v012-r03-stability.test.js:174:1
+✖ r03 镇库销售统一同步移除库存成本：企业连续采购、店铺进货、居民购买与失败交易 (3.493017ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 30000
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v012-r03-stability.test.js:186:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 30000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v013-aggregate-model.test.js:197:1
+✖ v10→v12 迁移以 cohort 校准人口、保留资产店铺债权并接入货币改革；失败时原存档不变 (71.865045ms)
+  AssertionError [ERR_ASSERTION]: 成功迁移应保留原始 v10 备份
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v013-aggregate-model.test.js:236:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/v019-payment-context.test.js:102:1
+✖ 0.1.9 同一家庭在同一市场轮次先收款再付款时仍按最新状态报价 (4.983655ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 60000
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v019-payment-context.test.js:119:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 60000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v15-currency-enterprise-shares.test.js:97:1
+✖ 磨坊企业采购居民小麦、向面包房企业供粉、面包销售后才确认收入和利润 (51.934037ms)
+  AssertionError [ERR_ASSERTION]: 磨坊必须真实买入小麦
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v15-currency-enterprise-shares.test.js:111:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/v15-currency-enterprise-shares.test.js:243:1
+✖ 多个同价卖家共享同一居民需求池，成交总量不重复且轮换避免后序卖家长期饿死 (4.574551ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v15-currency-enterprise-shares.test.js:259:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v15_1-industry-balance.test.js:51:1
+✖ 面粉调价后企业真实采购与磨坊经营权估值读取同一当前价 (21.792604ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 15000
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v15_1-industry-balance.test.js:64:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 15000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v16-0.0.16-regressions.test.js:127:1
+✖ 正式版本号与存档结构版本独立：应用0.2.1，存档结构v15 (39.045048ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0.2.3' !== '0.2.1'
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v16-0.0.16-regressions.test.js:130:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0.2.3',
+    expected: '0.2.1',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/v16-households-commerce.test.js:60:1
+✖ 就业换券额度按实际在岗成员每日生成，换岗不刷新，收入不占额度 (10.367693ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/hatch/workspace/maixiang-game/work/maixiang-src/tests/v16-households-commerce.test.js:63:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

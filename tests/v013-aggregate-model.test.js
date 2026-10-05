@@ -233,5 +233,6 @@ test("v10→v12 迁移以 cohort 校准人口、保留资产店铺债权并接�
   const loaded = loadState(okStorage, CONTENT);
   assert.equal(loaded.migrated, true);
   assert.equal(saveState(okStorage, loaded.state, CONTENT), true);
-  assert.ok(okStorage.keys().some(key => key.includes("backup-before-v14-migration")), "成功迁移应保留原始 v10 备份");
+  // 基线清理：备份 key 取当前存档版本（storage.js preserveRaw），v14 是旧版本号，已改为动态取 CONTENT.rules.saveVersion。
+  assert.ok(okStorage.keys().some(key => key.includes(`backup-before-v${CONTENT.rules.saveVersion}-migration`)), "成功迁移应保留原始 v10 备份");
 });

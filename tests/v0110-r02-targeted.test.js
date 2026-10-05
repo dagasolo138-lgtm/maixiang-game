@@ -161,11 +161,13 @@ test("0.1.10-r02 就业面板的公司岗位读取公司工资，并只提交到
 });
 
 test("0.1.10-r02 设置页显示唯一构建号和当前页面地址", () => {
-  assert.equal(BUILD_ID, "0110-r07-b001");
+  // 基线清理：构建号跟随版本演进（现为 src/content/version.js 的 BUILD_ID），不再硬编码旧值；
+  // 本测试只断言"设置页展示了当前构建号"这一行为。
+  assert.ok(typeof BUILD_ID === "string" && BUILD_ID.length > 0, "构建号应为非空字符串");
   const html = renderSettings(null, null, { managerOpen: true, appVersion: "0.1.10", buildId: BUILD_ID, pageAddress: "https://example.test/maixiang/", slots: [], persistenceIssue: { message: "测试故障" } });
   assert.match(html, /当前运行版本/);
   assert.match(html, /0\.1\.10/);
-  assert.match(html, /0110-r07-b001/);
+  assert.ok(html.includes(BUILD_ID), "设置页应显示当前构建号");
   assert.match(html, /https:\/\/example\.test\/maixiang\//);
   assert.match(html, /真实写入探测/);
   assert.doesNotMatch(html, />重试本机存储</);

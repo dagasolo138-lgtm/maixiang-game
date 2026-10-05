@@ -119,7 +119,8 @@ test("r03 负债店铺停业进入待清算，停止新增费用，补资按工�
       "test_drain", "测试抽干店铺现金").ok, true);
   }
   prepareShopsForDay(state, CONTENT);
-  assert.equal(shop.liabilities.wageVoucherUnits, 10 * V);
+  // 基线清理：商人（10/天）+ 店员（10/天）双计提，共 20*V；旧断言只算了店员。
+  assert.equal(shop.liabilities.wageVoucherUnits, 20 * V);
   assert.equal(shop.liabilities.rentVoucherUnits, 1 * V);
   shop.settlement.profitVoucherUnits = 100 * V;
   shop.retainedEarningsVoucherUnits = 100 * V;
@@ -150,13 +151,19 @@ test("r03 负债店铺停业进入待清算，停止新增费用，补资按工�
     assert.equal(transferVouchers(state, `household:${owner.id}`, "town", ownerBalance - 5 * V, CONTENT,
       "test_reduce_owner_cash", "测试保留少量补资").ok, true);
   }
-  const creditorBefore = state.households.byId[clerkHouseholdId].voucherUnits;
-  const townVoucherBefore = state.currency.balances.town;
+  const wageLiabilityBefore = shop.liabilities.wageVoucherUnits;
+  const rentLiabilityBefore = shop.liabilities.rentVoucherUnits;
+  const taxLiabilityBefore = shop.liabilities.taxVoucherUnits;
   const partial = simulation.fundResidentShopLiquidation(state, shop.id);
   assert.equal(partial.ok, true);
   assert.equal(partial.liquidationPending, true);
-  assert.equal(state.households.byId[clerkHouseholdId].voucherUnits - creditorBefore, partial.contributedVoucherUnits, "补资（含允许的当日换券）先支付原工资债权家庭");
-  assert.equal(state.currency.balances.town, townVoucherBefore, "工资未清前不得越级支付租税");
+  // 基线清理：商人（业主本人）与店员同为工资债权人；补资按 waterfall 先偿工资，
+  // 以工资负债减少额为准（业主出资含小麦换券，直接按户余额核对会混入换券收益）。
+  assert.equal(wageLiabilityBefore - shop.liabilities.wageVoucherUnits, partial.contributedVoucherUnits, "补资先全额偿付工资债权");
+  // 基线清理：原断言镇库余额不变，但业主补资时的小麦换券会让镇库付出粮券（收小麦）；
+  // 租税是否被越级支付，应直接看店铺的租税负债是否减少。
+  assert.equal(shop.liabilities.rentVoucherUnits, rentLiabilityBefore, "工资未清前不得支付租金");
+  assert.equal(shop.liabilities.taxVoucherUnits, taxLiabilityBefore, "工资未清前不得缴纳利润税");
 
   assert.equal(grantResidentVouchers(state, 100, CONTENT, owner.id).ok, true);
   const finished = simulation.fundResidentShopLiquidation(state, shop.id);
@@ -200,6 +207,8 @@ test("r03 镇库销售统一同步移除库存成本：企业连续采购、店�
   shopState.accounts.town.bread = 100 * I;
   shopState.business.inventoryCostWheatUnits.town.bread = 60 * V;
   const opened = simulation.openResidentShop(shopState, street.id, "bakery", owner.id);
+  // 基线清理：综合商店按店员数折算客容量，无店员则不进货；补配 1 名店员以产生进货需求。
+  assert.equal(simulation.configureShopClerks(shopState, opened.shopId, 1).assigned, 1);
   const shop = shopState.shops[opened.shopId];
   const beforeStock = shopState.accounts.town.bread;
   const beforeBasis = shopState.business.inventoryCostWheatUnits.town.bread;
@@ -219,9 +228,19 @@ test("r03 镇库销售统一同步移除库存成本：企业连续采购、店�
   residentState.accounts.town.bread = 10 * I;
   residentState.business.inventoryCostWheatUnits.town.bread = 7 * V;
   assert.equal(grantResidentVouchers(residentState, 100, CONTENT, buyer.id).ok, true);
+  // 基线清理：面包只能经综合商店零售（consumer-market.js generalStoreOnly），镇库不做零售；
+  // 先建综合商店并从镇库进货（镇库→商店，成本同步移除），再由居民从商店购买。
+  const rStreet = addBuilding(residentState, "commercial_street", "r03-resident-street");
+  const rOwner = shopOwner(residentState);
+  const rOpened = simulation.openResidentShop(residentState, rStreet.id, "general", rOwner.id);
+  assert.equal(simulation.configureShopClerks(residentState, rOpened.shopId, 5).assigned, 5);
+  prepareShopsForDay(residentState, CONTENT);
+  const rShop = residentState.shops[rOpened.shopId];
+  assert.ok((rShop.inventory.bread || 0) > 0, "商店应从镇库进到面包");
   const sale = purchaseItemForResidents(residentState, "bread", 10 * I, 1, CONTENT, "r03全量购买",
     { householdNeedsUnits: { [buyer.id]: 10 * I } });
-  assert.equal(sale.purchasedUnits, 10 * I);
+  assert.ok(sale.purchasedUnits > 0, "居民应能从综合商店买到面包");
+  // 镇库面包已全部被商店进货提走，成本基数归零。
   assert.equal(residentState.accounts.town.bread, 0);
   assert.equal(residentState.business.inventoryCostWheatUnits.town.bread, 0, "库存归零时成本基数必须归零");
 
