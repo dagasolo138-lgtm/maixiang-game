@@ -65,3 +65,11 @@
 
 当前：0.2.3 开发中（流通改革）。历史版本见 `CHANGELOG.md`。
 GitHub：`dagasolo138-lgtm/maixiang-game`（main 分支）。一个需求一个分支，PR 交付，Kavi 验收。
+
+## 基线清零教训（2026-10-05 深夜，Kavi 亲自修）
+- 无批发市场时 `buyWholesaleForOwner` 回退到镇库直购（`buyTownDirectForOwner`）：多卖家聚合，镇库优先、不足时从其他住户买（小麦保留对方口粮，面粉等加工品不保留），返回 sellerRows。0.1.10 契约"生产原料优先从镇库供应"。
+- 镇库从批发市场付费采购（`procureTownInputFromWholesale` 非免费品类）必须真实入库到 `state.accounts.town`，否则镇库付钱收不到货（BUG A，木材）。
+- 镇营建造从市场领料走免费内部调拨（`allocateInputToTown`），不用 `procureTownInputFromWholesale`（后者对木材收费，与"不重复收费"注释矛盾）。
+- `townMillWheatDemandUnits` 要算上市（listedLevels>0）的磨坊，否则公司磨坊永久断小麦。
+- 面粉/面包/盐 `generalStoreOnly` 是既定设计（0.2.2 起）：镇库/公司/住户不得直售居民，只能经综合商店。测试 fixture 须建商店。
+- 住户换券的粮券由"镇库现有余额支付"，测试须先 `issueGrainVouchers(state,"town",N)` 印制。
