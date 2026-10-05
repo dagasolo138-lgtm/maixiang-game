@@ -88,7 +88,8 @@ test("r05 旧档无债权人的店铺工资欠款会归属并偿还，不再永�
   assert.equal(shop.liabilities.legacyUnattributedWageVoucherUnits, 0);
   assert.equal(shop.liabilities.wageVoucherUnits, 0, "30旧欠薪+当日商人工资都应有偿还路径");
   assert.equal(Object.values(shop.liabilities.claimsVoucherUnits).reduce((a, b) => a + b, 0), 0);
-  assert.equal(residentsAfter - residentsBefore, 40 * V, "旧欠薪30+当日商人工资10应真实到账");
+  // 基线清理：店主商人不领固定工资，仅旧欠薪 30 到账。
+  assert.equal(residentsAfter - residentsBefore, 30 * V, "旧欠薪30应真实到账（店主商人当日工资为0）");
 });
 
 test("r05 公司旧档无债权人欠薪即使当前岗位为0也能偿还，不再永久阻塞分红", () => {

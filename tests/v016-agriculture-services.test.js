@@ -106,24 +106,24 @@ test("综合商店三种商品共用接待能力，库存与成本按商品独�
   assert.equal(opened.ok, true, opened.reason);
   const shop = state.shops[opened.shopId];
   assert.equal(simulation.configureShopClerks(state, shop.id, 1).ok, true);
-  for (const itemId of ["flour", "bread", "salt"]) shop.inventory[itemId] = 100 * I;
-  shop.inventoryCostVoucherUnits.flour = 100 * V;
-  shop.inventoryCostVoucherUnits.bread = 200 * V;
-  shop.inventoryCostVoucherUnits.salt = 300 * V;
-  const first = sellShopProduct(state, shop.id, `household:${buyer.id}`, 60 * I, CONTENT, "测试面粉零售", "flour");
-  const second = sellShopProduct(state, shop.id, `household:${buyer.id}`, 100 * I, CONTENT, "测试面包零售", "bread");
+  for (const itemId of ["flour", "bread", "salt"]) shop.inventory[itemId] = 150 * I;
+  shop.inventoryCostVoucherUnits.flour = 150 * V;
+  shop.inventoryCostVoucherUnits.bread = 300 * V;
+  shop.inventoryCostVoucherUnits.salt = 450 * V;
+  const first = sellShopProduct(state, shop.id, `household:${buyer.id}`, 120 * I, CONTENT, "测试面粉零售", "flour");
+  const second = sellShopProduct(state, shop.id, `household:${buyer.id}`, 120 * I, CONTENT, "测试面包零售", "bread");
   const third = sellShopProduct(state, shop.id, `household:${buyer.id}`, 1 * I, CONTENT, "测试盐零售", "salt");
   assert.equal(first.ok, true);
   assert.equal(second.ok, true);
-  // 基线清理：商人计入接待能力（1 店员 + 1 商人 = 80 客流 × 2 斤 = 160 斤上限），前两次共售 160 斤达上限。
+  // 基线清理：商人计入接待能力（1 店员 + 1 商人 = 120 客流 × 2 斤 = 240 斤上限），前两次共售 240 斤达上限。
   assert.equal(third.ok, false);
   assert.match(third.reason, /接待能力/);
-  assert.equal(shop.accounts.day.soldUnits.flour, 60 * I);
-  assert.equal(shop.accounts.day.soldUnits.bread, 100 * I, "1店员+1商人的160斤折算承载量由多商品共用");
-  assert.equal(shop.inventoryCostVoucherUnits.flour, 40 * V);
-  assert.equal(shop.inventoryCostVoucherUnits.bread, 0 * V);
-  assert.equal(shop.inventoryCostVoucherUnits.salt, 300 * V);
-  assert.equal(shop.accounts.day.cogsVoucherUnits, 260 * V);
+  assert.equal(shop.accounts.day.soldUnits.flour, 120 * I);
+  assert.equal(shop.accounts.day.soldUnits.bread, 120 * I, "1店员+1商人的240斤折算承载量由多商品共用");
+  assert.equal(shop.inventoryCostVoucherUnits.flour, 30 * V);
+  assert.equal(shop.inventoryCostVoucherUnits.bread, 60 * V);
+  assert.equal(shop.inventoryCostVoucherUnits.salt, 450 * V);
+  assert.equal(shop.accounts.day.cogsVoucherUnits, 360 * V);
 });
 
 test("服务需求在店铺间共享且家庭共用一份服务预算，成交后不会被第二家重复满足", () => {

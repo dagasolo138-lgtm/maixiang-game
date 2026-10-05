@@ -202,7 +202,8 @@ test("店铺欠薪欠租会保留，长期无法经营自动停业并释放商�
     assert.equal(drained.ok, true);
   }
   prepareShopsForDay(state, CONTENT);
-  assert.equal(shop.liabilities.wageVoucherUnits, 30 * V);
+  // 基线清理：店主商人不领固定工资，仅2店员计 20*V。
+  assert.equal(shop.liabilities.wageVoucherUnits, 20 * V);
   assert.equal(shop.liabilities.rentVoucherUnits, 1 * V);
   shop.badDays = CONTENT.rules.shopClosureBadDays - 1;
   const result = finishShopsDay(state, CONTENT).find(row => row.shopId === shop.id);

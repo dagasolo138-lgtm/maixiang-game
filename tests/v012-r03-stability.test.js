@@ -119,8 +119,8 @@ test("r03 负债店铺停业进入待清算，停止新增费用，补资按工�
       "test_drain", "测试抽干店铺现金").ok, true);
   }
   prepareShopsForDay(state, CONTENT);
-  // 基线清理：商人（10/天）+ 店员（10/天）双计提，共 20*V；旧断言只算了店员。
-  assert.equal(shop.liabilities.wageVoucherUnits, 20 * V);
+  // 基线清理：店主商人不领固定工资，仅店员（10/天）计提，共 10*V。
+  assert.equal(shop.liabilities.wageVoucherUnits, 10 * V);
   assert.equal(shop.liabilities.rentVoucherUnits, 1 * V);
   shop.settlement.profitVoucherUnits = 100 * V;
   shop.retainedEarningsVoucherUnits = 100 * V;

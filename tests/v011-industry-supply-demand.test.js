@@ -166,8 +166,8 @@ test("0.1.1综合商店按真实客流增员，且新店员满30日后才允许�
   const opened = simulation.openResidentShop(state, street.id, "bakery", owner.id);
   assert.equal(opened.ok, true, opened.reason);
   const shop = state.shops[opened.shopId];
-  // 基线清理：商人计入接待能力，1 商人 = 40 客流 × 2 斤 = 240000 单位。
-  assert.equal(shopSalesCapacityUnits(state, shop, CONTENT), 240000, "仅商人时应有商人本人的接待能力");
+  // 基线清理：商人计入接待能力，1 商人 = 60 客流 × 2 斤 = 360000 单位。
+  assert.equal(shopSalesCapacityUnits(state, shop, CONTENT), 360000, "仅商人时应有商人本人的接待能力");
   // 用户 0.1.11 新增增员经济性门槛：需盈利且资金充足才增员，先注资
   fundTown(state, 100000);
   assert.equal(transferVouchers(state, "town", `shop:${shop.id}`, 2000 * V, CONTENT, "test_shop_capital", "补足测试增员资金").ok, true);
@@ -176,8 +176,8 @@ test("0.1.1综合商店按真实客流增员，且新店员满30日后才允许�
   }));
   prepareShopsForDay(state, CONTENT);
   assert.equal(jobCount(state, `shop:${shop.id}:clerk`), 1);
-  // 基线清理：商人计入，1 店员 + 1 商人 = 80 客流 × 2 斤 = 160 斤。
-  assert.equal(shopSalesCapacityUnits(state, shop, CONTENT), 160 * I, "1名店员加商人对应80客流、按每客2斤折算销售承载量");
+  // 基线清理：商人计入，1 店员 + 1 商人 = 120 客流 × 2 斤 = 240 斤。
+  assert.equal(shopSalesCapacityUnits(state, shop, CONTENT), 240 * I, "1名店员加商人对应120客流、按每客2斤折算销售承载量");
 
   state.day += CONTENT.rules.operatingPlanIntervalDays;
   shop.history = Array.from({ length: CONTENT.rules.operatingObservationDays }, (_, serial) => ({
