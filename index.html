@@ -5046,6 +5046,13 @@ function removeInventory(market, itemId, units) {
   return { units: quantity, costVoucherUnits: cost };
 }
 
+// 对外出口从批发市场取货（外镇贸易用）：返回实际取出单位数
+       function takeWholesaleInventoryForExport(state, itemId, units, content) {
+  if (!hasWholesaleMarket(state)) return { units: 0 };
+  const market = ensureWholesaleMarket(state, content);
+  return removeInventory(market, itemId, units);
+}
+
 function priceValueUnits(itemId, units, state, content) {
   return Math.round(units / content.precision.inventoryUnitsPerJin * wholesaleUnitPrice(state, itemId, content) * currencyScale(content));
 }
@@ -5657,7 +5664,7 @@ function readPurchasePrice(market, itemId, content) {
   }
   return result;
 }
-return { WHOLESALE_ITEM_IDS, WHOLESALE_MONOPOLY_ITEM_IDS, DEFAULT_PURCHASE_PRICES, DEFAULT_SALE_PRICES, INVENTORY_PRICE_FEEDBACK_ELASTICITY, INVENTORY_PRICE_FEEDBACK_SCALE, PURCHASE_PRICE_FLOOR_RATIO, ensureWholesaleMarket, hasWholesaleMarket, resetWholesaleDay, resetWholesaleYear, wholesaleUnitPrice, wholesalePurchasePrice, purchasePriceFeedback, refreshWholesalePurchasePrices, setWholesalePrice, setWholesalePurchasePrice, wholesalePurchaseQuote, setWholesaleTownAllocation, transferTownToWholesale, stockpileWholesale, releaseWholesale, allocateTownOutputToWholesale, allocateInputToTown, ensureWholesaleWheatForTown, townMillWheatDemandUnits, depositWholesalePurchasedInventory, runWholesaleIntake, WHOLESALE_FREE_INPUT_ITEM_IDS, procureTownInputFromWholesale, buyWholesaleForOwner, payWholesaleWageDue, fundWholesaleMarket, splitWholesaleWageFunding, recordWholesaleWageSplit, wholesaleCashflow, readWholesaleMarket, wholesaleSummary, snapshotWholesaleHistory, wholesaleAvgSoldUnits, wholesaleTrends };
+return { WHOLESALE_ITEM_IDS, WHOLESALE_MONOPOLY_ITEM_IDS, DEFAULT_PURCHASE_PRICES, DEFAULT_SALE_PRICES, INVENTORY_PRICE_FEEDBACK_ELASTICITY, INVENTORY_PRICE_FEEDBACK_SCALE, PURCHASE_PRICE_FLOOR_RATIO, ensureWholesaleMarket, hasWholesaleMarket, resetWholesaleDay, resetWholesaleYear, wholesaleUnitPrice, wholesalePurchasePrice, purchasePriceFeedback, refreshWholesalePurchasePrices, setWholesalePrice, setWholesalePurchasePrice, wholesalePurchaseQuote, setWholesaleTownAllocation, takeWholesaleInventoryForExport, transferTownToWholesale, stockpileWholesale, releaseWholesale, allocateTownOutputToWholesale, allocateInputToTown, ensureWholesaleWheatForTown, townMillWheatDemandUnits, depositWholesalePurchasedInventory, runWholesaleIntake, WHOLESALE_FREE_INPUT_ITEM_IDS, procureTownInputFromWholesale, buyWholesaleForOwner, payWholesaleWageDue, fundWholesaleMarket, splitWholesaleWageFunding, recordWholesaleWageSplit, wholesaleCashflow, readWholesaleMarket, wholesaleSummary, snapshotWholesaleHistory, wholesaleAvgSoldUnits, wholesaleTrends };
 })();
 
 // ===== systems/payroll.js =====
@@ -11663,6 +11670,7 @@ const __mxmod48 = (() => {
 const { nextRandom } = __mxmod47;
 const { makeTransactionId, recordEvent, recordLedger } = __mxmod8;
 const { addInventory, changeInventory, quantityToUnits, unitsToQuantity } = __mxmod10;
+const { hasWholesaleMarket, readWholesaleMarket, takeWholesaleInventoryForExport } = __mxmod25;
 const OUTSIDE_TOWN_NAME = "四地主镇";
        const OUTSIDE_RULERS = ["陈", "王", "李", "赵"];
        const TRADE_SELL_ITEMS = ["wheat", "flour", "bread", "salt", "wood"];
@@ -11872,9 +11880,29 @@ function clampPrice(value) {
     qty = Math.min(qty, affordableQty);
     const qtyUnits = quantityToUnits(qty, content);
     if (qtyUnits <= 0) return { ok: false, reason: "数量过小" };
-    const take = changeInventory(state, "town", itemId, -qtyUnits, `对${OUTSIDE_TOWN_NAME}出口${item.name}`, "trade_export", content, transactionId);
-    if (!take.ok) return { ok: false, reason: "镇库存" + item.name + "不足" };
-    const actualJin = unitsToQuantity(qtyUnits, content);
+    // 出口货源（0.2.3 做市商机制）：优先从批发市场库存出货，不足部分从镇库补。
+    // 之前只读镇库，批发市场有货也报"镇库存不足"。
+    let remainingUnits = qtyUnits;
+    let fromMarketUnits = 0;
+    if (hasWholesaleMarket(state)) {
+      const taken = takeWholesaleInventoryForExport(state, itemId, remainingUnits, content);
+      fromMarketUnits = taken.units || 0;
+      remainingUnits -= fromMarketUnits;
+    }
+    if (remainingUnits > 0) {
+      const take = changeInventory(state, "town", itemId, -remainingUnits, `对${OUTSIDE_TOWN_NAME}出口${item.name}`, "trade_export", content, transactionId);
+      if (!take.ok) {
+        // 镇库也不够：把批发市场已扣的回滚，避免货款两空
+        if (fromMarketUnits > 0) {
+          const market = readWholesaleMarket(state, content);
+          market.inventory[itemId] = (market.inventory[itemId] || 0) + fromMarketUnits;
+        }
+        return { ok: false, reason: "批发市场与镇库存" + item.name + "不足" };
+      }
+      remainingUnits = 0;
+    }
+    const actualUnits = qtyUnits - Math.max(0, remainingUnits);
+    const actualJin = unitsToQuantity(actualUnits, content);
     const valueJin = Math.round(actualJin * price * 100) / 100;
     ot.wheatStockJin = Math.round(Math.max(0, ot.wheatStockJin - valueJin) * 100) / 100;
     addInventory(state, "town", "wheat", valueJin, `对${OUTSIDE_TOWN_NAME}出口${item.name}所得`, "trade_export", content);

@@ -249,6 +249,13 @@ function removeInventory(market, itemId, units) {
   return { units: quantity, costVoucherUnits: cost };
 }
 
+// 对外出口从批发市场取货（外镇贸易用）：返回实际取出单位数
+export function takeWholesaleInventoryForExport(state, itemId, units, content) {
+  if (!hasWholesaleMarket(state)) return { units: 0 };
+  const market = ensureWholesaleMarket(state, content);
+  return removeInventory(market, itemId, units);
+}
+
 function priceValueUnits(itemId, units, state, content) {
   return Math.round(units / content.precision.inventoryUnitsPerJin * wholesaleUnitPrice(state, itemId, content) * currencyScale(content));
 }

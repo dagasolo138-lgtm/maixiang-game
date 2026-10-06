@@ -1,6 +1,7 @@
 import { nextRandom } from "../core/random.js";
 import { makeTransactionId, recordEvent, recordLedger } from "../economy/ledger.js";
 import { addInventory, changeInventory, quantityToUnits, unitsToQuantity } from "../economy/inventory.js";
+import { hasWholesaleMarket, readWholesaleMarket, takeWholesaleInventoryForExport } from "./wholesale-market.js";
 
 // 外镇v1「四地主镇」：纯贸易伙伴，不做完整模拟，只用动态算法维持基础数值。
 // 四地主（陈/王/李/赵）统治的农业小镇：1万亩、1000劳动力，主产小麦，有面粉店/面包店；
@@ -216,9 +217,29 @@ export function tradeWithOutsideTown(state, direction, itemId, quantityJin, cont
     qty = Math.min(qty, affordableQty);
     const qtyUnits = quantityToUnits(qty, content);
     if (qtyUnits <= 0) return { ok: false, reason: "数量过小" };
-    const take = changeInventory(state, "town", itemId, -qtyUnits, `对${OUTSIDE_TOWN_NAME}出口${item.name}`, "trade_export", content, transactionId);
-    if (!take.ok) return { ok: false, reason: "镇库存" + item.name + "不足" };
-    const actualJin = unitsToQuantity(qtyUnits, content);
+    // 出口货源（0.2.3 做市商机制）：优先从批发市场库存出货，不足部分从镇库补。
+    // 之前只读镇库，批发市场有货也报"镇库存不足"。
+    let remainingUnits = qtyUnits;
+    let fromMarketUnits = 0;
+    if (hasWholesaleMarket(state)) {
+      const taken = takeWholesaleInventoryForExport(state, itemId, remainingUnits, content);
+      fromMarketUnits = taken.units || 0;
+      remainingUnits -= fromMarketUnits;
+    }
+    if (remainingUnits > 0) {
+      const take = changeInventory(state, "town", itemId, -remainingUnits, `对${OUTSIDE_TOWN_NAME}出口${item.name}`, "trade_export", content, transactionId);
+      if (!take.ok) {
+        // 镇库也不够：把批发市场已扣的回滚，避免货款两空
+        if (fromMarketUnits > 0) {
+          const market = readWholesaleMarket(state, content);
+          market.inventory[itemId] = (market.inventory[itemId] || 0) + fromMarketUnits;
+        }
+        return { ok: false, reason: "批发市场与镇库存" + item.name + "不足" };
+      }
+      remainingUnits = 0;
+    }
+    const actualUnits = qtyUnits - Math.max(0, remainingUnits);
+    const actualJin = unitsToQuantity(actualUnits, content);
     const valueJin = Math.round(actualJin * price * 100) / 100;
     ot.wheatStockJin = Math.round(Math.max(0, ot.wheatStockJin - valueJin) * 100) / 100;
     addInventory(state, "town", "wheat", valueJin, `对${OUTSIDE_TOWN_NAME}出口${item.name}所得`, "trade_export", content);
