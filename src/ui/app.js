@@ -420,6 +420,9 @@ export function mountGame(root) {
     } else if (kind === "shop-profit-tax") {
       result = simulation.setShopProfitTax(state, parsed.value);
       successMessage = `商业利润税已设为${number(parsed.value, 2)}%。`;
+    } else if (kind === "wholesale-daily-wheat") {
+      result = simulation.setWholesaleDailyWheat(state, parsed.value);
+      successMessage = `批发市场每日小麦补贴已设为${number(parsed.value, 1)}斤。`;
     } else if (kind === "wholesale-price") {
       result = simulation.configureWholesalePrice(state, input.dataset.draftTarget, parsed.value);
       successMessage = `批发价已设为${number(parsed.value, 3)}小麦等值。`;
@@ -1579,6 +1582,36 @@ export function mountGame(root) {
       showToast(direction === "sell"
         ? `已向四地主镇卖出${number(result.quantityJin, 1)}${itemId === "wood" ? "单位" : "斤"}${itemName}，得小麦${number(result.valueJin, 1)}斤（含关税${number(result.tariffJin, 1)}斤）。`
         : `已从四地主镇买入${number(result.quantityJin, 1)}斤${itemName}，支付小麦${number(result.valueJin, 1)}斤。`);
+      return;
+    }
+    const wheatLoanButton = closest(target, "[data-wheat-loan-issue]");
+    if (wheatLoanButton && state) {
+      const principalKey = "wheat-loan-principal";
+      const rateKey = "wheat-loan-rate";
+      const principalInput = numericInputFor(principalKey);
+      const rateInput = numericInputFor(rateKey);
+      const principalRaw = numericDrafts.has(principalKey) ? numericDrafts.get(principalKey).value : principalInput?.value;
+      const rateRaw = numericDrafts.has(rateKey) ? numericDrafts.get(rateKey).value : rateInput?.value;
+      const principalParsed = parseNumericDraft(principalRaw, { label: "放贷斤数", minimum: 0, maximum: 1000000 });
+      if (!principalParsed.ok) {
+        setDraftError(principalKey, principalParsed.reason, principalInput);
+        return;
+      }
+      const rateParsed = parseNumericDraft(rateRaw, { label: "年利率", minimum: 0, maximum: 50 });
+      if (!rateParsed.ok) {
+        setDraftError(rateKey, rateParsed.reason, rateInput);
+        return;
+      }
+      const result = simulation.issueWheatLoan(state, principalParsed.value, rateParsed.value);
+      if (!result?.ok) {
+        setDraftError(principalKey, result?.reason || "放贷失败", principalInput);
+        return;
+      }
+      numericDrafts.delete(principalKey);
+      numericDrafts.delete(rateKey);
+      changed(true);
+      render(true);
+      showToast(`已向四地主镇发放小麦贷款${number(result.loan.principalJin)}斤，年利率${number(result.loan.annualRatePercent, 1)}%。`);
       return;
     }
   }

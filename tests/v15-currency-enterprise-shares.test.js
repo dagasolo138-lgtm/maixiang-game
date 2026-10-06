@@ -117,8 +117,8 @@ test("磨坊企业采购居民小麦、向面包房企业供粉、面包销售�
   assert.ok(wheatUnits > 0, "镇库应持有可调拨的小麦");
   changeInventory(state, "town", "wheat", -wheatUnits, "镇库调拨至批发市场供磨坊企业采购", "test_adjustment", CONTENT);
   const market = state.wholesaleMarket;
-  market.inventory.wheat = (market.inventory.wheat || 0) + wheatUnits;
-  market.inventoryCostVoucherUnits.wheat = 0;
+  // 小麦就是市场现金：直接进 cashWheatUnits
+  market.cashWheatUnits = (market.cashWheatUnits || 0) + wheatUnits;
   const residentWheatBefore = state.accounts.residents.wheat;
 
   simulation.advanceDays(state, 2);

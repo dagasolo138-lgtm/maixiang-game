@@ -8,13 +8,13 @@ import {
 import {
   setEmployment, buildAt, sendRelief, toggleAutomaticRelief,
   setWageRate, setBreadPrice, setUnemploymentPolicy, setVillaPolicy, setWageControl,
-  setSocialSecurityPolicy, injectSocialSecurity, setTradeTariffRate, tradeWithOutsideTown, setAgricultureTax,
+  setSocialSecurityPolicy, injectSocialSecurity, setTradeTariffRate, tradeWithOutsideTown, issueWheatLoan, setAgricultureTax,
   setPrivateProductionTax, setOperatingRightPrice, upgradeBuilding, demolishAt, setProjectWorkers,
   sellOperatingLevel, issueGrainVouchers, redeemGrainVouchers, listCompany, createCompany, listCompanyShares,
   configureShareOffer, subscribeShares, addCompanyCapital, configureDividend, configureIntermediatePrice,
   configureCompanyWage, configureCompanyTargetWorkers, configureCompanySalePrice, addCompanyOperatingLevel, removeCompanyOperatingLevel, liquidateCompany, buybackCompanyShares,
   setPublicProcurementIntent, clearPublicProcurementIntent, adoptRecommendedIndustryPrices, retainExistingIndustryPrices,
-  setEmploymentExchangeQuota, setShopRent, setShopProfitTax, openResidentShop, configureShopMerchants, configureShopClerks, closeResidentShop, fundResidentShopLiquidation,
+  setEmploymentExchangeQuota, setShopRent, setShopProfitTax, setWholesaleDailyWheat, openResidentShop, configureShopMerchants, configureShopClerks, closeResidentShop, fundResidentShopLiquidation,
   configureWholesalePrice, configureWholesaleTownAllocation, configureWholesalePurchasePrice, fundWholesaleMarket, configureShopTargetMargin, configureAllShopsTargetMargin, configureShopRetailPrice, stockpileWholesale, releaseWholesale, setOutputTarget, configureServicePrice,
   startCurrencyReform, configureVoucherPaymentTarget, configureResidentExchange, finishCurrencyReform,
   reclaimFarmland
@@ -100,6 +100,9 @@ export function createSimulation(content) {
     tradeWithOutsideTown: function (state, direction, itemId, quantityJin) {
       return tradeWithOutsideTown(state, direction, itemId, quantityJin, definitions);
     },
+    issueWheatLoan: function (state, principalJin, annualRatePercent) {
+      return issueWheatLoan(state, principalJin, annualRatePercent, definitions);
+    },
     setAgricultureTax: function (state, percent) { return setAgricultureTax(state, percent); },
     setPrivateProductionTax: function (state, typeId, percent) { return setPrivateProductionTax(state, typeId, percent, definitions); },
     setOperatingRightPrice: function (state, buildingId, price) { return setOperatingRightPrice(state, buildingId, price); },
@@ -136,6 +139,7 @@ export function createSimulation(content) {
     finishCurrencyReform: function (state) { return finishCurrencyReform(state, definitions); },
     setShopRent: function (state, value) { return setShopRent(state, value); },
     setShopProfitTax: function (state, value) { return setShopProfitTax(state, value, definitions); },
+    setWholesaleDailyWheat: function (state, value) { return setWholesaleDailyWheat(state, value); },
     openResidentShop: function (state, buildingId, typeId, householdId) { return openResidentShop(state, buildingId, typeId, householdId, definitions); },
     configureShopMerchants: function (state, shopId, count) { return configureShopMerchants(state, shopId, count, definitions); },
     configureShopClerks: function (state, shopId, count) { return configureShopClerks(state, shopId, count, definitions); },

@@ -220,6 +220,9 @@ test("processing is atomic; wages settle separately even when materials are shor
   assert.equal(simulation.issueGrainVouchers(state, "town", 5000).ok, true);
   addInventory(state, "town", "wood", 600, "test stock", "test", CONTENT);
   const start = simulation.buildAt(state, "mill", "east");
+  // 本测试测生产原子性，关闭每日小麦补贴以隔离变量
+  state.policy ||= {};
+  state.policy.wholesaleDailyWheatJin = 0;
   simulation.advanceDays(state, 40);
   // 基线清理：0.2.3 起「镇营生产原料必须经过批发市场」，镇库余粮不能直接投产。
   // 批发市场建筑是镇营调拨原料的前提（hasWholesaleMarket），所以先建成它。
@@ -245,7 +248,7 @@ test("processing is atomic; wages settle separately even when materials are shor
   const market = state.wholesaleMarket;
   const movedUnits = 30 * scale;
   changeInventory(state, "town", "wheat", -movedUnits, "调拨至批发市场", "test_adjustment", CONTENT);
-  market.inventory.wheat = (market.inventory.wheat || 0) + movedUnits;
+  market.cashWheatUnits = (market.cashWheatUnits || 0) + movedUnits;
   assert.equal(productionStatus(state, state.buildings[0], CONTENT).status, "limited_materials");
   const beforeStocks = {
     wheat: state.accounts.town.wheat,

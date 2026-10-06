@@ -16,7 +16,7 @@ import { selectHousing } from "../selectors/housing.js";
 import { settleHousingRent, buyRepairWoodForResidents } from "./housing.js";
 import { settleVillaPurchases, settleVillaPropertyTax } from "./villas.js";
 import { payPensions } from "./social-security.js";
-import { advanceOutsideTownDay, settleOutsideTownYear } from "./outside-town.js";
+import { advanceOutsideTownDay, settleOutsideTownYear, settleWheatLoansYear } from "./outside-town.js";
 import { resetLaborCompetitionYear } from "./labor-market.js";
 import { recordEconomyHistory } from "./wealth-stats.js";
 import { accrueSaltNeed, buySaltForResidents, consumeDailySalt, finishSaltGraceDay, selectSaltCoverage } from "./salt.js";
@@ -28,7 +28,7 @@ import { refreshOperatingPlan, recordConsumerDay } from "../economy/operating-pl
 import { archiveHouseholdLifeYear, finalizeHouseholdLifeDay, resetHouseholdLifeDay, resetHouseholdLifeYear } from "./household-life.js";
 import { finalizeMonetaryPaymentDay } from "../economy/payment.js";
 import { accrueServiceDemand, processServiceDemand } from "./services.js";
-import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits, snapshotWholesaleHistory } from "./wholesale-market.js";
+import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits, snapshotWholesaleHistory, subsidizeWholesaleWheat } from "./wholesale-market.js";
 import { applyCompanyDistributionsToAnnualReport, buildAnnualReport } from "./annual-reports.js";
 import { settleNeighborAid, resetNeighborAidYear } from "./neighbor-aid.js";
 
@@ -97,6 +97,8 @@ export function settleOneDay(state, content) {
   const wholesaleTownAllocation = runWholesaleIntake(state, [], [], content, { includeTownAllocation: true });
   // 统购统销保障原料：镇库小麦自动投放市场，供磨坊领用（小麦产权仍归镇库）。
   const wholesaleWheatPreroll = ensureWholesaleWheatForTown(state, content, townMillWheatDemandUnits(state, content));
+  // 每日小麦补贴：前期市场不盈利，镇库默认每天给市场1000斤运营资金（政策可调）。
+  const wholesaleWheatSubsidy = subsidizeWholesaleWheat(state, content);
   const production = processAllBuildings(state, content);
   // 当日镇营产成品立即回到批发市场，供后续民营、公司与商铺采购。
   const wholesaleTownOutput = runWholesaleIntake(state, production, [], content, { includeTownAllocation: false });
@@ -206,6 +208,8 @@ export function settleOneDay(state, content) {
   // 外镇动态放在一日结算末尾：年事件/生产消费在1月1日结算，每日衰减贸易记忆并重算价格。
   // 刻意在既有系统之后推进，避免扰动既有随机数流（存档种子可复现性不受影响）。
   const outsideTownYear = isNewYearDay ? settleOutsideTownYear(state, content) : null;
+  // 小麦贷款年结：计息 + 外镇用结余小麦还款（放在年事件之后，有当年收成可还）
+  const wheatLoanYear = isNewYearDay ? settleWheatLoansYear(state, content) : null;
   const outsideTownDay = advanceOutsideTownDay(state, content);
   // 经济历史曲线（用户 0.1.11）：每日收盘后记录，供地图"经济"面板画走势。
   recordEconomyHistory(state, content);

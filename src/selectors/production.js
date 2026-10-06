@@ -15,7 +15,10 @@ function wholesaleBatches(state, recipe, workers, content) {
   let shortestName = null;
   for (const input of recipe.inputs || []) {
     const perBatch = Math.round(input.quantity * content.precision.inventoryUnitsPerJin);
-    const marketUnits = Math.max(0, market.inventory?.[input.itemId] || 0);
+    // 小麦就是市场现金：从 cashWheatUnits 读
+    const marketUnits = input.itemId === "wheat"
+      ? Math.max(0, market.cashWheatUnits || 0)
+      : Math.max(0, market.inventory?.[input.itemId] || 0);
     const byItem = Math.min(wanted, Math.floor(marketUnits / Math.max(1, perBatch)));
     if (byItem < batches) {
       batches = byItem;

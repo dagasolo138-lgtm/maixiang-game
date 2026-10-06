@@ -34,6 +34,10 @@ export function renderOutsideTown(view) {
   const statusLine = ot.tradeClosed
     ? `<div class="row"><span class="label">商路</span><strong class="value">中断中（今年无法贸易）</strong></div>`
     : "";
+  const activeLoans = (ot.loans || []).filter(l => l.status === "active");
+  const loanRows = activeLoans.length > 0
+    ? activeLoans.map(l => `<div class="row"><span class="label">${l.issueYear}年放贷</span><strong class="value">本金${number(l.principalJin)}斤 · 欠${number(l.outstandingJin)}斤 · 息${number(l.accruedInterestJin, 1)}斤 · 年利率${number(l.annualRatePercent, 1)}%</strong></div>`).join("")
+    : `<div class="subtle">暂无未还贷款。</div>`;
   return `<h2>外贸 · ${escapeHtml(ot.name)}</h2>
     <div class="cardlet">
       <div class="row"><span class="label">统治者</span><strong class="value">${ot.rulers.map(r => escapeHtml(r) + "地主").join("、")}</strong></div>
@@ -49,5 +53,13 @@ export function renderOutsideTown(view) {
     <div class="cardlet"><div class="row"><span class="label">出口关税税率</span><div class="setting-input">${renderNumericInput(view, { key: "trade-tariff-rate", kind: "trade-tariff-rate", target: "tradeTariff", value: ot.tariffRate ?? 5, label: "出口关税税率", minimum: 0, maximum: 30, className: "setting-editor" })}<b>%</b></div></div>
       <div class="row"><span class="label">本年出口 / 关税</span><strong class="value">${number(ot.stats?.yearExportJin || 0)} / ${number(ot.stats?.yearTariffJin || 0, 1)}斤</strong></div>
       <div class="row"><span class="label">累计关税</span><strong class="value">${number(ot.stats?.tariffJin || 0, 1)}斤</strong></div>
+    </div>
+    <div class="cardlet"><h3>小麦贷款</h3>
+      <div class="subtle">天灾欠收时可放贷解急。每年年结计息，外镇用结余小麦先息后本偿还。</div>
+      ${loanRows}
+      <div class="row"><span class="label">累计放贷 / 收息</span><strong class="value">${number(ot.loanStats?.totalIssuedJin || 0)} / ${number(ot.loanStats?.totalInterestJin || 0, 1)}斤</strong></div>
+      <div class="row"><span class="label">放贷斤数</span><div class="setting-input">${renderNumericInput(view, { key: "wheat-loan-principal", kind: "wheat-loan-principal", target: "wheatLoan", value: "", label: "小麦贷款斤数", minimum: 0, maximum: 1000000, className: "setting-editor" })}<b>斤</b></div></div>
+      <div class="row"><span class="label">年利率</span><div class="setting-input">${renderNumericInput(view, { key: "wheat-loan-rate", kind: "wheat-loan-rate", target: "wheatLoan", value: "", label: "小麦贷款年利率", minimum: 0, maximum: 50, className: "setting-editor" })}<b>%</b>
+      <button class="secondary" data-wheat-loan-issue="1">发放贷款</button></div></div>
     </div>`;
 }

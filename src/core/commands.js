@@ -22,7 +22,7 @@ import { reclaimFarmland as reclaimFarmlandSystem } from "../systems/agriculture
 import { setVillaPolicy as setVillaPolicySystem } from "../systems/villas.js";
 import { setWageControlPolicy as setWageControlPolicySystem } from "../systems/payroll.js";
 import { setSocialSecurityPolicy as setSocialSecurityPolicySystem, injectSocialSecurity as injectSocialSecuritySystem } from "../systems/social-security.js";
-import { setTradeTariffRate as setTradeTariffRateSystem, tradeWithOutsideTown as tradeWithOutsideTownSystem } from "../systems/outside-town.js";
+import { setTradeTariffRate as setTradeTariffRateSystem, tradeWithOutsideTown as tradeWithOutsideTownSystem, issueWheatLoan as issueWheatLoanSystem } from "../systems/outside-town.js";
 
 export function setWageRate(state, roleId, dailyJin, content) {
   const value = Number(dailyJin);
@@ -78,6 +78,10 @@ export function setTradeTariffRate(state, percent) {
 
 export function tradeWithOutsideTown(state, direction, itemId, quantityJin, content) {
   return tradeWithOutsideTownSystem(state, direction, itemId, quantityJin, content);
+}
+
+export function issueWheatLoan(state, principalJin, annualRatePercent, content) {
+  return issueWheatLoanSystem(state, principalJin, annualRatePercent, content);
 }
 
 export function injectSocialSecurity(state, amountJin, content) {
@@ -242,6 +246,13 @@ export function setShopProfitTax(state, percent, content) {
   if (!Number.isFinite(value) || value < 0 || value > max) return { ok: false, reason: `商业利润税须为0%—${max}%` };
   state.policy.shopProfitTaxPercent = Math.round(value * 100) / 100;
   return { ok: true, value: state.policy.shopProfitTaxPercent };
+}
+
+export function setWholesaleDailyWheat(state, jin) {
+  const value = Number(jin);
+  if (!Number.isFinite(value) || value < 0 || value > 100000) return { ok: false, reason: "每日小麦补贴须为0—100000斤" };
+  state.policy.wholesaleDailyWheatJin = Math.round(value * 100) / 100;
+  return { ok: true, value: state.policy.wholesaleDailyWheatJin };
 }
 
 export function openResidentShop(state, buildingId, typeId, householdId, content) {

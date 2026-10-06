@@ -212,6 +212,9 @@ test("mill to bakery accounting counts sold stock once and keeps unsold cost in 
   addInventory(state, "town", "wood", 1200, "test market stock", "test", CONTENT);
   const market = simulation.buildAt(state, "wholesale_market", "village-01");
   assert.equal(market.ok, true, market.reason);
+  // 本测试测生产核算，关闭每日小麦补贴以隔离变量
+  state.policy ||= {};
+  state.policy.wholesaleDailyWheatJin = 0;
   simulation.advanceDays(state, 60);
   addInventory(state, "town", "wood", 600, "test stock", "test", CONTENT);
   const mill = simulation.buildAt(state, "mill", "east");

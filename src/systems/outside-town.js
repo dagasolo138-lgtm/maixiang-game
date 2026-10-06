@@ -18,8 +18,8 @@ export const MEMORY_DECAY_PER_DAY = 0.995;
 export const DEFAULT_TRADE_TARIFF_PERCENT = 5;
 export const MAX_TRADE_TARIFF_PERCENT = 30;
 
-// 外镇收购价（我们卖出）：小麦斤/单位。盐、木材需求高，收购价高；粮食自给足，收购价低。
-const BASE_BUY_PRICE = { wheat: 0.85, flour: 1.15, bread: 1.35, salt: 4.5, wood: 2.8 };
+// 外镇收购价（我们卖出）：小麦斤/单位。小麦是战略物资，收购价不低于1（不亏本卖粮）；
+const BASE_BUY_PRICE = { wheat: 1.05, flour: 1.15, bread: 1.35, salt: 4.5, wood: 2.8 };
 // 外镇售价（我们买入）：粮食充裕，售价便宜。
 const BASE_SELL_PRICE = { wheat: 1.15, flour: 1.55, bread: 1.9 };
 const YIELD_PER_MU_JIN = 400;
@@ -77,6 +77,14 @@ function applyOutsideTownDefaults(ot, source) {
   }
   if (ot.lastYearProductionJin === undefined) ot.lastYearProductionJin = src.lastYearProductionJin || 0;
   if (ot.lastYearConsumptionJin === undefined) ot.lastYearConsumptionJin = src.lastYearConsumptionJin || 0;
+  // 小麦贷款：天灾欠收时本镇放贷给四地主镇，玩家定斤数和利息
+  ot.loans = ot.loans ?? (Array.isArray(src.loans) ? src.loans.map(l => ({ ...l })) : []);
+  ot.loanStats = ot.loanStats ?? {};
+  const srcLoanStats = src.loanStats || {};
+  for (const key of ["totalIssuedJin", "totalRepaidJin", "totalInterestJin", "activeLoans"]) {
+    const value = ot.loanStats[key] ?? srcLoanStats[key];
+    ot.loanStats[key] = Number.isFinite(value) && value >= 0 ? value : 0;
+  }
   return ot;
 }
 
@@ -289,6 +297,94 @@ export function setTradeTariffRate(state, percent) {
   return { ok: true, tradeTariffRate: value };
 }
 
+// 小麦贷款：天灾欠收时本镇放贷给四地主镇。玩家定斤数和年利率。
+// 放贷：镇库小麦 -> 外镇小麦库存；还款：外镇按年结时从小麦库存扣还本付息。
+export const MAX_LOAN_JIN = 1000000;
+export const MAX_LOAN_RATE_PERCENT = 50;
+export function issueWheatLoan(state, principalJin, annualRatePercent, content) {
+  const ot = ensureOutsideTown(state);
+  const principal = Math.round(Number(principalJin) * 100) / 100;
+  const rate = Number(annualRatePercent);
+  if (!Number.isFinite(principal) || principal <= 0) return { ok: false, reason: "贷款斤数须大于0" };
+  if (principal > MAX_LOAN_JIN) return { ok: false, reason: `单笔贷款不超过${MAX_LOAN_JIN}斤` };
+  if (!Number.isFinite(rate) || rate < 0 || rate > MAX_LOAN_RATE_PERCENT) {
+    return { ok: false, reason: `年利率须在0—${MAX_LOAN_RATE_PERCENT}%之间` };
+  }
+  const scale = content.precision.inventoryUnitsPerJin;
+  const units = Math.floor(principal * scale);
+  if (units <= 0) return { ok: false, reason: "贷款斤数过小" };
+  const townWheat = Math.max(0, state.accounts?.town?.wheat || 0);
+  if (townWheat < units) return { ok: false, reason: "镇库小麦不足，放贷失败" };
+  state.accounts.town.wheat = townWheat - units;
+  ot.wheatStockJin = Math.round((ot.wheatStockJin + principal) * 100) / 100;
+  const loan = {
+    id: `loan-${state.year}-${state.day}-${ot.loans.length}`,
+    principalJin: principal,
+    annualRatePercent: Math.round(rate * 100) / 100,
+    outstandingJin: principal,
+    accruedInterestJin: 0,
+    issueYear: state.year,
+    issueDay: state.day,
+    status: "active"
+  };
+  ot.loans.push(loan);
+  ot.loanStats.totalIssuedJin = Math.round((ot.loanStats.totalIssuedJin + principal) * 100) / 100;
+  ot.loanStats.activeLoans = ot.loans.filter(l => l.status === "active").length;
+  const transactionId = makeTransactionId(state);
+  recordLedger(state, {
+    type: "wheat_loan_issue", transactionId, source: "town", destination: "outside_town",
+    itemId: "wheat", quantityUnits: units, qeqUnits: 0,
+    reason: `向${OUTSIDE_TOWN_NAME}发放小麦贷款${principal}斤，年利率${loan.annualRatePercent}%`
+  }, content);
+  recordEvent(state, `向${OUTSIDE_TOWN_NAME}发放小麦贷款${Math.round(principal)}斤（年利率${loan.annualRatePercent}%），解其天灾之急。`, content);
+  return { ok: true, loan };
+}
+
+// 每年年结时：贷款计息 + 外镇从结余小麦中还款（先息后本）
+export function settleWheatLoansYear(state, content) {
+  const ot = ensureOutsideTown(state);
+  let repaidJin = 0;
+  let interestJin = 0;
+  for (const loan of ot.loans) {
+    if (loan.status !== "active") continue;
+    // 计一年利息
+    const yearInterest = Math.round(loan.outstandingJin * loan.annualRatePercent / 100 * 100) / 100;
+    loan.accruedInterestJin = Math.round((loan.accruedInterestJin + yearInterest) * 100) / 100;
+    // 外镇用结余小麦还款：先还利息，再还本金
+    const totalDue = Math.round((loan.outstandingJin + loan.accruedInterestJin) * 100) / 100;
+    const payable = Math.min(totalDue, Math.max(0, ot.wheatStockJin));
+    if (payable > 0) {
+      const payInterest = Math.min(loan.accruedInterestJin, payable);
+      const payPrincipal = Math.min(loan.outstandingJin, payable - payInterest);
+      loan.accruedInterestJin = Math.round((loan.accruedInterestJin - payInterest) * 100) / 100;
+      loan.outstandingJin = Math.round((loan.outstandingJin - payPrincipal) * 100) / 100;
+      ot.wheatStockJin = Math.round((ot.wheatStockJin - payInterest - payPrincipal) * 100) / 100;
+      const townUnits = Math.floor((payInterest + payPrincipal) * content.precision.inventoryUnitsPerJin);
+      state.accounts ||= {};
+      state.accounts.town ||= {};
+      state.accounts.town.wheat = (state.accounts.town.wheat || 0) + townUnits;
+      repaidJin = Math.round((repaidJin + payInterest + payPrincipal) * 100) / 100;
+      interestJin = Math.round((interestJin + payInterest) * 100) / 100;
+      if (loan.outstandingJin <= 0.01 && loan.accruedInterestJin <= 0.01) {
+        loan.status = "repaid";
+        recordEvent(state, `${OUTSIDE_TOWN_NAME}还清小麦贷款（本金${loan.principalJin}斤）。`, content);
+      }
+    }
+  }
+  ot.loanStats.totalRepaidJin = Math.round((ot.loanStats.totalRepaidJin + repaidJin) * 100) / 100;
+  ot.loanStats.totalInterestJin = Math.round((ot.loanStats.totalInterestJin + interestJin) * 100) / 100;
+  ot.loanStats.activeLoans = ot.loans.filter(l => l.status === "active").length;
+  if (repaidJin > 0) {
+    recordLedger(state, {
+      type: "wheat_loan_repay", transactionId: makeTransactionId(state),
+      source: "outside_town", destination: "town", itemId: "wheat",
+      quantityUnits: Math.floor(repaidJin * content.precision.inventoryUnitsPerJin), qeqUnits: 0,
+      reason: `${OUTSIDE_TOWN_NAME}偿还小麦贷款${Math.round(repaidJin)}斤（含利息${Math.round(interestJin)}斤）`
+    }, content);
+  }
+  return { repaidJin, interestJin };
+}
+
 // 供 UI/面板读取的视图数据（只读，不回写游戏状态）。
 export function selectOutsideTownView(state, content) {
   const ot = readOutsideTown(state);
@@ -317,6 +413,8 @@ export function selectOutsideTownView(state, content) {
     tariffRate: tradeTariffRate(state),
     stats: { ...ot.stats },
     lastYearProductionJin: ot.lastYearProductionJin || 0,
-    lastYearConsumptionJin: ot.lastYearConsumptionJin || 0
+    lastYearConsumptionJin: ot.lastYearConsumptionJin || 0,
+    loans: (ot.loans || []).map(l => ({ ...l })),
+    loanStats: { ...ot.loanStats }
   };
 }
