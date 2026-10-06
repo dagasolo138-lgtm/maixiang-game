@@ -1,6 +1,6 @@
 import { currencyScale } from "../economy/currency.js";
 import { recordEvent } from "../economy/ledger.js";
-import { householdList, householdPopulation, isActiveHousehold } from "./households.js";
+import { householdList, householdPopulation, isActiveHousehold, syncResidentAggregates } from "./households.js";
 import { wholesalePrice } from "./wealth-stats.js";
 import { companyWorkingCapitalReserve } from "./companies.js";
 import { ensureHouseholdInvestPropensity, householdInvestableVoucherUnits } from "./investment-preference.js";
@@ -95,7 +95,7 @@ export function bankLoanableVoucherUnits(state) {
   return Math.max(0, totals.cashVoucherUnits - required);
 }
 
-export function depositToBank(state, householdId, voucherUnits) {
+export function depositToBank(state, householdId, voucherUnits, content = null) {
   if (!bankAvailable(state)) return { ok: false, reason: "银行尚未可用（需建成银行并完成货币改革）" };
   const units = Math.floor(Number(voucherUnits) || 0);
   if (!Number.isSafeInteger(units) || units <= 0) return { ok: false, reason: "存款金额必须为正整数" };
@@ -107,10 +107,12 @@ export function depositToBank(state, householdId, voucherUnits) {
   bank.cashVoucherUnits += units;
   bank.deposits[householdId] = (bank.deposits[householdId] || 0) + units;
   bank.stats.depositsCount += 1;
+  // 居民汇总粮券是缓存值，改动家庭券后必须同步，否则粮券总账守恒校验失败。
+  if (content) syncResidentAggregates(state, content);
   return { ok: true, householdId, voucherUnits: units };
 }
 
-export function withdrawFromBank(state, householdId, voucherUnits) {
+export function withdrawFromBank(state, householdId, voucherUnits, content = null) {
   const units = Math.floor(Number(voucherUnits) || 0);
   if (!Number.isSafeInteger(units) || units <= 0) return { ok: false, reason: "取款金额必须为正整数" };
   const bank = ensureBankState(state);
@@ -122,6 +124,8 @@ export function withdrawFromBank(state, householdId, voucherUnits) {
   bank.deposits[householdId] = deposited - units;
   bank.cashVoucherUnits -= units;
   household.voucherUnits = (household.voucherUnits || 0) + units;
+  // 同上：居民汇总粮券缓存必须随之刷新。
+  if (content) syncResidentAggregates(state, content);
   return { ok: true, householdId, voucherUnits: units };
 }
 
@@ -238,7 +242,7 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
     if (cash < reserveUnits) {
       const shortfall = reserveUnits - cash;
       const canTake = Math.min(shortfall, bank.deposits[household.id] || 0);
-      if (canTake > 0) withdrawFromBank(state, household.id, canTake);
+      if (canTake > 0) withdrawFromBank(state, household.id, canTake, content);
       household.stockBuyBudgetVoucherUnits = 0;
       continue;
     }
@@ -247,7 +251,7 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
     const investable = householdInvestableVoucherUnits(state, content, household);
     const propensity = ensureHouseholdInvestPropensity(state, content, household);
     const depositAmount = Math.floor(investable * propensity.deposit);
-    if (depositAmount > 0) depositToBank(state, household.id, depositAmount);
+    if (depositAmount > 0) depositToBank(state, household.id, depositAmount, content);
     household.stockBuyBudgetVoucherUnits = investable - depositAmount;
   }
 }
@@ -276,7 +280,14 @@ export function settleBankDay(state, content) {
   settleBankLoansDay(state, content, bank, policy, dayIndex);
   settleBankAutoLoans(state, content, bank);
   if ((bank.cashVoucherUnits || 0) < 0) {
-    recordEvent(state, "银行现金为负，已资不抵债！请降低准备金率或补充资金。", content);
+    // 银行现金持续为负时逐日告警会刷屏；用事件合并机制折叠成一条聚合事件。
+    recordEvent(state, "银行现金为负，已资不抵债！请降低准备金率或补充资金。", content, {
+      mergeKey: "bank_negative_cash",
+      mergeWindowDays: 7,
+      amount: Math.abs(bank.cashVoucherUnits || 0),
+      mergedText: (count, amount) =>
+        `银行现金连续${count}天为负，已资不抵债！请降低准备金率或补充资金。`
+    });
   }
   const totals = bankTotals(state);
   return {

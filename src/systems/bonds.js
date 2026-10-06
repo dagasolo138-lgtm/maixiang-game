@@ -1,6 +1,6 @@
 import { currencyScale, ensureCurrencyState, voucherBalance } from "../economy/currency.js";
 import { recordEvent } from "../economy/ledger.js";
-import { householdList, householdPopulation, isActiveHousehold } from "./households.js";
+import { householdList, householdPopulation, isActiveHousehold, syncResidentAggregates } from "./households.js";
 import { wholesalePrice } from "./wealth-stats.js";
 import { bankLoanableVoucherUnits, bankPolicy, ensureBankState } from "./bank.js";
 import { liquidityInvestRatio } from "./liquidity.js";
@@ -22,6 +22,7 @@ export function ensureBondState(state) {
   bonds.seq ||= 0;
   if (!Array.isArray(bonds.issues)) bonds.issues = [];
   bonds.creditPenaltyBps ||= 0;
+  bonds.townOwesBankVoucherUnits ||= 0;
   return bonds;
 }
 
@@ -42,11 +43,15 @@ function holderKeyOf(kind, id) {
   return `${kind}:${id}`;
 }
 
-function payToHolder(state, holderKey, units) {
+function payToHolder(state, holderKey, units, content = null) {
   const [kind, id] = holderKey.split(":");
   if (kind === "household") {
     const household = state.households?.byId?.[id];
-    if (household) household.voucherUnits = (household.voucherUnits || 0) + units;
+    if (household) {
+      household.voucherUnits = (household.voucherUnits || 0) + units;
+      // 居民汇总粮券是缓存值：改动家庭券后必须同步，否则粮券总账守恒校验失败。
+      if (content) syncResidentAggregates(state, content);
+    }
   } else if (kind === "bank") {
     const bank = ensureBankState(state);
     bank.cashVoucherUnits = (bank.cashVoucherUnits || 0) + units;
@@ -113,6 +118,8 @@ export function subscribeBond(state, issueId, holderKind, holderId, voucherUnits
     if (!household || !isActiveHousehold(household)) return { ok: false, reason: "住户不存在或已迁出" };
     if ((household.voucherUnits || 0) < units) return { ok: false, reason: "住户粮券不足" };
     household.voucherUnits -= units;
+    // 居民汇总粮券是缓存值：改动家庭券后必须同步，否则粮券总账守恒校验失败。
+    syncResidentAggregates(state, content);
   } else if (holderKind === "bank") {
     const bank = ensureBankState(state);
     if ((bank.cashVoucherUnits || 0) < units) return { ok: false, reason: "银行现金不足" };
@@ -126,11 +133,33 @@ export function subscribeBond(state, issueId, holderKind, holderId, voucherUnits
   return { ok: true, issueId, holderKey: key, voucherUnits: units };
 }
 
+// 流拍退款：认购款已进镇库，但认购期内镇库可能已把钱花出去。
+// 镇库现金只够退多少就退多少，退不出的部分挂为家庭对镇库的持久应收
+// （household.townOwesVoucherUnits，与开店失败垫付同一机制，每日由 shops 结算优先偿付），
+// 绝不把镇库余额扣成负数。
 function refundSubscription(state, issue, content) {
   for (const [key, units] of Object.entries(issue.subscriptions)) {
     if (!(units > 0)) continue;
-    addTownCashUnits(state, -units);
-    payToHolder(state, key, units);
+    const townCash = Math.max(0, townCashUnits(state));
+    const refundable = Math.min(units, townCash);
+    if (refundable > 0) {
+      addTownCashUnits(state, -refundable);
+      payToHolder(state, key, refundable, content);
+    }
+    const shortfall = units - refundable;
+    if (shortfall > 0) {
+      if (key.startsWith("household:")) {
+        const household = state.households?.byId?.[key.slice(10)];
+        if (household) {
+          household.townOwesVoucherUnits ||= 0;
+          household.townOwesVoucherUnits += shortfall;
+        }
+      } else {
+        // 银行认购退不出：同样挂为镇库对银行的应付款，日结算时优先补付。
+        state.bonds.townOwesBankVoucherUnits = (state.bonds.townOwesBankVoucherUnits || 0) + shortfall;
+      }
+      recordEvent(state, `国债${issue.id}流拍退款：镇库现金不足，${shortfall}券暂记为应付，日后优先偿付。`, content);
+    }
   }
   issue.subscriptions = {};
   issue.subscribedVoucherUnits = 0;
@@ -205,7 +234,7 @@ function payCoupon(state, issue, content) {
       const due = Math.floor((holding.principalVoucherUnits || 0) * issue.couponRateAnnualPercent / 100);
       const part = totalDue > 0 ? Math.floor(pay * due / totalDue) : 0;
       if (part > 0) {
-        payToHolder(state, holding.holderKey, part);
+        payToHolder(state, holding.holderKey, part, content);
         distributed += part;
       }
     }
@@ -224,7 +253,7 @@ function settleMaturity(state, issue, content) {
     const pay = Math.min(cash, holding.principalVoucherUnits || 0);
     if (pay > 0) {
       addTownCashUnits(state, -pay);
-      payToHolder(state, holding.holderKey, pay);
+      payToHolder(state, holding.holderKey, pay, content);
       cash -= pay;
       holding.principalVoucherUnits -= pay;
       issue.stats.principalRepaidVoucherUnits += pay;
@@ -265,9 +294,22 @@ export function redeemBondEarly(state, issueId, holderKey, content) {
   const total = holding.principalVoucherUnits + accrued;
   if (townCashUnits(state) < total) return { ok: false, reason: "镇库现金不足，暂无法赎回" };
   addTownCashUnits(state, -total);
-  payToHolder(state, holderKey, total);
+  payToHolder(state, holderKey, total, content);
   issue.holdings = issue.holdings.filter(row => row !== holding);
   return { ok: true, principalVoucherUnits: holding.principalVoucherUnits, interestVoucherUnits: accrued };
+}
+
+// 流拍退款挂账的镇库应付：每日用镇库现有现金尽量补付给银行，绝不透支。
+function settleTownBondPayables(state, bonds, content) {
+  const owed = bonds.townOwesBankVoucherUnits || 0;
+  if (owed <= 0) return;
+  const pay = Math.min(owed, Math.max(0, townCashUnits(state)));
+  if (pay <= 0) return;
+  addTownCashUnits(state, -pay);
+  const bank = ensureBankState(state);
+  bank.cashVoucherUnits = (bank.cashVoucherUnits || 0) + pay;
+  bonds.townOwesBankVoucherUnits = owed - pay;
+  recordEvent(state, `镇库补付国债流拍退款${pay}券给银行。`, content);
 }
 
 export function settleBondsDay(state, content) {
@@ -275,6 +317,8 @@ export function settleBondsDay(state, content) {
   const bonds = ensureBondState(state);
   const daysPerYear = content.rules.daysPerYear || 360;
   const dayIndex = (state.year - 1) * daysPerYear + state.day;
+  // 镇库欠银行/住户的流拍退款：镇库有钱就优先补付（家庭侧由 shops 结算的 townOwes 一并处理）。
+  settleTownBondPayables(state, bonds, content);
   for (const issue of bonds.issues) {
     if (issue.status === "subscribing") {
       autoSubscribe(state, issue, content);
