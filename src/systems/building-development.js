@@ -23,6 +23,11 @@ function projectsForBuilding(state, building) {
 export function selectUpgradePreview(state, buildingId, content) {
   const building = state.buildings.find(row => row.id === buildingId);
   if (!building) return { available: false, reason: "建筑不存在" };
+  // 镇库只升级镇营建筑：含公司/民营经营权的，镇库出钱别人受益，不予升级（之前不校验）。
+  const ownership = building.ownership || {};
+  if ((ownership.privateLevels || 0) > 0 || (ownership.listedLevels || 0) > 0) {
+    return { available: false, reason: "含公司/民营经营权的建筑由业主出资升级，镇库不垫付" };
+  }
   const definition = content.buildings[building.typeId];
   const config = definition?.upgrade;
   const level = Math.max(1, building.level || 1);

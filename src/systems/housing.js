@@ -61,8 +61,8 @@ export function buyRepairWoodForResidents(state, content) {
   // 镇库木材是建设储备，居民修缮只从市场余量（企业、商铺、其他家庭）购买。
   const result = purchaseItemForResidents(state, "wood", targetUnits, currentUnitPrice(state, "wood", content), content, "居民购买木材修缮房屋", { excludeTownSellers: true });
   const afterTotal = households.reduce((sum, household) => sum + (household.inventory?.wood || 0), 0);
-  // 需要扣回的修缮消耗：买入带来的净增量，且不超过本日买入量。
-  const consumeTarget = Math.max(0, Math.min(targetUnits, afterTotal - beforeTotal));
+  // 需要扣回的修缮消耗：以实际买入量为准（之前用总量净增量，家庭间转卖时总量不变导致买入方木材不被消费）。
+  const consumeTarget = Math.max(0, Math.min(targetUnits, result.purchasedUnits || 0));
   let consumedUnits = 0;
   if (consumeTarget > 0) {
     // 按“本日新增量”从多到少扣除，每家最多扣掉自己买入后的净增量。

@@ -285,10 +285,26 @@ export function openShop(state, buildingId, typeId, content, preferredHouseholdI
     const refund = settleMonetaryPayment(state, `shop:${shopId}`, `household:${household.id}`, {
       valueUnits: startupUnits, voucherValueUnits: payment.voucherPaidValueUnits || 0, wheatValueUnits: payment.wheatPaidValueUnits || 0
     }, content, "shop_capital_refund", "开店失败退回资金", { requireFull: true, allowVoucherFallback: false, countsForReform: false });
-    // 退款失败也要删店，但把未退金额记为店铺对家庭的负债，避免启动资金无声消失。
+    // 退款失败：镇库先行垫付给家庭。店铺即将删除，其负债记录会一并消失，
+    // 故不在店上记账，直接由镇库承担并记为家庭对镇库的应收（持久化，不随店删除）。
     if (!refund.ok) {
-      shop.liabilities.refundVoucherUnits = (shop.liabilities.refundVoucherUnits || 0) + startupUnits;
-      recordEvent(state, `${shop.name}开店失败，${Math.round(startupUnits / content.precision.currencyUnitsPerVoucher)}券启动资金暂欠家庭。`, content);
+      const due = {
+        valueUnits: startupUnits,
+        voucherValueUnits: payment.voucherPaidValueUnits || 0,
+        wheatValueUnits: payment.wheatPaidValueUnits || 0
+      };
+      const advance = settleMonetaryPayment(state, "town", `household:${household.id}`, due, content,
+        "shop_capital_refund_advance", `${shop.name}开店失败镇库垫付启动资金`,
+        { requireFull: false, trackUnpaid: true, shortfallKey: `shop-refund:${shopId}:${household.id}` });
+      const paidAdvance = advance.paidValueUnits || 0;
+      const remainingAdvance = Math.max(0, startupUnits - paidAdvance);
+      if (remainingAdvance > 0) {
+        // 镇库也付不出全额：记为家庭对镇库的持久应收，下次镇库有钱时优先偿付。
+        household.townOwesVoucherUnits = (household.townOwesVoucherUnits || 0) + remainingAdvance;
+        recordEvent(state, `${shop.name}开店失败，镇库垫付${Math.round(paidAdvance / content.precision.currencyUnitsPerVoucher)}券，剩余${Math.round(remainingAdvance / content.precision.currencyUnitsPerVoucher)}券记为家庭对镇库应收。`, content);
+      } else {
+        recordEvent(state, `${shop.name}开店失败，镇库垫付${Math.round(startupUnits / content.precision.currencyUnitsPerVoucher)}券启动资金给家庭。`, content);
+      }
     }
     delete state.shops[shopId];
     // 回退店铺编号，避免出现空洞（之前只删店不回退编号）。
@@ -847,7 +863,27 @@ export function prepareShopsForDay(state, content) {
   return rows;
 }
 
+// 镇库偿付欠家庭的款项（如开店失败垫付不足的剩余）。每日尝试，有钱就还。
+function settleTownOwesHouseholds(state, content) {
+  const households = householdList(state).filter(h => (h.townOwesVoucherUnits || 0) > 0);
+  if (households.length === 0) return;
+  for (const household of households) {
+    const owed = household.townOwesVoucherUnits || 0;
+    if (owed <= 0) continue;
+    const result = settleMonetaryPayment(state, "town", `household:${household.id}`,
+      currentPaymentComposition(state, owed), content,
+      "town_debt_repayment", "镇库偿付欠款",
+      { requireFull: false, trackUnpaid: true, shortfallKey: `town-owes:${household.id}` });
+    const paid = result.paidValueUnits || 0;
+    household.townOwesVoucherUnits = Math.max(0, owed - paid);
+    if (paid > 0) {
+      recordEvent(state, `镇库偿付欠${household.name || household.id} ${Math.round(paid / content.precision.currencyUnitsPerVoucher)}券。`, content);
+    }
+  }
+}
+
 export function finishShopsDay(state, content, forceSettlement = false) {
+  settleTownOwesHouseholds(state, content);
   const rows = [];
   for (const shop of Object.values(ensureShops(state, content)).filter(shop => shop.status === "open")) {
     payDailyLiabilities(state, shop, content);

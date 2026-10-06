@@ -323,8 +323,10 @@ export function payDailyWages(state, laborAtStart, content) {
       if (planned === "mixed" && payer === "wholesale") {
         const remaining = Math.max(0, amount - paid);
         if (remaining > 0) {
+          // 镇库必须用市场付款后的剩余构成（result.remainingComposition），
+          // 不能用付款前的 paymentClaims[householdId]，否则会按全额重复支付。
           const townResult = settleMonetaryPayment(state, "town", `household:${householdId}`,
-            normalizePaymentObligation(paymentClaims[householdId] || remaining, state), content,
+            normalizePaymentObligation(result.remainingComposition, state), content,
             row.key === "builders" ? "construction_wage_payment" : "wage_payment", "镇库兜底批发市场工资差额",
             { requireFull: false, trackUnpaid: true, shortfallKey: `town-wage:${row.payrollKey}:${householdId}` });
           paid += townResult.paidValueUnits || 0;
