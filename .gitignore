@@ -1,6 +1,8 @@
 # 构建产物（本地 scripts/bundle-single.mjs 可复现）
 dist/
 dist-single/
+# 审计中间文件（报告另存，不进仓库）
+audit-*/
 # 依赖
 node_modules/
 # 工作日志
