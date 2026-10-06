@@ -726,6 +726,8 @@ function normalizeV15(raw, definitions, legacyCompleted = false) {
   state.policy.wageControl.civil ??= 1.0;
   state.policy.wageControl.industry ??= 1.0;
   state.policy.tradeTariffRate ??= 5;
+  // 自动存档频率是 v15 内新增的策略字段，旧档缺失时补默认"每月"（读取方虽有 ?? 1 兜底，仍按铁律补齐）。
+  state.policy.autosaveMonths ??= 1;
   state.socialSecurity ||= { enabled: false, balanceUnits: 0, dailyPerWorkerJin: 1, pensionPerElderJin: 2, totalInjectedUnits: 0, totalCollectedUnits: 0, totalPaidUnits: 0 };
   state.socialSecurity.enabled ??= false;
   state.socialSecurity.balanceUnits ??= 0;

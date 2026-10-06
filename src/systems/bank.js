@@ -223,6 +223,10 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
   const scale = currencyScale(content);
   const dailyDepositRate = policy.depositRateAnnualPercent / 100 / daysPerYear;
   const wheatPricePerJin = wholesalePrice(state, "wheat", content) || 0;
+  // 本循环逐户存取款，会批量改家庭钱包；推迟到循环结束再同步一次居民汇总，
+  // 避免每户都做一次全量重算（O(n²)），同时保证粮券守恒口径正确。
+  const previousDefer = Boolean(state._deferHouseholdSync);
+  state._deferHouseholdSync = true;
   for (const household of householdList(state)) {
     if (!isActiveHousehold(household)) continue;
     // 先计息：存款台账增加（银行确认支出，兑付时从现金支付）
@@ -254,6 +258,8 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
     if (depositAmount > 0) depositToBank(state, household.id, depositAmount, content);
     household.stockBuyBudgetVoucherUnits = investable - depositAmount;
   }
+  state._deferHouseholdSync = previousDefer;
+  if (!previousDefer) syncResidentAggregates(state, content);
 }
 
 function settleBankAutoLoans(state, content, bank) {
