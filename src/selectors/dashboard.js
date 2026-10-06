@@ -375,7 +375,7 @@ export function selectDashboard(state, content, selection) {
     bondOutstandingVoucher: bondOutstandingVoucherUnits(state) / voucherScale,
     depositRateAnnualPercent: state.policy?.bank?.depositRateAnnualPercent ?? null,
     loanRateAnnualPercent: state.policy?.bank?.loanRateAnnualPercent ?? null,
-    liquidityLevel: null
+    liquidityLevel: state.liquidity?.level ?? null
   };
   return {
     year: state.year,

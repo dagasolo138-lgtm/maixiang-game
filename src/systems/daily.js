@@ -30,6 +30,7 @@ import { finalizeMonetaryPaymentDay } from "../economy/payment.js";
 import { settleBankDay } from "./bank.js";
 import { settleBondsDay } from "./bonds.js";
 import { settleStockMarketDay } from "./stock-exchange.js";
+import { settleLiquidityDay } from "./liquidity.js";
 import { accrueServiceDemand, processServiceDemand } from "./services.js";
 import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits, snapshotWholesaleHistory, subsidizeWholesaleWheat } from "./wholesale-market.js";
 import { applyCompanyDistributionsToAnnualReport, buildAnnualReport } from "./annual-reports.js";
@@ -150,6 +151,8 @@ export function settleOneDay(state, content) {
   accumulateFarmDay(state, content);
   const endingYearToday = state.day + 1 >= content.rules.daysPerYear;
   finalizeMonetaryPaymentDay(state, content);
+  // 流动性日结算：刷新投资比例（五期算法），供银行/国债当日使用。
+  settleLiquidityDay(state, content);
   // 银行日结算：存款计息/吸储、贷款计息/还款/核销、公司自动借款（金融扩展二期）。
   settleBankDay(state, content);
   // 国债日结算：认购/拍卖定价、付息、到期还本/展期/违约（金融扩展三期）。

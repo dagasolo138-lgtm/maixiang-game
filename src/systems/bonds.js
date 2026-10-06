@@ -3,6 +3,7 @@ import { recordEvent } from "../economy/ledger.js";
 import { householdList, householdPopulation, isActiveHousehold } from "./households.js";
 import { wholesalePrice } from "./wealth-stats.js";
 import { bankLoanableVoucherUnits, bankPolicy, ensureBankState } from "./bank.js";
+import { liquidityInvestRatio } from "./liquidity.js";
 
 // 国债系统（金融扩展第三期）：镇库发行，拍卖定价。
 // - 认购期7天；认购踊跃则票面利率下调，认购不足则上浮；不足3成流拍退款
@@ -169,12 +170,13 @@ function autoSubscribe(state, issue, content) {
       if (!isActiveHousehold(household)) continue;
       const pop = householdPopulation(household);
       if (!(pop > 0) || !(wheatPricePerJin > 0)) continue;
-      // 银行吸储后的剩余闲钱，再拿一半认购
+      // 银行吸储后的剩余闲钱，按流动性投资比例的一半认购（五期算法自动调整）
+      const investRatio = liquidityInvestRatio(state, content);
       const reserveUnits = Math.ceil(pop * 2 * 30 * wheatPricePerJin * scale);
       const surplus = (household.voucherUnits || 0) - reserveUnits;
       if (surplus <= 0) continue;
       const left = issue.totalVoucherUnits - issue.subscribedVoucherUnits;
-      const amount = Math.min(Math.floor(surplus * 0.5), left);
+      const amount = Math.min(Math.floor(surplus * investRatio * 0.5), left);
       if (amount > 0) subscribeBond(state, issue.id, "household", household.id, amount, content);
     }
   }

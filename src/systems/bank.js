@@ -3,6 +3,7 @@ import { recordEvent } from "../economy/ledger.js";
 import { householdList, householdPopulation, isActiveHousehold } from "./households.js";
 import { wholesalePrice } from "./wealth-stats.js";
 import { companyWorkingCapitalReserve } from "./companies.js";
+import { liquidityInvestRatio } from "./liquidity.js";
 
 // 银行系统（金融扩展第二期）：镇营银行，利润归镇库。
 // - 只存粮券不存粮食；存款按日计息；可向上市公司放贷
@@ -12,8 +13,7 @@ import { companyWorkingCapitalReserve } from "./companies.js";
 export const DEFAULT_DEPOSIT_RATE_ANNUAL_PERCENT = 2;
 export const DEFAULT_LOAN_RATE_ANNUAL_PERCENT = 6;
 export const DEFAULT_RESERVE_REQUIREMENT_PERCENT = 10;
-// 二期固定投资比例；五期流动性规则改为按民间流动性健康度自动在 50%～80% 滑动。
-export const BANK_DEPOSIT_INVEST_RATIO = 0.65;
+// 投资比例改由流动性算法按日自动调整（五期），见 liquidity.js。
 export const BANK_HOUSEHOLD_RESERVE_DAYS = 30;
 export const BANK_LOAN_TERM_DAYS = 90;
 export const BANK_LOAN_WRITEOFF_OVERDUE_DAYS = 30;
@@ -241,10 +241,11 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
       if (canTake > 0) withdrawFromBank(state, household.id, canTake);
       continue;
     }
-    // 吸储：30 天口粮储备之外的闲钱，按固定比例存入（二期；五期改算法）
+    // 吸储：30 天口粮储备之外的闲钱，按当日流动性投资比例存入（五期算法自动调整）
+    const investRatio = liquidityInvestRatio(state, content);
     const surplus = cash - reserveUnits;
     if (surplus > 0) {
-      const amount = Math.floor(surplus * BANK_DEPOSIT_INVEST_RATIO);
+      const amount = Math.floor(surplus * investRatio);
       if (amount > 0) depositToBank(state, household.id, amount);
     }
   }
