@@ -1685,16 +1685,30 @@ export function mountGame(root) {
     mapCamera.step();
     if (state) {
       if (!clock.paused) animationTime += elapsed;
-      const advanced = clock.advanceFrame(elapsed, () => {
-        simulation.advanceDay(state);
-        dirty = true;
-        stateRevision += 1;
-        invalidateStateView();
-        if (state.shortageQeq > 0) {
-          clock.pause();
-          showToast("口粮出现短缺，时光已暂停。请检查居民粮账并拨粮救济。", 4200);
-        }
-      });
+      // 防御：单日结算异常时暂停并提示，避免静默卡死（之前异常会直接掐断 rAF 循环）
+      let advanced = 0;
+      const frameStart = performance.now();
+      try {
+        advanced = clock.advanceFrame(elapsed, () => {
+          simulation.advanceDay(state);
+          dirty = true;
+          stateRevision += 1;
+          invalidateStateView();
+          if (state.shortageQeq > 0) {
+            clock.pause();
+            showToast("口粮出现短缺，时光已暂停。请检查居民粮账并拨粮救济。", 4200);
+          }
+          // 单帧内多日结算超时保护：超过 800ms 自动暂停，下帧继续
+          if (performance.now() - frameStart > 800 && !clock.paused) {
+            clock.pause();
+            showToast("单日结算较慢，已自动暂停，可手动继续。", 3000);
+          }
+        });
+      } catch (err) {
+        clock.pause();
+        console.error("[麦乡] 日结算异常已暂停", err);
+        showToast("结算出现异常已暂停：" + (err && err.message || "未知错误"), 5000);
+      }
       if (advanced > 0) render();
       const view = latestView;
       if (view && !clock.paused && now - lastCanvasFrame >= 90) {
