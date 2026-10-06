@@ -3,7 +3,7 @@ import { recordEvent } from "../economy/ledger.js";
 import { householdList, householdPopulation, isActiveHousehold, syncResidentAggregates } from "./households.js";
 import { wholesalePrice } from "./wealth-stats.js";
 import { companyWorkingCapitalReserve } from "./companies.js";
-import { ensureHouseholdInvestPropensity, householdInvestableVoucherUnits } from "./investment-preference.js";
+import { ensureHouseholdInvestPropensity, householdInvestableVoucherUnits, HOUSEHOLD_RESERVE_DAYS } from "./investment-preference.js";
 
 // 银行系统（金融扩展第二期）：镇营银行，利润归镇库。
 // - 只存粮券不存粮食；存款按日计息；可向上市公司放贷
@@ -14,7 +14,8 @@ export const DEFAULT_DEPOSIT_RATE_ANNUAL_PERCENT = 2;
 export const DEFAULT_LOAN_RATE_ANNUAL_PERCENT = 6;
 export const DEFAULT_RESERVE_REQUIREMENT_PERCENT = 10;
 // 投资比例改由流动性算法按日自动调整（五期），见 liquidity.js。
-export const BANK_HOUSEHOLD_RESERVE_DAYS = 30;
+// 生活储备天数与 investment-preference.js 共用同一常量，避免分流口径漂移。
+export const BANK_HOUSEHOLD_RESERVE_DAYS = HOUSEHOLD_RESERVE_DAYS;
 export const BANK_LOAN_TERM_DAYS = 90;
 export const BANK_LOAN_WRITEOFF_OVERDUE_DAYS = 30;
 
@@ -257,6 +258,8 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
     const depositAmount = Math.floor(investable * propensity.deposit);
     if (depositAmount > 0) depositToBank(state, household.id, depositAmount, content);
     household.stockBuyBudgetVoucherUnits = investable - depositAmount;
+    // 记下预算归属的绝对日：consumeHouseholdStockBudget 凭此防止同日重复消费超发。
+    household.stockBudgetAbsDay = (state.year - 1) * daysPerYear + state.day;
   }
   state._deferHouseholdSync = previousDefer;
   if (!previousDefer) syncResidentAggregates(state, content);

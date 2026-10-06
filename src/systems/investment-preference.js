@@ -60,11 +60,13 @@ export function householdInvestableVoucherUnits(state, content, household) {
 }
 
 // 取出本日股票购买预算并清零：银行结算时已按倾向分流并写入 household.stockBuyBudgetVoucherUnits；
-// 银行不可用时直接按倾向现算。
+// 银行不可用时直接按倾向现算。若银行今日已结算且预算已消费，不再重算（防同日重复调用超发）。
 export function consumeHouseholdStockBudget(state, content, household) {
   let budget = household.stockBuyBudgetVoucherUnits || 0;
   household.stockBuyBudgetVoucherUnits = 0;
   if (budget > 0) return budget;
+  const absDay = (state.year - 1) * (content.rules.daysPerYear || 365) + state.day;
+  if (household.stockBudgetAbsDay === absDay) return 0;
   const investable = householdInvestableVoucherUnits(state, content, household);
   if (investable <= 0) return 0;
   const propensity = ensureHouseholdInvestPropensity(state, content, household);

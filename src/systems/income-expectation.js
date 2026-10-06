@@ -40,7 +40,7 @@ export function maybeRefreshHouseholdIncomeExpectations(state, content) {
 export function updateHouseholdIncomeExpectations(state, content) {
   const daysPerYear = content.rules.daysPerYear || 360;
   const acres = state.agriculture?.reclaimedAcres || 0;
-  const yieldPerAcre = content.agriculture?.yieldPerAcre ?? content.rules.yieldPerAcre ?? 0;
+  const yieldPerAcre = content.agriculture?.yieldPerAcre ?? 0;
   const taxRate = (state.policy?.agricultureTaxPercent ?? content.rules.agricultureTaxDefaultPercent ?? 50) / 100;
   const households = householdList(state);
   let totalFarmers = 0;
