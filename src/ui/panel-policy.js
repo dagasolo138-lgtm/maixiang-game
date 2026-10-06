@@ -7,6 +7,10 @@ export function renderPolicy(view) {
   const agriculture = view.agriculturePolicy;
   const industries = [["mill", "磨坊"], ["bakery", "面包房"], ["lumberyard", "伐木场"], ["saltworks", "盐场"]];
   const privateTaxes = industries.map(([id, name]) => `<div class="row"><span class="label">${name}</span><div class="setting-input">${renderNumericInput(view, { key: `private-tax:${id}`, kind: "private-tax-rate", target: id, value: view.policy.privateProductionTaxPercent?.[id] ?? 10, label: `${name}民营生产税率`, minimum: 0, maximum: 80, className: "setting-editor" })}<b>%</b></div></div>`).join("");
+  // 建筑门控（0.1.11 补回）：无相关建筑时不渲染对应卡片
+  const buildingTypeIds = new Set((view.buildings || []).map(b => b.typeId));
+  const hasCommerce = buildingTypeIds.has("commercial_street") || buildingTypeIds.has("public_housing") || (view.shops || []).length > 0;
+  const hasIndustry = industries.some(([id]) => buildingTypeIds.has(id));
   const workshopWage = view.wageRates.millers ?? view.wageRates.bakers ?? 10;
   const builderWage = view.wageRates.builders ?? 10;
   const shopTax = (view.shops || []).reduce((sum, row) => sum + (row.lastTaxVoucher || 0), 0);
@@ -18,20 +22,24 @@ export function renderPolicy(view) {
   const reformAction = reform.stage === "wheat"
     ? `<button class="primary wide" data-reform-start ${reform.hasBankAccess ? "" : "disabled"}>启动货币改革</button><div class="subtle">${reform.hasBankAccess ? "启动后进入过渡期，初始粮券支付比例为0%。" : "需先建成银行后才能启动。"}</div>`
     : `<button class="secondary wide" data-bank-open>进入银行管理</button>`;
-  return `<h2>政策</h2>
-    <details class="detail-block" data-detail-key="policy-reform"><summary>货币改革</summary><div class="detail-body">
+  // 货币改革简化态（0.1.11 补回）：小麦阶段且无银行时只显示一行提示
+  const reformCard = (reform.stage === "wheat" && !reform.hasBankAccess)
+    ? `<div class="cardlet subtle">货币改革：建成银行后可启动。</div>`
+    : `<details class="detail-block" data-detail-key="policy-reform"><summary>货币改革</summary><div class="detail-body">
       <div class="row"><span class="label">当前制度</span><strong class="value">${reform.stageName}</strong></div>
       ${reform.stage !== "wheat" ? `<div class="row"><span class="label">目标粮券支付比例</span><strong class="value">${number(reform.targetPercent, 2)}%</strong></div>` : ""}
       ${reform.legacyBankAccess && !reform.hasPhysicalBank ? `<div class="subtle">旧存档兼容银行入口已启用，不占用地图地块。</div>` : ""}
       ${reformAction}
-    </div></details>
-    <details class="detail-block" data-detail-key="policy-commerce"><summary>家庭与商业</summary><div class="detail-body">
+    </div></details>`;
+  return `<h2>政策</h2>
+    ${reformCard}
+    ${hasCommerce ? `<details class="detail-block" data-detail-key="policy-commerce"><summary>家庭与商业</summary><div class="detail-body">` : ""}
       <div class="row"><span class="label">营业店铺日租</span><div class="setting-input">${renderNumericInput(view, { key: "shop-rent", kind: "shop-rent", target: "shops", value: view.policy.shopRentVoucher ?? 1, label: "每间营业店铺每日租金", minimum: 0, maximum: 100000, className: "setting-editor" })}<b>${moneyUnit}</b></div></div>
       <div class="row"><span class="label">商业利润税</span><div class="setting-input">${renderNumericInput(view, { key: "shop-tax", kind: "shop-profit-tax", target: "shops", value: view.policy.shopProfitTaxPercent ?? 10, label: "商业利润税", minimum: 0, maximum: 80, className: "setting-editor" })}<b>%</b></div></div>
       <div class="row"><span class="label">今日住宅实收租金</span><strong class="value">${number(view.housing.lastRentDay?.collectedVoucher || 0,1)}${moneyUnit}</strong></div>
       <div class="row"><span class="label">最近店铺利润税</span><strong class="value">${number(shopTax,1)}${moneyUnit}</strong></div>
       <div class="subtle">商业金额按小麦等值核算；实际支付媒介由当前货币制度决定。</div>
-    </div></details>
+    ${hasCommerce ? "</div></details>" : ""}
     <details class="detail-block" data-detail-key="policy-welfare"><summary>工资与福利</summary><div class="detail-body">
       <div class="row"><span class="label">作坊 / 建筑日薪</span><strong class="value">${number(workshopWage)} / ${number(builderWage)}${moneyUnit}</strong></div>
       <label class="toggle"><input id="benefitEnabled" type="checkbox" ${policy.enabled ? "checked" : ""}><span>失业金</span></label>
@@ -68,8 +76,8 @@ export function renderPolicy(view) {
       <div class="row"><span class="label">预计秋收分粮</span><strong class="value">镇库${number(agriculture.townShareJin)} / 居民${number(agriculture.residentShareJin)}斤</strong></div>
       <div class="subtle">${agriculture.lastHarvest ? `上次秋收实际：镇库${number(agriculture.lastHarvest.townJin)} / 居民${number(agriculture.lastHarvest.residentJin)}斤` : "尚未到秋收结算；税率按农事日累计。"}</div>
     </div></details>
-    <details class="detail-block" data-detail-key="policy-relief"><summary>救济</summary><div class="detail-body"><div class="row"><span class="label">需救济 / 已拨家庭</span><strong class="value">${number(relief.eligibleHouseholds||0)} / ${number(relief.servedHouseholds||0)}户</strong></div><div class="row"><span class="label">今日正常兑付 / 救济</span><strong class="value">${number((relief.redeemedWheatUnits||0)/view.inventoryUnitsPerJin,1)} / ${number((relief.movedQeqUnits||0)/view.qeqUnitsPerJin,1)}斤</strong></div><div class="row"><span class="label">今日邻里互助</span><strong class="value">${number(neighborAidDay.donorHouseholds||0)}户接济${number(neighborAidDay.helpedHouseholds||0)}户 · ${number((neighborAidDay.movedQeqUnits||0)/view.qeqUnitsPerJin,1)}斤</strong></div><div class="row"><span class="label">本年邻里接济</span><strong class="value">${number((neighborAid.year?.movedQeqUnits||0)/view.qeqUnitsPerJin,1)}斤</strong></div><div class="subtle">口粮不足3天、又没有粮券可兑的人家，会先得到存粮充裕人家的接济，镇库救济再兜底。</div>${(relief.missingQeqUnits||0)>0?`<div class="shortage-banner visible">镇库不足，尚缺 ${number(relief.missingQeqUnits/view.qeqUnitsPerJin,1)}斤口粮</div>`:""}</div></details>
-    <details class="detail-block" data-detail-key="policy-privatetax"><summary>民营生产税</summary><div class="detail-body">${privateTaxes}</div></details>
+    <details class="detail-block" data-detail-key="policy-relief"><summary>救济</summary><div class="detail-body"><div class="row"><span class="label">需救济 / 已拨家庭</span><strong class="value">${number(relief.eligibleHouseholds||0)} / ${number(relief.servedHouseholds||0)}户</strong></div><div class="row"><span class="label">今日正常兑付 / 救济</span><strong class="value">${number((relief.redeemedWheatUnits||0)/view.inventoryUnitsPerJin,1)} / ${number((relief.movedQeqUnits||0)/view.qeqUnitsPerJin,1)}斤</strong></div>${(relief.missingQeqUnits||0)>0?`<div class="shortage-banner visible">镇库不足，尚缺 ${number(relief.missingQeqUnits/view.qeqUnitsPerJin,1)}斤口粮</div>`:""}<div class="row"><span class="label">今日邻里互助</span><strong class="value">${number(neighborAidDay.donorHouseholds||0)}户接济${number(neighborAidDay.helpedHouseholds||0)}户 · ${number((neighborAidDay.movedQeqUnits||0)/view.qeqUnitsPerJin,1)}斤</strong></div><div class="row"><span class="label">本年邻里接济</span><strong class="value">${number((neighborAid.year?.movedQeqUnits||0)/view.qeqUnitsPerJin,1)}斤</strong></div><div class="subtle">口粮不足3天、又没有粮券可兑的人家，会先得到存粮充裕人家的接济，镇库救济再兜底。</div></div></details>
+    ${hasIndustry ? `<details class="detail-block" data-detail-key="policy-privatetax"><summary>民营生产税</summary><div class="detail-body">${privateTaxes}</div></details>` : ""}
     <details class="detail-block" data-detail-key="policy-detail"><summary>政策详情</summary><div class="detail-body">
       <div class="row"><span class="label">本季农业税平均</span><strong class="value">${number(agriculture.accumulatedAveragePercent, 2)}%</strong></div>
       <div class="row"><span class="label">预计结算税率</span><strong class="value">${number(agriculture.projectedSettlementPercent, 2)}%</strong></div>

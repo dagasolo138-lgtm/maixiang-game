@@ -38,7 +38,7 @@ function diagnosticsMarkup(issue, stats) {
   if (idb) rows.push(`IndexedDB：主档 ${bytes(idb.primaryBytes)}；轮换备份 ${bytes(idb.backupBytes)}；遗留归档 ${bytes(idb.archiveBytes)}；合计 ${bytes(idb.totalBytes)}`);
   if (local) rows.push(`遗留 localStorage：r01 主档 ${bytes(local.slotPrimaryBytes)}；旧单存档 ${bytes(local.oldSingleBytes)}；历史/自动备份 ${bytes(local.backupBytes)}；目录 ${bytes(local.catalogBytes)}；合计 ${bytes(local.totalBytes)}`);
   if (issue?.originalName) rows.push(`原始异常：${escapeHtml(issue.originalName)}${issue.originalMessage ? `：${escapeHtml(issue.originalMessage)}` : ""}`);
-  return rows.length ? `<details class="cardlet" data-detail-key="storage-diagnostics"><summary>存储故障详情</summary><p class="subtle">${rows.join("<br>")}</p><p class="subtle">这里只记录步骤与字节占用，不显示存档正文。</p></details>` : "";
+  return rows.length ? `<details class="cardlet" data-detail-key="storage-diagnostics"><summary>${issue ? "存储故障详情" : "存储详情"}</summary><p class="subtle">${rows.join("<br>")}</p><p class="subtle">这里只记录步骤与字节占用，不显示存档正文。</p></details>` : "";
 }
 
 function recoveryMarkup(view, ui) {
