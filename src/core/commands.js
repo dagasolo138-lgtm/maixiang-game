@@ -20,6 +20,7 @@ import { setBuildingOutputTarget } from "../systems/production.js";
 import { setServiceUnitPrice } from "../systems/services.js";
 import { reclaimFarmland as reclaimFarmlandSystem } from "../systems/agriculture.js";
 import { setVillaPolicy as setVillaPolicySystem } from "../systems/villas.js";
+import { setBankPolicy as setBankPolicySystem } from "../systems/bank.js";
 import { setWageControlPolicy as setWageControlPolicySystem } from "../systems/payroll.js";
 import { setSocialSecurityPolicy as setSocialSecurityPolicySystem, injectSocialSecurity as injectSocialSecuritySystem } from "../systems/social-security.js";
 import { setTradeTariffRate as setTradeTariffRateSystem, tradeWithOutsideTown as tradeWithOutsideTownSystem, issueWheatLoan as issueWheatLoanSystem } from "../systems/outside-town.js";
@@ -62,6 +63,10 @@ export function setUnemploymentPolicy(state, patch) {
 
 export function setVillaPolicy(state, patch) {
   return setVillaPolicySystem(state, patch || {});
+}
+
+export function setBankPolicy(state, patch) {
+  return setBankPolicySystem(state, patch || {});
 }
 
 export function setWageControl(state, patch) {

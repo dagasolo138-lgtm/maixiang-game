@@ -104,6 +104,8 @@ export function totalVoucherBalances(state) {
   for (const shop of Object.values(state.shops || {})) total += shop.cashVoucherUnits || 0;
   // 批发市场现金是粮券总账的一部分；漏算会让守恒校验（validateCurrencyInvariant）失败。
   total += state.wholesaleMarket?.cashVoucherUnits || 0;
+  // 银行现金是粮券总账的一部分（金融扩展二期）；deposits 台账只是归属明细，不重复计入。
+  total += state.bank?.cashVoucherUnits || 0;
   return total;
 }
 

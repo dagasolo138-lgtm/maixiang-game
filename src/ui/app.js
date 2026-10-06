@@ -385,6 +385,15 @@ export function mountGame(root) {
     } else if (kind === "villa-tax-rate") {
       result = simulation.setVillaPolicy(state, { taxRatePercent: parsed.value });
       successMessage = `别墅房产税率已设为${number(parsed.value, 2)}%。`;
+    } else if (kind === "bank-deposit-rate") {
+      result = simulation.setBankPolicy(state, { depositRateAnnualPercent: parsed.value });
+      successMessage = `银行存款年利率已设为${number(parsed.value, 2)}%。`;
+    } else if (kind === "bank-loan-rate") {
+      result = simulation.setBankPolicy(state, { loanRateAnnualPercent: parsed.value });
+      successMessage = `银行贷款年利率已设为${number(parsed.value, 2)}%。`;
+    } else if (kind === "bank-reserve") {
+      result = simulation.setBankPolicy(state, { reserveRequirementPercent: parsed.value });
+      successMessage = `银行准备金率已设为${number(parsed.value, 2)}%。`;
     } else if (kind === "wage-control-civil") {
       result = simulation.setWageControl(state, { civil: parsed.value });
       successMessage = `公务员类工资系数已设为${number(parsed.value, 2)}。`;

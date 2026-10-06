@@ -73,6 +73,15 @@ export function renderPolicy(view) {
       <div class="row"><span class="label">累计房产税 / 欠税</span><strong class="value">${number(view.policy.villaStats?.taxCollectedWheatJin || 0, 1)} / ${number(view.policy.villaStats?.taxArrearsWheatJin || 0, 1)}小麦等值</strong></div>
       <div class="subtle">富裕家庭按流动资产从高到低依次购房，一户一栋；购房款全额进入镇库。</div>
     </div></details>
+    ${reform.hasBankAccess ? `<details class="detail-block" data-detail-key="policy-bank"><summary>银行</summary><div class="detail-body">
+      <div class="row"><span class="label">存款年利率</span><div class="setting-input">${renderNumericInput(view, { key: "bank-deposit-rate", kind: "bank-deposit-rate", target: "bank", value: view.policy.bankStats?.depositRateAnnualPercent ?? 2, label: "银行存款年利率", minimum: 0, maximum: 100, className: "setting-editor" })}<b>%</b></div></div>
+      <div class="row"><span class="label">贷款年利率</span><div class="setting-input">${renderNumericInput(view, { key: "bank-loan-rate", kind: "bank-loan-rate", target: "bank", value: view.policy.bankStats?.loanRateAnnualPercent ?? 6, label: "银行贷款年利率", minimum: 0, maximum: 100, className: "setting-editor" })}<b>%</b></div></div>
+      <div class="row"><span class="label">准备金率</span><div class="setting-input">${renderNumericInput(view, { key: "bank-reserve", kind: "bank-reserve", target: "bank", value: view.policy.bankStats?.reserveRequirementPercent ?? 10, label: "银行准备金率", minimum: 0, maximum: 100, className: "setting-editor" })}<b>%</b></div></div>
+      <div class="row"><span class="label">居民存款 / 在贷余额</span><strong class="value">${number(view.policy.bankStats?.totalDepositsVoucher || 0, 1)} / ${number(view.policy.bankStats?.outstandingLoansVoucher || 0, 1)}券</strong></div>
+      <div class="row"><span class="label">可贷额度 / 坏账累计</span><strong class="value">${number(view.policy.bankStats?.loanableVoucher || 0, 1)} / ${number(view.policy.bankStats?.badDebtVoucher || 0, 1)}券</strong></div>
+      <div class="row"><span class="label">累计收息 / 付息</span><strong class="value">${number(view.policy.bankStats?.interestEarnedVoucher || 0, 1)} / ${number(view.policy.bankStats?.interestPaidVoucher || 0, 1)}券</strong></div>
+      <div class="subtle">只存粮券不存粮食，按日计息；上市公司现金不足周转金时自动借款（90天期）；逾期30天核销坏账。存贷利差为银行利润（镇营，归镇库）。</div>
+    </div></details>` : ""}
     <details class="detail-block" data-detail-key="policy-agritax"><summary>农业税</summary><div class="detail-body">
       <div class="row"><span class="label">当前税率</span><div class="setting-input">${renderNumericInput(view, { key: "agriculture-tax", kind: "agriculture-tax", target: "agriculture", value: agriculture.currentPercent, label: "农业税率", minimum: 0, maximum: 80, className: "setting-editor" })}<b>%</b></div></div>
       <div class="row"><span class="label">预计秋收分粮</span><strong class="value">镇库${number(agriculture.townShareJin)} / 居民${number(agriculture.residentShareJin)}斤</strong></div>

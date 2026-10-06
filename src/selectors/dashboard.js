@@ -370,8 +370,8 @@ export function selectDashboard(state, content, selection) {
     listedCount: macroListedCount,
     stockMarketCapVoucher: macroMarketCapVoucherUnits / voucherScale,
     bondOutstandingVoucher: 0,
-    depositRateAnnualPercent: null,
-    loanRateAnnualPercent: null,
+    depositRateAnnualPercent: state.policy?.bank?.depositRateAnnualPercent ?? null,
+    loanRateAnnualPercent: state.policy?.bank?.loanRateAnnualPercent ?? null,
     liquidityLevel: null
   };
   return {
@@ -454,7 +454,29 @@ export function selectDashboard(state, content, selection) {
       villaStats: selectVillaStats(state, content),
       wageControl: state.policy?.wageControl || { civil: 1.0, industry: 1.0 },
       wageLastDay: state.payroll?.lastDay || null,
-      socialSecurity: selectSocialSecurityStats(state, content)
+      socialSecurity: selectSocialSecurityStats(state, content),
+      // 银行统计（金融扩展二期）：只读，不初始化 state.bank
+      bankStats: (function () {
+        const bank = state.bank || {};
+        let totalDeposits = 0;
+        for (const units of Object.values(bank.deposits || {})) totalDeposits += units || 0;
+        let outstanding = 0;
+        for (const loan of bank.loans || []) {
+          if (loan.status === "active") outstanding += loan.outstandingVoucherUnits || 0;
+        }
+        const reservePct = state.policy?.bank?.reserveRequirementPercent ?? 10;
+        return {
+          depositRateAnnualPercent: state.policy?.bank?.depositRateAnnualPercent ?? 2,
+          loanRateAnnualPercent: state.policy?.bank?.loanRateAnnualPercent ?? 6,
+          reserveRequirementPercent: reservePct,
+          totalDepositsVoucher: totalDeposits / voucherScale,
+          outstandingLoansVoucher: outstanding / voucherScale,
+          loanableVoucher: Math.max(0, (bank.cashVoucherUnits || 0) - Math.floor(totalDeposits * reservePct / 100)) / voucherScale,
+          badDebtVoucher: (bank.stats?.badDebtVoucherUnits || 0) / voucherScale,
+          interestEarnedVoucher: (bank.stats?.interestEarnedVoucherUnits || 0) / voucherScale,
+          interestPaidVoucher: (bank.stats?.interestPaidVoucherUnits || 0) / voucherScale
+        };
+      })()
     } : null,
     agriculturePolicy: needPolicy ? (function () {
       const rows = (state.agriculture.taxDays || []).filter(row => row.year === state.year);
