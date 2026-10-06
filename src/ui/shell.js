@@ -31,6 +31,7 @@ export const SHELL_HTML = `<main class="shell">
       </div>
       <div class="map-hint" id="mapHint">点田地、粮仓或作坊查看</div>
       <details class="econ-mini" id="econMini"><summary id="econSummary">经济</summary><div class="econ-body" id="econBody"></div></details>
+      <details class="macro-panel" id="macroPanel"><summary id="macroSummary">宏观</summary><div class="macro-body" id="macroBody"></div></details>
       <div class="map-zoom" role="group" aria-label="地图缩放">
         <button data-map-zoom="1" aria-label="放大地图">＋</button><button data-map-reset aria-label="复位地图">${uiIcon("reset")}</button><button data-map-zoom="-1" aria-label="缩小地图">−</button>
       </div>

@@ -244,6 +244,15 @@ button:focus-visible, input:focus-visible { outline: 3px solid #d39f43; outline-
 .event-close .ui-icon { width: 16px; height: 16px; }
 .event-history { max-height: 192px; overflow-y: auto; padding: 0 11px 10px; border-top: 1px solid #ffffff28; }
 .event-line { padding-top: 8px; color: #f5ebce; font-size: 12px; line-height: 1.45; }
+/* 宏观面板（金融扩展第一期）：右上角透明，可折叠 */
+.macro-panel { position: absolute; z-index: 3; top: 54px; right: 10px; width: 212px; border: 1px solid #f5e9c785; border-radius: 11px; color: #fff9e4; background: #2f4739d9; box-shadow: 0 2px 8px #1d28173a; font-size: 12px; }
+.macro-panel summary { padding: 7px 10px; cursor: pointer; list-style: none; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.macro-panel summary::-webkit-details-marker { display: none; }
+.macro-panel[open] summary { border-bottom: 1px solid #f5e9c744; }
+.macro-body { padding: 5px 10px 9px; }
+.macro-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 2.5px 0; line-height: 1.35; }
+.macro-row span { color: #e8dfc2; flex: none; }
+.macro-row strong { color: #f4d47c; font-weight: 700; text-align: right; }
 .event-line time { display: block; color: #dbcb9c; font-size: 10px; }
 .bottom-nav { z-index: 3; flex: none; min-height: 60px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; padding: 5px 2px 0; }
 .tab { min-width: 0; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid transparent; border-radius: 14px; color: #6d6958; background: transparent; font-size: 11px; font-weight: 650; }

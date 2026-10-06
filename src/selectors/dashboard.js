@@ -347,6 +347,33 @@ export function selectDashboard(state, content, selection) {
       }))
     };
   }) : [];
+  // 宏观面板指标（金融扩展第一期）：只读派生，不写 state；
+  // 国债/银行利率/流动性字段预留，后续期数接入后填充。
+  const laborMarket = computeLaborMarket(state, content);
+  const jinScale = content.precision.inventoryUnitsPerJin;
+  const macroHistory = state.economyHistory || [];
+  const macroLastHistory = macroHistory[macroHistory.length - 1] || {};
+  let macroMarketCapVoucherUnits = 0;
+  let macroListedCount = 0;
+  for (const company of Object.values(state.companies || {})) {
+    if (!company.listing?.listed) continue;
+    macroListedCount += 1;
+    macroMarketCapVoucherUnits += (company.shareSale?.sharePriceVoucherUnits || 0) * (company.totalShares || 0);
+  }
+  const macro = {
+    unemploymentRate: laborMarket.unemploymentRate,
+    residentWheatJin: (state.accounts.residents.wheat || 0) / jinScale,
+    residentVoucher: voucherBalance(state, "residents") / voucherScale,
+    townWheatJin: (state.accounts.town.wheat || 0) / jinScale,
+    townVoucher: voucherBalance(state, "town") / voucherScale,
+    wheatPrice: Number.isFinite(macroLastHistory.wheatPrice) ? macroLastHistory.wheatPrice : null,
+    listedCount: macroListedCount,
+    stockMarketCapVoucher: macroMarketCapVoucherUnits / voucherScale,
+    bondOutstandingVoucher: 0,
+    depositRateAnnualPercent: null,
+    loanRateAnnualPercent: null,
+    liquidityLevel: null
+  };
   return {
     year: state.year,
     day: state.day,
@@ -355,7 +382,8 @@ export function selectDashboard(state, content, selection) {
     speed: selection && selection.speed ? selection.speed : 1,
     people,
     labor,
-    laborMarket: computeLaborMarket(state, content),
+    laborMarket,
+    macro,
     laborUnemploymentHighPercent: content.rules.laborUnemploymentHighPercent ?? 8,
     laborUnemploymentLowPercent: content.rules.laborUnemploymentLowPercent ?? 5,
     wealthNow: computeWealthStats(state, content),

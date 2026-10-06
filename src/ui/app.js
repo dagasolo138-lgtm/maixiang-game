@@ -17,6 +17,7 @@ import { renderBuild, setBuildCategory } from "./panel-build.js";
 import { renderResidents } from "./panel-residents.js";
 import { renderEconomy } from "./panel-economy.js";
 import { econMiniSummary, renderEconMini } from "./econ-mini.js";
+import { macroPanelSummary, renderMacroPanel } from "./macro-panel.js";
 import { renderPolicy } from "./panel-policy.js";
 import { renderSite } from "./panel-site.js";
 import { renderSettings } from "./panel-settings.js";
@@ -201,6 +202,14 @@ export function mountGame(root) {
     if (econBody) {
       const html = renderEconMini(view);
       if (econBody.innerHTML !== html) econBody.innerHTML = html;
+    }
+    // 宏观面板（金融扩展第一期）：右上角透明，摘要常显失业率。
+    const macroSummary = $("#macroSummary");
+    const macroBody = $("#macroBody");
+    if (macroSummary) macroSummary.textContent = macroPanelSummary(view);
+    if (macroBody) {
+      const html = renderMacroPanel(view);
+      if (macroBody.innerHTML !== html) macroBody.innerHTML = html;
     }
     $("#pauseBtn").classList.toggle("selected", view.paused);
     $("#pauseBtn").setAttribute("aria-pressed", String(view.paused));
