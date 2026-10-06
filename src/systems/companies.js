@@ -174,7 +174,7 @@ export function createIndependentCompany(state, buildingId, options, content) {
   const inventory = Object.fromEntries(Object.keys(content.items).map(itemId => [itemId, 0]));
   const inventoryCostVoucherUnits = Object.fromEntries(Object.keys(content.items).map(itemId => [itemId, 0]));
   const name = String(options?.name || "").trim().slice(0, 30) || definition.name + "公司";
-  const defaultWage = state.employment.wageRates?.[definition.jobs?.[0]?.id] ?? definition.jobs?.[0]?.wagePerWorkerDay ?? 10;
+  const defaultWage = state.employment.wageRates?.[definition.jobs?.[0]?.id] ?? definition.jobs?.[0]?.wagePerWorkerDay ?? 5;
   const company = ensureCompanyBooks({
     id, name, buildingId, typeId: building.typeId, listedLevels: levels,
     totalShares: 0, townShares: 0, residentShares: 0, householdShares: {},
@@ -591,7 +591,7 @@ export function payListedCompanyWages(state, content) {
   for (const company of Object.values(ensureCompanies(state, content))) {
     const definition = content.buildings[company.typeId]; const job = definition?.jobs?.[0]; if (!job) continue;
     const jobKey = listedJobKeyForBuilding(company.buildingId, job.id); const workers = readJobCount(state, jobKey);
-    const rate = Number.isFinite(company.settings?.wagePerWorkerDay) ? company.settings.wagePerWorkerDay : (state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 10); const due = Math.round(workers * rate * scale);
+    const rate = Number.isFinite(company.settings?.wagePerWorkerDay) ? company.settings.wagePerWorkerDay : (state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 5); const due = Math.round(workers * rate * scale);
     const assignments = jobAssignments(state, jobKey); accrueWageClaims(state, company.payroll, assignments, due, content);
     company.payroll.legacyUnattributedArrearsVoucherUnits ??= Math.max(0, (company.payroll.arrearsVoucherUnits || 0) - claimTotal(company.payroll));
     if (company.payroll.legacyUnattributedArrearsVoucherUnits > 0) {
@@ -770,7 +770,7 @@ export function companyWorkingCapitalReserve(company, state, content) {
   const plannedTarget = Number.isInteger(company.plan?.desiredWorkers) ? company.plan.desiredWorkers : null;
   // 周转金按明确目标经营规模计算；显式0人即0人，只有未设置目标时才回退到计划/容量。短暂停工但目标仍大于0不会压低储备。
   const reserveWorkers = Math.min(capacity, Math.max(0, configuredTarget ?? plannedTarget ?? capacity));
-  const wageRate = Number.isFinite(company.settings?.wagePerWorkerDay) ? company.settings.wagePerWorkerDay : (state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 10);
+  const wageRate = Number.isFinite(company.settings?.wagePerWorkerDay) ? company.settings.wagePerWorkerDay : (state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 5);
   const days = content.rules.companyOperatingReserveDays || 360;
   const wageReserve = Math.round(reserveWorkers * wageRate * days * currencyScale(content));
   const recipe = definition?.recipeId ? content.recipes[definition.recipeId] : null;
@@ -958,7 +958,7 @@ export function companySummary(state, company, content) {
   const averageWageUnits = recentAverage(observed, "wageExpenseVoucherUnits", content);
   const inventoryDays = averageDailySalesUnits > 0 ? finishedStock / averageDailySalesUnits : null;
   let displayStatus = company.status || "运营中";
-  const wageRate = job ? (Number.isFinite(company.settings?.wagePerWorkerDay) ? company.settings.wagePerWorkerDay : (state.employment?.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 10)) : 0;
+  const wageRate = job ? (Number.isFinite(company.settings?.wagePerWorkerDay) ? company.settings.wagePerWorkerDay : (state.employment?.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 5)) : 0;
   const nextPayrollUnits = Math.round(Math.max(1, workers) * wageRate * scale);
   if ((company.payroll?.arrearsVoucherUnits || 0) > 0) displayStatus = "欠薪";
   else if ((company.plan?.plannedBatches || 0) > 0 && maximumPayableValueUnits(state, "company:" + company.id, content) < nextPayrollUnits) displayStatus = "资金不足";

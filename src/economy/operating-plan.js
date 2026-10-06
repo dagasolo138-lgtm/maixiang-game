@@ -200,7 +200,7 @@ function desiredWorkers(row, batches, state, content) {
   if (row.kind === "company") {
     const company = state.companies?.[row.companyId];
     const job = content.buildings[row.typeId]?.jobs?.[0];
-    const wage = state.employment?.wageRates?.[job?.id] ?? job?.wagePerWorkerDay ?? 10;
+    const wage = state.employment?.wageRates?.[job?.id] ?? job?.wagePerWorkerDay ?? 5;
     const scale = content.precision.currencyUnitsPerVoucher;
     const cashWorkers = wage > 0 ? Math.floor(maximumPayableValueUnits(state, `company:${company?.id}`, content) / (wage * scale)) : row.maxWorkers;
     desired = Math.min(desired, Math.max(0, cashWorkers));

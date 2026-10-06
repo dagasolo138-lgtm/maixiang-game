@@ -86,7 +86,7 @@ export function selectConstructionOptions(state, content, context = {}) {
     const previewBuilders = Math.min(builderSlots, Math.max(unassignedBuilders,
       Math.min(definition.construction.recommendedWorkers, unassignedBuilders + labor.idle)));
     const estimatedDays = previewBuilders > 0 ? Math.ceil(definition.construction.workDays / previewBuilders) : null;
-    const builderWage = state.employment.wageRates?.builders ?? content.roles.builders?.wagePerWorkerDay ?? 10;
+    const builderWage = state.employment.wageRates?.builders ?? content.roles.builders?.wagePerWorkerDay ?? 5;
     const allowedPlots = definition.requiredPlotFeature
       ? runtime.plotsByFeature.get(definition.requiredPlotFeature) || []
       : runtime.ordinaryPlots;
@@ -178,7 +178,7 @@ export function selectDashboard(state, content, selection) {
         name: job.name,
         workers: readJobCount(state, jobKeyForBuilding(building.id, job.id), runtime),
         capacity: job.capacityMode === "building" ? job.slots : job.slots * Math.max(0, ownership.townLevels ?? building.level ?? 1),
-        wagePerWorkerDay: state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 10,
+        wagePerWorkerDay: state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 5,
         poachable: laborRow?.poachable || 0,
         globalDemandKind: laborRow?.globalDemandKind || null,
         globalDemand: laborRow?.globalDemand ?? null,
@@ -243,7 +243,7 @@ export function selectDashboard(state, content, selection) {
   });
   const options = (needBuild || needSite) ? selectConstructionOptions(state, content, { runtime, labor }) : [];
   // 在建工程列表：每个工程各自带名称、进度、投入人数与预计工期/工资。
-  const builderWage = state.employment.wageRates?.builders ?? content.roles.builders?.wagePerWorkerDay ?? 10;
+  const builderWage = state.employment.wageRates?.builders ?? content.roles.builders?.wagePerWorkerDay ?? 5;
   const projectViews = (state.projects || []).map(function (project) {
     const definition = content.buildings[project.typeId];
     const workers = Math.max(0, Math.floor(project.workers || 0));

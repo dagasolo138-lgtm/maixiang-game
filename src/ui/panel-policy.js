@@ -11,8 +11,8 @@ export function renderPolicy(view) {
   const buildingTypeIds = new Set((view.buildings || []).map(b => b.typeId));
   const hasCommerce = buildingTypeIds.has("commercial_street") || buildingTypeIds.has("public_housing") || (view.shops || []).length > 0;
   const hasIndustry = industries.some(([id]) => buildingTypeIds.has(id));
-  const workshopWage = view.wageRates.millers ?? view.wageRates.bakers ?? 10;
-  const builderWage = view.wageRates.builders ?? 10;
+  const workshopWage = view.wageRates.millers ?? view.wageRates.bakers ?? 5;
+  const builderWage = view.wageRates.builders ?? 5;
   const shopTax = (view.shops || []).reduce((sum, row) => sum + (row.lastTaxVoucher || 0), 0);
   const relief = view.relief || {};
   const neighborAid = view.neighborAid || {};

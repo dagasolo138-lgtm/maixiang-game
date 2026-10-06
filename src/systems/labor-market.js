@@ -73,7 +73,7 @@ export function computeLaborMarket(state, content) {
   }
   const idle = Math.max(0, workers - employed);
   const buildersWage = state.employment?.wageRates?.builders
-    ?? content.roles?.builders?.wagePerWorkerDay ?? 10;
+    ?? content.roles?.builders?.wagePerWorkerDay ?? 5;
   const referenceWage = publicWorkers > 0 ? publicWageSum / publicWorkers : buildersWage;
   const unemploymentRate = workers > 0 ? idle / workers : 0;
   const high = content.rules.laborUnemploymentHighPercent ?? 8;

@@ -618,7 +618,7 @@ function normalizeV14(raw, definitions, legacyCompleted = false) {
     company.settings.salePricesVoucherPerUnit ||= {};
     const definition = definitions.buildings[company.typeId];
     const job = definition?.jobs?.[0];
-    if (!Number.isFinite(company.settings.wagePerWorkerDay)) company.settings.wagePerWorkerDay = state.employment?.wageRates?.[job?.id] ?? job?.wagePerWorkerDay ?? 10;
+    if (!Number.isFinite(company.settings.wagePerWorkerDay)) company.settings.wagePerWorkerDay = state.employment?.wageRates?.[job?.id] ?? job?.wagePerWorkerDay ?? 5;
     if (!Number.isInteger(company.settings.targetWorkers)) company.settings.targetWorkers = Math.min(job?.slots * company.listedLevels || 0, company.plan?.desiredWorkers ?? job?.slots * company.listedLevels ?? 0);
     company.annualSettlement ||= { lastSettledYear: company.lastDividendYear || 0, lastYearNetProfitVoucherUnits: 0, workingCapitalTargetVoucherUnits: 0, distributedVoucherUnits: 0, undistributedVoucherUnits: company.retainedEarningsVoucherUnits || 0 };
 

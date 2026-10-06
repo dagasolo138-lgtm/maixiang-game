@@ -6,7 +6,7 @@ export const BUILDINGS = Object.freeze({
     recipeId: "mill_flour",
     productionRoleId: "millers",
     jobs: Object.freeze([Object.freeze({
-      id: "millers", name: "磨坊工", slots: 12, wagePerWorkerDay: 10,
+      id: "millers", name: "磨坊工", slots: 12, wagePerWorkerDay: 5,
       note: "每人每日最多磨80斤麦", releasePriority: 30
     })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 600 }]),
@@ -22,7 +22,7 @@ export const BUILDINGS = Object.freeze({
     recipeId: "bakery_bread",
     productionRoleId: "bakers",
     jobs: Object.freeze([Object.freeze({
-      id: "bakers", name: "面包师", slots: 10, wagePerWorkerDay: 10,
+      id: "bakers", name: "面包师", slots: 10, wagePerWorkerDay: 5,
       note: "每人每日最多烤80斤面粉", releasePriority: 40
     })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 500 }]),
@@ -40,7 +40,7 @@ export const BUILDINGS = Object.freeze({
     accountingSector: "forestry",
     requiredPlotFeature: "logging_resource",
     jobs: Object.freeze([Object.freeze({
-      id: "lumberjacks", name: "伐木工", slots: 20, wagePerWorkerDay: 10,
+      id: "lumberjacks", name: "伐木工", slots: 20, wagePerWorkerDay: 5,
       note: "每人每日产1单位木材", releasePriority: 30
     })]),
     construction: Object.freeze({
@@ -57,7 +57,7 @@ export const BUILDINGS = Object.freeze({
     accountingSector: "salt",
     requiredPlotFeature: "salt_mine",
     jobs: Object.freeze([Object.freeze({
-      id: "salt_workers", name: "盐工", slots: 10, wagePerWorkerDay: 10,
+      id: "salt_workers", name: "盐工", slots: 10, wagePerWorkerDay: 5,
       note: "每人每日产5斤食盐", releasePriority: 30
     })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 100 }]),
@@ -72,7 +72,7 @@ export const BUILDINGS = Object.freeze({
     description: "镇营商品集散 · 每级10个岗位 · 统一批发价与下游进货",
     maxInstances: 1,
     jobs: Object.freeze([Object.freeze({
-      id: "wholesale_workers", name: "批发市场职员", slots: 10, wagePerWorkerDay: 10,
+      id: "wholesale_workers", name: "批发市场职员", slots: 10, wagePerWorkerDay: 5,
       note: "每级增加10个镇营岗位", releasePriority: 45
     })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 1000 }]),
@@ -85,8 +85,8 @@ export const BUILDINGS = Object.freeze({
     description: "居民开店 · 每级2间铺位",
     maxInstances: 12,
     jobs: Object.freeze([
-      Object.freeze({ id: "merchants", name: "商人", slots: 8, wagePerWorkerDay: 10, note: "每间店最多4名商人，由店铺支付", releasePriority: 60, managedBy: "shops" }),
-      Object.freeze({ id: "shop_clerks", name: "店员", slots: 100, wagePerWorkerDay: 10, note: "综合商店最多50名店员；其他店铺最多20名，由店铺支付", releasePriority: 70, managedBy: "shops" })
+      Object.freeze({ id: "merchants", name: "商人", slots: 8, wagePerWorkerDay: 5, note: "每间店最多4名商人，由店铺支付", releasePriority: 60, managedBy: "shops" }),
+      Object.freeze({ id: "shop_clerks", name: "店员", slots: 100, wagePerWorkerDay: 5, note: "综合商店最多50名店员；其他店铺最多20名，由店铺支付", releasePriority: 70, managedBy: "shops" })
     ]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 1200 }]),
     construction: Object.freeze({ workDays: 800, recommendedWorkers: 16 }),
@@ -96,7 +96,7 @@ export const BUILDINGS = Object.freeze({
     id: "town_hall", name: "政务厅", icon: "🏛️",
     description: "公务员办公 · 每级10个岗位容量",
     maxInstances: 12,
-    jobs: Object.freeze([Object.freeze({ id: "civil_servants", name: "公务员", slots: 10, wagePerWorkerDay: 10, note: "全镇需求按人口计算", releasePriority: 50, globalDemand: "public_service" })]),
+    jobs: Object.freeze([Object.freeze({ id: "civil_servants", name: "公务员", slots: 10, wagePerWorkerDay: 5, note: "全镇需求按人口计算", releasePriority: 50, globalDemand: "public_service" })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 800 }]),
     construction: Object.freeze({ workDays: 600, recommendedWorkers: 12 }),
     upgrade: Object.freeze({ maxLevel: 5, workDays: 600, materialRequirements: Object.freeze([{ itemId: "wood", quantity: 800 }]) })
@@ -105,7 +105,7 @@ export const BUILDINGS = Object.freeze({
     id: "police_station", name: "警察局", icon: "🚓",
     description: "警察办公 · 每级10个岗位容量",
     maxInstances: 12,
-    jobs: Object.freeze([Object.freeze({ id: "police", name: "警察", slots: 10, wagePerWorkerDay: 10, note: "全镇需求按人口计算", releasePriority: 50, globalDemand: "public_service" })]),
+    jobs: Object.freeze([Object.freeze({ id: "police", name: "警察", slots: 10, wagePerWorkerDay: 5, note: "全镇需求按人口计算", releasePriority: 50, globalDemand: "public_service" })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 800 }]),
     construction: Object.freeze({ workDays: 600, recommendedWorkers: 12 }),
     upgrade: Object.freeze({ maxLevel: 5, workDays: 600, materialRequirements: Object.freeze([{ itemId: "wood", quantity: 800 }]) })
@@ -114,7 +114,7 @@ export const BUILDINGS = Object.freeze({
     id: "bank", name: "银行", icon: "🏦",
     description: "粮券印制、换券与注销 · 全镇限建一座",
     maxInstances: 1,
-    jobs: Object.freeze([Object.freeze({ id: "bank_staff", name: "银行职员", slots: 8, capacityMode: "building", wagePerWorkerDay: 10, note: "银行日常运营", releasePriority: 55 })]),
+    jobs: Object.freeze([Object.freeze({ id: "bank_staff", name: "银行职员", slots: 8, capacityMode: "building", wagePerWorkerDay: 5, note: "银行日常运营", releasePriority: 55 })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 800 }]),
     construction: Object.freeze({ workDays: 600, recommendedWorkers: 12 })
   }),
@@ -122,7 +122,7 @@ export const BUILDINGS = Object.freeze({
     id: "stock_exchange", name: "交易所", icon: "📈",
     description: "挂牌、认购与回购 · 全镇限建一座",
     maxInstances: 1,
-    jobs: Object.freeze([Object.freeze({ id: "exchange_staff", name: "交易所职员", slots: 8, capacityMode: "building", wagePerWorkerDay: 10, note: "交易登记与清算", releasePriority: 55 })]),
+    jobs: Object.freeze([Object.freeze({ id: "exchange_staff", name: "交易所职员", slots: 8, capacityMode: "building", wagePerWorkerDay: 5, note: "交易登记与清算", releasePriority: 55 })]),
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 800 }]),
     construction: Object.freeze({ workDays: 600, recommendedWorkers: 12 })
   }),
@@ -134,7 +134,7 @@ export const BUILDINGS = Object.freeze({
     accountingSector: "housing",
     housingCapacity: 1000,
     materialRequirements: Object.freeze([{ itemId: "wood", quantity: 2000 }]),
-    jobs: Object.freeze([Object.freeze({ id: "housing_managers", name: "公租房管理员", slots: 20, capacityMode: "building", wagePerWorkerDay: 10, note: "入住、维护与租务", releasePriority: 55 })]),
+    jobs: Object.freeze([Object.freeze({ id: "housing_managers", name: "公租房管理员", slots: 20, capacityMode: "building", wagePerWorkerDay: 5, note: "入住、维护与租务", releasePriority: 55 })]),
     construction: Object.freeze({
       workDays: 2000, recommendedWorkers: 20
     }),

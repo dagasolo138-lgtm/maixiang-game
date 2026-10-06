@@ -121,7 +121,7 @@ export function payPrivateIndustryWages(state, content) {
   for (const building of state.buildings.filter(row => SELLABLE.has(row.typeId) && (row.ownership?.privateLevels || 0) > 0)) {
     const definition = content.buildings[building.typeId]; const job = definition?.jobs?.[0]; if (!job) continue;
     const key = privateJobKeyForBuilding(building.id, job.id); const workers = readJobCount(state, key);
-    const rate = state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 10; const due = Math.round(workers * rate * scale);
+    const rate = state.employment.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 5; const due = Math.round(workers * rate * scale);
     const payroll = state.privateEconomy.payrollByBuilding[building.id] ||= { arrearsVoucherUnits: 0, cumulativeAccruedVoucherUnits: 0, cumulativePaidVoucherUnits: 0, claimsVoucherUnits: {} };
     const assignments = jobAssignments(state, key); accrueWageClaims(state, payroll, assignments, due, content);
     payroll.legacyUnattributedArrearsVoucherUnits ??= Math.max(0, (payroll.arrearsVoucherUnits || 0) - claimTotal(payroll));

@@ -54,7 +54,7 @@ function buildCard(option, selectedBuild, wageRates, unit) {
         : `${number(option.count)}座 · 可建`;
   const isSelected = selectedBuild === option.id;
   const jobs = (option.jobs || []).map(job =>
-    `${escapeHtml(job.name)} ${number(job.slots)}人 · 日薪${number(wageRates[job.id] ?? job.wagePerWorkerDay ?? 10, 1)}${unit}`
+    `${escapeHtml(job.name)} ${number(job.slots)}人 · 日薪${number(wageRates[job.id] ?? job.wagePerWorkerDay ?? 5, 1)}${unit}`
   ).join("<br>");
   const jobsHtml = jobs || "无固定岗位";
   const location = option.requiredPlotFeature

@@ -104,7 +104,7 @@ export function theoreticalFullSaleProfitPerWorker(state, typeId, content) {
     sum + row.quantity * batches * currentUnitPrice(state, row.itemId, content) * (1 - taxPercent / 100), 0);
   const inputCost = (recipe.inputs || []).reduce((sum, row) =>
     sum + row.quantity * batches * currentUnitPrice(state, row.itemId, content), 0);
-  const wage = state.employment?.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 10;
+  const wage = state.employment?.wageRates?.[job.id] ?? job.wagePerWorkerDay ?? 5;
   return {
     typeId,
     batchesPerWorkerDay: batches,

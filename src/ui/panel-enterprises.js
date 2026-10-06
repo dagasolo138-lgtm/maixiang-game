@@ -70,7 +70,7 @@ function renderOperationControls(view, company) {
     : "未上市，不变更股本";
   return `<h4>独立经营</h4>
     <div class="business-form-grid">
-      <label>日薪${stagedInput(view, { key: wageKey, label: "公司日薪", value: company.settings?.wagePerWorkerDay ?? 10, minimum: 0 })}<small>${escapeHtml(unit)}/人日</small></label>
+      <label>日薪${stagedInput(view, { key: wageKey, label: "公司日薪", value: company.settings?.wagePerWorkerDay ?? 5, minimum: 0 })}<small>${escapeHtml(unit)}/人日</small></label>
       <label>目标用工${stagedInput(view, { key: targetKey, label: "公司目标用工", value: company.plannedWorkers, integer: true, minimum: 0, maximum: company.capacity })}<small>人</small></label>
     </div>
     <div class="business-sticky-actions"><button class="secondary" data-company-wage="${escapeHtml(company.id)}">设置工资</button><button class="secondary" data-company-target="${escapeHtml(company.id)}">设置用工</button></div>

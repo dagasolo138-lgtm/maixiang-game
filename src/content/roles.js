@@ -4,7 +4,7 @@ export const CORE_ROLES = Object.freeze({
     capacity: "farmland", releasePriority: 10
   }),
   builders: Object.freeze({
-    id: "builders", name: "营造", note: "建筑施工期间计日薪", scope: "core", wagePerWorkerDay: 10,
+    id: "builders", name: "营造", note: "建筑施工期间计日薪", scope: "core", wagePerWorkerDay: 5,
     capacity: "project", releasePriority: 100
   })
 });
