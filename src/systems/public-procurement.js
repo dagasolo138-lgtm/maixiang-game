@@ -196,7 +196,7 @@ export function procureTownMaterial(state, itemId, wantedUnits, content) {
   const wholesaleWanted = Math.min(preview.wholesaleUsableUnits || 0, preview.purchasableUnits);
   if (wholesaleWanted > 0) {
     const issued = procureTownInputFromWholesale(state, itemId, wholesaleWanted, content,
-      `镇营建造从批发市场采购${content.items[itemId]?.name || itemId}`);
+      `镇营建造从批发市场领用${content.items[itemId]?.name || itemId}`);
     if (issued.ok && issued.boughtUnits > 0) {
       sellerRows.push({ seller: "wholesale_market", quantityUnits: issued.boughtUnits, paidVoucherUnits: issued.paidVoucherUnits || 0 });
       bought += issued.boughtUnits;

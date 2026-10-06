@@ -8234,7 +8234,7 @@ function wholesaleStockUnits(state, itemId) {
   const wholesaleWanted = Math.min(preview.wholesaleUsableUnits || 0, preview.purchasableUnits);
   if (wholesaleWanted > 0) {
     const issued = procureTownInputFromWholesale(state, itemId, wholesaleWanted, content,
-      `镇营建造从批发市场采购${content.items[itemId]?.name || itemId}`);
+      `镇营建造从批发市场领用${content.items[itemId]?.name || itemId}`);
     if (issued.ok && issued.boughtUnits > 0) {
       sellerRows.push({ seller: "wholesale_market", quantityUnits: issued.boughtUnits, paidVoucherUnits: issued.paidVoucherUnits || 0 });
       bought += issued.boughtUnits;
@@ -19896,7 +19896,6 @@ function renderTrade(view) {
     <div class="cardlet"><div class="row"><span class="label">面包售价</span><div class="setting-input">${renderNumericInput(view, { key: "bread-price", kind: "bread-price", target: "bread", value: price, label: "每斤面包的小麦等值售价", minimum: 0, maximum: 1000000, positive: true, className: "setting-editor" })}<b>${unit}/斤</b></div></div>
       <div class="row"><span class="label">居民 / 镇库面包库存</span><strong class="value">${number(view.market.residentBreadJin)} / ${number(view.market.townBreadJin)}斤</strong></div>
       ${rows.length ? rows.map(row => `<div class="row"><span class="label">${escapeHtml(itemName(row.itemId))} 目标 / 买到</span><strong class="value">${number(row.targetQeqJin, 1)} / ${number(row.purchasedJin, 1)}斤 · 付${number(row.paidVoucher, 1)}${unit}</strong></div>${row.purchasedJin <= 0 && row.limitReason ? `<div class="subtle">${escapeHtml(row.limitReason)}</div>` : ""}`).join("") : `<div class="subtle">时光流动后显示当日购买情况。</div>`}
-      ${trade.limitReason ? `<div class="subtle">${escapeHtml(trade.limitReason)}</div>` : ""}<div class="subtle">${moneyMixHint(view)}。</div>
     </div>
     <details class="detail-block" data-detail-key="bread-rules"><summary>购买规则</summary><div class="detail-body"><div class="subtle">居民每天按口粮占比补足主粮：小麦${number((shares.wheat || 0) * 100, 0)}%、面粉${number((shares.flour || 0) * 100, 0)}%、面包${number((shares.bread || 0) * 100, 0)}%。家里已有的先算进去；小麦直接向镇库和有余粮的人家买；面粉、面包、食盐、木材在商业街综合商店买，零售价为批发价×1.2。</div></div></details>`;
 }
@@ -20092,7 +20091,7 @@ function resolveAccountName(view, token) {
   return `<h2>粮食与粮券账目</h2>
     <div class="cardlet"><div class="row"><span class="label">居民账（口粮当量）</span><strong class="value">${number(view.accounts.residents.qeq)} 斤</strong></div><div class="subtle">${accountLines(view.accounts.residents)}</div><div class="row" style="margin-top:10px"><span class="label">镇库账（口粮当量）</span><strong class="value">${number(view.accounts.town.qeq)} 斤</strong></div><div class="subtle">${accountLines(view.accounts.town)}</div><div class="row" style="margin-top:9px;padding-top:8px;border-top:1px solid #eee9db"><span class="label">全镇可食口粮合计</span><strong class="value">${number(view.totalQeq)} 斤</strong></div><div class="subtle">居民每日消费${number(view.dailyNeed)}斤；口粮${numberMax(view.residentFoodDays, 1)}天。</div></div>
     <h3>本年收支（已过${number(view.day)}天）</h3>
-    <div class="cardlet"><div class="row"><span class="label">收成入库</span><strong class="value">${number(totals.harvest)}斤小麦</strong></div><div class="row"><span class="label">居民口粮消费</span><strong class="value">${number(totals.consumption)}口粮斤</strong></div><div class="row"><span class="label">镇营/施工工资计提 · 已付</span><strong class="value">${number(wageAccrued)} / ${number(wagePaid)}小麦等值</strong></div><div class="row"><span class="label">累计欠薪余额 / 本年失业金</span><strong class="value">${number(arrears)} / ${number(unemploymentPaid)}小麦等值</strong></div><div class="row"><span class="label">实物救济 / 加工损耗</span><strong class="value">${number(totals.relief)}斤小麦 / ${number(totals.processingLoss)}斤</strong></div><div class="subtle">${moneyMixHint(view)}。工资、失业金、租金、商品和股份交易按实际支付媒介分别记账；农业税、救济口粮和生产税仍按实物记账。粮券先由镇库印制，镇库粮券可自由支出；换券时交出的小麦直接进入镇库，不设独立兑付储备。</div></div>
+    <div class="cardlet"><div class="row"><span class="label">收成入库</span><strong class="value">${number(totals.harvest)}斤小麦</strong></div><div class="row"><span class="label">居民口粮消费</span><strong class="value">${number(totals.consumption)}口粮斤</strong></div><div class="row"><span class="label">镇营/施工工资计提 · 已付</span><strong class="value">${number(wageAccrued)} / ${number(wagePaid)}小麦等值</strong></div><div class="row"><span class="label">累计欠薪余额 / 本年失业金</span><strong class="value">${number(arrears)} / ${number(unemploymentPaid)}小麦等值</strong></div><div class="row"><span class="label">实物救济 / 加工损耗</span><strong class="value">${number(totals.relief)}斤小麦 / ${number(totals.processingLoss)}斤</strong></div><div class="subtle">工资、失业金、租金、商品和股份交易按实际支付媒介分别记账；农业税、救济口粮和生产税仍按实物记账。粮券先由镇库印制，镇库粮券可自由支出；换券时交出的小麦直接进入镇库，不设独立兑付储备。${moneyMixHint(view)}。</div></div>
     ${last ? `<h3>上一年汇总 · 第${number(last.year)}年</h3><div class="cardlet"><div class="row"><span class="label">年初至年末人口</span><strong class="value">${number(last.populationAtClose)} → ${number(last.populationAfterAging)}</strong></div><div class="row"><span class="label">出生 / 死亡</span><strong class="value">${number(last.births)} / ${number(last.deaths)} 人</strong></div><div class="subtle">显示上一年人口汇总。</div></div>` : ""}
     <h3>最近账目</h3><div class="ledger-list"><table class="ledger-table"><thead><tr><th>日期</th><th>缘由 / 去向</th><th style="text-align:right">数量</th></tr></thead><tbody>${rows || `<tr><td colspan="3">尚无账目。</td></tr>`}</tbody></table></div>`;
 }
@@ -20174,7 +20173,7 @@ function items(map, names, units, scale) {
       <div class="row"><span class="label">失业金</span><strong class="value">${number(town.unemploymentWheatUnits / scale)}小麦等值</strong></div>
       <div class="row"><span class="label">建设投入 / 拆除返还</span><strong class="value">${items(town.constructionMaterials, view.itemNames, view.itemUnits, scale)} / ${items(town.constructionMaterialsReturned, view.itemNames, view.itemUnits, scale)}</strong></div>
       <div class="row"><span class="label">民营人工折算</span><strong class="value">${number((view.privateEconomy?.year?.internalLaborCostWheatUnits || 0) / scale)}小麦等值</strong></div>
-          <div class="subtle">货币收支按小麦等值汇总；${moneyMixHint(view)}。实际小麦与粮券支付可在账目中逐笔查看。</div>
+          <div class="subtle">货币收支按小麦等值汇总，实际小麦与粮券支付可在账目中逐笔查看。${moneyMixHint(view)}。</div>
     </div></section>`;
 }
 return { renderAnnualFlows };
