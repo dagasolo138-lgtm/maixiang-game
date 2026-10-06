@@ -23,7 +23,7 @@ export const MAX_TRADE_TARIFF_PERCENT = 30;
 const BASE_BUY_PRICE = { flour: 1.15, bread: 1.35, salt: 4.5, wood: 2.8 };
 // 外镇售价（我们买入）
 const BASE_SELL_PRICE = { flour: 1.55, bread: 1.9 };
-const YIELD_PER_MU_JIN = 400;
+const YIELD_PER_MU_JIN = 500;
 const FOOD_PER_PERSON_DAY_JIN = 2;
 
 export function ensureOutsideTown(state) {

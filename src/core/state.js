@@ -41,7 +41,7 @@ function spreadAgeBand(total, start, end) {
 
 export function createInitialCohorts() {
   const cohorts = [
-    ...spreadAgeBand(200, 0, 17),
+    ...spreadAgeBand(300, 0, 17),
     ...spreadAgeBand(600, 18, 64),
     ...spreadAgeBand(200, 65, 84)
   ];

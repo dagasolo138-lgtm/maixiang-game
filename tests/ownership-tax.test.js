@@ -24,7 +24,7 @@ function addBuilding(state, typeId, id, level = 1, townLevels = level, privateLe
 }
 
 test("农业税0%、50%、80%与年中调税按农事日平均分粮", () => {
-  for (const [rate, town, resident] of [[0, 0, 1600000], [50, 800000, 800000], [80, 1280000, 320000]]) {
+  for (const [rate, town, resident] of [[0, 0, 2000000], [50, 1000000, 1000000], [80, 1600000, 400000]]) {
     const state = simulation.createInitialState();
     simulation.setAgricultureTax(state, rate);
     simulation.advanceDays(state, 274);

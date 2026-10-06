@@ -39,13 +39,13 @@ function fundedHousehold(state, amount = 1000, exclude = new Set()) {
   return household;
 }
 
-test("v16初始家庭保持1000人口、600劳动力和居民总财富汇总一致", () => {
+test("v16初始家庭保持1100人口、600劳动力和居民总财富汇总一致", () => {
   const state = legacyVoucherState();
   const households = householdList(state);
   assert.equal(households.length, 250);
   assert.equal(state.households.members, undefined);
-  assert.equal(households.reduce((sum, h) => sum + h.ageBands.children + h.ageBands.workers + h.ageBands.elders, 0), 1000);
-  assert.equal(simulation.populationStats(state).children, 200);
+  assert.equal(households.reduce((sum, h) => sum + h.ageBands.children + h.ageBands.workers + h.ageBands.elders, 0), 1100);
+  assert.equal(simulation.populationStats(state).children, 300);
   assert.equal(simulation.populationStats(state).workers, 600);
   assert.equal(simulation.populationStats(state).elders, 200);
   const occupations = simulation.selectDashboard(state).households.occupations;
@@ -86,33 +86,34 @@ test("就业换券额度按实际在岗成员每日生成，换岗不刷新，�
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 4000);
 });
 
-test("公务员与警察需求按全镇人口计算，1000人为2、1001人为3且不按建筑重复", () => {
+test("公务员与警察需求按全镇人口计算，1100人为3、1501人为4且不按建筑重复", () => {
   const state = legacyVoucherState();
   const hallA = addCompletedBuilding(state, "town_hall", "hall-a");
   addCompletedBuilding(state, "town_hall", "hall-b");
   const policeA = addCompletedBuilding(state, "police_station", "police-a");
   let jobs = simulation.selectJobRows(state);
-  assert.equal(jobs.publicServiceDemand, 2);
-  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 2);
-  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 2);
-  assert.equal(simulation.setEmployment(state, "hall-b::civil_servants", 10).assigned, 0, "第二栋不能再复制一份全镇需求");
-
-  const workerCohort = state.cohorts.find(row => row.age >= 18 && row.age < 65);
-  const extraHousehold = householdList(state)[0];
-  workerCohort.m += 1;
-  extraHousehold.ageBands.workers += 1;
-  jobs = simulation.selectJobRows(state);
   assert.equal(jobs.publicServiceDemand, 3);
   assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 3);
   assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 3);
+  assert.equal(simulation.setEmployment(state, "hall-b::civil_servants", 10).assigned, 0, "第二栋不能再复制一份全镇需求");
 
-  workerCohort.m -= 1;
-  extraHousehold.ageBands.workers -= 1;
+  // 加401人（1100→1501），跨过1500阈值，需求从3变4
+  const workerCohort = state.cohorts.find(row => row.age >= 18 && row.age < 65);
+  const extraHousehold = householdList(state)[0];
+  workerCohort.m += 401;
+  extraHousehold.ageBands.workers += 401;
+  jobs = simulation.selectJobRows(state);
+  assert.equal(jobs.publicServiceDemand, 4);
+  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 4);
+  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 4);
+
+  workerCohort.m -= 401;
+  extraHousehold.ageBands.workers -= 401;
   reconcileEmployment(state, CONTENT);
   jobs = simulation.selectJobRows(state);
-  assert.equal(jobs.publicServiceDemand, 2);
-  assert.equal(jobs.civilServants, 2);
-  assert.equal(jobs.police, 2);
+  assert.equal(jobs.publicServiceDemand, 3);
+  assert.equal(jobs.civilServants, 3);
+  assert.equal(jobs.police, 3);
 });
 
 test("商业街每级2铺、综合商店每铺最多50店员且所有岗位占用真实唯一劳动力", () => {

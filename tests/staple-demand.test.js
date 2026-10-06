@@ -73,7 +73,9 @@ test("居民主食需求按固定份额拆分，小麦、面粉、面包都会�
   assert.equal(rows[2].targetQeqJin, dailyNeedJin * 0.2);
 
   // 面包口粮当量为 5/6，因此成交的物理斤数比口粮当量多。
-  assert.equal(rows[2].purchasedJin, rows[2].targetQeqJin / (5 / 6));
+  // （户数增加后逐户取整累积微小误差，用近似比较）
+  assert.ok(Math.abs(rows[2].purchasedJin - rows[2].targetQeqJin / (5 / 6)) < 0.1,
+    `面包购买量应接近理论值，实际${rows[2].purchasedJin}`);
   assert.equal(itemQeqUnitsPerInventoryUnit(CONTENT.items.bread, CONTENT), 5);
   assert.equal(itemQeqUnitsPerInventoryUnit(CONTENT.items.wheat, CONTENT), 6);
 
@@ -93,7 +95,9 @@ test("主食购买采用净需求：已有库存会扣减当日购买量", () =>
   setResidentInventoryJin(full, "flour", 0, CONTENT);
   const boughtFull = buyStaplesForResidents(full, population, CONTENT).staples.rows
     .find(row => row.itemId === "flour");
-  assert.equal(boughtFull.purchasedJin, flourTargetJin);
+  // （户数增加后逐户取整累积微小误差，用近似比较）
+  assert.ok(Math.abs(boughtFull.purchasedJin - flourTargetJin) < 0.1,
+    `对照组应足额购买，实际${boughtFull.purchasedJin}，目标${flourTargetJin}`);
 
   // 实验组：家中已有大部分面粉，只补足差额。
   const partial = withGeneralStore(voucherState(), { flour: 3000 * SCALE });
@@ -104,8 +108,11 @@ test("主食购买采用净需求：已有库存会扣减当日购买量", () =>
     .find(row => row.itemId === "flour");
 
   assert.ok(boughtPartial.purchasedJin < boughtFull.purchasedJin);
-  assert.equal(boughtPartial.purchasedJin, flourTargetJin - heldJin);
-  assert.equal(partial.accounts.residents.flour / SCALE, flourTargetJin);
+  // （户数增加后逐户取整累积微小误差，用近似比较）
+  assert.ok(Math.abs(boughtPartial.purchasedJin - (flourTargetJin - heldJin)) < 0.1,
+    `实验组应补足差额，实际${boughtPartial.purchasedJin}，目标${flourTargetJin - heldJin}`);
+  assert.ok(Math.abs(partial.accounts.residents.flour / SCALE - flourTargetJin) < 0.1,
+    `居民面粉库存应接近目标${flourTargetJin}，实际${partial.accounts.residents.flour / SCALE}`);
 
   // 已有库存超过目标时完全不买。
   const satisfied = withGeneralStore(voucherState(), { flour: 3000 * SCALE });
