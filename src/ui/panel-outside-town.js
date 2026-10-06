@@ -8,8 +8,8 @@ const ITEM_META = {
   salt: { name: "食盐", unit: "斤" },
   wood: { name: "木材", unit: "单位" }
 };
-const SELL_ITEMS = ["wheat", "flour", "bread", "salt", "wood"];
-const BUY_ITEMS = ["wheat", "flour", "bread"];
+const SELL_ITEMS = ["flour", "bread", "salt", "wood"];
+const BUY_ITEMS = ["flour", "bread"];
 
 function tradeRow(view, itemId) {
   const ot = view.outsideTown;

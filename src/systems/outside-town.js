@@ -10,18 +10,19 @@ import { hasWholesaleMarket, readWholesaleMarket, takeWholesaleInventoryForExpor
 
 export const OUTSIDE_TOWN_NAME = "四地主镇";
 export const OUTSIDE_RULERS = ["陈", "王", "李", "赵"];
-export const TRADE_SELL_ITEMS = ["wheat", "flour", "bread", "salt", "wood"];
-export const TRADE_BUY_ITEMS = ["wheat", "flour", "bread"];
+export const TRADE_SELL_ITEMS = ["flour", "bread", "salt", "wood"];
+export const TRADE_BUY_ITEMS = ["flour", "bread"];
 export const MAX_TRADE_JIN_PER_ORDER = 100000;
 export const PRICE_ELASTICITY = 1.0;
 export const MEMORY_DECAY_PER_DAY = 0.995;
 export const DEFAULT_TRADE_TARIFF_PERCENT = 5;
 export const MAX_TRADE_TARIFF_PERCENT = 30;
 
-// 外镇收购价（我们卖出）：小麦斤/单位。小麦是战略物资，收购价不低于1（不亏本卖粮）；
-const BASE_BUY_PRICE = { wheat: 1.05, flour: 1.15, bread: 1.35, salt: 4.5, wood: 2.8 };
-// 外镇售价（我们买入）：粮食充裕，售价便宜。
-const BASE_SELL_PRICE = { wheat: 1.15, flour: 1.55, bread: 1.9 };
+// 外镇收购价（我们卖出）：小麦斤/单位。盐、木材需求高，收购价高。
+// 小麦不做贸易商品（镇库直管的战略物资），只做结算货币；缺粮时走小麦贷款。
+const BASE_BUY_PRICE = { flour: 1.15, bread: 1.35, salt: 4.5, wood: 2.8 };
+// 外镇售价（我们买入）
+const BASE_SELL_PRICE = { flour: 1.55, bread: 1.9 };
 const YIELD_PER_MU_JIN = 400;
 const FOOD_PER_PERSON_DAY_JIN = 2;
 
