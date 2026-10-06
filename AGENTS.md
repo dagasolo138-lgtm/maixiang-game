@@ -80,3 +80,9 @@ GitHub：`dagasolo138-lgtm/maixiang-game`（main 分支）。一个需求一个�
 - 清算要加破产核销：30 天还不清就核销坏账强制关闭，否则永久僵死。
 - 主食购买要按户缺口分配（学盐的 `householdNeedsUnits`），不能按人口均分，否则富户囤粮穷户挨饿。
 - 需求弹性只在综合商店是实际卖家时才应用，避免误伤镇库/公司销量。
+
+## 2026-10-06 上午高危返工教训（Kavi 亲自复查线上代码发现，"收完了"说早了）
+- 开店失败退款：`delete state.shops[shopId]` 会把店上记的任何负债一起删掉。退款失败时不要在店上记 `liabilities.refundVoucherUnits`，而是删店前由镇库直接垫付给家庭（`shop_capital_refund_advance`）；镇库也没钱时记 `household.townOwesVoucherUnits` 持久应收（`||=` 初始化），`finishShopsDay` 每日偿付。原则：**负债不能记在即将被 delete 的对象上**。
+- mixed 工资镇库兜底：镇库结算必须用市场付款后的 `result.remainingComposition`，不能用付款前的 `paymentClaims[householdId]`，否则按全额重复支付。原则：**多阶段支付，每一阶段都以前一阶段的剩余构成为准**。
+- 居民修缮木材（`buyRepairWoodForResidents`）：扣回目标按实际买入量（`result.purchasedUnits`），不用总量净增量；家庭间转卖时总量不变，净增量口径会让买入方木材逃掉消费。
+- 镇库升级建筑（`selectUpgradePreview`）：含公司/民营经营权的建筑镇库不垫付升级，由业主出资。原则：**谁受益谁出钱，镇库不替私人资产买单**。
