@@ -19,7 +19,7 @@ import { currencyScale, validateCurrencyInvariant, voucherBalance } from "../eco
 import { hasBankAccess, monetaryReformProgress } from "../economy/payment.js";
 import { householdLivingSummary, occupationCounts, householdPopulation, householdIdleWorkers } from "../systems/households.js";
 import { shopSummaries } from "../systems/shops.js";
-import { wholesaleSummary } from "../systems/wholesale-market.js";
+import { wholesaleSummary, wholesaleTrends } from "../systems/wholesale-market.js";
 import { selectOutsideTownView } from "../systems/outside-town.js";
 import { householdRecentTotalsReadonly, householdFoodDays } from "../systems/household-life.js";
 import { createDashboardRuntime, employmentExchangeRemainingUnits } from "./dashboard-runtime.js";
@@ -368,6 +368,7 @@ export function selectDashboard(state, content, selection) {
     households: { count: households.length, living: householdLiving, occupations, exchangeRemainingJin: exchangeRemainingUnits / content.precision.inventoryUnitsPerJin, details: householdDetails, categories: householdCategories, issueCounts: state.satisfactionFactors?.issueCounts || { food:0,salt:0,housing:0,wage:0 }, satisfactionChange },
     shops,
     wholesaleMarket: (needBusiness || needSite) ? wholesaleSummary(state, content) : null,
+    wholesaleTrends: (needBusiness || needSite) ? wholesaleTrends(state, content) : null,
     servicePricesVoucherPerUse: (needBusiness || needSite) ? { ...(state.services?.pricesVoucherPerUse || {}) } : {},
     residentFoodDays: selectFoodDays(state, content, false),
     totalFoodDays: needBusiness ? selectFoodDays(state, content, true) : 0,

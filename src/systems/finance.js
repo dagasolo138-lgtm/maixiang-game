@@ -159,6 +159,9 @@ export function applyAutomaticRelief(state, population, content) {
     servedHouseholds: result.rows.length,
     unmetHouseholds: prepared.eligible.filter(row => householdFoodQeqUnits(state, row.household, content) < row.targetQeqUnits).length
   };
-  if (result.movedQeqUnits > 0) recordEvent(state, "镇库按家庭缺粮紧迫度拨出 " + Math.round(result.movedQeqUnits / content.precision.qeqUnitsPerJin).toLocaleString("zh-CN") + "斤口粮。", content, { day: state.day + 1 });
+  if (result.movedQeqUnits > 0) recordEvent(state, "镇库按家庭缺粮紧迫度拨出 " + Math.round(result.movedQeqUnits / content.precision.qeqUnitsPerJin).toLocaleString("zh-CN") + "斤口粮。", content, {
+    day: state.day + 1, mergeKey: "auto-relief", mergeWindowDays: 30, amount: result.movedQeqUnits,
+    mergedText: (count, amount) => `近30日镇库自动救济累计拨出 ${Math.round(amount / content.precision.qeqUnitsPerJin).toLocaleString("zh-CN")}斤口粮（${count}次）。`
+  });
   return state.relief.lastDay;
 }

@@ -90,7 +90,10 @@ export function buyRepairWoodForResidents(state, content) {
           quantityUnits: row.units, qeqUnits: 0, reason: "房屋修缮消耗木材"
         }, content);
       }
-      recordEvent(state, `居民修缮房屋消耗木材${consumedUnits}单位。`, content);
+      recordEvent(state, `居民修缮房屋消耗木材${consumedUnits}单位。`, content, {
+        mergeKey: "house-repair-wood", mergeWindowDays: 3, amount: consumedUnits,
+        mergedText: (count, amount) => `近3日居民修缮房屋累计消耗木材${amount}单位（${count}次）。`
+      });
     }
   }
   state.housing ||= {};

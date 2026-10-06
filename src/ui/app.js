@@ -246,7 +246,7 @@ export function mountGame(root) {
     const history = $("#eventHistory");
     history.hidden = !nav.eventsExpanded;
     history.innerHTML = nav.eventsExpanded
-      ? view.events.slice(0, 5).map(event => `<div class="event-line"><time>第${number(event.year)}年 · 第${number(event.day)}日</time>${escapeHtml(event.text)}</div>`).join("")
+      ? view.events.slice(0, 5).map(event => `<div class="event-line"><time>第${number(event.year)}年 · 第${number(event.day)}${event.untilDay && event.untilDay > event.day ? `–${number(event.untilDay)}` : ""}日</time>${escapeHtml(event.text)}</div>`).join("")
       : "";
   }
 

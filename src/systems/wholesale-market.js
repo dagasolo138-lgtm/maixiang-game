@@ -817,3 +817,46 @@ export function wholesaleSummary(state, content) {
     cumulative: cumulativePeriod
   };
 }
+
+// 批发市场历史快照（0.1.11 机制补回）：每日记录库存/销量/价格，保留30天。
+export function snapshotWholesaleHistory(state, content) {
+  const market = readWholesaleMarket(state, content);
+  market.history ||= [];
+  const snapshot = {
+    year: state.year,
+    day: state.day,
+    inventory: Object.fromEntries(WHOLESALE_MONOPOLY_ITEM_IDS.map(itemId => [itemId, market.inventory?.[itemId] || 0])),
+    sold: Object.fromEntries(WHOLESALE_MONOPOLY_ITEM_IDS.map(itemId => [itemId, market.day?.soldUnits?.[itemId] || 0])),
+    price: Object.fromEntries(WHOLESALE_MONOPOLY_ITEM_IDS.map(itemId => [itemId, market.pricesVoucherPerUnit?.[itemId] || 0]))
+  };
+  market.history.push(snapshot);
+  if (market.history.length > 30) market.history.splice(0, market.history.length - 30);
+}
+
+// 近N日均售（0.1.11 ZM）
+export function wholesaleAvgSoldUnits(state, itemId, content, days = 7) {
+  const market = readWholesaleMarket(state, content);
+  const history = (market.history || []).slice(-days);
+  if (history.length === 0) return 0;
+  return history.reduce((sum, h) => sum + (h.sold?.[itemId] || 0), 0) / history.length;
+}
+
+// 批发市场趋势视图（0.1.11 zM）：供面板使用
+export function wholesaleTrends(state, content) {
+  const market = readWholesaleMarket(state, content);
+  const scale = content.precision.inventoryUnitsPerJin;
+  const history = market.history || [];
+  const result = {};
+  for (const itemId of WHOLESALE_MONOPOLY_ITEM_IDS) {
+    const avgSoldJin = wholesaleAvgSoldUnits(state, itemId, content, 7) / scale;
+    const stockJin = (market.inventory?.[itemId] || 0) / scale;
+    result[itemId] = {
+      avgSoldJin,
+      stockDays: avgSoldJin > 0 ? stockJin / avgSoldJin : null,
+      townStockJin: (state.accounts?.town?.[itemId] || 0) / scale,
+      inventory: history.map(h => (h.inventory?.[itemId] || 0) / scale),
+      price: history.map(h => h.price?.[itemId] || 0)
+    };
+  }
+  return result;
+}

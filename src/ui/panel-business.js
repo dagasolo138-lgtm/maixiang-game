@@ -1,5 +1,12 @@
 import { escapeHtml, number, moneyUnit, moneyMixHint } from "./format.js";
 
+// 地块标签人性化（0.1.11 _2() 补回）："空地 3" → "3号地"
+function humanizePlotLabel(view, building) {
+  const label = view.plots?.find(p => p.id === building.plotId)?.label;
+  if (!label) return building.id;
+  return label.replace(/^空地\s*(\d+)$/, "$1号地").replace(/空地$/, "") || label;
+}
+
 function jin(units, scale) { return (units || 0) / scale; }
 function outputSummary(map, names, scale) {
   const rows = Object.entries(map || {}).filter(([, units]) => units > 0);
@@ -32,7 +39,7 @@ export function renderBusiness(view) {
     const slots = building.jobs.reduce((sum, job) => sum + job.capacity, 0);
     const payroll = view.payroll?.lastDay?.workers?.find(row => row.buildingId === building.id);
     const wageUnpaid = payroll?.unpaidCurrentWheatJin || 0;
-    return `<div class="cardlet"><div class="row"><strong>${escapeHtml(building.name)} · ${escapeHtml(building.id)}</strong><span class="badge">${escapeHtml(building.status.label)}</span></div>
+    return `<div class="cardlet"><div class="row"><strong>${escapeHtml(building.name)} · ${escapeHtml(humanizePlotLabel(view, building))}</strong><span class="badge">${escapeHtml(building.status.label)}</span></div>
       <div class="row"><span class="label">人数</span><strong class="value">${number(workers)} / ${number(slots)}人</strong></div>
       <div class="row"><span class="label">今日产量</span><strong class="value">${outputSummary(building.jobs[0]?.outputToday, view.itemNames, scale)}</strong></div>
       ${wageUnpaid > 0 ? `<div class="shortage-banner visible">新增欠薪 ${number(wageUnpaid)}${unit}</div>` : ""}</div>`;

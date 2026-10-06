@@ -28,7 +28,7 @@ import { refreshOperatingPlan, recordConsumerDay } from "../economy/operating-pl
 import { archiveHouseholdLifeYear, finalizeHouseholdLifeDay, resetHouseholdLifeDay, resetHouseholdLifeYear } from "./household-life.js";
 import { finalizeMonetaryPaymentDay } from "../economy/payment.js";
 import { accrueServiceDemand, processServiceDemand } from "./services.js";
-import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits } from "./wholesale-market.js";
+import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits, snapshotWholesaleHistory } from "./wholesale-market.js";
 import { applyCompanyDistributionsToAnnualReport, buildAnnualReport } from "./annual-reports.js";
 import { settleNeighborAid, resetNeighborAidYear } from "./neighbor-aid.js";
 
@@ -209,6 +209,8 @@ export function settleOneDay(state, content) {
   const outsideTownDay = advanceOutsideTownDay(state, content);
   // 经济历史曲线（用户 0.1.11）：每日收盘后记录，供地图"经济"面板画走势。
   recordEconomyHistory(state, content);
+  // 批发市场历史快照（0.1.11 补回）：每日库存/销量/价格，保留30天，供趋势分析。
+  snapshotWholesaleHistory(state, content);
   const afterTotal = totalQeqUnits(state, content);
   return {
     construction,

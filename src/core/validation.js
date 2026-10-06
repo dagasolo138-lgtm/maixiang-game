@@ -24,7 +24,8 @@ export function validateState(state, content) {
   }
   if (state.events.some(event => !Number.isInteger(event?.year) || event.year < 1 ||
       !Number.isInteger(event?.day) || event.day < 1 || event.day > content.rules.daysPerYear ||
-      typeof event?.text !== "string")) {
+      typeof event?.text !== "string" ||
+      (event.untilDay != null && (!Number.isInteger(event.untilDay) || event.untilDay < event.day || event.untilDay > content.rules.daysPerYear)))) {
     errors.push("事件日期或内容无效");
   }
   if (state.ledger.some(row => !Number.isInteger(row?.year) || row.year < 1 ||

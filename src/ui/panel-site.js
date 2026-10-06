@@ -2,6 +2,13 @@ import { escapeHtml, number, numberMax, moneyUnit } from "./format.js";
 import { renderNumericInput } from "./numeric-drafts.js";
 import { renderShopPricing } from "./panel-shop-pricing.js";
 
+// 地块标签人性化（0.1.11 _2() 补回）："空地 3" → "3号地"
+function humanizePlotLabel(view, building) {
+  const label = view.plots?.find(p => p.id === building.plotId)?.label;
+  if (!label) return building.id;
+  return label.replace(/^空地\s*(\d+)$/, "$1号地").replace(/空地$/, "") || label;
+}
+
 function outputLines(map, names, units, scale) {
   const rows = Object.entries(map || {}).filter(([, quantity]) => quantity > 0);
   return rows.map(([id, quantity]) =>
@@ -140,12 +147,13 @@ export function renderSite(view) {
     body = bankManagementMarkup(view, false);
     actions = `<button class="secondary" data-go="policy">返回政策</button>`;
   } else if (building?.typeId === "bank") {
-    title = `${building.name} · ${building.id}`;
+    title = `${building.name} · ${humanizePlotLabel(view, building)}`;
     body = `${bankManagementMarkup(view, true)}${buildingStaffingMarkup(view, building)}${developmentMarkup(view, building, development)}`;
     actions = `<button class="secondary" data-go="policy">查看货币改革政策</button>`;
   } else if (building?.typeId === "wholesale_market") {
-    title = `${building.name} · ${building.id}`;
+    title = `${building.name} · ${humanizePlotLabel(view, building)}`;
     const market = view.wholesaleMarket || { inventory: {}, pricesVoucherPerUnit: {}, purchasePricesVoucherPerUnit: {}, dailyTownAllocation: {}, cashflow: null };
+    const trends = view.wholesaleTrends || {};
     const tradeableIds = ["flour", "bread", "wood", "salt"];
     const marketRowsAll = tradeableIds.map(itemId => {
       const name = view.itemNames?.[itemId] || itemId;
@@ -155,7 +163,21 @@ export function renderSite(view) {
       const purchasePrice = market.purchasePricesVoucherPerUnit?.[itemId] ?? 0;
       const purchaseIndex = market.purchasePriceIndex?.[itemId] ?? 1;
       const feedbackText = purchaseIndex >= 0.999 ? "库存低位，收购价满额" : `库存偏高，收购价按反馈系数 ${number(purchaseIndex, 2)} 打折`;
-      return `<div class="cardlet"><div class="row"><span class="label">${escapeHtml(name)}库存</span><strong class="value">${number(market.inventory?.[itemId] || 0, 2)}${escapeHtml(itemUnit)}</strong></div>
+      // 批发市场趋势（0.1.11 补回）：可售天数、7日均售、双走势线
+      const trend = trends[itemId] || {};
+      const stockDaysText = trend.stockDays == null ? "近7日无销量" : `约可售${number(trend.stockDays, 1)}天`;
+      const trendSpark = (values, label) => {
+        const vals = (values || []).filter(v => Number.isFinite(v));
+        if (vals.length < 2) return "";
+        const min = Math.min(...vals), max = Math.max(...vals);
+        if (max === min) return "";
+        const w = 100, h = 28;
+        const pts = vals.map((v, i) => `${(i / (vals.length - 1) * w).toFixed(1)},${(h - (v - min) / (max - min) * (h - 4) - 2).toFixed(1)}`).join(" ");
+        return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-label="${escapeHtml(label)}走势"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
+      };
+      return `<div class="cardlet"><div class="row"><span class="label">${escapeHtml(name)}库存</span><strong class="value">${number(market.inventory?.[itemId] || 0, 2)}${escapeHtml(itemUnit)} · ${escapeHtml(stockDaysText)}</strong></div>
+        <div class="row"><span class="label">7日均售 / 镇库存</span><strong class="value">${number(trend.avgSoldJin || 0, 2)} / ${number(trend.townStockJin || 0, 2)}${escapeHtml(itemUnit)}</strong></div>
+        <div class="trend-pair">${trendSpark(trend.inventory, "库存")}${trendSpark(trend.price, "批发价")}</div>
         <div class="row"><span class="label">收购价（向公司/民营）</span><div class="setting-input">${renderNumericInput(view, { key: `wholesale-buy:${itemId}`, kind: "wholesale-purchase-price", target: itemId, value: market.purchasePriceReferenceVoucherPerUnit?.[itemId] ?? purchasePrice, label: `${name}收购价基准`, minimum: 0.001, maximum: 1000000, positive: true, className: "setting-editor" })}<b>${escapeHtml(unit)}/${escapeHtml(itemUnit)}</b></div></div>
         <div class="row"><span class="label">当前实际收购价</span><strong class="value">${number(purchasePrice, 3)} <span class="subtle">${escapeHtml(feedbackText)}</span></strong></div>
         <div class="row"><span class="label">售价（卖给综合商店）</span><div class="setting-input">${renderNumericInput(view, { key: `wholesale-price:${itemId}`, kind: "wholesale-price", target: itemId, value: market.pricesVoucherPerUnit?.[itemId] ?? 1, label: `${name}售价`, minimum: 0.001, maximum: 1000000, positive: true, className: "setting-editor" })}<b>${escapeHtml(unit)}/${escapeHtml(itemUnit)}</b></div></div>
@@ -184,7 +206,7 @@ export function renderSite(view) {
       <div class="subtle">批发市场统购统销：镇营产成品无偿调拨入市，销售利润留在市场，并由市场统一发放镇营建筑工资。库存越多收购价自动越低，防止大公司一次性抽干市场粮券。</div></div>`;
     body = `<div class="status-strip"><span class="status-light working"></span><strong>镇营批发市场 · 做市商</strong><span>${number(building.level)}级</span></div><div class="subtle">镇营、民营和公司产成品汇入这里；综合商店及各类生产者统一从这里采购原料。市场对每个商品同时挂收购价与售价；小麦仍归镇库直管。固定调拨用于把镇库小麦或既有库存每天送入批发市场；单次调运可一次性收储或投放，用来平抑库存。</div>${buildingStaffingMarkup(view, building)}${cashCard}${marketRows}${developmentMarkup(view, building, development)}`;
   } else if (building?.typeId === "commercial_street") {
-    title = `${building.name} · ${building.id}`;
+    title = `${building.name} · ${humanizePlotLabel(view, building)}`;
     const shops = (view.shops || []).filter(shop => shop.buildingId === building.id && shop.status !== "closed");
     const occupied = shops.filter(shop => shop.occupiesStreet);
     const capacity = building.level * 2;
@@ -214,11 +236,11 @@ export function renderSite(view) {
     actions = `<button class="secondary" data-go="policy">查看租税政策</button>`;
   } else if (building?.typeId === "public_housing") {
     const home = building.housing;
-    title = `${building.name} · ${building.id}`;
+    title = `${building.name} · ${humanizePlotLabel(view, building)}`;
     body = `<div class="status-strip"><span class="status-light working"></span><strong>已落成</strong><span>${number(building.level)}级</span></div><div class="row"><span class="label">入住 / 容量 / 空位</span><strong class="value">${number(home?.occupied || 0)} / ${number(home?.capacity || 1000)} / ${number(home?.vacancies || 0)}人</strong></div><div class="row"><span class="label">租金已收 / 减免</span><strong class="value">${number(view.housing.lastRentDay?.collectedWheatJin || 0)} / ${number(view.housing.lastRentDay?.waivedWheatJin || 0)}${escapeHtml(unit)}</strong></div>${buildingStaffingMarkup(view, building)}${developmentMarkup(view, building, development)}`;
     actions = `<button class="secondary" data-go="residents">查看镇民</button>`;
   } else if (building) {
-    title = `${building.name} · ${building.id}`;
+    title = `${building.name} · ${humanizePlotLabel(view, building)}`;
     const payroll = view.payroll?.lastDay?.workers?.find(row => row.buildingId === building.id);
     const jobs = building.jobs.map(job => ({ ...job, key: `${building.id}::${job.id}` }));
     const privateJobs = building.privateJobs.map(job => ({ ...job, key: `${building.id}::${job.id}::private` }));

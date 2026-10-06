@@ -1,0 +1,10680 @@
+
+(()=>{
+var x4=Object.freeze({
+saveVersion:15,daysPerYear:365,growingDays:274,foodPerPersonDay:2,housingCapacity:1000,builderSlots:24,dailyDaysPerSecond:0.45,speedChoices:[1,4,16],manualReliefAmountJin:30000,automaticReliefTriggerDays:7,automaticReliefTargetDays:14,neighborAidTriggerDays:3,neighborAidTargetDays:7,neighborAidDonorMinDays:60,neighborAidDonorShare:0.1,maxAge:105,ledgerLimit:4000,breadTargetShareAtBasePrice:0.25,breadPriceElasticity:0.75,breadTargetShareMaximum:0.5,stapleDemandShares:Object.freeze({
+wheat:0.6,flour:0.2,bread:0.2}
+),houseRepairWoodUnitsPerDay:5,breadBasicReserveDays:30,breadBasePriceWheatPerJin:2,unemploymentDailyJin:1,saltAnnualDemandJinPerPerson:10,saltPriceWheatPerJin:10,rentPerResidentDayWheatJin:1,saltFoodReserveDays:30,saltGraceDays:30,buildingMaxLevel:5,agricultureTaxDefaultPercent:40,agricultureTaxMaximumPercent:80,agricultureTaxLookbackDays:30,agricultureTaxSatisfactionLowPercent:0,agricultureTaxSatisfactionHighPercent:80,agricultureTaxSatisfactionSwing:10,operatingRightReserveDays:90,operatingRightValuationDays:365,privateProductionTaxDefaultPercent:10,privateProductionTaxMaximumPercent:80,privateWoodTargetJin:2000,currencyLedgerLimit:1500,basicCommerceFoodReserveDays:30,shareFoodReserveDays:90,shareLivingVoucherReserveDays:30,sharesPerListedLevel:1000,defaultDividendPercent:50,companyOperatingReserveDays:360,sharePerformanceObservationDays:30,shareTargetAnnualYieldPercent:8,companyValuationProfitYears:5,companyValuationTargetProfitRatePercent:20,companyValuationRateFactorMinimum:0.5,companyValuationRateFactorMaximum:1.5,shareNoHistoryMaxTakePercent:10,householdFoodReserveDays:30,householdLifeHistoryDays:14,householdFoodRedemptionTargetDays:3,satisfactionObservationDays:14,satisfactionUpdateIntervalDays:3,satisfactionSmoothing:0.18,satisfactionUrgentFoodSmoothing:0.55,householdSatisfaction:Object.freeze({
+foodWeight:35,saltWeight:12,housingWeight:15,wageWeight:15,reserveWeight:13,disposableWeight:5,breadComfortMaximum:5,reserveTargetDays:30,disposableTargetVoucherPerCapitaDay:1.5}
+),householdLiving:Object.freeze({
+difficultPerCapitaVoucher:30,comfortablePerCapitaVoucher:180,difficultFoodDays:14,comfortableFoodDays:60}
+),employmentExchangeDefaultJin:2,employmentExchangeMinimumJin:0,employmentExchangeMaximumJin:10,publicServiceDemandPopulation:500,publicServiceDefaultWageVoucher:10,shopRentDefaultVoucher:1,shopProfitTaxDefaultPercent:10,shopProfitTaxMaximumPercent:80,shopSettlementDays:30,shopMerchantStartupVoucher:120,shopWorkingCapitalReserveDays:7,shopMerchantSalesCapacityJin:60,shopClerkSalesCapacityJin:120,shopMaxMerchants:4,shopMaxClerks:20,generalStoreMaxClerks:50,generalStoreMarkupPercent:20,generalStoreCustomersPerStaff:40,generalStoreMaxDailyCustomers:2000,shopMinimumEmploymentDays:30,shopMerchantDefaultWageVoucher:10,shopClerkDefaultWageVoucher:10,shopClosureBadDays:30,serviceDemandMaximumCycles:2,serviceBudgetSharePercent:35,serviceComfortDailyMaximum:3,serviceTypes:Object.freeze({
+haircut:Object.freeze({
+id:"haircut",name:"理发店",basis:"person",cycleDays:20,priceVoucher:4,merchantCapacity:24,clerkCapacity:30,consumables:Object.freeze([]),comfort:0.8,incomeSensitivity:0.8}
+),repair:Object.freeze({
+id:"repair",name:"修补铺",basis:"household",cycleDays:30,priceVoucher:8,merchantCapacity:14,clerkCapacity:18,consumables:Object.freeze([]),comfort:1.2,incomeSensitivity:0.7}
+),tea:Object.freeze({
+id:"tea",name:"茶馆",basis:"person",cycleDays:5,priceVoucher:3,merchantCapacity:40,clerkCapacity:48,consumables:Object.freeze([]),comfort:0.6,incomeSensitivity:1.6}
+),school:Object.freeze({
+id:"school",name:"学堂",basis:"child",cycleDays:1,priceVoucher:1,adjustablePrice:!0,merchantCapacity:50,clerkCapacity:50,maxCapacity:100,employeeOnlyCapacity:!0,consumables:Object.freeze([]),comfort:0.4,incomeSensitivity:0.8}
+),restaurant:Object.freeze({
+id:"restaurant",name:"饭店",basis:"person",cycleDays:5,priceVoucher:4,merchantCapacity:50,clerkCapacity:50,employeeOnlyCapacity:!0,consumables:Object.freeze([{
+itemId:"wheat",quantity:2}
+]),mealReplacement:!0,comfort:1,incomeSensitivity:1}
+)}
+),operatingPlanIntervalDays:3,operatingObservationDays:7,producerInventoryTargetDays:2,shopInventoryTargetDays:2,operatingWorkerAdjustMaxPerCycle:2,newBusinessTrialWorkers:1,newBusinessTrialDays:6,shopClerkUtilizationHireThreshold:0.85,shopClerkUtilizationReleaseThreshold:0.45,shopTypes:Object.freeze({
+general:Object.freeze({
+id:"general",name:"综合商店",kind:"retail",itemIds:Object.freeze(["flour","bread","wood","salt"])}
+),haircut:Object.freeze({
+id:"haircut",name:"理发店",kind:"service",serviceId:"haircut"}
+),repair:Object.freeze({
+id:"repair",name:"修补铺",kind:"service",serviceId:"repair"}
+),tea:Object.freeze({
+id:"tea",name:"茶馆",kind:"service",serviceId:"tea"}
+),school:Object.freeze({
+id:"school",name:"学堂",kind:"service",serviceId:"school"}
+),restaurant:Object.freeze({
+id:"restaurant",name:"饭店",kind:"service",serviceId:"restaurant"}
+),grain:Object.freeze({
+id:"grain",name:"粮店",kind:"legacy_retail",itemId:"wheat",aliasOf:"general"}
+),bakery:Object.freeze({
+id:"bakery",name:"面包店",kind:"legacy_retail",itemId:"bread",aliasOf:"general"}
+),salt:Object.freeze({
+id:"salt",name:"盐店",kind:"legacy_retail",itemId:"salt",aliasOf:"general"}
+)}
+),marketPricesVoucherPerUnit:Object.freeze({
+wheat:1,flour:1.8,bread:2,wood:15,salt:10}
+)}
+),x6=Object.freeze({
+acres:4000,acresMaximum:1e5,acresPerFarmer:10,yieldPerAcre:400,cropItemId:"wheat",farmerRoleId:"farmers",reclaimAcresPerBatch:100,reclaimWorkDaysPerBatch:100,reclaimWageRoleId:"builders",townTaxRate:Object.freeze({
+numerator:1,denominator:2}
+)}
+),f$=Object.freeze({
+inventoryUnitsPerJin:3000,qeqUnitsPerJin:18000,currencyUnitsPerVoucher:3000}
+),L6=Object.freeze({
+seed:917309,stocks:Object.freeze({
+residents:Object.freeze({
+wheat:730000}
+),town:Object.freeze({
+wheat:730000}
+)}
+),roleCounts:Object.freeze({
+farmers:400,builders:0}
+),satisfaction:75}
+);
+var K6=Object.freeze({
+wheat:Object.freeze({
+id:"wheat",name:"小麦",unit:"斤",category:"grain",edible:!0,qeq:Object.freeze({
+numerator:1,denominator:1}
+),consumptionPriority:30,transferPriority:30,openingCostWheatPerJin:1}
+),flour:Object.freeze({
+id:"flour",name:"面粉",unit:"斤",category:"food",edible:!0,qeq:Object.freeze({
+numerator:1,denominator:1}
+),consumptionPriority:20,transferPriority:20,openingCostWheatPerJin:1}
+),bread:Object.freeze({
+id:"bread",name:"面包",unit:"斤",category:"food",edible:!0,qeq:Object.freeze({
+numerator:5,denominator:6}
+),satisfactionPerQeq:1,consumptionPriority:10,transferPriority:10,openingCostWheatPerJin:0.8333333333333334}
+),wood:Object.freeze({
+id:"wood",name:"木材",unit:"单位",category:"material",edible:!1,qeq:null,openingCostWheatPerJin:0}
+),salt:Object.freeze({
+id:"salt",name:"食盐",unit:"斤",category:"household",edible:!1,qeq:null,openingCostWheatPerJin:0}
+)}
+);
+var O$=Object.freeze({
+farmers:Object.freeze({
+id:"farmers",name:"务农",note:"每人照看10亩",scope:"core",wagePerWorkerDay:0,capacity:"farmland",releasePriority:10}
+),builders:Object.freeze({
+id:"builders",name:"营造",note:"建筑施工期间计日薪",scope:"core",wagePerWorkerDay:10,capacity:"project",releasePriority:100}
+)}
+);
+var D6=Object.freeze({
+mill_flour:Object.freeze({
+id:"mill_flour",name:"磨粉",accountingRawInputs:Object.freeze(["wheat"]),inputs:Object.freeze([{
+itemId:"wheat",quantity:20}
+]),outputs:Object.freeze([{
+itemId:"flour",quantity:16}
+]),losses:Object.freeze([{
+itemId:"wheat",quantity:4}
+]),batchesPerWorkerDay:4}
+),bakery_bread:Object.freeze({
+id:"bakery_bread",name:"烤面包",inputs:Object.freeze([{
+itemId:"flour",quantity:5}
+]),outputs:Object.freeze([{
+itemId:"bread",quantity:6}
+]),losses:Object.freeze([]),batchesPerWorkerDay:16}
+),lumber_gathering:Object.freeze({
+id:"lumber_gathering",name:"伐木",kind:"gather",inputs:Object.freeze([]),outputs:Object.freeze([{
+itemId:"wood",quantity:1}
+]),losses:Object.freeze([]),batchesPerWorkerDay:1}
+),salt_gathering:Object.freeze({
+id:"salt_gathering",name:"采盐与加工",kind:"gather",inputs:Object.freeze([]),outputs:Object.freeze([{
+itemId:"salt",quantity:5}
+]),losses:Object.freeze([]),batchesPerWorkerDay:1}
+)}
+);
+var B6=Object.freeze({
+mill:Object.freeze({
+id:"mill",name:"磨坊",icon:"⚙️",description:"小麦磨面",maxInstances:12,recipeId:"mill_flour",productionRoleId:"millers",jobs:Object.freeze([Object.freeze({
+id:"millers",name:"磨坊工",slots:12,wagePerWorkerDay:10,note:"每人每日最多磨80斤麦",releasePriority:30}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:600}
+]),construction:Object.freeze({
+workDays:480,recommendedWorkers:12}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:480,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:600}
+])}
+)}
+),bakery:Object.freeze({
+id:"bakery",name:"面包房",icon:"\uD83E\uDD56",description:"面粉烤面包 · 需已有面粉",maxInstances:12,recipeId:"bakery_bread",productionRoleId:"bakers",jobs:Object.freeze([Object.freeze({
+id:"bakers",name:"面包师",slots:10,wagePerWorkerDay:10,note:"每人每日最多烤80斤面粉",releasePriority:40}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:500}
+]),construction:Object.freeze({
+workDays:400,recommendedWorkers:10}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:400,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:500}
+])}
+)}
+),lumberyard:Object.freeze({
+id:"lumberyard",name:"伐木场",icon:"\uD83E\uDEB5",description:"南林伐木 · 木材持续可用",maxInstances:12,recipeId:"lumber_gathering",productionRoleId:"lumberjacks",accountingSector:"forestry",requiredPlotFeature:"logging_resource",jobs:Object.freeze([Object.freeze({
+id:"lumberjacks",name:"伐木工",slots:20,wagePerWorkerDay:10,note:"每人每日产1单位木材",releasePriority:30}
+)]),construction:Object.freeze({
+workDays:200,recommendedWorkers:10}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:200,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:100}
+])}
+)}
+),saltworks:Object.freeze({
+id:"saltworks",name:"盐场",icon:"\uD83E\uDDC2",description:"盐矿采掘并精制食盐 · 原料持续可用",maxInstances:12,recipeId:"salt_gathering",productionRoleId:"salt_workers",accountingSector:"salt",requiredPlotFeature:"salt_mine",jobs:Object.freeze([Object.freeze({
+id:"salt_workers",name:"盐工",slots:10,wagePerWorkerDay:10,note:"每人每日产5斤食盐",releasePriority:30}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:100}
+]),construction:Object.freeze({
+workDays:300,recommendedWorkers:10}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:300,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:100}
+])}
+)}
+),wholesale_market:Object.freeze({
+id:"wholesale_market",name:"批发市场",icon:"\uD83C\uDFEA",description:"镇营商品集散 · 每级10个岗位 · 统一批发价与下游进货",maxInstances:1,jobs:Object.freeze([Object.freeze({
+id:"wholesale_workers",name:"批发市场职员",slots:10,wagePerWorkerDay:10,note:"每级增加10个镇营岗位",releasePriority:45}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:1000}
+]),construction:Object.freeze({
+workDays:700,recommendedWorkers:14}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:700,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:1000}
+])}
+)}
+),commercial_street:Object.freeze({
+id:"commercial_street",name:"商业街",icon:"\uD83C\uDFEC",description:"居民开店 · 每级2间铺位",maxInstances:12,jobs:Object.freeze([Object.freeze({
+id:"merchants",name:"商人",slots:8,wagePerWorkerDay:10,note:"每间店最多4名商人，由店铺支付",releasePriority:60,managedBy:"shops"}
+),Object.freeze({
+id:"shop_clerks",name:"店员",slots:100,wagePerWorkerDay:10,note:"综合商店最多50名店员；其他店铺最多20名，由店铺支付",releasePriority:70,managedBy:"shops"}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:1200}
+]),construction:Object.freeze({
+workDays:800,recommendedWorkers:16}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:800,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:1200}
+])}
+)}
+),town_hall:Object.freeze({
+id:"town_hall",name:"政务厅",icon:"\uD83C\uDFDB️",description:"公务员办公 · 每级10个岗位容量",maxInstances:12,jobs:Object.freeze([Object.freeze({
+id:"civil_servants",name:"公务员",slots:10,wagePerWorkerDay:10,note:"全镇需求按人口计算",releasePriority:50,globalDemand:"public_service"}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:800}
+]),construction:Object.freeze({
+workDays:600,recommendedWorkers:12}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:600,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:800}
+])}
+)}
+),police_station:Object.freeze({
+id:"police_station",name:"警察局",icon:"\uD83D\uDE93",description:"警察办公 · 每级10个岗位容量",maxInstances:12,jobs:Object.freeze([Object.freeze({
+id:"police",name:"警察",slots:10,wagePerWorkerDay:10,note:"全镇需求按人口计算",releasePriority:50,globalDemand:"public_service"}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:800}
+]),construction:Object.freeze({
+workDays:600,recommendedWorkers:12}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:600,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:800}
+])}
+)}
+),bank:Object.freeze({
+id:"bank",name:"银行",icon:"\uD83C\uDFE6",description:"粮券印制、换券与注销 · 全镇限建一座",maxInstances:1,jobs:Object.freeze([Object.freeze({
+id:"bank_staff",name:"银行职员",slots:8,capacityMode:"building",wagePerWorkerDay:10,note:"银行日常运营",releasePriority:55}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:800}
+]),construction:Object.freeze({
+workDays:600,recommendedWorkers:12}
+)}
+),stock_exchange:Object.freeze({
+id:"stock_exchange",name:"交易所",icon:"\uD83D\uDCC8",description:"挂牌、认购与回购 · 全镇限建一座",maxInstances:1,jobs:Object.freeze([Object.freeze({
+id:"exchange_staff",name:"交易所职员",slots:8,capacityMode:"building",wagePerWorkerDay:10,note:"交易登记与清算",releasePriority:55}
+)]),materialRequirements:Object.freeze([{
+itemId:"wood",quantity:800}
+]),construction:Object.freeze({
+workDays:600,recommendedWorkers:12}
+)}
+),public_housing:Object.freeze({
+id:"public_housing",name:"公租住宅区",icon:"\uD83C\uDFD8️",description:"镇营住宅 · 每座20名管理员",maxInstances:12,accountingSector:"housing",housingCapacity:1000,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:2000}
+]),jobs:Object.freeze([Object.freeze({
+id:"housing_managers",name:"公租房管理员",slots:20,capacityMode:"building",wagePerWorkerDay:10,note:"入住、维护与租务",releasePriority:55}
+)]),construction:Object.freeze({
+workDays:2000,recommendedWorkers:20}
+),upgrade:Object.freeze({
+maxLevel:5,workDays:2000,materialRequirements:Object.freeze([{
+itemId:"wood",quantity:2000}
+])}
+)}
+)}
+);
+var $N=[Object.freeze({
+id:"east",label:"溪畔空地",x:76.5,y:58.5}
+),Object.freeze({
+id:"south",label:"南路空地",x:81.5,y:77}
+)],X$=[],ZN=[22,34,46,58,70,82,94],zN=[52,65,78,91];
+for(let $ of zN)for(let Z of ZN){
+if(Z===46&&$===52||Z===58&&$===52||Z===70&&$===52||Z===82&&$===52||Z===70&&$===65||Z===82&&$===65||Z===82&&$===78)continue;
+let z=X$.length+1;
+X$.push(Object.freeze({
+id:"village-"+String(z).padStart(2,"0"),label:"空地 "+z,x:Z,y:$}
+))}
+X$.push(Object.freeze({
+id:"village-22",label:"空地 22",x:10,y:52}
+));
+var NN=[Object.freeze({
+id:"forest-logging-01",label:"南林伐木资源点",x:6,y:82,feature:"logging_resource"}
+),Object.freeze({
+id:"forest-salt-01",label:"南部盐矿资源点",x:6,y:96,feature:"salt_mine"}
+)],B5=Object.freeze([...$N,...X$,...NN]),R6=Object.freeze({
+granary:Object.freeze({
+label:"共用粮仓",icon:"\uD83C\uDF3E",x:48,y:34}
+),houses:Object.freeze({
+label:"村舍",icon:"\uD83C\uDFE0",x:58,y:66}
+),well:Object.freeze({
+label:"古井",icon:"\uD83E\uDEA3",x:41,y:72}
+),field:Object.freeze({
+label:"镇有麦田",icon:"\uD83C\uDF31",x:24,y:38}
+)}
+);
+var b1=Object.freeze({
+agriculture:x6,initial:L6,precision:f$,rules:x4,items:K6,roles:O$,recipes:D6,buildings:B6,plots:B5}
+);
+function E6(){
+return{
+agricultureWheatUnits:0,wagesWheatUnits:0,constructionWagesWheatUnits:0,unemploymentWheatUnits:0,reliefWheatUnits:0,rentWheatUnits:0,breadPurchaseWheatUnits:0,saltPurchaseWheatUnits:0,operatingRightWheatUnits:0,consumptionQeqUnits:0,privateInputs:{
+}
+,privateOutputs:{
+}
+,privateTaxes:{
+}
+,constructionMaterials:{
+}
+,constructionMaterialsReturned:{
+}
+}
+}
+function R1(){
+return{
+residents:E6(),town:E6()}
+}
+function R5($,Z,z){
+$[Z]=($[Z]||0)+z}
+function H6($,Z){
+$.financialFlows||={
+day:R1(),year:R1(),cumulative:R1()}
+;
+let z=[$.financialFlows.day,$.financialFlows.year,$.financialFlows.cumulative];
+for(let N of z){
+let{
+residents:M,town:Q}
+=N,_=Z.quantityUnits||0;
+if(Z.type==="harvest"){
+if(Z.destination==="residents")M.agricultureWheatUnits+=_;
+if(Z.destination==="town")Q.agricultureWheatUnits+=_}
+else if(Z.type==="construction_wage_payment"||Z.type==="construction_wage_arrears_payment")M.constructionWagesWheatUnits+=_,Q.constructionWagesWheatUnits+=_;
+else if(Z.type==="wage_payment"||Z.type==="wage_arrears_payment")M.wagesWheatUnits+=_,Q.wagesWheatUnits+=_;
+else if(Z.type==="unemployment_benefit")M.unemploymentWheatUnits+=_,Q.unemploymentWheatUnits+=_;
+else if(Z.type==="relief")M.reliefWheatUnits+=_,Q.reliefWheatUnits+=_;
+else if(Z.type==="rent_payment")M.rentWheatUnits+=_,Q.rentWheatUnits+=_;
+else if(Z.type==="operating_right_sale")M.operatingRightWheatUnits+=_,Q.operatingRightWheatUnits+=_;
+else if(Z.type==="bread_trade"&&(Z.itemId==="wheat"||Z.itemId==="grain_voucher"))M.breadPurchaseWheatUnits+=_,Q.breadPurchaseWheatUnits+=_;
+else if(Z.type==="salt_trade"&&(Z.itemId==="wheat"||Z.itemId==="grain_voucher"))M.saltPurchaseWheatUnits+=_,Q.saltPurchaseWheatUnits+=_;
+else if(Z.type==="consume")M.consumptionQeqUnits+=Z.qeqUnits||0;
+else if(Z.type==="private_process_input")R5(M.privateInputs,Z.itemId,_);
+else if(Z.type==="private_production_output")R5(M.privateOutputs,Z.itemId,_);
+else if(Z.type==="private_production_tax")R5(Q.privateTaxes,Z.itemId,_);
+else if(Z.type==="construction_material")R5(Q.constructionMaterials,Z.itemId,_);
+else if(Z.type==="construction_material_return")R5(Q.constructionMaterialsReturned,Z.itemId,_)}
+}
+function V0($,Z,z,N={
+}
+){
+let M={
+year:N.year??$.year,day:Math.max(1,Math.min(z.rules.daysPerYear,N.day??$.day+1))}
+;
+if($.ledgerSequence+=1,$.ledger.unshift({
+id:$.ledgerSequence,...M,...Z}
+),H6($,{
+id:$.ledgerSequence,...M,...Z}
+),$.ledger.length>z.rules.ledgerLimit)$.ledger.length=z.rules.ledgerLimit}
+function q0($,Z,z,N={
+}
+){
+let M=N.day??$.day;
+if(N.mergeKey){
+let Q=$.events.find((f)=>f.mergeKey===N.mergeKey),_=Q?Q.untilDay??Q.day:null;
+if(Q&&Q.year===$.year&&M-_>=0&&M-_<=(N.mergeWindowDays||1)){
+Q.untilDay=M,Q.mergeCount=(Q.mergeCount||1)+1,Q.mergeAmount=(Q.mergeAmount||0)+(N.amount||0),Q.text=N.mergedText?N.mergedText(Q.mergeCount,Q.mergeAmount):Z;
+return}
+if($.events.unshift({
+year:$.year,day:Math.max(1,Math.min(z.rules.daysPerYear,M)),text:Z,mergeKey:N.mergeKey,mergeCount:1,mergeAmount:N.amount||0}
+),$.events.length>24)$.events.length=24;
+return}
+if($.events.unshift({
+year:$.year,day:Math.max(1,Math.min(z.rules.daysPerYear,M)),text:Z}
+),$.events.length>24)$.events.length=24}
+function E0($){
+return $.transactionSequence=($.transactionSequence||0)+1,"tx-"+$.transactionSequence}
+function L4(){
+return{
+harvestQeq:0,consumptionQeq:0,operatingWagesQeq:0,constructionPayQeq:0,reliefQeq:0,processingLossQeq:0,unemploymentPaidQeq:0,wagePaidQeq:0,wageArrearsQeq:0}
+}
+function K1($,Z,z){
+if(!Number.isSafeInteger($)||$<0)return{
+ok:!1,reason:"分配数量无效",rows:[],unallocatedUnits:$}
+;
+if(!Array.isArray(Z)||Z.length===0)return{
+ok:$===0,reason:$===0?null:"没有可接收者",rows:[],unallocatedUnits:$}
+;
+if($===0)return{
+ok:!0,rows:[],unallocatedUnits:0}
+;
+let N=[],M=0n;
+for(let G=0;
+G<Z.length;
+G+=1){
+let X=Z[G],q=z(X,G);
+if(!Number.isSafeInteger(q)||q<0)return{
+ok:!1,reason:"分配权重无效",rows:[],unallocatedUnits:$}
+;
+if(q===0)continue;
+M+=BigInt(q),N.push({
+recipient:X,index:G,weight:BigInt(q),units:0,remainder:0n}
+)}
+if(N.length===0||M===0n)return{
+ok:!1,reason:"总权重为0，无法分配",rows:[],unallocatedUnits:$}
+;
+let Q=BigInt($),_=0;
+for(let G of N){
+let X=Q*G.weight;
+G.units=Number(X/M),G.remainder=X%M,_+=G.units}
+let f=$-_;
+if(f>0){
+let G=N.slice().sort((X,q)=>{
+if(X.remainder===q.remainder)return X.index-q.index;
+return X.remainder>q.remainder?-1:1}
+);
+for(let X=0;
+X<f;
+X+=1)G[X].units+=1}
+let O=N.filter((G)=>G.units>0).sort((G,X)=>G.index-X.index).map((G)=>({
+recipient:G.recipient,units:G.units,weight:Number(G.weight)}
+)),Y=O.reduce((G,X)=>G+X.units,0);
+if(Y!==$)throw Error(`加权分配守恒失败：期望${$}，实际${Y}`);
+return{
+ok:!0,rows:O,unallocatedUnits:0}
+}
+function Q1($,Z){
+let z=Number($);
+if(!Number.isFinite(z))throw TypeError("物品数量必须是有限数值");
+return Math.round((z+Number.EPSILON)*Z.precision.inventoryUnitsPerJin)}
+function A6($,Z){
+return $/Z.precision.inventoryUnitsPerJin}
+function g1($,Z){
+if(!$||$.edible!==!0||!$.qeq)return 0;
+let z=Z.precision.qeqUnitsPerJin*$.qeq.numerator,N=Z.precision.inventoryUnitsPerJin*$.qeq.denominator,M=z/N;
+if(!Number.isInteger(M))throw Error("口粮当量精度不支持物品："+$.id);
+return M}
+function p0($,Z,z){
+return g1($,z)*Z}
+function _1($,Z){
+return $/Z.precision.qeqUnitsPerJin}
+function H5($){
+return Boolean($.households?.byId)}
+function T6($){
+return Object.values($.households?.byId||{
+}
+)}
+function A5($,Z){
+if(!H5($))return;
+$.accounts||={
+}
+,$.accounts.residents||={
+}
+;
+for(let z of Object.keys(Z.items))$.accounts.residents[z]=T6($).reduce((N,M)=>N+(M.inventory?.[z]||0),0)}
+function Y$($,Z){
+if(Z==="town")return $.accounts?.town||null;
+if(Z==="residents")return $.accounts?.residents||null;
+if(Z?.startsWith("household:"))return $.households?.byId?.[Z.slice(10)]?.inventory||null;
+if(Z?.startsWith("company:"))return $.companies?.[Z.slice(8)]?.inventory||null;
+if(Z?.startsWith("shop:"))return $.shops?.[Z.slice(5)]?.inventory||null;
+return null}
+function z1($,Z,z){
+if(Z==="residents"&&H5($))A5($,z);
+let N=Y$($,Z);
+if(!N)return 0;
+let M=0;
+for(let[Q,_]of Object.entries(z.items))M+=p0(_,N[Q]||0,z);
+return M}
+function n2($,Z){
+let z=z1($,"residents",Z)+z1($,"town",Z);
+for(let N of Object.values($.companies||{
+}
+))for(let[M,Q]of Object.entries(Z.items))z+=p0(Q,N.inventory?.[M]||0,Z);
+for(let N of Object.values($.shops||{
+}
+))for(let[M,Q]of Object.entries(Z.items))z+=p0(Q,N.inventory?.[M]||0,Z);
+return z}
+function L2($,Z,z,N){
+if(!N.items[z])throw Error("未注册物品："+z);
+if(Z==="residents"&&H5($))A5($,N);
+let M=Y$($,Z);
+if(!M)throw Error("未知粮食账户："+Z);
+if(!Number.isInteger(M[z]))M[z]=0;
+return M[z]}
+function MN($){
+let Z=$?.ageBands||{
+}
+;
+return Math.max(0,Z.children||0)+Math.max(0,Z.workers||0)+Math.max(0,Z.elders||0)}
+function QN($,Z,z,N){
+let M=T6($);
+if(!M.length)throw Error("居民家庭账户为空");
+if(z>0){
+let Q=K1(z,M,(_)=>MN(_));
+if(!Q.ok)throw Error("居民家庭库存分配失败："+Q.reason);
+for(let{
+recipient:_,units:f}
+of Q.rows)_.inventory||={
+}
+,_.inventory[Z]=(_.inventory[Z]||0)+f}
+else if(z<0){
+let Q=-z,_=M.slice().sort((f,O)=>(O.inventory?.[Z]||0)-(f.inventory?.[Z]||0)||String(f.id).localeCompare(String(O.id)));
+for(let f of _){
+if(Q<=0)break;
+let O=f.inventory?.[Z]||0,Y=Math.min(Q,O);
+if(Y<=0)continue;
+f.inventory[Z]-=Y,Q-=Y}
+if(Q>0)throw RangeError("居民家庭库存不足")}
+A5($,N)}
+function E5($,Z,z,N,M){
+if(!Number.isSafeInteger(N)||N<0)throw RangeError("库存不能为负数或超出精度");
+let Q=L2($,Z,z,M);
+if(Z==="residents"&&H5($)){
+QN($,z,N-Q,M);
+return}
+let _=Y$($,Z);
+if(_[z]=N,Z?.startsWith("household:"))A5($,M)}
+function _N($,Z){
+if(Z==="town"||Z==="residents")return Boolean($.accounts?.[Z]);
+if(Z?.startsWith("household:"))return Boolean($.households?.byId?.[Z.slice(10)]);
+if(Z?.startsWith("company:"))return Boolean($.companies?.[Z.slice(8)]);
+if(Z?.startsWith("shop:"))return Boolean($.shops?.[Z.slice(5)]);
+return!1}
+function fN($,Z,z,N,M,Q,_){
+let f=$.business?.inventoryCostWheatUnits?.town;
+if(!f||Z===z)return;
+let O=Number.isSafeInteger(f[N])?f[N]:0;
+if(Z==="town"){
+let Y=M===Q?O:Q>0?Math.floor(O*M/Q):0;
+f[N]=O-Y}
+else if(z==="town"){
+let Y=Number.isFinite(_.items[N]?.openingCostWheatPerJin)?_.items[N].openingCostWheatPerJin:0;
+f[N]=O+Math.round(M*Y)}
+}
+function G$($,Z,z){
+$.yearTotals[Z]=($.yearTotals[Z]||0)+z}
+function C6($,Z,z,N,M,Q,_,f,O){
+if(!Number.isSafeInteger(N)||N===0){
+if(N===0)return{
+ok:!0,quantityUnits:0}
+;
+throw TypeError("库存变化必须是整数精度单位")}
+let G=L2($,Z,z,_)+N;
+if(G<0)return{
+ok:!1,reason:"库存不足"}
+;
+E5($,Z,z,G,_);
+let X=_.items[z],q=p0(X,Math.abs(N),_);
+return V0($,{
+type:Q||(N>0?"deposit":"withdrawal"),transactionId:f||E0($),source:N>0?"external":Z,destination:N>0?Z:"external",itemId:z,quantityUnits:Math.abs(N),qeqUnits:q,reason:M}
+,_,O),{
+ok:!0,quantityUnits:Math.abs(N),qeqUnits:q}
+}
+function P6($,Z,z,N,M,Q,_){
+if(!Number.isSafeInteger(M)||M<=0||!_.items[N]||!_N($,z))return{
+ok:!1,reason:"材料返还记录无效"}
+;
+let f=L2($,z,N,_);
+if(!Number.isSafeInteger(f+M))return{
+ok:!1,reason:"库存超出精度"}
+;
+E5($,z,N,f+M,_);
+let O=E0($);
+return V0($,{
+type:"construction_material_return",transactionId:O,source:Z,destination:z,itemId:N,quantityUnits:M,qeqUnits:p0(_.items[N],M,_),reason:Q}
+,_),{
+ok:!0,transactionId:O,quantityUnits:M}
+}
+function K4($,Z,z,N){
+let M=Math.max(0,Math.floor(Z)),Q=Object.values(z.items).filter(function(O){
+return O.edible&&O.qeq}
+).sort(function(O,Y){
+return(O.transferPriority||0)-(Y.transferPriority||0)}
+),_=M,f=[];
+for(let O of Q){
+let Y=g1(O,z),G=Math.max(0,Math.floor($[O.id]||0)),X=Math.min(G,Math.floor(_/Y));
+if(X>0)f.push({
+itemId:O.id,quantityUnits:X,qeqUnits:X*Y}
+),_-=X*Y;
+if(_===0)break}
+if(_>0&&!N)return null;
+return{
+requestedQeqUnits:M,movedQeqUnits:M-_,remainingQeqUnits:_,moves:f}
+}
+function q$($,Z,z,N,M,Q,_,f){
+let O=f||{
+}
+;
+if(Z==="residents"&&H5($))A5($,_);
+let Y=Y$($,Z),G=K4(Y,N,_,O.allowPartial===!0);
+if(!G||G.movedQeqUnits===0)return{
+ok:!1,movedQeqUnits:0,missingQeqUnits:Math.max(0,N)}
+;
+let X=E0($);
+for(let q of G.moves){
+let J=L2($,Z,q.itemId,_),F=L2($,z,q.itemId,_);
+fN($,Z,z,q.itemId,q.quantityUnits,$.accounts.town[q.itemId]||0,_),E5($,Z,q.itemId,J-q.quantityUnits,_),E5($,z,q.itemId,F+q.quantityUnits,_),V0($,{
+type:Q||"transfer",transactionId:X,source:Z,destination:z,itemId:q.itemId,quantityUnits:q.quantityUnits,qeqUnits:q.qeqUnits,reason:M}
+,_)}
+if(Q==="wage")G$($,"operatingWagesQeq",G.movedQeqUnits);
+if(Q==="construction")G$($,"constructionPayQeq",G.movedQeqUnits);
+if(Q==="relief")G$($,"reliefQeq",G.movedQeqUnits);
+return{
+ok:G.remainingQeqUnits===0,movedQeqUnits:G.movedQeqUnits,missingQeqUnits:G.remainingQeqUnits,moves:G.moves,transactionId:X}
+}
+function K2($,Z,z){
+let N=Z.inputs||[],M=Z.outputs||[],Q=new Map,_=new Map,f=function(X){
+return X.quantityUnits??Q1(X.quantityJin,z)}
+,O=function(X){
+return X.owner+"|"+X.itemId}
+;
+for(let X of N){
+if(!z.items[X.itemId])return{
+ok:!1,reason:"未注册物品："+X.itemId}
+;
+let q=O(X);
+Q.set(q,(Q.get(q)||0)+f(X))}
+for(let X of M){
+if(!z.items[X.itemId])return{
+ok:!1,reason:"未注册物品："+X.itemId}
+;
+let q=O(X);
+_.set(q,(_.get(q)||0)+f(X))}
+for(let[X,q]of Q){
+let J=X.indexOf("|"),F=X.slice(0,J),W=X.slice(J+1);
+if(L2($,F,W,z)<q)return{
+ok:!1,reason:"原料不足",itemId:W}
+}
+for(let[X,q]of _){
+let J=X.indexOf("|"),F=X.slice(0,J),W=X.slice(J+1);
+if(!Number.isSafeInteger(L2($,F,W,z)+q))return{
+ok:!1,reason:"产物超出库存精度",itemId:W}
+}
+if(Number.isSafeInteger(Z.minEndingQeqUnits)){
+let X=z1($,Z.protectedOwner||"residents",z);
+for(let[q,J]of Q){
+let[F,W]=q.split("|");
+if(F===(Z.protectedOwner||"residents"))X-=p0(z.items[W],J,z)}
+for(let[q,J]of _){
+let[F,W]=q.split("|");
+if(F===(Z.protectedOwner||"residents"))X+=p0(z.items[W],J,z)}
+if(X<Z.minEndingQeqUnits)return{
+ok:!1,reason:"民营加工会侵占居民基本口粮储备"}
+}
+let Y=E0($),G=function(X,q){
+for(let J of X){
+let{
+owner:F,itemId:W}
+=J,K=f(J),L=L2($,F,W,z),x=q*K;
+E5($,F,W,L+x,z);
+let R=z.items[W],C=p0(R,Math.abs(x),z);
+V0($,{
+type:q<0?J.type||Z.inputType||"process_input":J.type||Z.outputType||"process_output",transactionId:Y,source:q<0?F:J.source||Z.outputSource||"processing",destination:q<0?J.destination||Z.inputDestination||"processing":J.destination||F,itemId:W,quantityUnits:K,qeqUnits:C,reason:Z.reason}
+,z)}
+}
+;
+G(N,-1);
+for(let X of Z.losses||[]){
+let q=X.quantityUnits??Q1(X.quantityJin,z);
+if(!q)continue;
+let J=p0(z.items[X.itemId],q,z);
+V0($,{
+type:"processing_loss",transactionId:Y,source:X.owner||"town",destination:"loss",itemId:X.itemId,quantityUnits:q,qeqUnits:J,reason:Z.lossReason||"加工损耗（未进入口粮）"}
+,z),G$($,"processingLossQeq",J)}
+return G(M,1),{
+ok:!0,transactionId:Y,wageQeqUnits:0}
+}
+var _f=f$.inventoryUnitsPerJin;
+function J$($){
+let Z=[];
+if(!Number.isInteger($.precision?.inventoryUnitsPerJin)||$.precision.inventoryUnitsPerJin<=0||!Number.isInteger($.precision?.qeqUnitsPerJin)||$.precision.qeqUnitsPerJin<=0)Z.push("库存与口粮当量精度必须是正整数");
+for(let[N,M]of Object.entries($.items||{
+}
+)){
+if(M.id!==N)Z.push("物品定义的 id 与注册键不同："+N);
+if(!M.name||!M.unit)Z.push("物品缺少名称或单位："+N);
+if(M.edible&&(!M.qeq||M.qeq.numerator<=0||M.qeq.denominator<=0))Z.push("可食物品必须定义正口粮当量："+N);
+try{
+g1(M,$)}
+catch(Q){
+Z.push(Q.message)}
+}
+for(let[N,M]of Object.entries($.recipes||{
+}
+)){
+if(M.id!==N)Z.push("配方定义的 id 与注册键不同："+N);
+if(!M.outputs?.length||!M.inputs?.length&&M.kind!=="gather")Z.push("配方必须有产物；无原料配方须明确标为采集："+N);
+if(!Number.isInteger(M.batchesPerWorkerDay)||M.batchesPerWorkerDay<=0)Z.push("配方批次产能须为正整数："+N);
+for(let Q of[...M.inputs||[],...M.outputs||[],...M.losses||[]]){
+if(!$.items[Q.itemId]||!(Q.quantity>0))Z.push("配方使用未注册物品或无效数量："+N);
+let _=Q.quantity*$.precision.inventoryUnitsPerJin;
+if(!Number.isSafeInteger(Math.round(_))||Math.abs(_-Math.round(_))>0.000000001)Z.push("配方数量超出库存精度："+N)}
+}
+let z=$.rules?.serviceTypes||{
+}
+;
+for(let[N,M]of Object.entries(z)){
+if(M.id!==N)Z.push("服务定义的 id 与注册键不同："+N);
+if(!M.name||!["person","household","child"].includes(M.basis))Z.push("服务缺少名称或需求口径无效："+N);
+if(!Number.isInteger(M.cycleDays)||M.cycleDays<=0||!Number.isFinite(M.priceVoucher)||M.priceVoucher<=0||!Number.isFinite(M.merchantCapacity)||M.merchantCapacity<=0||!Number.isFinite(M.clerkCapacity)||M.clerkCapacity<=0||!Number.isFinite(M.comfort)||M.comfort<0||!Number.isFinite(M.incomeSensitivity)||M.incomeSensitivity<0)Z.push("服务周期、价格、产能或舒心参数无效："+N);
+if(!Array.isArray(M.consumables))Z.push("服务耗材必须是数组："+N);
+else for(let Q of M.consumables)if(!$.items[Q.itemId]||!Number.isFinite(Q.quantity)||Q.quantity<=0)Z.push("服务耗材引用未注册物品或数量无效："+N)}
+if(!Number.isInteger($.rules?.serviceDemandMaximumCycles)||$.rules.serviceDemandMaximumCycles<=0||!Number.isFinite($.rules?.serviceBudgetSharePercent)||$.rules.serviceBudgetSharePercent<0||$.rules.serviceBudgetSharePercent>100||!Number.isFinite($.rules?.serviceComfortDailyMaximum)||$.rules.serviceComfortDailyMaximum<0)Z.push("服务需求累计、预算或舒心上限参数无效");
+for(let[N,M]of Object.entries($.rules?.shopTypes||{
+}
+)){
+if(M.id!==N)Z.push("店铺定义的 id 与注册键不同："+N);
+if(M.aliasOf&&!$.rules.shopTypes[M.aliasOf])Z.push("店铺别名引用不存在："+N);
+if(M.kind==="service"&&!z[M.serviceId])Z.push("服务店铺引用未注册服务："+N);
+for(let Q of M.itemIds||[])if(!$.items[Q])Z.push("零售店铺引用未注册商品："+N)}
+for(let[N,M]of Object.entries($.buildings||{
+}
+)){
+if(M.id!==N)Z.push("建筑定义的 id 与注册键不同："+N);
+if(M.recipeId&&!$.recipes[M.recipeId])Z.push("建筑引用了未注册配方："+N);
+if(!M.construction||!(M.construction.workDays>0)||!(M.construction.recommendedWorkers>0))Z.push("建筑施工参数无效："+N);
+for(let Q of M.materialRequirements||[])if(!$.items[Q.itemId]||!Number.isFinite(Q.quantity)||Q.quantity<=0)Z.push("建筑材料要求无效："+N);
+if(M.upgrade){
+if(!Number.isInteger(M.upgrade.maxLevel)||M.upgrade.maxLevel<1||!Number.isInteger(M.upgrade.workDays)||M.upgrade.workDays<=0)Z.push("建筑升级参数无效："+N);
+for(let Q of M.upgrade.materialRequirements||[])if(!$.items[Q.itemId]||!Number.isFinite(Q.quantity)||Q.quantity<=0)Z.push("升级材料要求无效："+N)}
+if(M.housingCapacity!==void 0&&(!Number.isInteger(M.housingCapacity)||M.housingCapacity<=0))Z.push("建筑住房容量无效："+N);
+for(let Q of M.jobs||[])if(!Q.id||Q.slots<=0||Q.wagePerWorkerDay<0)Z.push("建筑岗位参数无效："+N)}
+return{
+valid:Z.length===0,errors:Z}
+}
+var E1=16,c1=65;
+function W$($){
+if($<16)return"children";
+if($<65)return"workers";
+return"elders"}
+function U6($){
+return Object.fromEntries(Object.keys($.items).map((Z)=>[Z,0]))}
+var k6=new WeakMap;
+function o1($){
+let Z=String($||"").match(/(\d+)$/);
+return Z?Number(Z[1]):Number.MAX_SAFE_INTEGER}
+function ON($,Z){
+return{
+id:`household-${$+1}`,name:`第${$+1}户`,ageBands:{
+children:0,workers:0,elders:0}
+,jobs:{
+}
+,inventory:U6(Z),voucherUnits:0,shares:{
+}
+,shopIds:[],operatingRights:[],income:{
+dayVoucherUnits:0,yearVoucherUnits:0,cumulativeVoucherUnits:0,history:[]}
+,agricultureWorkUnits:0}
+}
+function f0($,Z=null){
+let z=Z===null?$:$.households?.byId?.[Z];
+if(!z)return 0;
+let N=z.ageBands||{
+}
+;
+return Math.max(0,N.children||0)+Math.max(0,N.workers||0)+Math.max(0,N.elders||0)}
+function i1($){
+return Math.max(0,$?.ageBands?.workers||0)}
+function y0($){
+return Object.values($?.jobs||{
+}
+).reduce((Z,z)=>Z+Math.max(0,Number(z)||0),0)}
+function P1($){
+return Math.max(0,i1($)-y0($))}
+function J0($){
+return f0($)>0}
+function S6($,Z){
+let N=Array.from({
+length:250}
+,(O,Y)=>ON(Y,Z)),M={
+children:0,workers:0,elders:0}
+;
+for(let O of $.cohorts){
+let Y=O.m+O.f;
+M[W$(O.age)]+=Y}
+let Q=M.workers;
+for(let O=0;
+O<2&&Q>0;
+O+=1)for(let Y of N){
+if(Q<=0)break;
+Y.ageBands.workers+=1,Q-=1}
+for(let O=0;
+Q>0;
+O=(O+1)%250)N[O].ageBands.workers+=1,Q-=1;
+for(let O=0;
+O<M.children;
+O+=1)N[O%250].ageBands.children+=1;
+for(let O=0;
+O<M.elders;
+O+=1)N[O%250].ageBands.elders+=1;
+let _={
+...$.accounts?.residents||{
+}
+}
+;
+for(let[O,Y]of Object.entries(_)){
+let G=K1(Y,N,(X)=>f0(X));
+if(!G.ok)throw Error("初始家庭库存分配失败："+G.reason);
+for(let{
+recipient:X,units:q}
+of G.rows)X.inventory[O]=q}
+$.households={
+byId:Object.fromEntries(N.map((O)=>[O.id,O])),nextHouseholdNumber:251,exchange:{
+dayKey:null,eligibleByHousehold:{
+}
+,usedByHousehold:{
+}
+}
+}
+;
+let f=Math.max(0,Math.floor(Z.initial.roleCounts?.farmers||0));
+if(f)U0($,"farmers",f,null,{
+employerType:"farm",employerId:"fields"}
+);
+return M0($,Z),$.households}
+function D1($){
+return Boolean($.households?.byId)}
+function m($){
+let Z=$.households?.byId;
+if(!Z)return[];
+let z=k6.get(Z);
+if(!z)z=Object.values(Z).sort((N,M)=>o1(N.id)-o1(M.id)),k6.set(Z,z);
+return z}
+function e1($){
+return m($).reduce((Z,z)=>{
+return Z.children+=z.ageBands?.children||0,Z.workers+=z.ageBands?.workers||0,Z.elders+=z.ageBands?.elders||0,Z}
+,{
+children:0,workers:0,elders:0}
+)}
+function f1($,Z){
+return m($).map((z)=>({
+householdId:z.id,count:Math.max(0,z.jobs?.[Z]||0)}
+)).filter((z)=>z.count>0)}
+function u0($,Z){
+return f1($,Z).reduce((z,N)=>z+N.count,0)}
+function XN($){
+return`${$.year}:${$.day}`}
+function T5($,Z){
+if(!D1($))return null;
+let z=$.households.exchange||={
+dayKey:null,eligibleByHousehold:{
+}
+,usedByHousehold:{
+}
+,peakEmploymentCount:0}
+,N=XN($);
+if(z.dayKey!==N)z.dayKey=N,z.eligibleByHousehold=Object.fromEntries(m($).map((M)=>[M.id,y0(M)])),z.usedByHousehold={
+}
+,z.peakEmploymentCount=Object.values(z.eligibleByHousehold).reduce((M,Q)=>M+Q,0);
+else if(!Number.isInteger(z.peakEmploymentCount)||z.peakEmploymentCount<0)z.peakEmploymentCount=Object.values(z.eligibleByHousehold||{
+}
+).reduce((M,Q)=>M+Math.max(0,Number(Q)||0),0);
+return z}
+function GN($,Z,z){
+let N=T5($,z),M=$.households?.byId?.[Z];
+if(!N||!M)return;
+let Q=m($).reduce((O,Y)=>O+y0(Y),0);
+if(Q<=N.peakEmploymentCount)return;
+let _=Q-N.peakEmploymentCount,f=[M,...m($).filter((O)=>O.id!==M.id)];
+for(let O of f){
+if(_<=0)break;
+let Y=Math.max(0,N.eligibleByHousehold?.[O.id]||0),G=y0(O),X=Math.max(0,G-Y);
+if(X<=0)continue;
+let q=Math.min(X,_);
+N.eligibleByHousehold[O.id]=Y+q,_-=q}
+N.peakEmploymentCount=Q}
+function D2($,Z,z,N,M=null){
+let Q=$.households?.byId?.[Z];
+if(!Q)return{
+ok:!1,reason:"家庭不存在"}
+;
+let _=Math.max(0,Math.floor(Number(N)||0)),f=Math.max(0,Q.jobs?.[z]||0);
+if(y0(Q)-f+_>i1(Q))return{
+ok:!1,reason:"该家庭没有足够待业劳动力"}
+;
+if(Q.jobs||={
+}
+,_>0)Q.jobs[z]=_;
+else delete Q.jobs[z];
+if(M&&_>f)GN($,Z,M);
+return{
+ok:!0,before:f,after:_}
+}
+function U0($,Z,z,N=null,M={
+}
+){
+let Q=Math.max(0,Math.floor(Number(z)||0)),_=m($),f=u0($,Z),O=[],Y=[];
+if(f>Q){
+let G=f-Q,X=_.filter((q)=>(q.jobs?.[Z]||0)>0).sort((q,J)=>y0(J)-y0(q)||o1(J.id)-o1(q.id));
+for(let q of X){
+if(G<=0)break;
+let J=q.jobs[Z]||0,F=Math.min(J,G);
+D2($,q.id,Z,J-F,null),O.push({
+householdId:q.id,count:F}
+),G-=F}
+}
+else if(f<Q){
+let G=Q-f,X=_.filter((q)=>P1(q)>0).sort((q,J)=>y0(q)-y0(J)||o1(q.id)-o1(J.id));
+for(let q of X){
+if(G<=0)break;
+let J=Math.min(G,P1(q));
+if(J<=0)continue;
+let F=q.jobs?.[Z]||0;
+D2($,q.id,Z,F+J,N),Y.push({
+householdId:q.id,count:J,employerType:M.employerType||M.type||null,employerId:M.employerId||M.id||null}
+),G-=J}
+}
+return f=u0($,Z),{
+ok:f===Q,target:Q,assigned:f,assignedRows:Y,releasedRows:O,reason:f===Q?null:"全镇没有足够待业劳动力"}
+}
+function C5($,Z,z,N=Number.MAX_SAFE_INTEGER){
+let M=$.households?.byId?.[Z];
+if(!M)return 0;
+let Q=Math.max(0,M.jobs?.[z]||0),_=Math.min(Q,Math.max(0,Math.floor(N)));
+if(_<=0)return 0;
+return D2($,Z,z,Q-_,null),_}
+function j6($){
+if($.endsWith(":clerk"))return 1000;
+if($.includes("::private"))return 800;
+if($.includes("::listed"))return 700;
+if($.includes("::"))return 600;
+if($==="builders")return 500;
+if($==="farmers")return 100;
+if($.endsWith(":merchant"))return 0;
+return 400}
+function P5($){
+let Z=[];
+for(let z of m($)){
+let N=y0(z)-i1(z);
+if(N<=0)continue;
+let M=Object.keys(z.jobs||{
+}
+).filter((Q)=>z.jobs[Q]>0).sort((Q,_)=>j6(_)-j6(Q)||_.localeCompare(Q));
+for(let Q of M){
+if(N<=0)break;
+let _=Math.min(N,z.jobs[Q]||0);
+if(_<=0)continue;
+C5($,z.id,Q,_),Z.push({
+householdId:z.id,jobKey:Q,count:_}
+),N-=_}
+if(N>0)throw Error("家庭就业释放失败："+z.id)}
+return Z}
+function I6($,Z,z,N){
+let M=Math.max(0,Math.floor($)),Q=new Map(Z.map((f)=>[f.id,0])),_=Z.filter((f)=>N(f)>0);
+while(M>0&&_.length){
+let f=K1(M,_,(O)=>Math.max(0,z(O)));
+if(!f.ok)for(let O of _){
+if(M<=0)break;
+if(N(O)-(Q.get(O.id)||0)<=0)continue;
+Q.set(O.id,(Q.get(O.id)||0)+1),M-=1}
+else{
+let O=0;
+for(let{
+recipient:Y,units:G}
+of f.rows){
+let X=Math.max(0,N(Y)-(Q.get(Y.id)||0)),q=Math.min(X,G);
+if(q<=0)continue;
+Q.set(Y.id,(Q.get(Y.id)||0)+q),O+=q}
+if(M-=O,O<=0)break}
+_=_.filter((O)=>(Q.get(O.id)||0)<N(O))}
+if(M>0)throw Error("人口聚合分配超出家庭可用人数");
+return Q}
+function D4($,Z,z){
+let N=m($),M=I6(z,N,(Q)=>Q.ageBands?.[Z]||0,(Q)=>Q.ageBands?.[Z]||0);
+for(let Q of N)Q.ageBands[Z]-=M.get(Q.id)||0;
+return M}
+function F$($,Z,z,N){
+let M=m($),Q=I6(N,M,(_)=>_.ageBands?.[Z]||0,(_)=>_.ageBands?.[Z]||0);
+for(let _ of M){
+let f=Q.get(_.id)||0;
+_.ageBands[Z]-=f,_.ageBands[z]+=f}
+return Q}
+function YN($,Z){
+if(Z<=0)return new Map;
+let z=m($).filter((Q)=>i1(Q)>0&&J0(Q));
+if(!z.length)z=m($).filter(J0);
+if(!z.length)z=m($);
+let N=K1(Z,z,(Q)=>Math.max(1,i1(Q)));
+if(!N.ok)throw Error("新生人口分配失败："+N.reason);
+let M=new Map;
+for(let{
+recipient:Q,units:_}
+of N.rows)Q.ageBands.children+=_,M.set(Q.id,_);
+return M}
+function b6($,Z){
+let z=e1($),N=Math.max(0,Math.floor(Z.childDeaths||0)),M=Math.max(0,Math.floor(Z.workerDeaths||0)),Q=Math.max(0,Math.floor(Z.elderDeaths||0)),_=Math.max(0,Math.floor(Z.adults||0)),f=Math.max(0,Math.floor(Z.retirees||0)),O=Math.max(0,Math.floor(Z.births||0));
+D4($,"children",N),D4($,"workers",M),D4($,"elders",Q),F$($,"workers","elders",f),F$($,"children","workers",_),YN($,O);
+let Y=P5($);
+return{
+before:z,after:e1($),employmentReleases:Y}
+}
+function M0($,Z){
+if(!D1($))return;
+if($._deferHouseholdSync){
+$._householdSyncDirty=!0;
+return}
+$._householdSyncDirty=!1,$.accounts||={
+}
+;
+let z=Object.keys(Z.items),N=Object.fromEntries(z.map((Q)=>[Q,0])),M=0;
+for(let Q of m($)){
+M+=Q.voucherUnits||0;
+for(let _ of z)N[_]+=Q.inventory?.[_]||0}
+$.accounts.residents||=U6(Z);
+for(let Q of z)$.accounts.residents[Q]=N[Q];
+$.currency||={
+}
+,$.currency.balances||={
+town:0,residents:0}
+,$.currency.balances.residents=M}
+function B4($){
+if(!D1($))return $.currency?.balances?.residents||0;
+if($._deferHouseholdSync)return m($).reduce((Z,z)=>Z+(z.voucherUnits||0),0);
+return $.currency?.balances?.residents||0}
+function a0($,Z,z){
+let N=0;
+for(let[M,Q]of Object.entries(z.items))N+=p0(Q,Z.inventory?.[M]||0,z);
+return N}
+function o2($,Z,z,N=null){
+let M=N??z.rules.householdFoodReserveDays??30;
+return f0(Z)*z.rules.foodPerPersonDay*M*z.precision.qeqUnitsPerJin}
+function D0($,Z,z,N=null){
+let M=Z.inventory?.wheat||0;
+if(M<=0)return 0;
+let Q=o2($,Z,z,N),_=0;
+for(let[Y,G]of Object.entries(z.items)){
+if(Y==="wheat"||!G.edible||!G.qeq)continue;
+_+=p0(G,Z.inventory?.[Y]||0,z)}
+let f=p0(z.items.wheat,1,z),O=Math.max(0,Math.ceil((Q-_)/Math.max(1,f)));
+return Math.max(0,M-O)}
+function t1($,Z,z){
+let N=T5($,z);
+if(!N)return Number.MAX_SAFE_INTEGER;
+let M=Math.max(z.rules.employmentExchangeMinimumJin??0,Math.min(z.rules.employmentExchangeMaximumJin??10,Number($.policy?.employmentExchangeJin??z.rules.employmentExchangeDefaultJin??2))),Q=N.eligibleByHousehold?.[Z]||0,_=Math.round(Q*M*z.precision.inventoryUnitsPerJin),f=N.usedByHousehold[Z]||0;
+return Math.max(0,_-f)}
+function g6($,Z,z,N){
+if(!Number.isSafeInteger(z)||z<0)return!1;
+let M=T5($,N);
+if(!M)return!0;
+if(t1($,Z,N)<z)return!1;
+return M.usedByHousehold[Z]=(M.usedByHousehold[Z]||0)+z,!0}
+function V$($,Z,z,N,M){
+let Q=$.households?.byId?.[Z];
+if(!Q||!Number.isSafeInteger(N)||N<0)return{
+ok:!1,reason:"家庭库存请求无效"}
+;
+let _=Q.inventory?.[z]||0;
+if(!Number.isSafeInteger(_+N))return{
+ok:!1,reason:"家庭库存超过安全范围"}
+;
+return Q.inventory[z]=_+N,M0($,M),{
+ok:!0,householdId:Z,units:N}
+}
+function v6($,Z,z,N,M={
+}
+){
+if(!D1($))return{
+ok:!1,reason:"家庭账户未初始化"}
+;
+if(!Number.isSafeInteger(z)||z<0)return{
+ok:!1,reason:"数量无效"}
+;
+let Q=z,_=[],O=((M.householdIds?.length)?M.householdIds.map((Y)=>$.households.byId[Y]).filter(Boolean):m($)).slice().sort((Y,G)=>(G.inventory?.[Z]||0)-(Y.inventory?.[Z]||0)||o1(Y.id)-o1(G.id));
+for(let Y of O){
+if(Q<=0)break;
+let G=Y.inventory?.[Z]||0;
+if(M.protectFoodDays!==void 0&&N.items[Z]?.edible){
+let q=o2($,Y,N,M.protectFoodDays),J=a0($,Y,N),F=p0(N.items[Z],1,N);
+G=Math.min(G,Math.max(0,Math.floor((J-q)/Math.max(1,F))))}
+let X=Math.min(Q,G);
+if(X<=0)continue;
+Y.inventory[Z]-=X,_.push({
+householdId:Y.id,units:X}
+),Q-=X}
+if(Q>0){
+for(let Y of _)$.households.byId[Y.householdId].inventory[Z]+=Y.units;
+return M0($,N),{
+ok:!1,reason:M.protectFoodDays!==void 0?"家庭可用库存不足":"居民库存不足"}
+}
+return M0($,N),{
+ok:!0,rows:_,units:z}
+}
+function x$($,Z,z,N,M={
+}
+){
+if(!D1($))return{
+ok:!1,reason:"家庭账户未初始化"}
+;
+if(!Number.isSafeInteger(z)||z<0)return{
+ok:!1,reason:"数量无效"}
+;
+let Q=M.householdIds?.length?M.householdIds.map((Y)=>$.households.byId[Y]).filter(Boolean):m($);
+if(M.activeOnly!==!1)Q=Q.filter(J0);
+if(!Q.length)return{
+ok:!1,reason:"没有可接收的家庭"}
+;
+let _=M.weights||null,f=K1(z,Q,(Y)=>{
+if(_)return Math.max(0,_[Y.id]??0);
+return Math.max(0,M.byMembers===!1?1:f0(Y))}
+);
+if(!f.ok)return{
+ok:!1,reason:f.reason,rows:[],units:0}
+;
+let O=f.rows.map(({
+recipient:Y,units:G}
+)=>{
+return Y.inventory[Z]=(Y.inventory[Z]||0)+G,{
+householdId:Y.id,units:G}
+}
+);
+return M0($,N),{
+ok:!0,rows:O,units:z}
+}
+function R4($,Z,z,N={
+}
+){
+if(!D1($))return{
+ok:!1,reason:"家庭账户未初始化"}
+;
+if(!Number.isSafeInteger(Z)||Z<0)return{
+ok:!1,reason:"数量无效"}
+;
+let M=Z,Q=[],_=m($).slice().sort((O,Y)=>(Y.voucherUnits||0)-(O.voucherUnits||0)||o1(O.id)-o1(Y.id)),f=Math.max(0,Number(N.reserveVoucherPerCapita||0));
+for(let O of _){
+if(M<=0)break;
+let Y=Math.round(f0(O)*f*z.precision.currencyUnitsPerVoucher),G=Math.max(0,(O.voucherUnits||0)-Y),X=Math.min(M,G);
+if(X<=0)continue;
+O.voucherUnits-=X,Q.push({
+householdId:O.id,units:X}
+),M-=X}
+if(M>0){
+for(let O of Q)$.households.byId[O.householdId].voucherUnits+=O.units;
+return M0($,z),{
+ok:!1,reason:"居民家庭可支配粮券不足"}
+}
+return M0($,z),{
+ok:!0,rows:Q,units:Z}
+}
+function y6($,Z,z,N={
+}
+){
+if(!D1($))return{
+ok:!1,reason:"家庭账户未初始化"}
+;
+if(!Number.isSafeInteger(Z)||Z<0)return{
+ok:!1,reason:"数量无效"}
+;
+let M=((N.householdIds?.length)?N.householdIds:m($).map((O)=>O.id)).map((O)=>$.households.byId[O]).filter(Boolean);
+if(N.activeOnly!==!1)M=M.filter(J0);
+if(!M.length)return{
+ok:!1,reason:"没有可接收的家庭"}
+;
+let Q=N.weights||null,_=K1(Z,M,(O)=>Math.max(0,Q?Q[O.id]??0:f0(O)));
+if(!_.ok)return{
+ok:!1,reason:_.reason,rows:[],units:0}
+;
+let f=_.rows.map(({
+recipient:O,units:Y}
+)=>{
+return O.voucherUnits=(O.voucherUnits||0)+Y,{
+householdId:O.id,units:Y}
+}
+);
+return M0($,z),{
+ok:!0,rows:f,units:Z}
+}
+function w6($){
+for(let Z of m($))if(Z.income)Z.income.dayVoucherUnits=0}
+function h6($){
+for(let Z of m($))if(Z.income)Z.income.yearVoucherUnits=0}
+function m6($,Z){
+let z={
+farmers:"农民",builders:"建筑工",millers:"作坊工",bakers:"作坊工",lumberjacks:"作坊工",salt_workers:"作坊工",civil_servants:"公务员",police:"警察"}
+,N={
+待业:0}
+;
+for(let M of m($)){
+N.待业+=P1(M);
+for(let[Q,_]of Object.entries(M.jobs||{
+}
+)){
+if(_<=0)continue;
+let f="就业者";
+if(Q.startsWith("shop:"))f=Q.endsWith(":merchant")?"商人":"店员";
+else{
+let O=Q.split("::")[1]||Q;
+f=z[O]||z[Q]||Z.roles?.[Q]?.name||"就业者"}
+N[f]=(N[f]||0)+_}
+}
+return N}
+function u6($,Z){
+let z=Z.precision.currencyUnitsPerVoucher,N=Z.precision.inventoryUnitsPerJin,M=Z.rules.householdLiving,Q=m($).map((f)=>{
+let O=f0(f),Y=Math.max(1,O),G=a0($,f,Z),X=O>0?G/Z.precision.qeqUnitsPerJin/(O*Z.rules.foodPerPersonDay):1/0,q=f.voucherUnits||0;
+for(let[W,K]of Object.entries(f.inventory||{
+}
+)){
+let L=Z.rules.marketPricesVoucherPerUnit?.[W]??0;
+q+=Math.round(K/N*L*z)}
+let J=O>0?q/z/Y:q/z,F=O===0?"非活跃":"温饱";
+if(O>0&&(X<M.difficultFoodDays||J<M.difficultPerCapitaVoucher))F="困难";
+else if(O>0&&X>=M.comfortableFoodDays&&J>=M.comfortablePerCapitaVoucher)F="富裕";
+return{
+householdId:f.id,name:f.name,people:O,foodDays:X,perCapitaVoucher:J,tier:F,voucher:(f.voucherUnits||0)/z}
+}
+),_={
+困难:0,温饱:0,富裕:0,非活跃:0}
+;
+for(let f of Q)_[f.tier]=(_[f.tier]||0)+1;
+return{
+rows:Q,counts:_,thresholds:M}
+}
+function C4($){
+if(!$||typeof $!=="object")return $;
+if($.projects=Array.isArray($.projects)?$.projects:[],Object.getOwnPropertyDescriptor($,"project")?.get)return $;
+let Z=Object.prototype.hasOwnProperty.call($,"project")?$.project:void 0;
+if(Object.defineProperty($,"project",{
+configurable:!0,enumerable:!1,get(){
+return $.projects.length?$.projects[0]:null}
+,set(z){
+$.projects=z?[z]:[]}
+}
+),Z&&$.projects.length===0)$.projects=[Z];
+return $}
+function E4($,Z,z){
+let N=z-Z+1,M=Math.floor($/N),Q=$%N;
+return Array.from({
+length:N}
+,function(_,f){
+let O=M+(f<Q?1:0),Y=Math.floor(O/2);
+return{
+age:Z+f,m:O-Y,f:Y,marriedM:0,marriedF:0}
+}
+)}
+function qN(){
+let $=[...E4(200,0,E1-1),...E4(650,E1,c1-1),...E4(150,c1,84)],Z=96;
+for(let z of $){
+if(z.age<20||z.age>39||Z<=0)continue;
+let N=Math.min(z.m,z.f,Z);
+z.marriedM=N,z.marriedF=N,Z-=N}
+return $}
+function JN($){
+let Z={
+residents:{
+}
+,town:{
+}
+}
+;
+for(let z of Object.keys($.items))Z.residents[z]=0,Z.town[z]=0;
+for(let z of["residents","town"])for(let[N,M]of Object.entries($.initial.stocks?.[z]||{
+}
+)){
+if(!$.items[N])throw Error("初始库存引用了未注册物品："+N);
+Z[z][N]=Math.round(M*$.precision.inventoryUnitsPerJin)}
+return Z}
+function WN(){
+return{
+harvestQeq:0,consumptionQeq:0,operatingWagesQeq:0,constructionPayQeq:0,reliefQeq:0,processingLossQeq:0,unemploymentPaidQeq:0,wagePaidQeq:0,wageArrearsQeq:0}
+}
+function L$($){
+let Z={
+}
+;
+for(let z of Object.values($.roles))if(z.wagePerWorkerDay>0)Z[z.id]=z.wagePerWorkerDay;
+for(let z of Object.values($.buildings))for(let N of z.jobs||[])if(Z[N.id]===void 0)Z[N.id]=N.wagePerWorkerDay??10;
+return Z}
+function H4(){
+return{
+soldBreadUnits:0,revenueWheatUnits:0,breadCogsWheatUnits:0,rawInputCostWheatUnits:0}
+}
+function k5(){
+return{
+acres:0,workDays:0,paidVoucherUnits:0}
+}
+function j5(){
+return{
+day:k5(),year:k5(),cumulative:k5(),last:null,history:[]}
+}
+function l6($){
+let Z={
+town:{
+}
+}
+,z={
+}
+;
+for(let[N,M]of Object.entries($.items)){
+let Q=Math.round(($.initial.stocks?.town?.[N]||0)*$.precision.inventoryUnitsPerJin),_=M.openingCostWheatPerJin,f=Number.isFinite(_)?_:N==="wheat"?1:0;
+Z.town[N]=Math.round(Q*f),z[N]=f}
+return{
+inventoryCostWheatUnits:Z,openingValuationWheatPerJin:z,buildings:{
+}
+,day:{
+producedUnits:{
+}
+,...H4(),operatingWagesWheatUnits:0,constructionWagesWheatUnits:0,processingLossWheatUnits:0}
+,year:{
+producedUnits:{
+}
+,...H4(),operatingWagesWheatUnits:0,constructionWagesWheatUnits:0,processingLossWheatUnits:0}
+,cumulative:{
+producedUnits:{
+}
+,...H4(),operatingWagesWheatUnits:0,constructionWagesWheatUnits:0,processingLossWheatUnits:0}
+}
+}
+function A4(){
+return{
+producedUnits:{
+}
+,soldUnits:0,revenueWheatUnits:0,operatingWagesWheatUnits:0}
+}
+function p6(){
+return Object.fromEntries(["forestry","salt"].map(function($){
+return[$,{
+day:A4(),year:A4(),cumulative:A4()}
+]}
+))}
+function T4(){
+return{
+dueWheatUnits:0,collectedWheatUnits:0,waivedWheatUnits:0}
+}
+function d6(){
+return{
+day:T4(),year:T4(),cumulative:T4()}
+}
+function B2($){
+let Z=$||{
+}
+,z=Z.content||b1,N={
+version:z.rules.saveVersion||3,schemaVersion:z.rules.saveVersion||3,year:1,day:0,accounts:JN(z),cohorts:qN(),population:{
+adultAge:E1}
+,employment:{
+wageRates:L$(z),targets:{
+farmers:Math.max(0,Math.floor(z.initial.roleCounts?.farmers||0))}
+}
+,agriculture:{
+workUnits:0,lastHarvestYear:0,reclaimedAcres:Math.max(0,Math.min(z.agriculture.acresMaximum??z.agriculture.acres,z.agriculture.acres)),reclaim:j5(),taxDays:[],taxHistory:[]}
+,plots:z.plots.map(function(M){
+return{
+...M}
+}
+),buildings:[],demolishedBuildings:[],projects:[],nextInstanceNumber:1,autoRelief:!0,policy:{
+unemploymentBenefit:{
+enabled:!1,dailyPerWorkerJin:z.rules.unemploymentDailyJin}
+,agricultureTaxPercent:z.rules.agricultureTaxDefaultPercent??40,privateProductionTaxPercent:Object.fromEntries(Object.keys(z.buildings).map((M)=>[M,z.rules.privateProductionTaxDefaultPercent??10])),employmentExchangeJin:z.rules.employmentExchangeDefaultJin??2,shopRentVoucher:z.rules.shopRentDefaultVoucher??1,shopProfitTaxPercent:z.rules.shopProfitTaxDefaultPercent??10,agricultureTaxRecent:Array.from({
+length:z.rules.agricultureTaxLookbackDays||30}
+,(M,Q)=>({
+year:0,day:Q,rateBps:5000,baseline:!0}
+))}
+,wholesaleMarket:{
+inventory:Object.fromEntries(Object.keys(z.items).map((M)=>[M,0])),inventoryCostVoucherUnits:Object.fromEntries(Object.keys(z.items).map((M)=>[M,0])),pricesVoucherPerUnit:{
+...z.rules.marketPricesVoucherPerUnit||{
+}
+}
+,dailyTownAllocationUnits:Object.fromEntries(Object.keys(z.items).map((M)=>[M,0])),day:{
+intakeUnits:{
+}
+,soldUnits:{
+}
+,townAllocatedUnits:{
+}
+,purchaseVoucherUnits:0,salesVoucherUnits:0}
+,year:{
+intakeUnits:{
+}
+,soldUnits:{
+}
+,townAllocatedUnits:{
+}
+,purchaseVoucherUnits:0,salesVoucherUnits:0}
+,cumulative:{
+intakeUnits:{
+}
+,soldUnits:{
+}
+,townAllocatedUnits:{
+}
+,purchaseVoucherUnits:0,salesVoucherUnits:0}
+}
+,market:{
+breadPriceWheatPerJin:z.rules.marketPricesVoucherPerUnit?.bread??z.rules.breadBasePriceWheatPerJin,breadPriceVoucherPerJin:z.rules.marketPricesVoucherPerUnit?.bread??z.rules.breadBasePriceWheatPerJin,pricesVoucherPerUnit:{
+...z.rules.marketPricesVoucherPerUnit||{
+}
+}
+,intermediatePricesVoucherPerUnit:{
+flour:z.rules.marketPricesVoucherPerUnit?.flour??1.8,wood:z.rules.marketPricesVoucherPerUnit?.wood??15}
+,operatingRightPrices:{
+}
+,sellerRotation:{
+bread:0,salt:0}
+,publicProcurementDemand:{
+}
+,operatingPlan:{
+updatedSerial:-1,rotation:{
+}
+,rows:{
+}
+,demand:{
+}
+}
+,consumerHistory:{
+bread:[],salt:[],wood:[]}
+,priceRecommendation:{
+pending:!1,choice:"new_game"}
+}
+,currency:{
+reserveWheatUnits:0,reserveWheatCostVoucherUnits:0,reserveModel:"town-inventory-v1",issuedUnits:0,balances:{
+town:0,residents:0}
+,issuedCumulativeUnits:0,exchangedCumulativeUnits:0,redeemedCumulativeUnits:0,guidancePending:!0,ledger:[]}
+,monetaryReform:{
+stage:"wheat",targetVoucherBps:0,residentExchangeEnabled:!1,legacyBankAccess:!1,started:null,completed:null,paymentHistory:[],voucherShortfallByKey:{
+}
+}
+,companies:{
+}
+,nextCompanyNumber:1,stockExchange:{
+legacyAccess:!1,rotation:0}
+,shops:{
+}
+,nextShopNumber:1,services:{
+demandByHousehold:{
+}
+,carryByHousehold:{
+}
+,pricesVoucherPerUse:Object.fromEntries(Object.values(z.rules.serviceTypes||{
+}
+).map((M)=>[M.id,M.priceVoucher||0])),mealsByHousehold:{
+}
+,rotation:{
+households:0,shops:{
+}
+,services:0}
+,day:{
+demandedUses:{
+}
+,attemptedUses:{
+}
+,servedUses:{
+}
+,unaffordableUses:{
+}
+,capacityUnmetUses:{
+}
+,spendingVoucherUnits:0}
+,history:[]}
+,privateEconomy:{
+taxRemainders:{
+}
+,day:{
+producedUnits:{
+}
+,taxedUnits:{
+}
+,outputUnits:{
+}
+,inputUnits:{
+}
+,internalLaborCostWheatUnits:0}
+,year:{
+producedUnits:{
+}
+,taxedUnits:{
+}
+,outputUnits:{
+}
+,inputUnits:{
+}
+,internalLaborCostWheatUnits:0}
+,cumulative:{
+producedUnits:{
+}
+,taxedUnits:{
+}
+,outputUnits:{
+}
+,inputUnits:{
+}
+,internalLaborCostWheatUnits:0}
+,rightSales:{
+dayWheatUnits:0,yearWheatUnits:0,cumulativeWheatUnits:0}
+,plans:{
+}
+,payrollByBuilding:{
+}
+}
+,financialFlows:{
+day:R1(),year:R1(),cumulative:R1()}
+,payroll:{
+arrearsWheatUnits:{
+}
+,totals:{
+paidWheatUnits:0,currentPaidWheatUnits:0,arrearsPaidWheatUnits:0,unpaidWheatUnits:0,unemploymentPaidWheatUnits:0}
+,year:{
+paidWheatUnits:0,currentPaidWheatUnits:0,arrearsPaidWheatUnits:0,unpaidWheatUnits:0,unemploymentPaidWheatUnits:0}
+}
+,business:l6(z),industries:p6(),fiscal:d6(),housing:{
+villageCapacity:z.rules.housingCapacity}
+,salt:{
+demandCarry:0,graceDaysElapsed:0,todayDemandUnits:0,todaySatisfiedUnits:0,history:[],day:{
+demandUnits:0,satisfiedUnits:0,purchasedUnits:0,paidWheatUnits:0}
+,year:{
+demandUnits:0,satisfiedUnits:0,purchasedUnits:0,paidWheatUnits:0}
+,lifetime:{
+demandUnits:0,satisfiedUnits:0,purchasedUnits:0,paidWheatUnits:0}
+}
+,satisfaction:z.initial.satisfaction,shortageQeq:0,rng:{
+algorithm:"lcg32-v1",state:(Z.seed??z.initial.seed)>>>0}
+,lastDemography:{
+births:0,deaths:0,marriages:0,laborChange:null}
+,yearTotals:WN(),annualReports:[],ledger:[],ledgerSequence:0,transactionSequence:0,events:[{
+year:1,day:1,text:"新任镇长上任。镇库与居民各存小麦七十三万斤，今日镇务暂歇。"}
+]}
+;
+return S6(N,z),C4(N),N}
+function U5($){
+if(!$.business)$.business={
+inventoryCostWheatUnits:{
+town:{
+}
+}
+,buildings:{
+}
+,day:{
+}
+,year:{
+}
+,cumulative:{
+}
+}
+;
+if(!$.business.inventoryCostWheatUnits)$.business.inventoryCostWheatUnits={
+town:{
+}
+}
+;
+if(!$.business.inventoryCostWheatUnits.town)$.business.inventoryCostWheatUnits.town={
+}
+;
+if(!$.business.buildings)$.business.buildings={
+}
+;
+return $.business}
+function FN($,Z){
+if(!$.producedUnits)$.producedUnits={
+}
+;
+$.producedUnits[Z]=$.producedUnits[Z]||0}
+function VN($,Z,z){
+let N=U5($);
+if(N.inventoryCostWheatUnits.town[Z]===void 0){
+let M=z.items[Z],Q=$.accounts.town[Z]||0,_=Number.isFinite(M?.openingCostWheatPerJin)?M.openingCostWheatPerJin:0;
+N.inventoryCostWheatUnits.town[Z]=Math.round(Q*_)}
+return N.inventoryCostWheatUnits.town[Z]}
+function e2($,Z,z,N){
+let M=$.accounts.town[Z]||0,Q=VN($,Z,N);
+if(!Number.isSafeInteger(z)||z<0||z>M)throw RangeError("成本核算数量超出镇库库存："+Z);
+let _=z===M?Q:M===0?0:Math.floor(Q*z/M);
+return{
+itemId:Z,quantityUnits:z,costWheatUnits:_,remainingCostWheatUnits:Q-_}
+}
+function t2($,Z){
+return U5($).inventoryCostWheatUnits.town[Z.itemId]=Z.remainingCostWheatUnits,Z.costWheatUnits}
+function $5($,Z,z,N){
+let M=e2($,Z,z,N);
+return $.accounts.town[Z]-=z,t2($,M),M}
+function n0($,Z,z){
+if(!Number.isSafeInteger(z)||z<0)throw TypeError("成本必须为非负整数");
+let N=U5($);
+N.inventoryCostWheatUnits.town[Z]=(N.inventoryCostWheatUnits.town[Z]||0)+z}
+function xN($,Z){
+let z=Z.reduce((M,Q)=>M+Q.weight,0);
+if($<=0||z<=0)return Z.map(()=>0);
+let N=0;
+return Z.map(function(M,Q){
+if(Q===Z.length-1)return $-N;
+let _=Math.floor($*M.weight/z);
+return N+=_,_}
+)}
+function c6($,Z,z,N,M){
+let Q=[],_=0,f=0;
+for(let F of z.inputs){
+let W=Math.round(F.quantity*N*M.precision.inventoryUnitsPerJin),K=e2($,F.itemId,W,M);
+if(Q.push(K),_+=K.costWheatUnits,(z.accountingRawInputs||[]).includes(F.itemId))f+=K.costWheatUnits}
+let O=z.outputs.map(function(F){
+let W=Math.round(F.quantity*N*M.precision.inventoryUnitsPerJin);
+return{
+itemId:F.itemId,quantityUnits:W,weight:p0(M.items[F.itemId],W,M)}
+}
+),Y=z.losses.map(function(F){
+let W=Math.round(F.quantity*N*M.precision.inventoryUnitsPerJin);
+return{
+itemId:F.itemId,quantityUnits:W,weight:p0(M.items[F.itemId],W,M)}
+}
+),G=[...O,...Y];
+if(G.reduce((F,W)=>F+W.weight,0)===0)for(let F of G)F.weight=F.quantityUnits;
+let X=xN(_,G),q=0;
+O.forEach(function(F,W){
+F.costWheatUnits=X[W]||0}
+),Y.forEach(function(F,W){
+F.costWheatUnits=X[O.length+W]||0,q+=F.costWheatUnits}
+);
+let J=M.buildings[Z.typeId];
+return{
+buildingId:Z.id,sector:J?.accountingSector||"bread",removals:Q,outputs:O,losses:Y,processingLossWheatUnits:q,rawInputCostWheatUnits:f}
+}
+function i6($,Z){
+let z=U5($),N=Z.sector==="bread"?null:$.industries?.[Z.sector]||null;
+for(let M of Z.removals)t2($,M);
+for(let M of Z.outputs){
+z.inventoryCostWheatUnits.town[M.itemId]=(z.inventoryCostWheatUnits.town[M.itemId]||0)+M.costWheatUnits;
+let Q=N?[N.day,N.year,N.cumulative]:[z.day,z.year,z.cumulative];
+for(let f of Q)FN(f,M.itemId),f.producedUnits[M.itemId]+=M.quantityUnits;
+let _=z.buildings[Z.buildingId]||(z.buildings[Z.buildingId]={
+todayOutputUnits:{
+}
+,yearOutputUnits:{
+}
+,lifetimeOutputUnits:{
+}
+}
+);
+for(let f of[_.todayOutputUnits,_.yearOutputUnits,_.lifetimeOutputUnits])f[M.itemId]=(f[M.itemId]||0)+M.quantityUnits}
+if(!N)for(let M of[z.day,z.year,z.cumulative])M.processingLossWheatUnits=(M.processingLossWheatUnits||0)+Z.processingLossWheatUnits,M.rawInputCostWheatUnits=(M.rawInputCostWheatUnits||0)+Z.rawInputCostWheatUnits;
+return Z}
+function r6($,Z,z,N="bread"){
+if(Z!=="construction"&&N!=="bread"){
+let _=$.industries?.[N];
+if(!_)return;
+for(let f of[_.day,_.year,_.cumulative])f.operatingWagesWheatUnits=(f.operatingWagesWheatUnits||0)+z;
+return}
+let M=U5($),Q=Z==="construction"?"constructionWagesWheatUnits":"operatingWagesWheatUnits";
+for(let _ of[M.day,M.year,M.cumulative])_[Q]=(_[Q]||0)+z}
+var k4=["incomeVoucherUnits","expenseVoucherUnits","lifeExpenseVoucherUnits","investmentVoucherUnits","assetExchangeVoucherUnits","capitalReturnVoucherUnits","inKindIncomeQeqUnits","reliefQeqUnits","foodConsumedQeqUnits","breadConsumedQeqUnits","saltConsumedUnits","wageDueVoucherUnits","wagePaidVoucherUnits","rentDueVoucherUnits","rentPaidVoucherUnits","serviceExpenseVoucherUnits","serviceComfortPoints","neighborAidReceivedQeqUnits","neighborAidGivenQeqUnits"];
+function O2(){
+return{
+}
+}
+function P4(){
+return Object.fromEntries(k4.map(($)=>[$,0]))}
+function v1($,Z){
+if($.life?._v012Ready)return $.life;
+$.life||={
+day:O2(),year:O2(),cumulative:O2(),recent:[],observation:{
+rows:[],totals:O2()}
+,satisfaction:null,satisfactionHistory:[]}
+;
+for(let z of["day","year","cumulative"])$.life[z]||=O2();
+return $.life.recent=Array.isArray($.life.recent)?$.life.recent:[],$.life.satisfactionHistory=Array.isArray($.life.satisfactionHistory)?$.life.satisfactionHistory:[],$.life.observation||={
+rows:[],totals:O2()}
+,$.life.observation.rows=Array.isArray($.life.observation.rows)?$.life.observation.rows:[],$.life.observation.totals||=O2(),$.life._v012Ready=!0,$.life}
+function s6($,Z){
+for(let z of m($))v1(z,Z).day=O2()}
+function a6($,Z){
+for(let z of m($))v1(z,Z).year=O2()}
+function $2($,Z,z,N){
+if(!Number.isFinite(z)||z<=0)return;
+let M=v1($,N);
+for(let Q of[M.day,M.year,M.cumulative])Q[Z]=(Q[Z]||0)+z}
+function K$($){
+return typeof $==="string"&&$.startsWith("household:")?$.slice(10):null}
+var LN=new Set(["wage_payment","construction_wage_payment","wage_arrears_payment","construction_wage_arrears_payment","enterprise_wage_payment","private_wage_payment","shop_wage_payment","unemployment_benefit","enterprise_dividend","enterprise_annual_distribution","shop_profit_distribution","shop_wholesale_purchase","wheat_direct_trade","bread_direct_trade","salt_direct_trade","flour_direct_trade","wood_direct_trade","private_input_purchase"]),KN=new Set(["rent_payment","wheat_trade","bread_trade","salt_trade","shop_retail_sale","shop_service_sale","wheat_direct_trade","bread_direct_trade","salt_direct_trade"]),DN=new Set(["share_subscription","operating_right_sale","shop_capital","shop_startup_capital","shop_capital_injection"]),BN=new Set(["shop_capital_refund","shop_close_distribution"]),RN=new Set(["wage_payment","construction_wage_payment","wage_arrears_payment","construction_wage_arrears_payment","enterprise_wage_payment","private_wage_payment","shop_wage_payment"]);
+function D$($,{
+from:Z,to:z,type:N,voucherUnits:M,householdDebits:Q=[],householdCredits:_=[]}
+,f){
+let O=Q.length?Q:K$(Z)?[{
+householdId:K$(Z),units:M}
+]:[],Y=_.length?_:K$(z)?[{
+householdId:K$(z),units:M}
+]:[];
+for(let G of O){
+let X=$.households?.byId?.[G.householdId];
+if(!X)continue;
+if(DN.has(N))$2(X,"investmentVoucherUnits",G.units,f);
+else if(KN.has(N)){
+if($2(X,"expenseVoucherUnits",G.units,f),$2(X,"lifeExpenseVoucherUnits",G.units,f),N==="shop_service_sale")$2(X,"serviceExpenseVoucherUnits",G.units,f)}
+else $2(X,"expenseVoucherUnits",G.units,f)}
+for(let G of Y){
+let X=$.households?.byId?.[G.householdId];
+if(!X)continue;
+if(BN.has(N))$2(X,"capitalReturnVoucherUnits",G.units,f);
+else if(LN.has(N))$2(X,"incomeVoucherUnits",G.units,f);
+if(RN.has(N))$2(X,"wagePaidVoucherUnits",G.units,f)}
+}
+function j4($,Z,z,N){
+for(let M of Z||[]){
+let Q=$.households?.byId?.[M.householdId];
+if(Q)$2(Q,"assetExchangeVoucherUnits",M.units??z,N)}
+}
+function O1($,Z,z,N,M){
+let Q=$.households?.byId?.[Z];
+if(Q)$2(Q,z,N,M)}
+function Z5($,Z,z,N){
+O1($,Z,"wageDueVoucherUnits",z,N)}
+function n6($,Z,z,N){
+O1($,Z,"rentDueVoucherUnits",z,N)}
+function o6($,Z,z,N){
+O1($,Z,"rentPaidVoucherUnits",z,N)}
+function e6($,Z){
+let z=Z.rules.householdLifeHistoryDays||90;
+for(let N of m($)){
+let M=v1(N,Z),Q={
+year:$.year,day:$.day+1,...M.day}
+;
+if(M.recent.push(Q),M.recent.length>z)M.recent.splice(0,M.recent.length-z);
+let _=M.observation;
+_.rows.push(Q);
+for(let[O,Y]of Object.entries(M.day))if(Y)_.totals[O]=(_.totals[O]||0)+Y;
+let f=Z.rules.satisfactionObservationDays||14;
+while(_.rows.length>f){
+let O=_.rows.shift();
+for(let[Y,G]of Object.entries(O))if(Y!=="year"&&Y!=="day"&&G)_.totals[Y]=(_.totals[Y]||0)-G}
+}
+}
+function t6($,Z,z){
+let M=v1($,z).recent.slice(-Math.max(1,Z||1)),Q=P4();
+for(let _ of M)for(let f of k4)Q[f]+=_[f]||0;
+return{
+days:M.length,...Q}
+}
+function $7($,Z,z){
+let N=$?.life||{
+}
+,M=Math.max(1,Z||1),Q=z.rules.satisfactionObservationDays||14,_=N.observation;
+if(M===Q&&Array.isArray(_?.rows)&&_?.totals)return{
+days:_.rows.length,...P4(),..._.totals}
+;
+let f=Array.isArray(N.recent)?N.recent.slice(-M):[],O=P4();
+for(let Y of f)for(let G of k4)O[G]+=Y[G]||0;
+return{
+days:f.length,...O}
+}
+function g2($,Z,z){
+let N=Math.max(1,f0(Z));
+return a0($,Z,z)/z.precision.qeqUnitsPerJin/(N*z.rules.foodPerPersonDay)}
+function Z7($,Z){
+let z={
+}
+,N=0,M=0;
+for(let _ of m($)){
+let f=v1(_,Z);
+for(let[Y,G]of Object.entries(f.year||{
+}
+))z[Y]=(z[Y]||0)+(G||0);
+let O=f0(_);
+N+=(f.satisfaction??$.satisfaction??75)*O,M+=O}
+let Q={
+year:$.year,households:m($).length,people:M,satisfaction:M?N/M:$.satisfaction,totals:z}
+;
+if($.householdLifeAnnual||=[],$.householdLifeAnnual.push(Q),$.householdLifeAnnual.length>20)$.householdLifeAnnual.splice(0,$.householdLifeAnnual.length-20);
+return Q}
+function z7($,Z,z){
+let N=BigInt($),M=BigInt(Z);
+if(M<=0n||N<0n)throw RangeError("货币单位换算参数无效");
+let Q=N/M,_=N%M;
+if(_!==0n){
+if(z==="ceil")Q+=1n;
+else if(z==="round"&&_*2n>=M)Q+=1n}
+let f=Number(Q);
+if(!Number.isSafeInteger(f))throw RangeError("货币单位换算超过安全整数范围");
+return f}
+function l0($,Z,z="floor"){
+if(!Number.isSafeInteger($)||$<0)throw RangeError("小麦单位无效");
+return z7(BigInt($)*BigInt(Z.precision.currencyUnitsPerVoucher),Z.precision.inventoryUnitsPerJin,z)}
+function X2($,Z,z="ceil"){
+if(!Number.isSafeInteger($)||$<0)throw RangeError("粮券单位无效");
+return z7(BigInt($)*BigInt(Z.precision.inventoryUnitsPerJin),Z.precision.currencyUnitsPerVoucher,z)}
+function $0($){
+return $.precision.currencyUnitsPerVoucher||$.precision.inventoryUnitsPerJin}
+function E2($){
+if($.currency||={
+reserveWheatUnits:0,reserveWheatCostVoucherUnits:0,reserveModel:"town-inventory-v1",issuedUnits:0,balances:{
+town:0,residents:0}
+,issuedCumulativeUnits:0,exchangedCumulativeUnits:0,redeemedCumulativeUnits:0,guidancePending:!0,ledger:[]}
+,$.currency.balances||={
+town:0,residents:0}
+,$.currency.balances.town||=0,$.currency.balances.residents||=0,$.currency.reserveWheatUnits||=0,$.currency.reserveWheatCostVoucherUnits||=0,$.currency.reserveModel||="town-inventory-v1",$.currency.issuedUnits||=0,$.currency.issuedCumulativeUnits||=0,$.currency.exchangedCumulativeUnits||=0,$.currency.redeemedCumulativeUnits||=0,!Array.isArray($.currency.ledger))$.currency.ledger=[];
+return $.currency}
+function B0($,Z){
+let z=E2($);
+if(Z==="town")return z.balances.town||0;
+if(Z==="residents")return D1($)?B4($):z.balances.residents||0;
+if(Z?.startsWith("household:"))return $.households?.byId?.[Z.slice(10)]?.voucherUnits||0;
+if(Z?.startsWith("company:"))return $.companies?.[Z.slice(8)]?.cashVoucherUnits||0;
+if(Z?.startsWith("shop:"))return $.shops?.[Z.slice(5)]?.cashVoucherUnits||0;
+throw Error("未知粮券账户："+Z)}
+function R2($,Z,z,N=null){
+if(!Number.isSafeInteger(z)||z<0)throw RangeError("粮券余额无效");
+let M=E2($);
+if(Z==="town"){
+M.balances.town=z;
+return}
+if(Z==="residents"){
+if(D1($))throw Error("居民汇总粮券账户为只读；应落到具体家庭");
+M.balances.residents=z;
+return}
+if(Z?.startsWith("household:")){
+let Q=$.households?.byId?.[Z.slice(10)];
+if(!Q)throw Error("家庭不存在："+Z.slice(10));
+if(Q.voucherUnits=z,N)M0($,N);
+return}
+if(Z?.startsWith("company:")){
+let Q=$.companies?.[Z.slice(8)];
+if(!Q)throw Error("企业不存在："+Z.slice(8));
+Q.cashVoucherUnits=z;
+return}
+if(Z?.startsWith("shop:")){
+let Q=$.shops?.[Z.slice(5)];
+if(!Q)throw Error("店铺不存在："+Z.slice(5));
+Q.cashVoucherUnits=z;
+return}
+throw Error("未知粮券账户："+Z)}
+function B$($,Z,z){
+let N=E2($),M={
+id:N.ledger.length+1,year:$.year,day:Math.max(1,Math.min(z.rules.daysPerYear,$.day+1)),...Z}
+;
+if(N.ledger.push(M),N.ledger.length>(z.rules.currencyLedgerLimit||1500))N.ledger.splice(0,N.ledger.length-(z.rules.currencyLedgerLimit||1500));
+return M}
+function EN($){
+let Z=E2($),z=Z.balances.town||0;
+z+=D1($)?B4($):Z.balances.residents||0;
+for(let N of Object.values($.companies||{
+}
+))z+=N.cashVoucherUnits||0;
+for(let N of Object.values($.shops||{
+}
+))z+=N.cashVoucherUnits||0;
+return z}
+function z5($,Z=null){
+let z=E2($),N=EN($);
+return{
+valid:Number.isSafeInteger(z.issuedUnits)&&z.issuedUnits>=0&&N===z.issuedUnits,balances:N,issuedUnits:z.issuedUnits,reserveWheatUnits:0,expectedIssuedUnits:z.issuedUnits}
+}
+function N7($,Z,z,N,M,Q=!0){
+if((Z.inventory?.wheat||0)<z)return{
+ok:!1,reason:"可用小麦不足"}
+;
+let _=D0($,Z,N,N.rules.householdFoodReserveDays??30);
+if(z>_)return{
+ok:!1,reason:"还需保留家庭基本口粮"}
+;
+if(Q&&z>t1($,Z.id,N))return{
+ok:!1,reason:"今日就业换券额度不足"}
+;
+if(Q&&!g6($,Z.id,z,N))return{
+ok:!1,reason:"今日就业换券额度不足"}
+;
+let f=l0(z,N,"floor");
+if(f<=0||X2(f,N,"ceil")!==z)return{
+ok:!1,reason:"该数量无法按当前整数精度1:1换券"}
+;
+return Z.inventory.wheat-=z,{
+ok:!0,householdId:Z.id,wheatUnits:z,voucherUnits:f,reason:M}
+}
+function M7($,Z){
+let z=$.monetaryReform||{
+stage:"wheat",residentExchangeEnabled:!1,legacyBankAccess:!1}
+,N=Boolean(z.legacyBankAccess||($.buildings||[]).some((M)=>M.typeId==="bank"));
+if(z.stage==="wheat")return{
+ok:!1,reason:"货币改革尚未启动"}
+;
+if(!N)return{
+ok:!1,reason:"需要银行才能发行或换券"}
+;
+if((Z==="residents"||Z?.startsWith("household:"))&&!z.residentExchangeEnabled)return{
+ok:!1,reason:"居民粮食换券当前已关闭"}
+;
+return{
+ok:!0}
+}
+function Q7($,Z,z,N="镇库印制粮券"){
+if(!Number.isSafeInteger(Z)||Z<=0)return{
+ok:!1,reason:"发行数量必须大于0"}
+;
+let M=M7($,"town");
+if(!M.ok)return M;
+let Q=E2($),_=B0($,"town")+Z,f=Q.issuedUnits+Z;
+if(!Number.isSafeInteger(_)||!Number.isSafeInteger(f))return{
+ok:!1,reason:"数值超过安全范围"}
+;
+R2($,"town",_,z),Q.issuedUnits=f,Q.issuedCumulativeUnits+=Z,Q.guidancePending=!1;
+let O=E0($);
+return B$($,{
+type:"mint",transactionId:O,owner:"town",voucherUnits:Z,reason:N}
+,z),V0($,{
+type:"voucher_issue",transactionId:O,source:"currency_issuer",destination:"town",itemId:"grain_voucher",quantityUnits:Z,qeqUnits:0,reason:N}
+,z),{
+ok:!0,transactionId:O,wheatUnits:0,voucherUnits:Z}
+}
+function R$($,Z,z,N,M="交出小麦换取镇库粮券"){
+if(!Number.isSafeInteger(z)||z<=0)return{
+ok:!1,reason:"换券小麦必须大于0"}
+;
+if(Z==="town")return{
+ok:!1,reason:"镇库发行粮券不消耗小麦，请使用印制发行"}
+;
+let Q=M7($,Z);
+if(!Q.ok)return Q;
+let _=l0(z,N,"floor");
+if(_<=0||X2(_,N,"ceil")!==z)return{
+ok:!1,reason:"该数量无法按当前整数精度换券"}
+;
+let f=E2($);
+if(B0($,"town")<_)return{
+ok:!1,reason:"镇库已发行粮券余额不足，请先印制粮券"}
+;
+if(!Number.isSafeInteger(($.accounts?.town?.wheat||0)+z))return{
+ok:!1,reason:"数值超过安全范围"}
+;
+let O=null;
+if(D1($)&&Z==="residents"){
+let G=z;
+O=[];
+let X=m($).slice().sort((q,J)=>Math.min(D0($,J,N),t1($,J.id,N))-Math.min(D0($,q,N),t1($,q.id,N)));
+for(let q of X){
+if(G<=0)break;
+let J=Math.min(D0($,q,N),t1($,q.id,N)),F=Math.min(G,J);
+if(F<=0)continue;
+let W=N7($,q,F,N,M,!0);
+if(!W.ok)continue;
+O.push({
+householdId:q.id,wheatUnits:F,units:W.voucherUnits}
+),G-=F}
+if(G>0){
+for(let q of O){
+let J=$.households.byId[q.householdId];
+J.inventory.wheat+=q.wheatUnits;
+let F=$.households.exchange;
+F.usedByHousehold[q.householdId]=Math.max(0,(F.usedByHousehold[q.householdId]||0)-q.wheatUnits)}
+return M0($,N),{
+ok:!1,reason:"家庭可用小麦或今日就业换券额度不足"}
+}
+for(let q of O)$.households.byId[q.householdId].voucherUnits=($.households.byId[q.householdId].voucherUnits||0)+q.units;
+M0($,N)}
+else if(Z?.startsWith("household:")){
+let G=$.households?.byId?.[Z.slice(10)];
+if(!G)return{
+ok:!1,reason:"家庭不存在"}
+;
+let X=N7($,G,z,N,M,!0);
+if(!X.ok)return X;
+G.voucherUnits=(G.voucherUnits||0)+_,O=[{
+householdId:G.id,wheatUnits:z,units:_}
+],M0($,N)}
+else if(Z?.startsWith("company:")||Z?.startsWith("shop:")){
+if((Z.startsWith("company:")?$.companies?.[Z.slice(8)]?.cashWheatUnits||0:$.shops?.[Z.slice(5)]?.cashWheatUnits||0)<z)return{
+ok:!1,reason:"可用小麦不足"}
+;
+if(Z.startsWith("company:"))$.companies[Z.slice(8)].cashWheatUnits-=z;
+else $.shops[Z.slice(5)].cashWheatUnits-=z;
+R2($,Z,B0($,Z)+_,N)}
+else return{
+ok:!1,reason:"该账户不能通过银行换券"}
+;
+R2($,"town",B0($,"town")-_,N),$.accounts.town.wheat=($.accounts.town.wheat||0)+z,n0($,"wheat",_),f.reserveWheatUnits=0,f.reserveWheatCostVoucherUnits=0,f.reserveModel="town-inventory-v1",f.exchangedCumulativeUnits=(f.exchangedCumulativeUnits||0)+_;
+let Y=E0($);
+return B$($,{
+type:"exchange",transactionId:Y,owner:Z,wheatUnits:z,voucherUnits:_,householdRows:O,reason:M}
+,N),j4($,O,_,N),V0($,{
+type:"voucher_exchange",transactionId:Y,source:Z,destination:"town",itemId:"wheat",quantityUnits:z,qeqUnits:z*N.precision.qeqUnitsPerJin/N.precision.inventoryUnitsPerJin,reason:M+"；小麦进入镇库，粮券由镇库现有余额支付"}
+,N),{
+ok:!0,transactionId:Y,wheatUnits:z,voucherUnits:_,householdRows:O}
+}
+function E$($,Z,z,N,M="注销粮券兑回小麦"){
+if(!Number.isSafeInteger(z)||z<=0)return{
+ok:!1,reason:"兑换数量必须大于0"}
+;
+if(!(Z==="town"||Z==="residents"||Z?.startsWith("household:")||Z?.startsWith("company:")||Z?.startsWith("shop:")))return{
+ok:!1,reason:"该账户不能直接兑回小麦"}
+;
+let _=E2($),f=X2(z,N,"floor");
+if(f<=0||l0(f,N,"floor")!==z)return{
+ok:!1,reason:"该数量无法按当前整数精度兑回"}
+;
+if(B0($,Z)<z)return{
+ok:!1,reason:"粮券余额不足"}
+;
+if(_.issuedUnits<z)return{
+ok:!1,reason:"未注销发行量不足"}
+;
+if(Z!=="town"&&($.accounts?.town?.wheat||0)<f)return{
+ok:!1,reason:"镇库可用小麦不足"}
+;
+let O=null;
+if(Z!=="town"){
+let G=e2($,"wheat",f,N);
+t2($,G),$.accounts.town.wheat-=f}
+if(D1($)&&Z==="residents"){
+let G=R4($,z,N);
+if(!G.ok)return G;
+O=G.rows.map((X)=>({
+...X,wheatUnits:X2(X.units,N,"floor")}
+));
+for(let X of O)$.households.byId[X.householdId].inventory.wheat+=X.wheatUnits;
+M0($,N)}
+else if(Z?.startsWith("household:")){
+let G=$.households?.byId?.[Z.slice(10)];
+if(!G||(G.voucherUnits||0)<z)return{
+ok:!1,reason:"粮券余额不足"}
+;
+G.voucherUnits-=z,G.inventory.wheat=(G.inventory.wheat||0)+f,O=[{
+householdId:G.id,units:z,wheatUnits:f}
+],M0($,N)}
+else if(Z==="town")R2($,Z,B0($,Z)-z,N);
+else if(Z?.startsWith("company:")||Z?.startsWith("shop:"))if(R2($,Z,B0($,Z)-z,N),Z.startsWith("company:"))$.companies[Z.slice(8)].cashWheatUnits=($.companies[Z.slice(8)].cashWheatUnits||0)+f;
+else $.shops[Z.slice(5)].cashWheatUnits=($.shops[Z.slice(5)].cashWheatUnits||0)+f;
+_.reserveWheatUnits=0,_.reserveWheatCostVoucherUnits=0,_.reserveModel="town-inventory-v1",_.issuedUnits-=z,_.redeemedCumulativeUnits+=z;
+let Y=E0($);
+return B$($,{
+type:"redeem",transactionId:Y,owner:Z,wheatUnits:f,voucherUnits:z,householdRows:O,reason:M}
+,N),j4($,O,z,N),V0($,{
+type:"voucher_redeem",transactionId:Y,source:"town",destination:Z,itemId:"wheat",quantityUnits:Z==="town"?0:f,qeqUnits:Z==="town"?0:f*N.precision.qeqUnitsPerJin/N.precision.inventoryUnitsPerJin,reason:M}
+,N),{
+ok:!0,transactionId:Y,wheatUnits:f,voucherUnits:z,householdRows:O}
+}
+function _7($,Z,z,N,M,Q="voucher_transfer",_="粮券转账",f={
+}
+){
+if(!Number.isSafeInteger(N)||N<0)return{
+ok:!1,reason:"粮券数量无效"}
+;
+if(N===0)return{
+ok:!0,voucherUnits:0,transactionId:null,householdDebits:[],householdCredits:[]}
+;
+if(B0($,Z)<N)return{
+ok:!1,reason:"粮券余额不足"}
+;
+if(!Number.isSafeInteger(B0($,z)+N))return{
+ok:!1,reason:"数值超过安全范围"}
+;
+let O=[],Y=[];
+if(D1($)&&Z==="residents"){
+let X=R4($,N,M,f.fromResidents||{
+}
+);
+if(!X.ok)return X;
+O=X.rows}
+else R2($,Z,B0($,Z)-N,M);
+if(D1($)&&z==="residents"){
+let X=y6($,N,M,f.toResidents||{
+}
+);
+if(!X.ok){
+if(Z==="residents")for(let q of O)$.households.byId[q.householdId].voucherUnits+=q.units;
+else R2($,Z,B0($,Z)+N,M);
+return M0($,M),X}
+Y=X.rows}
+else R2($,z,B0($,z)+N,M);
+let G=f.transactionId||E0($);
+return B$($,{
+type:Q,transactionId:G,from:Z,to:z,voucherUnits:N,householdDebits:O,householdCredits:Y,reason:_}
+,M),D$($,{
+from:Z,to:z,type:Q,voucherUnits:N,householdDebits:O,householdCredits:Y}
+,M),V0($,{
+type:Q,transactionId:G,source:Z,destination:z,itemId:"grain_voucher",quantityUnits:N,qeqUnits:0,reason:_}
+,M),{
+ok:!0,transactionId:G,voucherUnits:N,householdDebits:O,householdCredits:Y}
+}
+var G2="wheat",v2="transition",H$="voucher";
+function k1($){
+$.monetaryReform||={
+stage:G2,targetVoucherBps:0,residentExchangeEnabled:!1,legacyBankAccess:!1,started:null,completed:null,paymentHistory:[],voucherShortfallByKey:{
+}
+}
+;
+let Z=$.monetaryReform;
+if(![G2,v2,H$].includes(Z.stage))Z.stage=G2;
+if(Z.targetVoucherBps=Math.max(0,Math.min(1e4,Math.round(Number(Z.targetVoucherBps)||0))),Z.residentExchangeEnabled=Boolean(Z.residentExchangeEnabled),Z.legacyBankAccess=Boolean(Z.legacyBankAccess),!Array.isArray(Z.paymentHistory))Z.paymentHistory=[];
+return Z.voucherShortfallByKey||={
+}
+,Z}
+function HN($){
+return($.buildings||[]).some((Z)=>Z.typeId==="bank")}
+function b4($){
+let Z=k1($);
+return HN($)||Z.legacyBankAccess}
+function AN($,Z){
+let z=Math.abs($),N=Math.abs(Z);
+while(N)[z,N]=[N,z%N];
+return z||1}
+function f7($,Z,z){
+let N=Math.max(0,Math.floor($)),M=Math.max(0,Math.floor(Z));
+if(!N||!M)return{
+wheatUnits:0,voucherUnits:0}
+;
+let Q=AN(z.precision.inventoryUnitsPerJin,z.precision.currencyUnitsPerVoucher),_=z.precision.inventoryUnitsPerJin/Q,f=z.precision.currencyUnitsPerVoucher/Q,O=Math.ceil(N/f),Y=Math.floor(M/_),G=Math.min(O,Y);
+return{
+wheatUnits:G*_,voucherUnits:G*f}
+}
+function g4($,Z,z,N={
+}
+){
+let M=k1($);
+if(M.stage===G2)return 0;
+let Q=0;
+if(Z?.startsWith("household:")){
+if(!M.residentExchangeEnabled)return 0;
+let _=$.households?.byId?.[Z.slice(10)];
+if(!_)return 0;
+Q=Math.min(D0($,_,z,z.rules.householdFoodReserveDays??30),t1($,_.id,z))}
+else if(Z==="residents"){
+if(!M.residentExchangeEnabled)return 0;
+Q=m($).reduce((_,f)=>_+Math.min(D0($,f,z,z.rules.householdFoodReserveDays??30),t1($,f.id,z)),0)}
+else if(Z?.startsWith("company:")||Z?.startsWith("shop:"))Q=r1($,Z);
+if(Number.isSafeInteger(N.maxWheatUnits))Q=Math.min(Q,Math.max(0,N.maxWheatUnits));
+return Math.max(0,Q)}
+function TN($,Z,z,N,M,Q={
+}
+){
+if(z<=0||!(Z==="residents"||Z?.startsWith("household:")||Z?.startsWith("company:")||Z?.startsWith("shop:")))return{
+wheatUnits:0,voucherUnits:0}
+;
+let _=r1($,Z),f=Math.min(_,Number.isSafeInteger(Q.maxWheatUnits)?Math.max(0,Q.maxWheatUnits):_),O=X2(Math.max(0,N),M,"ceil"),Y=Math.max(0,f-O),G=Math.min(Y,g4($,Z,M,Q)),X=Math.max(0,B0($,"town")),q=f7(Math.min(z,X),G,M);
+if(q.wheatUnits<=0)return q;
+let J=R$($,Z,q.wheatUnits,M,"按银行开放规则为支付自动换券");
+return J.ok?{
+wheatUnits:J.wheatUnits,voucherUnits:J.voucherUnits}
+:{
+wheatUnits:0,voucherUnits:0}
+}
+function r1($,Z){
+if(Z==="town")return $.accounts?.town?.wheat||0;
+if(Z==="residents")return $.accounts?.residents?.wheat||0;
+if(Z?.startsWith("household:"))return $.households?.byId?.[Z.slice(10)]?.inventory?.wheat||0;
+if(Z?.startsWith("company:"))return $.companies?.[Z.slice(8)]?.cashWheatUnits||0;
+if(Z?.startsWith("shop:"))return $.shops?.[Z.slice(5)]?.cashWheatUnits||0;
+return 0}
+function CN($,Z,z){
+if(!Number.isSafeInteger(z)||z<0)return!1;
+let N=r1($,Z);
+return Number.isSafeInteger(N+z)}
+function U4($,Z,z,N){
+if(!Number.isSafeInteger(z)||z<0)throw RangeError("支付小麦余额无效");
+if(Z==="town")$.accounts.town.wheat=z;
+else if(Z?.startsWith("household:")){
+let M=$.households?.byId?.[Z.slice(10)];
+if(!M)throw Error("家庭不存在");
+M.inventory.wheat=z,M0($,N)}
+else if(Z?.startsWith("company:")){
+let M=$.companies?.[Z.slice(8)];
+if(!M)throw Error("企业不存在");
+M.cashWheatUnits=z}
+else if(Z?.startsWith("shop:")){
+let M=$.shops?.[Z.slice(5)];
+if(!M)throw Error("店铺不存在");
+M.cashWheatUnits=z}
+else throw Error("未知小麦支付账户："+Z)}
+function PN($,Z,z,N,M,Q,_,f,O){
+if(N<=0)return{
+ok:!0,wheatUnits:0,valueUnits:0,transactionId:O}
+;
+if(r1($,Z)<N)return{
+ok:!1,reason:"可支付小麦不足"}
+;
+if(!CN($,z,N))return{
+ok:!1,reason:"收款账户超过安全范围"}
+;
+let Y=[],G=[],X=null;
+if(Z==="residents"){
+let q=v6($,"wheat",N,Q);
+if(!q.ok)return q;
+Y=q.rows}
+else{
+if(Z==="town")X=e2($,"wheat",N,Q),t2($,X);
+U4($,Z,r1($,Z)-N,Q)}
+if(z==="residents"){
+let q=x$($,"wheat",N,Q);
+if(!q.ok){
+if(Z==="residents"){
+for(let J of Y)$.households.byId[J.householdId].inventory.wheat+=J.units;
+M0($,Q)}
+else if(U4($,Z,r1($,Z)+N,Q),Z==="town"&&X)n0($,"wheat",X.costWheatUnits);
+return{
+ok:!1,reason:"支付小麦预检后居民分配失败："+(q.reason||"")}
+}
+G=q.rows}
+else if(U4($,z,r1($,z)+N,Q),z==="town")n0($,"wheat",M);
+return V0($,{
+type:_,transactionId:O,source:Z,destination:z,itemId:"wheat",quantityUnits:N,qeqUnits:N*Q.precision.qeqUnitsPerJin/Q.precision.inventoryUnitsPerJin,reason:`${f}；以小麦结算`}
+,Q),D$($,{
+from:Z,to:z,type:_,voucherUnits:M,householdDebits:Y.map((q)=>({
+householdId:q.householdId,units:l0(q.units,Q,"floor")}
+)),householdCredits:G.map((q)=>({
+householdId:q.householdId,units:l0(q.units,Q,"floor")}
+))}
+,Q),{
+ok:!0,wheatUnits:N,valueUnits:M,transactionId:O}
+}
+function O7($,Z,z){
+if(!Number.isSafeInteger(z)||z<0)throw RangeError("应付价值必须为非负整数");
+if($===G2)return{
+valueUnits:z,wheatValueUnits:z,voucherValueUnits:0}
+;
+if($===H$)return{
+valueUnits:z,wheatValueUnits:0,voucherValueUnits:z}
+;
+let N=Math.round(z*Z/1e4);
+return{
+valueUnits:z,voucherValueUnits:N,wheatValueUnits:z-N}
+}
+function I4($,Z){
+return O7($.stage,$.targetVoucherBps,Z)}
+function N5($,Z,z,N={
+}
+){
+let M=k1($),Q=r1($,Z),_=Math.min(Q,Number.isSafeInteger(N.maxWheatUnits)?Math.max(0,N.maxWheatUnits):Q);
+return{
+content:z,stage:M.stage,targetVoucherBps:M.targetVoucherBps,voucherUnits:Math.max(0,B0($,Z)),actualWheatUnits:Q,wheatLimitUnits:_,autoExchangeableWheatUnits:g4($,Z,z,N),exchangeVoucherPoolUnits:Z==="town"?0:Math.max(0,B0($,"town")),allowVoucherFallback:N.allowVoucherFallback!==!1}
+}
+function kN($,Z){
+if(Number.isSafeInteger($))return I4(Z,$);
+let z=Math.max(0,Math.round(Number($?.valueUnits)||0)),N=Math.max(0,Math.round(Number($?.wheatValueUnits)||0)),M=Math.max(0,Math.round(Number($?.voucherValueUnits)||0)),Q=N+M;
+if(Q===z)return{
+valueUnits:z,wheatValueUnits:N,voucherValueUnits:M}
+;
+if(typeof console<"u")console.warn("[麦乡支付] 支付义务分项之和与总额不一致，已按分项之和改写",{
+valueUnits:z,wheatValueUnits:N,voucherValueUnits:M}
+);
+return{
+valueUnits:Q,wheatValueUnits:N,voucherValueUnits:M}
+}
+function X7($,Z,z){
+let N=X2($.wheatValueUnits,z,"ceil"),M=Math.max(0,Z.wheatLimitUnits-N),Q=Math.min(M,Z.autoExchangeableWheatUnits),_=f7(Math.min(Math.max(0,$.voucherValueUnits-Z.voucherUnits),Z.exchangeVoucherPoolUnits||0),Q,z),f=Z.voucherUnits+_.voucherUnits,O=Math.min($.voucherValueUnits,f),Y=$.voucherValueUnits-O,G=Z.stage===v2&&Z.allowVoucherFallback,X=Math.max(0,Z.wheatLimitUnits-_.wheatUnits),q=l0(X,z,"floor"),J=Math.min($.wheatValueUnits,q),F=Math.max(0,q-J),W=G?Math.min(Y,F):0;
+Y-=W;
+let K=$.wheatValueUnits-J,L=K+Y;
+return{
+due:$,full:L===0,voucherPaidValueUnits:O,wheatPaidValueUnits:J+W,fallbackWheatValueUnits:W,remainingValueUnits:L,remainingComposition:{
+valueUnits:L,wheatValueUnits:K,voucherValueUnits:Y}
+,voucherShortfallValueUnits:Y,availableWheatUnits:X}
+}
+function jN($,Z){
+let z=kN(Z,$);
+return X7(z,$,$.content)}
+function v4($,Z){
+if($.stage===G2){
+let z=I4($,Z),N=l0($.wheatLimitUnits,$.content,"floor"),M=Math.min(Z,N),Q=Z-M;
+return{
+due:z,full:Q===0,voucherPaidValueUnits:0,wheatPaidValueUnits:M,fallbackWheatValueUnits:0,remainingValueUnits:Q,remainingComposition:{
+valueUnits:Q,wheatValueUnits:Q,voucherValueUnits:0}
+,voucherShortfallValueUnits:0,availableWheatUnits:$.wheatLimitUnits}
+}
+return jN($,I4($,Z))}
+function UN($){
+let Z=$.voucherUnits,z=Math.max(0,l0($.wheatLimitUnits,$.content,"floor"));
+if($.stage===G2)return z;
+if($.stage===H$){
+let N=Math.min(l0($.autoExchangeableWheatUnits,$.content,"floor"),$.exchangeVoucherPoolUnits||0);
+return Math.min(Number.MAX_SAFE_INTEGER,Z+N)}
+return Math.min(Number.MAX_SAFE_INTEGER,Z+z)}
+function P0($,Z,z,N={
+}
+){
+let M=N.paymentContext||N5($,Z,z,N);
+return UN(M)}
+function j1($,Z,z,N,M={
+}
+){
+let Q=M.paymentContext||N5($,Z,N,M),_=0,f=Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(Number(z)||0)));
+while(_<f){
+let O=Math.ceil((_+f)/2);
+if(v4(Q,O).full)_=O;
+else f=O-1}
+return _}
+function F0($,Z){
+let z=k1($);
+return O7(z.stage,z.targetVoucherBps,Z)}
+function H2($,Z){
+let z=$||{
+valueUnits:0,wheatValueUnits:0,voucherValueUnits:0}
+,N=Z||{
+valueUnits:0,wheatValueUnits:0,voucherValueUnits:0}
+;
+return{
+valueUnits:(z.valueUnits||0)+(N.valueUnits||0),wheatValueUnits:(z.wheatValueUnits||0)+(N.wheatValueUnits||0),voucherValueUnits:(z.voucherValueUnits||0)+(N.voucherValueUnits||0)}
+}
+function SN($){
+return{
+valueUnits:$,wheatValueUnits:0,voucherValueUnits:$}
+}
+function Z2($,Z=null){
+if(Number.isSafeInteger($))return Z?F0(Z,$):SN($);
+let z=Math.max(0,Math.round(Number($?.valueUnits)||0)),N=Math.max(0,Math.round(Number($?.wheatValueUnits)||0)),M=Math.max(0,Math.round(Number($?.voucherValueUnits)||0)),Q=N+M;
+if(Q===z)return{
+valueUnits:z,wheatValueUnits:N,voucherValueUnits:M}
+;
+if(typeof console<"u")console.warn("[麦乡支付] 支付义务分项之和与总额不一致，已按分项之和改写",{
+valueUnits:z,wheatValueUnits:N,voucherValueUnits:M}
+);
+return{
+valueUnits:Q,wheatValueUnits:N,voucherValueUnits:M}
+}
+function IN($,Z){
+return($.year-1)*Z.rules.daysPerYear+$.day+1}
+function G7($,Z){
+let z=k1($),N=IN($,Z),M=z.paymentHistory.find((Q)=>Q.serial===N);
+if(!M){
+if(M={
+serial:N,year:$.year,day:$.day+1,paidValueUnits:0,voucherValueUnits:0,wheatValueUnits:0,fallbackWheatValueUnits:0,unpaidAttemptValueUnits:0,finalized:!1}
+,z.paymentHistory.push(M),z.paymentHistory.sort((Q,_)=>Q.serial-_.serial),z.paymentHistory.length>60)z.paymentHistory.splice(0,z.paymentHistory.length-60)}
+return M}
+function bN($,Z,z,N=0){
+let M=G7($,z);
+M.paidValueUnits+=Z.paidValueUnits,M.voucherValueUnits+=Z.voucherPaidValueUnits,M.wheatValueUnits+=Z.wheatPaidValueUnits,M.fallbackWheatValueUnits+=Z.fallbackWheatValueUnits,M.unpaidAttemptValueUnits+=Math.max(0,N)}
+function S4($,Z,z){
+if(!Z)return;
+let N=k1($);
+if(z>0)N.voucherShortfallByKey[Z]=z;
+else delete N.voucherShortfallByKey[Z]}
+function A2($,Z,z,N,M={
+}
+){
+let Q=Z2(z,$),_=k1($),f=r1($,Z),O=Math.min(f,Number.isSafeInteger(M.maxWheatUnits)?Math.max(0,M.maxWheatUnits):f);
+return X7(Q,{
+stage:_.stage,voucherUnits:Math.max(0,B0($,Z)),wheatLimitUnits:O,autoExchangeableWheatUnits:g4($,Z,N,M),exchangeVoucherPoolUnits:Z==="town"?0:Math.max(0,B0($,"town")),allowVoucherFallback:M.allowVoucherFallback!==!1}
+,N)}
+function x0($,Z,z,N,M,Q="payment",_="货币支付",f={
+}
+){
+let O=Z2(N,$);
+if(O.valueUnits<=0)return{
+ok:!0,paidValueUnits:0,voucherPaidValueUnits:0,wheatPaidValueUnits:0,fallbackWheatValueUnits:0,remainingValueUnits:0,remainingComposition:O,transactionId:null}
+;
+let Y=k1($);
+if(f.requireFull!==!1){
+let H=A2($,Z,O,M,f);
+if(!H.full){
+if(f.trackUnpaid)S4($,f.shortfallKey,H.voucherShortfallValueUnits||0);
+return{
+ok:!1,reason:(H.voucherShortfallValueUnits||0)>0?Y.stage===v2?"粮券与可支付小麦均不足":"粮券不足，当前制度不允许小麦补付":"可支付小麦不足",paidValueUnits:0,voucherPaidValueUnits:0,wheatPaidValueUnits:0,fallbackWheatValueUnits:0,remainingValueUnits:O.valueUnits,remainingComposition:O,voucherShortfallValueUnits:H.voucherShortfallValueUnits||0}
+}
+}
+let G=B0($,Z);
+TN($,Z,Math.max(0,O.voucherValueUnits-G),O.wheatValueUnits,M,f);
+let X=B0($,Z),q=Math.min(O.voucherValueUnits,X),J=O.voucherValueUnits-q,F=Y.stage===v2&&f.allowVoucherFallback!==!1,W=O.wheatValueUnits,K=r1($,Z),L=Math.min(K,Number.isSafeInteger(f.maxWheatUnits)?Math.max(0,f.maxWheatUnits):K),x=l0(L,M,"floor"),R=Math.min(W,x),C=Math.max(0,x-R),B=F?Math.min(J,C):0;
+J-=B;
+let I=W-R,T=I+J;
+if(f.requireFull!==!1&&T>0){
+let H=J>0&&q<O.voucherValueUnits?F?"粮券与可支付小麦均不足":"粮券不足，当前制度不允许小麦补付":"可支付小麦不足";
+if(f.trackUnpaid)S4($,f.shortfallKey,J);
+return{
+ok:!1,reason:H,paidValueUnits:0,voucherPaidValueUnits:0,wheatPaidValueUnits:0,fallbackWheatValueUnits:0,remainingValueUnits:O.valueUnits,remainingComposition:O,voucherShortfallValueUnits:J}
+}
+let b=q,y=R+B,j=X2(y,M,"ceil");
+if(j>L)throw Error("小麦支付换算预检失败");
+let l=E0($);
+if(b>0){
+let H=_7($,Z,z,b,M,Q,`${_}；粮券部分`,{
+transactionId:l}
+);
+if(!H.ok)throw Error("粮券支付预检后失败："+H.reason)}
+if(y>0){
+let H=PN($,Z,z,j,y,M,Q,_,l);
+if(!H.ok)throw Error("小麦支付预检后失败："+H.reason)}
+let e=b+y,u={
+ok:T===0,reason:T>0?"仅完成部分支付":null,transactionId:l,paidValueUnits:e,voucherPaidValueUnits:b,wheatPaidValueUnits:y,wheatPaidUnits:j,fallbackWheatValueUnits:B,remainingValueUnits:T,voucherShortfallValueUnits:J,remainingComposition:{
+valueUnits:T,wheatValueUnits:I,voucherValueUnits:J}
+}
+;
+if(f.trackUnpaid)S4($,f.shortfallKey,J);
+if(f.countsForReform!==!1)bN($,u,M,f.trackUnpaid?T:0);
+return u}
+function Y7($,Z){
+let z=G7($,Z);
+return z.finalized=!0,z}
+function y4($,Z){
+let z=k1($),M=z.paymentHistory.filter((X)=>X.finalized).sort((X,q)=>X.serial-q.serial).slice(-7),Q=M.reduce((X,q)=>X+q.paidValueUnits,0),_=M.reduce((X,q)=>X+q.voucherValueUnits,0),f=M.reduce((X,q)=>X+q.fallbackWheatValueUnits,0),O=Object.values(z.voucherShortfallByKey||{
+}
+).reduce((X,q)=>X+Math.max(0,Number(q)||0),0),Y=M.length===7&&M.every((X,q)=>q===0||X.serial===M[q-1].serial+1),G=z.stage===v2&&z.targetVoucherBps===1e4&&Y&&Q>0&&f===0&&O===0;
+return{
+stage:z.stage,targetVoucherBps:z.targetVoucherBps,recentDays:M.length,recentPaidValueUnits:Q,recentVoucherValueUnits:_,recentVoucherBps:Q>0?Math.round(_*1e4/Q):0,recentFallbackWheatValueUnits:f,voucherShortfallValueUnits:O,consecutiveSevenDays:Y,eligibleToComplete:G}
+}
+function q7($,Z){
+let z=k1($);
+if(z.stage!==G2)return{
+ok:!1,reason:"货币改革已经启动"}
+;
+if(!b4($))return{
+ok:!1,reason:"需先建成银行"}
+;
+return z.stage=v2,z.targetVoucherBps=0,z.residentExchangeEnabled=!1,z.started={
+year:$.year,day:Math.min(Z.rules.daysPerYear,$.day+1)}
+,{
+ok:!0,stage:z.stage}
+}
+function J7($,Z){
+let z=k1($);
+if(z.stage!==v2)return{
+ok:!1,reason:"仅过渡期可调整粮券支付比例"}
+;
+let N=Number(Z);
+if(!Number.isFinite(N)||N<0||N>100)return{
+ok:!1,reason:"粮券支付比例须为0%—100%"}
+;
+return z.targetVoucherBps=Math.round(N*100),{
+ok:!0,value:z.targetVoucherBps/100}
+}
+function W7($,Z){
+let z=k1($);
+if(z.stage===G2)return{
+ok:!1,reason:"货币改革尚未启动"}
+;
+return z.residentExchangeEnabled=Boolean(Z),{
+ok:!0,enabled:z.residentExchangeEnabled}
+}
+function F7($,Z){
+let z=k1($),N=y4($,Z);
+if(!N.eligibleToComplete)return{
+ok:!1,reason:"尚未满足结束过渡期条件",progress:N}
+;
+return z.stage=H$,z.targetVoucherBps=1e4,z.completed={
+year:$.year,day:Math.min(Z.rules.daysPerYear,$.day+1)}
+,{
+ok:!0,stage:z.stage,progress:N}
+}
+function w4($,Z){
+$.agriculture||={
+}
+;
+let z=A$(Z);
+if(!Number.isFinite($.agriculture.reclaimedAcres))$.agriculture.reclaimedAcres=Math.max(0,Math.min(z,Z.agriculture.acres));
+$.agriculture.reclaimedAcres=Math.max(0,Math.min(z,Math.floor($.agriculture.reclaimedAcres))),$.agriculture.reclaim||=j5();
+for(let N of["day","year","cumulative"])$.agriculture.reclaim[N]||=k5();
+return $.agriculture}
+function A$($){
+let Z=$.agriculture.acresMaximum;
+return Number.isFinite(Z)&&Z>0?Z:$.agriculture.acres}
+function X1($,Z){
+return w4($,Z).reclaimedAcres}
+function gN($){
+let Z=$.agriculture.reclaimAcresPerBatch||100;
+return($.agriculture.reclaimWorkDaysPerBatch||100)/Z}
+function h4($,Z){
+let z=Math.max(0,Math.floor(Number($)||0));
+return Math.round(z*gN(Z))}
+function m4($,Z,z){
+w4($,Z);
+let N=A$(Z),M=$.agriculture.reclaimedAcres,Q=Math.max(0,Math.floor(Number(z)||0)),_=Math.min(Q,Math.max(0,N-M)),f=h4(_,Z),O=Z.agriculture.reclaimWageRoleId||"builders",Y=$.employment?.wageRates?.[O]??0;
+return{
+requested:Q,allowed:_,clamped:_<Q,maximum:N,current:M,remaining:Math.max(0,N-M),workDays:f,wageRoleId:O,wagePerWorkerDay:Y,estimatedVoucher:f*Y}
+}
+function V7($,Z,z={
+}
+){
+let N=w4($,Z),M=m4($,Z,z.acres);
+if(M.requested<=0)return{
+ok:!1,reason:"开荒亩数须为正整数"}
+;
+if(M.allowed<=0)return{
+ok:!1,reason:"已开荒耕地达到上限 "+M.maximum+" 亩"}
+;
+let Q=Math.max(0,Math.floor(Number(z.workers)||0));
+if(Q<=0)return{
+ok:!1,reason:"投入开荒人数须为正整数"}
+;
+let{
+workDays:_,wagePerWorkerDay:f}
+=M,O=Math.min(Q,Math.max(1,_)),Y=Math.max(1,Math.ceil(_/O)),G=$0(Z),X=Math.round(_*f*G),q=E0($),J=vN($,O),F=0;
+if(X>0&&J.length>0)F=yN($,J,O,_,X,Z,q);
+let W=Math.max(0,X-F);
+if(V0($,{
+type:"reclaim_wage_expense",transactionId:q,source:"town",destination:"wage_expense",itemId:"grain_voucher",quantityUnits:F,qeqUnits:0,reason:"开荒 "+M.allowed+" 亩，投入 "+O+" 人合 "+_+" 工日；镇库实付工资"}
+,Z),W>0)V0($,{
+type:"reclaim_wage_shortfall",transactionId:q,source:"town",destination:"unpaid",itemId:"grain_voucher",quantityUnits:W,qeqUnits:0,reason:"镇库可支付资产不足，开荒工资未能足额支付"}
+,Z);
+N.reclaimedAcres=Math.min(M.maximum,N.reclaimedAcres+M.allowed);
+let K={
+acres:M.allowed,workDays:_,paidVoucherUnits:F}
+;
+for(let L of["day","year","cumulative"]){
+let x=N.reclaim[L];
+x.acres+=K.acres,x.workDays+=K.workDays,x.paidVoucherUnits+=K.paidVoucherUnits}
+if(N.reclaim.last={
+year:$.year,day:$.day+1,...K,workers:O,days:Y,requested:M.requested,clamped:M.clamped,wagePerWorkerDay:f,maximum:M.maximum,reclaimedAcres:N.reclaimedAcres,unpaidVoucherUnits:W,paidVoucher:F/G,dueVoucher:X/G}
+,N.reclaim.history.push({
+year:$.year,day:$.day+1,...K,workers:O,days:Y}
+),N.reclaim.history.length>40)N.reclaim.history=N.reclaim.history.slice(-40);
+return q0($,"开荒 "+M.allowed+" 亩（投入 "+O+" 人、"+_+" 工日），镇库支付开荒工资 "+Math.round(F/G).toLocaleString("zh-CN")+"粮券；已开荒 "+N.reclaimedAcres+" / "+M.maximum+"亩。",Z),{
+ok:!0,transactionId:q,acres:M.allowed,requested:M.requested,clamped:M.clamped,workDays:_,workers:O,days:Y,wagePerWorkerDay:f,dueVoucherUnits:X,paidVoucherUnits:F,unpaidVoucherUnits:W,dueVoucher:X/G,paidVoucher:F/G,wageRows:J,reclaimedAcres:N.reclaimedAcres,maximum:M.maximum}
+}
+function vN($,Z){
+let z=m($).filter((Q)=>P1(Q)>0).sort((Q,_)=>y0(Q)-y0(_)||Q.id.localeCompare(_.id)),N=[],M=Math.max(0,Z);
+for(let Q of z){
+if(M<=0)break;
+let _=Math.min(M,P1(Q));
+if(_<=0)continue;
+N.push({
+householdId:Q.id,count:_}
+),M-=_}
+return N}
+function yN($,Z,z,N,M,Q,_){
+let f=Math.max(1,z),O=0;
+for(let Y of Z){
+let G=Math.min(M-O,Math.round(M*Y.count/f));
+if(G<=0)continue;
+let q=x0($,"town","household:"+Y.householdId,F0($,G),Q,"land_reclamation_wage","开荒工资：镇库承担，按投入人日结算",{
+requireFull:!1,trackUnpaid:!0,shortfallKey:"town-reclaim-wage:"+Y.householdId,transactionId:_}
+).paidValueUnits||0;
+if(O+=q,V0($,{
+type:"reclaim_wage",transactionId:_,source:"town",destination:"household:"+Y.householdId,itemId:"grain_voucher",quantityUnits:q,qeqUnits:0,reason:"开荒工资：投入 "+Y.count+" 人·"+N+"工日；镇库支付"}
+,Q),q>0)Z5($,Y.householdId,q,Q)}
+return O}
+function W0($,Z,z){
+let N=z.rules.marketPricesVoucherPerUnit||{
+}
+,M=$.wholesaleMarket?.pricesVoucherPerUnit||{
+}
+;
+if(Number.isFinite(M[Z])&&M[Z]>0)return Number(M[Z]);
+let Q=$.market?.pricesVoucherPerUnit||{
+}
+;
+if(Number.isFinite(Q[Z])&&Q[Z]>0)return Number(Q[Z]);
+if(Z==="bread"){
+let _=$.market?.breadPriceVoucherPerJin??$.market?.breadPriceWheatPerJin;
+if(Number.isFinite(_)&&_>0)return Number(_)}
+if(Z==="flour"||Z==="wood"){
+let _=$.market?.intermediatePricesVoucherPerUnit?.[Z];
+if(Number.isFinite(_)&&_>0)return Number(_)}
+if(Z==="salt"&&Number.isFinite(z.rules.saltPriceWheatPerJin))return Number(z.rules.saltPriceWheatPerJin);
+return Number(N[Z]??0)}
+function T$($,Z){
+return Object.fromEntries(Object.keys(Z.items).map((z)=>[z,W0($,z,Z)]))}
+var wN=0.5,hN=3;
+function mN($,Z){
+let z=Z?.rules?.marketPricesVoucherPerUnit?.[$];
+if(!Number.isFinite(z)||z<=0)return null;
+let N=function(M){
+return Math.round(M*1000)/1000}
+;
+return{
+reference:z,min:N(z*wN),max:N(z*hN)}
+}
+function S5($,Z,z,N){
+let M=Math.round(Number(z)*1000)/1000;
+if(!Number.isFinite(M)||M<=0)return{
+ok:!1,reason:"价格须为正的有限数值"}
+;
+let Q=N?mN(Z,N):null,_=M,f=!1;
+if(Q){
+if(_<Q.min)_=Q.min,f=!0;
+else if(_>Q.max)_=Q.max,f=!0}
+if($.market||={
+}
+,$.market.pricesVoucherPerUnit||={
+}
+,$.market.pricesVoucherPerUnit[Z]=_,$.wholesaleMarket||={
+}
+,$.wholesaleMarket.pricesVoucherPerUnit||={
+}
+,$.wholesaleMarket.pricesVoucherPerUnit[Z]=_,$.market.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+if(Z==="bread")$.market.breadPriceWheatPerJin=_,$.market.breadPriceVoucherPerJin=_;
+if(Z==="flour"||Z==="wood")$.market.intermediatePricesVoucherPerUnit||={
+}
+,$.market.intermediatePricesVoucherPerUnit[Z]=_;
+return{
+ok:!0,value:_,clamped:f}
+}
+function x7($,Z){
+let z=Z.rules.marketPricesVoucherPerUnit||{
+}
+;
+$.market||={
+}
+;
+let N=$.market.priceRecommendation||{
+}
+,M=Array.isArray(N.items)&&N.items.length?N.items.map((Q)=>Q.itemId).filter((Q)=>Q==="flour"||Q==="wood"):["flour","wood"];
+for(let Q of M)if(Number.isFinite(z[Q])&&z[Q]>0)S5($,Q,z[Q],Z);
+return $.market.priceRecommendation||={
+}
+,$.market.priceRecommendation.pending=!1,$.market.priceRecommendation.choice="adopted",{
+ok:!0,prices:T$($,Z)}
+}
+function L7($,Z){
+return $.market||={
+}
+,$.market.priceRecommendation||={
+}
+,$.market.priceRecommendation.pending=!1,$.market.priceRecommendation.choice="kept",{
+ok:!0,prices:T$($,Z)}
+}
+function K7($,Z,z){
+let N=z.buildings[Z],M=N?.recipeId?z.recipes[N.recipeId]:null,Q=N?.jobs?.[0];
+if(!M||!Q)return null;
+let _=M.batchesPerWorkerDay||0,f=$.policy?.privateProductionTaxPercent?.[Z]??z.rules.privateProductionTaxDefaultPercent??10,O=(M.outputs||[]).reduce((X,q)=>X+q.quantity*_*W0($,q.itemId,z)*(1-f/100),0),Y=(M.inputs||[]).reduce((X,q)=>X+q.quantity*_*W0($,q.itemId,z),0),G=$.employment?.wageRates?.[Q.id]??Q.wagePerWorkerDay??10;
+return{
+typeId:Z,batchesPerWorkerDay:_,taxPercent:f,grossRevenueVoucher:O,inputCostVoucher:Y,wageVoucher:G,profitVoucher:O-Y-G}
+}
+var uN=["bakery","saltworks","mill","lumberyard"];
+function lN($,Z){
+return(Math.max(1,$.year||1)-1)*(Z.rules.daysPerYear||365)+($.day||0)}
+function y2($,Z,z,N=null){
+let M=z.rules.shopTypes?.[Z];
+if(!M)return null;
+let Q=M.aliasOf?z.rules.shopTypes?.[M.aliasOf]:M;
+if(!Q||Q.kind==="service")return null;
+let _=N||M.itemId||Q.itemId||Q.itemIds?.[0];
+if(!_||!(Q.itemIds||[_]).includes(_))return null;
+let f=W0($,_,z),O=Q.id==="general"?Math.max(0,z.rules.generalStoreMarkupPercent??20)/100:0,Y=f*(1+O);
+return{
+...Q,itemId:_,retailVoucherPerUnit:Y,wholesaleVoucherPerUnit:f}
+}
+function R7($,Z,z){
+let N=($||[]).slice(-Math.max(1,z));
+if(!N.length)return 0;
+return N.reduce((M,Q)=>M+Number(Q?.[Z]||0),0)/N.length}
+function pN($,Z){
+return Z.recipes[Z.buildings[$]?.recipeId]?.outputs?.[0]?.itemId||null}
+function dN($,Z){
+let z=Z.recipes[Z.buildings[$]?.recipeId];
+return Math.round((z?.outputs?.[0]?.quantity||0)*Z.precision.inventoryUnitsPerJin)}
+function D7($,Z){
+let z=$.accounts?.town?.[Z]||0;
+for(let N of Object.values($.companies||{
+}
+))z+=N.inventory?.[Z]||0;
+for(let N of Object.values($.shops||{
+}
+))if(N.status==="open")z+=N.inventory?.[Z]||0;
+return z}
+function cN($,Z){
+let z=$.accounts?.residents?.[Z]||0;
+for(let N of Object.values($.companies||{
+}
+))z+=N.inventory?.[Z]||0;
+return Math.max(0,z)}
+function B7($,Z,z){
+let N=$.market?.consumerHistory?.[Z]||[];
+return R7(N,"soldUnits",z.rules.operatingObservationDays||7)}
+function E7($,Z,z,N){
+if(!Number.isFinite(z)||z<=0)return 0;
+let M=m($).filter(J0).reduce((f,O)=>f+D0($,O,N,N.rules.basicCommerceFoodReserveDays??30),0),Q=P0($,"residents",N),_=j1($,"residents",Q,N,{
+maxWheatUnits:M}
+);
+return Math.max(0,Math.floor(_*N.precision.inventoryUnitsPerJin/(z*N.precision.currencyUnitsPerVoucher)))}
+function iN($,Z){
+let z=A0($).total,N=W0($,"bread",Z)*(1+Math.max(0,Z.rules.generalStoreMarkupPercent??20)/100),M=Z.rules.breadBasePriceWheatPerJin,Q=Math.max(0,Math.min(Z.rules.breadTargetShareMaximum,Z.rules.breadTargetShareAtBasePrice*Math.pow(M/N,Z.rules.breadPriceElasticity))),_=z*Z.rules.foodPerPersonDay*Q,f=Math.round(_*Z.precision.inventoryUnitsPerJin),O=$.accounts?.residents?.bread||0,Y=Math.max(0,f-O);
+return Math.min(Y,E7($,"bread",N,Z))}
+function rN($,Z){
+let z=Math.max(0,$.salt?.todayDemandUnits||0),N=$.accounts?.residents?.salt||0,M=Math.max(0,z-N),Q=W0($,"salt",Z)*(1+Math.max(0,Z.rules.generalStoreMarkupPercent??20)/100);
+return Math.min(M,E7($,"salt",Q,Z))}
+function sN($,Z,z){
+let N=pN(Z,z);
+if(!N)return{
+itemId:N,demandUnits:0,basis:"无产品"}
+;
+if(Z==="bakery"){
+let M=iN($,z),Q=B7($,"bread",z);
+return{
+itemId:N,demandUnits:Math.max(M,Q),basis:"家庭可支付面包需求与近期实销"}
+}
+if(Z==="saltworks"){
+let M=rN($,z),Q=B7($,"salt",z);
+return{
+itemId:N,demandUnits:Math.max(M,Q),basis:"家庭可支付食盐需求与近期实销"}
+}
+if(Z==="lumberyard"){
+let M=$.market?.publicProcurementDemand?.wood||null,Q=Math.max(0,Math.floor(M?.requiredUnits??M?.wantedUnits??0)),_=Math.max(0,$.accounts?.town?.wood||0),f=Math.max(0,Q-_),O=W0($,"wood",z),Y=j1($,"town",P0($,"town",z),z),G=O>0?Math.max(0,Math.floor(Y*z.precision.inventoryUnitsPerJin/(O*z.precision.currencyUnitsPerVoucher))):0,X=Math.min(f,G);
+return{
+itemId:N,demandUnits:X,outstandingUnits:f,basis:!M?"暂无有预算的建设订单":f<=0?"建设订单已由镇库库存覆盖":X<=0?"建设采购预算不足":X<f?"建设采购仅部分有预算":"有预算的实际建设采购"}
+}
+return{
+itemId:N,demandUnits:0,basis:"由下游生产计划决定"}
+}
+function aN($,Z,z){
+let N=[];
+for(let M of $.buildings||[]){
+if(M.typeId!==Z)continue;
+let Q=z.buildings[Z],_=z.recipes[Q?.recipeId],f=Q?.jobs?.[0];
+if(!_||!f)continue;
+let O=Math.max(0,M.ownership?.privateLevels||0);
+if(O>0)N.push({
+key:`private:${M.id}`,kind:"private",buildingId:M.id,typeId:Z,maxWorkers:f.slots*O,batchesPerWorkerDay:_.batchesPerWorkerDay||0,currentWorkers:O0($,G1(M.id,f.id)),ageDays:$.privateEconomy?.plans?.[M.id]?.ageDays||0}
+)}
+for(let M of Object.values($.companies||{
+}
+)){
+if(M.typeId!==Z)continue;
+let Q=z.buildings[Z],_=z.recipes[Q?.recipeId],f=Q?.jobs?.[0];
+if(!_||!f)continue;
+N.push({
+key:`company:${M.id}`,kind:"company",companyId:M.id,buildingId:M.buildingId,typeId:Z,maxWorkers:f.slots*M.listedLevels,batchesPerWorkerDay:_.batchesPerWorkerDay||0,currentWorkers:O0($,N1(M.buildingId,f.id)),ageDays:M.plan?.ageDays||0}
+)}
+return N.sort((M,Q)=>M.key.localeCompare(Q.key))}
+function nN($,Z,z=0){
+let N=Object.fromEntries(Z.map((f)=>[f.key,0]));
+if($<=0||!Z.length)return N;
+let M=Z.slice(z%Z.length).concat(Z.slice(0,z%Z.length)),Q=Math.max(0,Math.floor($)),_=M.map((f)=>({
+row:f,capacity:f.maxWorkers*f.batchesPerWorkerDay}
+));
+while(Q>0&&_.length){
+let f=Math.max(1,Math.ceil(Q/_.length)),O=[],Y=0;
+for(let G of _){
+if(Q<=0)break;
+let X=N[G.row.key]||0,q=Math.max(0,G.capacity-X);
+if(q<=0)continue;
+let J=Math.min(q,f,Q);
+if(N[G.row.key]=X+J,Q-=J,Y+=J,q>J)O.push(G)}
+if(!Y)break;
+_=O}
+return N}
+function oN($,Z,z,N){
+let M=$.batchesPerWorkerDay>0?Math.ceil(Z/$.batchesPerWorkerDay):0;
+if(M<=0&&$.ageDays<(N.rules.newBusinessTrialDays||6))M=Math.min($.maxWorkers,N.rules.newBusinessTrialWorkers||1);
+if($.kind==="company"){
+let _=z.companies?.[$.companyId],f=N.buildings[$.typeId]?.jobs?.[0],O=z.employment?.wageRates?.[f?.id]??f?.wagePerWorkerDay??10,Y=N.precision.currencyUnitsPerVoucher,G=O>0?Math.floor(P0(z,`company:${_?.id}`,N)/(O*Y)):$.maxWorkers;
+M=Math.min(M,Math.max(0,G))}
+let Q=N.rules.operatingWorkerAdjustMaxPerCycle||2;
+if(M>$.currentWorkers)M=Math.min(M,$.currentWorkers+Q);
+if(M<$.currentWorkers)M=Math.max(M,$.currentWorkers-Q);
+return Math.max(0,Math.min($.maxWorkers,M))}
+function eN($,Z,z,N=0){
+let M=z.precision.inventoryUnitsPerJin;
+if(Z==="mill"){
+let Y=z.recipes.bakery_bread.inputs.find((q)=>q.itemId==="flour")?.quantity||0,G=Math.round(N*Y*M),X=D7($,"flour");
+return{
+itemId:"flour",demandUnits:G,targetUnits:Math.max(0,G-X),basis:"按可执行面包生产计划形成面粉需求"}
+}
+let Q=sN($,Z,z),_=Z==="lumberyard"?cN($,Q.itemId):D7($,Q.itemId);
+if(Z==="lumberyard")return{
+...Q,stockUnits:_,targetUnits:Math.max(0,Q.demandUnits-_)}
+;
+let f=z.rules.producerInventoryTargetDays||2,O=Math.round(Q.demandUnits*f);
+return{
+...Q,stockUnits:_,targetUnits:Math.max(0,Q.demandUnits+O-_)}
+}
+function H7($){
+return $.market||={
+}
+,$.market.operatingPlan||={
+updatedSerial:-1,rotation:{
+}
+,rows:{
+}
+,demand:{
+}
+}
+,$.market.consumerHistory||={
+bread:[],salt:[],wood:[]}
+,$.privateEconomy||={
+}
+,$.privateEconomy.plans||={
+}
+,$.market.operatingPlan}
+function A7($,Z,z=!1){
+let N=H7($),M=lN($,Z),Q=Math.max(1,Z.rules.operatingPlanIntervalDays||3);
+if(!z&&N.updatedSerial>=0&&M-N.updatedSerial<Q){
+for(let f of Object.values($.companies||{
+}
+))if(f.plan)f.plan.ageDays=(f.plan.ageDays||0)+1;
+for(let f of Object.values($.privateEconomy.plans||{
+}
+))f.ageDays=(f.ageDays||0)+1;
+return N}
+N.updatedSerial=M,N.rows={
+}
+,N.demand={
+}
+;
+let _=0;
+for(let f of uN){
+let O=eN($,f,Z,_),Y=dN(f,Z),G=Y>0?Math.ceil(O.targetUnits/Y):0,X=aN($,f,Z);
+if(G<=0&&X.some((F)=>F.ageDays<(Z.rules.newBusinessTrialDays||6)))G=1;
+let q=N.rotation[f]||0,J=nN(G,X,q);
+if(X.length)N.rotation[f]=(q+1)%X.length;
+for(let F of X){
+let W=oN(F,J[F.key]||0,$,Z),K={
+...F,plannedBatches:J[F.key]||0,desiredWorkers:W,demandBasis:O.basis,demandUnits:O.demandUnits||0,marketStockUnits:O.stockUnits||0}
+;
+if(N.rows[F.key]=K,F.kind==="company"){
+let L=$.companies[F.companyId];
+L.plan={
+...L.plan||{
+}
+,...K,ageDays:(L.plan?.ageDays||0)+Q,updatedSerial:M}
+}
+else{
+let L=$.privateEconomy.plans[F.buildingId]||{
+}
+;
+$.privateEconomy.plans[F.buildingId]={
+...L,...K,ageDays:(L.ageDays||0)+Q,updatedSerial:M}
+}
+}
+if(N.demand[f]=O,f==="bakery")_=Object.values(J).reduce((F,W)=>F+W,0)}
+return N}
+function C$($,Z){
+let z=$.market?.operatingPlan?.rows?.[Z];
+return z?Math.max(0,Math.floor(z.plannedBatches||0)):null}
+function P$($,Z){
+let z=$.market?.operatingPlan?.rows?.[Z];
+return z?Math.max(0,Math.floor(z.desiredWorkers||0)):null}
+function T7($,Z){
+H7($);
+let z=Math.max(14,(Z.rules.operatingObservationDays||7)*4),N=Math.round(($.market?.lastDay?.purchasedBreadJin||0)*Z.precision.inventoryUnitsPerJin),M=Math.max(0,$.salt?.todaySatisfiedUnits||$.salt?.day?.purchasedUnits||0);
+for(let[Q,_]of[["bread",N],["salt",M]]){
+let f=$.market.consumerHistory[Q]||=[];
+if(f.push({
+year:$.year,day:$.day+1,soldUnits:_}
+),f.length>z)f.splice(0,f.length-z)}
+}
+function Y2($,Z,z){
+return R7($,Z,z.rules.operatingObservationDays||7)}
+function I5($){
+return $.claimsVoucherUnits||={
+}
+,$.claimsVoucherUnits}
+function k$($){
+return $.claimsPayment||={
+}
+,$.claimsPayment}
+function w2($,Z,z,N,M){
+let Q=I5(Z),_=k$(Z);
+if(N<=0||!z?.length)return[];
+let f={
+}
+;
+for(let X of z)if(X?.householdId&&X.count>0)f[X.householdId]=(f[X.householdId]||0)+X.count;
+let O=Object.keys(f).map((X)=>$.households?.byId?.[X]).filter(Boolean),Y=K1(N,O,(X)=>f[X.id]||0);
+if(!Y.ok)return[];
+let G=[];
+for(let{
+recipient:X,units:q}
+of Y.rows){
+if(q<=0)continue;
+Q[X.id]=(Q[X.id]||0)+q,_[X.id]=H2(_[X.id],F0($,q)),Z5($,X.id,q,M),G.push({
+householdId:X.id,units:q}
+)}
+return G}
+function q2($,Z,z,N=[]){
+let M=Math.max(0,Math.round(Number(z)||0));
+if(M<=0)return{
+attributed:0,rows:[]}
+;
+let Q=$.households?.byId||{
+}
+,_={
+}
+;
+for(let q of N||[]){
+if(!q?.householdId||!Q[q.householdId]||q.count<=0)continue;
+_[q.householdId]=(_[q.householdId]||0)+q.count}
+let f=Object.keys(_).map((q)=>Q[q]).filter(Boolean);
+if(!f.length){
+f=Object.values(Q).filter((q)=>{
+let J=q?.ageBands||{
+}
+;
+return Math.max(0,(J.children||0)+(J.workers||0)+(J.elders||0))>0}
+);
+for(let q of f){
+let J=q.ageBands||{
+}
+;
+_[q.id]=Math.max(1,(J.children||0)+(J.workers||0)+(J.elders||0))}
+}
+if(!f.length)return{
+attributed:0,rows:[]}
+;
+let O=K1(M,f,(q)=>_[q.id]||0);
+if(!O.ok)return{
+attributed:0,rows:[]}
+;
+let Y=I5(Z),G=k$(Z),X=[];
+for(let{
+recipient:q,units:J}
+of O.rows){
+if(J<=0)continue;
+Y[q.id]=(Y[q.id]||0)+J,G[q.id]=H2(G[q.id],{
+valueUnits:J,wheatValueUnits:0,voucherValueUnits:J}
+),X.push({
+householdId:q.id,units:J}
+)}
+return{
+attributed:X.reduce((q,J)=>q+J.units,0),rows:X}
+}
+function V1($){
+return Object.values(I5($)).reduce((Z,z)=>Z+(z||0),0)}
+function b5($,Z,z,N,M,Q,_={
+}
+){
+let f=I5(Z),O=k$(Z),Y=0,G=[];
+for(let X of Object.keys(f).sort()){
+let q=f[X]||0;
+if(q<=0)continue;
+let J=Z2(O[X]||q,$),F=x0($,z,`household:${X}`,J,N,M,Q,{
+requireFull:!1,trackUnpaid:!0,shortfallKey:`${_.shortfallPrefix||M}:${X}`}
+),W=F.paidValueUnits||0;
+if(f[X]=Math.max(0,q-W),O[X]=F.remainingComposition,W>0)G.push({
+householdId:X,units:W,payment:F}
+);
+Y+=W}
+return{
+paid:Y,rows:G,remaining:V1(Z)}
+}
+function C7($,Z,z,N,M,Q,_={
+}
+){
+let f=I5(Z),O=k$(Z),Y=0,G=[];
+for(let X of Object.keys(f).sort()){
+let q=f[X]||0;
+if(q<=0)continue;
+let J=Z2(O[X]||q,$),F=0;
+for(let K of z){
+if(J.valueUnits<=0)break;
+let L=typeof K==="string"?K:K.id,x=typeof K==="string"?void 0:K.maxWheatUnits,R=x0($,L,`household:${X}`,J,N,M,Q,{
+requireFull:!1,maxWheatUnits:x,countsForReform:!0}
+);
+F+=R.paidValueUnits||0,J=R.remainingComposition}
+f[X]=Math.max(0,q-F),O[X]=J;
+let W=`${_.shortfallPrefix||M}:${X}`;
+if($.monetaryReform||={
+}
+,$.monetaryReform.voucherShortfallByKey||={
+}
+,J.voucherValueUnits>0)$.monetaryReform.voucherShortfallByKey[W]=J.voucherValueUnits;
+else delete $.monetaryReform.voucherShortfallByKey[W];
+if(F>0)G.push({
+householdId:X,units:F}
+);
+Y+=F}
+return{
+paid:Y,rows:G,remaining:V1(Z)}
+}
+var x1=Object.freeze(["wheat","flour","bread","wood","salt"]);
+function i0($=0){
+return Object.fromEntries(x1.map((Z)=>[Z,$]))}
+function U1($){
+return($.buildings||[]).some((Z)=>Z.typeId==="wholesale_market"&&(Z.level||1)>0)}
+function Y1($,Z){
+$.wholesaleMarket||={
+}
+;
+let z=$.wholesaleMarket;
+z.inventory||=i0(0),z.inventoryCostVoucherUnits||=i0(0),z.pricesVoucherPerUnit||={
+}
+,z.dailyTownAllocationUnits||=i0(0),z.day||={
+intakeUnits:i0(0),soldUnits:i0(0),townAllocatedUnits:i0(0),purchaseVoucherUnits:0,salesVoucherUnits:0}
+,z.year||={
+intakeUnits:i0(0),soldUnits:i0(0),townAllocatedUnits:i0(0),purchaseVoucherUnits:0,salesVoucherUnits:0}
+,z.cumulative||={
+intakeUnits:i0(0),soldUnits:i0(0),townAllocatedUnits:i0(0),purchaseVoucherUnits:0,salesVoucherUnits:0}
+;
+for(let N of x1)if(z.inventory[N]=Math.max(0,Math.floor(z.inventory[N]||0)),z.inventoryCostVoucherUnits[N]=Math.max(0,Math.floor(z.inventoryCostVoucherUnits[N]||0)),z.dailyTownAllocationUnits[N]=Math.max(0,Math.floor(z.dailyTownAllocationUnits[N]||0)),!(Number.isFinite(z.pricesVoucherPerUnit[N])&&z.pricesVoucherPerUnit[N]>0)){
+let M=$.market?.pricesVoucherPerUnit?.[N],Q=Z.rules.marketPricesVoucherPerUnit?.[N]??1;
+z.pricesVoucherPerUnit[N]=Number.isFinite(M)&&M>0?M:Q}
+return z}
+function M5($,Z,z,N){
+for(let M of["day","year","cumulative"])$[M][Z]||=i0(0),$[M][Z][z]=($[M][Z][z]||0)+N}
+function u4($,Z,z){
+for(let N of["day","year","cumulative"])$[N][Z]=($[N][Z]||0)+z}
+function k7($,Z){
+let z=Y1($,Z);
+z.day={
+intakeUnits:i0(0),soldUnits:i0(0),townAllocatedUnits:i0(0),purchaseVoucherUnits:0,salesVoucherUnits:0}
+}
+function j7($,Z){
+let z=Y1($,Z);
+z.year={
+intakeUnits:i0(0),soldUnits:i0(0),townAllocatedUnits:i0(0),purchaseVoucherUnits:0,salesVoucherUnits:0}
+}
+function T2($,Z,z){
+let N=Y1($,z);
+return Number(N.pricesVoucherPerUnit[Z]||0)}
+function j$($,Z,z,N){
+if(!x1.includes(Z))return{
+ok:!1,reason:"批发市场不经营这种商品"}
+;
+let M=Math.round(Number(z)*1000)/1000;
+if(!Number.isFinite(M)||M<=0||M>1e6)return{
+ok:!1,reason:"批发价须为正的有限数值"}
+;
+let Q=S5($,Z,M,N);
+if(!Q.ok)return Q;
+let _=Y1($,N);
+return _.pricesVoucherPerUnit[Z]=Q.value,{
+ok:!0,itemId:Z,value:Q.value,clamped:Q.clamped}
+}
+function U7($,Z,z,N){
+if(!x1.includes(Z))return{
+ok:!1,reason:"批发市场不经营这种商品"}
+;
+let M=Number(z);
+if(!Number.isFinite(M)||M<0||M>1e9)return{
+ok:!1,reason:"每日调拨量须为非负有限数值"}
+;
+let Q=Y1($,N);
+return Q.dailyTownAllocationUnits[Z]=Math.round(M*N.precision.inventoryUnitsPerJin),{
+ok:!0,itemId:Z,quantity:Q.dailyTownAllocationUnits[Z]/N.precision.inventoryUnitsPerJin}
+}
+function l4($,Z,z,N){
+$.inventory[Z]=($.inventory[Z]||0)+z,$.inventoryCostVoucherUnits[Z]=($.inventoryCostVoucherUnits[Z]||0)+Math.max(0,Math.floor(N||0))}
+function p4($,Z,z){
+let N=$.inventory[Z]||0,M=Math.min(Math.max(0,Math.floor(z)),N);
+if(M<=0)return{
+units:0,costVoucherUnits:0}
+;
+let Q=$.inventoryCostVoucherUnits[Z]||0,_=M===N?Q:Math.floor(Q*M/N);
+return $.inventory[Z]-=M,$.inventoryCostVoucherUnits[Z]=Math.max(0,Q-_),{
+units:M,costVoucherUnits:_}
+}
+function d4($,Z,z,N){
+return Math.round(Z/N.precision.inventoryUnitsPerJin*T2(z,$,N)*$0(N))}
+function g5($,Z,z,N,M="镇库调拨至批发市场"){
+let Q=Y1($,N);
+if(!U1($))return{
+ok:!1,movedUnits:0,reason:"尚未建成批发市场"}
+;
+let _=Math.max(0,$.accounts?.town?.[Z]||0),f=Math.min(Math.max(0,Math.floor(z)),_);
+if(f<=0)return{
+ok:!1,movedUnits:0,reason:"镇库无可调拨库存"}
+;
+let O=$5($,Z,f,N);
+return l4(Q,Z,f,O.costWheatUnits),M5(Q,"intakeUnits",Z,f),V0($,{
+type:"wholesale_town_transfer",transactionId:E0($),source:"town",destination:"wholesale_market",itemId:Z,quantityUnits:f,qeqUnits:0,reason:M}
+,N),{
+ok:!0,movedUnits:f}
+}
+function tN($,Z,z,N,M){
+let Q=$.households?.byId?.[Z],_=Y1($,M);
+if(!Q)return 0;
+let f=Math.max(0,Q.inventory?.[z]||0),O=Math.min(f,Math.max(0,Math.floor(N)));
+if(O<=0)return 0;
+let Y=d4(z,O,$,M);
+if(Y>P0($,"town",M))return 0;
+if(!x0($,"town",`household:${Z}`,F0($,Y),M,"wholesale_private_purchase",`批发市场收购${Q.name}的${M.items[z]?.name||z}`,{
+requireFull:!0}
+).ok)return 0;
+return Q.inventory[z]-=O,l4(_,z,O,Y),M5(_,"intakeUnits",z,O),u4(_,"purchaseVoucherUnits",Y),O}
+function S7($,Z,z,N,M){
+if(!x1.includes(Z)||z<=0)return{
+ok:!1,units:0}
+;
+let Q=Y1($,M);
+return l4(Q,Z,Math.floor(z),Math.max(0,Math.floor(N||0))),M5(Q,"intakeUnits",Z,Math.floor(z)),u4(Q,"purchaseVoucherUnits",Math.max(0,Math.floor(N||0))),{
+ok:!0,units:Math.floor(z)}
+}
+function U$($,Z,z,N,M={
+}
+){
+let Q=Y1($,N);
+if(!U1($))return{
+active:!1,intakeUnits:i0(0)}
+;
+let _=i0(0);
+for(let f of Z||[])for(let[O,Y]of Object.entries(f?.outputUnits||{
+}
+)){
+if(!x1.includes(O)||Y<=0)continue;
+let G=g5($,O,Y,N,"镇营生产当日产出进入批发市场");
+_[O]+=G.movedUnits||0}
+if(M.includeTownAllocation!==!1)for(let f of x1){
+let O=Math.max(0,Q.dailyTownAllocationUnits[f]||0);
+if(O<=0)continue;
+let G=g5($,f,O,N,"政府每日固定调拨至批发市场").movedUnits||0;
+if(G>0)_[f]+=G,M5(Q,"townAllocatedUnits",f,G)}
+for(let f of z||[])for(let O of f?.taxRows||[]){
+let Y=O.itemId;
+if(!x1.includes(Y))continue;
+let G=tN($,O.ownerHouseholdId,Y,O.residentUnits||0,N);
+_[Y]+=G}
+return M0($,N),{
+active:!0,intakeUnits:_}
+}
+function S$($,Z,z,N,M="镇营生产从批发市场领用原料"){
+let Q=Y1($,N);
+if(!U1($))return{
+ok:!1,boughtUnits:0,reason:"尚未建成批发市场"}
+;
+let _=p4(Q,Z,z);
+if(_.units<=0)return{
+ok:!1,boughtUnits:0,reason:"批发市场缺货"}
+;
+let f=d4(Z,_.units,$,N);
+return $.accounts.town[Z]=($.accounts.town[Z]||0)+_.units,n0($,Z,f),M5(Q,"soldUnits",Z,_.units),V0($,{
+type:"wholesale_town_issue",transactionId:E0($),source:"wholesale_market",destination:"town",itemId:Z,quantityUnits:_.units,qeqUnits:0,reason:M}
+,N),{
+ok:!0,boughtUnits:_.units,paidVoucherUnits:0,internalValueVoucherUnits:f}
+}
+function Q5($,Z,z,N,M,Q="从批发市场采购"){
+let _=Y1($,M);
+if(!U1($))return{
+ok:!1,boughtUnits:0,paidVoucherUnits:0,reason:"尚未建成批发市场"}
+;
+let f=Math.max(0,_.inventory[z]||0),O=Math.min(f,Math.max(0,Math.floor(N)));
+if(O<=0)return{
+ok:!1,boughtUnits:0,paidVoucherUnits:0,reason:"批发市场缺货"}
+;
+let Y=T2($,z,M),G=P0($,Z,M),X=Y>0?Math.floor(G*M.precision.inventoryUnitsPerJin/(Y*$0(M))):0;
+if(O=Math.min(O,Math.max(0,X)),O<=0)return{
+ok:!1,boughtUnits:0,paidVoucherUnits:0,reason:"采购方资金不足"}
+;
+let q=d4(z,O,$,M),J=Z.startsWith("household:")?Z.slice(10):null,F=J?$.households?.byId?.[J]:null,W=F?D0($,F,M,M.rules.householdFoodReserveDays??30):void 0,K=x0($,Z,"town",F0($,q),M,"wholesale_sale",Q,{
+requireFull:!0,...W===void 0?{
+}
+:{
+maxWheatUnits:W}
+}
+);
+if(!K.ok)return{
+ok:!1,boughtUnits:0,paidVoucherUnits:0,reason:K.reason||"支付失败"}
+;
+let L=p4(_,z,O);
+return M5(_,"soldUnits",z,L.units),u4(_,"salesVoucherUnits",q),{
+ok:!0,boughtUnits:L.units,paidVoucherUnits:q,unitPrice:Y}
+}
+function I7($,Z){
+let z=Y1($,Z),N=Z.precision.inventoryUnitsPerJin;
+return{
+active:U1($),pricesVoucherPerUnit:{
+...z.pricesVoucherPerUnit}
+,inventory:Object.fromEntries(x1.map((M)=>[M,(z.inventory[M]||0)/N])),dailyTownAllocation:Object.fromEntries(x1.map((M)=>[M,(z.dailyTownAllocationUnits[M]||0)/N])),trends:zM($,Z),day:z.day,year:z.year,cumulative:z.cumulative}
+}
+var P7=30,$M=7;
+function b7($,Z){
+if(!U1($))return;
+let z=Y1($,Z);
+if(z.history=Array.isArray(z.history)?z.history:[],z.history.push({
+year:$.year,day:$.day+1,inventory:Object.fromEntries(x1.map((N)=>[N,z.inventory[N]||0])),sold:Object.fromEntries(x1.map((N)=>[N,z.day?.soldUnits?.[N]||0])),price:Object.fromEntries(x1.map((N)=>[N,z.pricesVoucherPerUnit[N]||0]))}
+),z.history.length>P7)z.history.splice(0,z.history.length-P7)}
+function ZM($,Z){
+let z=($.history||[]).slice(-$M);
+if(!z.length)return 0;
+return z.reduce((N,M)=>N+(M.sold?.[Z]||0),0)/z.length}
+function g7($,Z,z,N){
+if(!x1.includes(Z))return{
+ok:!1,reason:"批发市场不经营这种商品"}
+;
+if(!U1($))return{
+ok:!1,reason:"尚未建成批发市场"}
+;
+let M=Math.round(Number(z)*N.precision.inventoryUnitsPerJin);
+if(!Number.isFinite(M)||M<=0)return{
+ok:!1,reason:"收储数量须大于0"}
+;
+let Q=Y1($,N),_=p4(Q,Z,M);
+if(_.units<=0)return{
+ok:!1,reason:"批发市场没有这种库存"}
+;
+return $.accounts.town[Z]=($.accounts.town[Z]||0)+_.units,n0($,Z,_.costVoucherUnits),V0($,{
+type:"wholesale_stockpile",transactionId:E0($),source:"wholesale_market",destination:"town",itemId:Z,quantityUnits:_.units,qeqUnits:0,reason:"镇库收储批发市场库存"}
+,N),{
+ok:!0,itemId:Z,movedJin:_.units/N.precision.inventoryUnitsPerJin}
+}
+function v7($,Z,z,N){
+if(!x1.includes(Z))return{
+ok:!1,reason:"批发市场不经营这种商品"}
+;
+let M=Math.round(Number(z)*N.precision.inventoryUnitsPerJin);
+if(!Number.isFinite(M)||M<=0)return{
+ok:!1,reason:"投放数量须大于0"}
+;
+let Q=g5($,Z,M,N,"镇库一次性投放至批发市场");
+if(!Q.ok)return Q;
+return{
+ok:!0,itemId:Z,movedJin:Q.movedUnits/N.precision.inventoryUnitsPerJin}
+}
+function zM($,Z){
+let z=Y1($,Z),N=Z.precision.inventoryUnitsPerJin,M=z.history||[];
+return Object.fromEntries(x1.map((Q)=>{
+let _=ZM(z,Q)/N,f=(z.inventory[Q]||0)/N;
+return[Q,{
+avgSoldJin:_,stockDays:_>0?f/_:null,townStockJin:($.accounts?.town?.[Q]||0)/N,inventory:M.map((O)=>(O.inventory?.[Q]||0)/N),price:M.map((O)=>O.price?.[Q]||0)}
+]}
+))}
+function r4($){
+return Object.fromEntries(Object.keys($.items).map((Z)=>[Z,0]))}
+function z2(){
+return{
+revenueVoucherUnits:0,cogsVoucherUnits:0,wageExpenseVoucherUnits:0,rentExpenseVoucherUnits:0,taxExpenseVoucherUnits:0,purchaseVoucherUnits:0,soldUnits:{
+}
+,purchasedUnits:{
+}
+,serviceUses:{
+}
+,customerCount:0,rejectedCustomerCount:0,profitVoucherUnits:0,distributedVoucherUnits:0}
+}
+function s4($){
+$.accounts||={
+day:z2(),year:z2(),cumulative:z2()}
+;
+for(let Z of["day","year","cumulative"])$.accounts[Z]||=z2(),$.accounts[Z].soldUnits||={
+}
+,$.accounts[Z].purchasedUnits||={
+}
+,$.accounts[Z].serviceUses||={
+}
+,$.accounts[Z].customerCount||=0,$.accounts[Z].rejectedCustomerCount||=0;
+return $.liabilities||={
+wageVoucherUnits:0,rentVoucherUnits:0,taxVoucherUnits:0,claimsVoucherUnits:{
+}
+}
+,$.liabilities.claimsVoucherUnits||={
+}
+,$.inventoryCostVoucherUnits||={
+}
+,$.settlement||={
+days:0,profitVoucherUnits:0,lossCarryVoucherUnits:0,lastTaxVoucherUnits:0,lastSettlementYear:0,lastSettlementDay:0}
+,$.retainedEarningsVoucherUnits??=0,$.cashVoucherUnits??=0,$.cashWheatUnits??=0,$.history||=[],$.plan||={
+lastAdjustedSerial:-1}
+,$.staffing||={
+clerkHiredSerials:[]}
+,$.staffing.clerkHiredSerials||=[],$}
+function w1($,Z){
+$.shops||={
+}
+,$.nextShopNumber||=1;
+for(let z of Object.values($.shops)){
+z.inventory||=r4(Z);
+for(let _ of Object.keys(Z.items))z.inventory[_]||=0;
+let N=Z.rules.shopTypes?.[z.typeId],M=N?.aliasOf?N.itemId:null;
+if(N?.aliasOf)z.typeId=N.aliasOf;
+let Q=Z.rules.shopTypes?.[z.typeId];
+z.primaryItemId||=z.itemId||M||Q?.itemIds?.[0]||null,z.itemId=z.primaryItemId,z.itemIds=Q?.kind==="retail"?[...Q.itemIds||[]]:[],z.serviceId=Q?.kind==="service"?Q.serviceId:null,s4(z)}
+return $.shops}
+function J2($,Z,z){
+for(let N of["day","year","cumulative"])N&&($.accounts[N][Z]=($.accounts[N][Z]||0)+z)}
+function I$($,Z,z,N){
+for(let M of["day","year","cumulative"])$.accounts[M][Z]||={
+}
+,$.accounts[M][Z][z]=($.accounts[M][Z][z]||0)+N}
+function g$($,Z){
+for(let z of["day","year","cumulative"])$.accounts[z].profitVoucherUnits=($.accounts[z].profitVoucherUnits||0)+Z;
+$.settlement.profitVoucherUnits=($.settlement.profitVoucherUnits||0)+Z,$.retainedEarningsVoucherUnits=($.retainedEarningsVoucherUnits||0)+Z}
+function h7($,Z){
+return $.employment.wageRates?.shop_clerks??Z.rules.shopClerkDefaultWageVoucher??10}
+function W2($,Z,z){
+let N=Number(Z?.clerkWageVoucher);
+return Number.isFinite(N)&&N>=0?N:h7($,z)}
+function c4($){
+return Math.round($*2)/2}
+function NM($,Z,z,N,M,Q,_,f){
+if(z.length<N||M<=0)return;
+let O=v5($,_),Y=Math.max(1,_.rules.shopWageAdjustIntervalDays??15);
+if(Number.isFinite(Z.plan.lastWageSerial)&&O-Z.plan.lastWageSerial<Y)return;
+Z.plan.lastWageSerial=O,f||=m2($,_);
+let G=$0(_),X=f.referenceWage,q=c4(f.targetShopWage),J=W2($,Z,_),F=Math.max(0.5,c4(X*(_.rules.shopWageStepPercent??10)/100)),W=c4(X*(_.rules.shopWageFloorPercent??50)/100),K=z.reduce((T,b)=>T+(b.profitVoucherUnits||0),0)/z.length/G,L=M+y1($,Z),x=K-M*F>0,R=K/Math.max(1,L)>=J*(_.rules.shopWageRaiseProfitShare??0.5),C=f.mood==="slack"?"失业多":f.mood==="tight"?"人手紧":"行情平稳",B=J,I=`${C}，工资维持`;
+if(K<0)B=Math.max(W,J-F),I=B<J?"亏损，减薪":"亏损，已到工资下限";
+else if(J<q&&x)B=Math.min(q,J+F),I=`${C}，向行情加薪`;
+else if(x&&R&&Q&&f.mood!=="slack")if(Z.plan.wageRaiseSkip=!Z.plan.wageRaiseSkip,!Z.plan.wageRaiseSkip)B=J+F,I="招不到人，加薪抢人";
+else I="招不到人，观望中";
+else if(J>q&&!Q&&f.mood!=="tight")B=Math.max(q,J-F),I=f.mood==="slack"?"失业多，压低工资":"高于行情，回调工资";
+else if(f.mood==="slack"&&J>q)B=Math.max(q,J-F),I="失业多，压低工资";
+Z.clerkWageVoucher=Math.max(W,B),Z.plan.wageDiagnosis=I,Z.plan.wageTarget=q}
+function o0($,Z){
+let z=$.rules.shopTypes?.[Z]||null;
+if(!z)return null;
+return z.aliasOf?$.rules.shopTypes?.[z.aliasOf]||null:z}
+function k2($,Z){
+let z=o0(Z,$?.typeId);
+return z?.kind==="retail"?[...z.itemIds||[]]:[]}
+function _5($,Z){
+return o0(Z,$?.typeId)?.kind==="service"}
+function m7($){
+return $.status!=="closed"&&$.status!=="liquidating"}
+function L1($){
+return`shop:${$.id}:merchant`}
+function C2($){
+return`shop:${$.id}:clerk`}
+function y1($,Z){
+return u0($,L1(Z))}
+function v$($,Z){
+let z=$.households?.byId?.[Z.ownerHouseholdId];
+return Boolean(z&&J0(z)&&(z.jobs?.[L1(Z)]||0)>=1&&y1($,Z)>0)}
+function S1($,Z){
+return u0($,C2(Z))}
+function v5($,Z){
+return(Math.max(1,$.year||1)-1)*(Z.rules.daysPerYear||365)+($.day||0)}
+function a4($,Z){
+return o0(Z,$?.typeId)?.id==="general"?Z.rules.generalStoreMaxClerks||50:Z.rules.shopMaxClerks||20}
+function u7($,Z,z){
+s4(Z);
+let N=S1($,Z),Q=v5($,z)-Math.max(0,z.rules.shopMinimumEmploymentDays||30);
+while(Z.staffing.clerkHiredSerials.length<N)Z.staffing.clerkHiredSerials.push(Q);
+if(Z.staffing.clerkHiredSerials.length>N)Z.staffing.clerkHiredSerials.length=N;
+return Z.staffing.clerkHiredSerials}
+function l7($,Z,z){
+let N=v5($,z),M=Math.max(0,z.rules.shopMinimumEmploymentDays||30);
+return u7($,Z,z).filter((Q)=>N-Q<M).length}
+function n4($,Z,z){
+if(!Z||Z.status!=="open"||!v$($,Z))return 0;
+if(o0(z,Z.typeId)?.id!=="general")return _5(Z,z)?h2($,Z,z):0;
+let M=S1($,Z)+y1($,Z);
+return Math.min(z.rules.generalStoreMaxDailyCustomers||1000,M*(z.rules.generalStoreCustomersPerStaff||20))}
+function y7($,Z){
+U0($,C2(Z),0,null)}
+function MM($,Z){
+return Object.values($.shops||{
+}
+).filter((z)=>z.buildingId===Z&&m7(z))}
+function QM($){
+return Math.max(0,($?.level||1)*2)}
+function g0($,Z){
+w1($,Z);
+for(let z of Object.values($.shops||{
+}
+)){
+if(z.status==="closed"||z.status==="liquidating"){
+U0($,L1(z),0,null),y7($,z);
+continue}
+let N=$.households?.byId?.[z.ownerHouseholdId],M=N?.jobs?.[L1(z)]||0;
+if(!N||!J0(N)||M<1){
+if(N&&M>0)D2($,N.id,L1(z),0,null);
+y7($,z),z.status="paused",z.statusReason="商人缺位，店员已遣散"}
+else if(z.status==="paused")z.status="open",z.statusReason="准备营业"}
+return $.shops}
+function _M($,Z){
+let z=Z.rules.householdLiving?.difficultPerCapitaVoucher??30;
+return Math.round(f0($)*z*$0(Z))}
+function fM($,Z,z=null){
+let N=Math.round((Z.rules.shopMerchantStartupVoucher||120)*$0(Z)),M=m($).filter((Q)=>{
+if(!J0(Q)||P1(Q)<=0)return!1;
+let _=D0($,Q,Z,Z.rules.householdFoodReserveDays??30);
+if(B0($,`household:${Q.id}`)+l0(_,Z,"floor")<N+_M(Q,Z))return!1;
+return A2($,`household:${Q.id}`,F0($,N),Z,{
+maxWheatUnits:_}
+).full}
+).sort((Q,_)=>P0($,`household:${_.id}`,Z)-P0($,`household:${Q.id}`,Z)||Q.id.localeCompare(_.id));
+if(z)return M.find((Q)=>Q.id===z)||null;
+return M[0]||null}
+function p7($,Z,z,N,M=null){
+w1($,N);
+let Q=$.buildings.find((K)=>K.id===Z);
+if(!Q||Q.typeId!=="commercial_street")return{
+ok:!1,reason:"请选择已建成的商业街"}
+;
+let _=N.rules.shopTypes?.[z],f=_?.aliasOf||z,O=o0(N,f);
+if(!O)return{
+ok:!1,reason:"不支持这种店铺"}
+;
+if(MM($,Z).length>=QM(Q))return{
+ok:!1,reason:"商业街没有空铺"}
+;
+let G=fM($,N,M);
+if(!G)return{
+ok:!1,reason:"没有同时满足生活储备、启动资金和空闲劳动力的家庭"}
+;
+if(P1(G)<=0)return{
+ok:!1,reason:"该家庭没有可开店的劳动力"}
+;
+let X=`shop-${$.nextShopNumber++}`,q=Math.round((N.rules.shopMerchantStartupVoucher||120)*$0(N)),J={
+id:X,name:`${G.name}${O.name}`,buildingId:Z,typeId:f,primaryItemId:_?.itemId||O.itemIds?.[0]||null,itemId:_?.itemId||O.itemIds?.[0]||null,itemIds:O.kind==="retail"?[...O.itemIds||[]]:[],serviceId:O.kind==="service"?O.serviceId:null,ownerHouseholdId:G.id,cashVoucherUnits:0,cashWheatUnits:0,inventory:r4(N),inventoryCostVoucherUnits:{
+}
+,status:"open",statusReason:"准备营业",openedYear:$.year,openedDay:$.day+1,badDays:0,accounts:{
+day:z2(),year:z2(),cumulative:z2()}
+,liabilities:{
+wageVoucherUnits:0,rentVoucherUnits:0,taxVoucherUnits:0}
+,settlement:{
+days:0,profitVoucherUnits:0,lossCarryVoucherUnits:0,lastTaxVoucherUnits:0,lastSettlementYear:0,lastSettlementDay:0}
+,retainedEarningsVoucherUnits:0,initialCapital:{
+valueUnits:q,voucherValueUnits:0,wheatValueUnits:0}
+}
+;
+$.shops[X]=J;
+let F=x0($,`household:${G.id}`,`shop:${X}`,F0($,q),N,"shop_capital",`${G.name}投入开店资金`,{
+requireFull:!0,maxWheatUnits:D0($,G,N,N.rules.householdFoodReserveDays??30)}
+);
+if(!F.ok)return delete $.shops[X],F;
+J.initialCapital.voucherValueUnits=F.voucherPaidValueUnits||0,J.initialCapital.wheatValueUnits=F.wheatPaidValueUnits||0;
+let W=D2($,G.id,`shop:${X}:merchant`,1,N);
+if(!W.ok)return x0($,`shop:${X}`,`household:${G.id}`,{
+valueUnits:q,voucherValueUnits:F.voucherPaidValueUnits||0,wheatValueUnits:F.wheatPaidValueUnits||0}
+,N,"shop_capital_refund","开店失败退回资金",{
+requireFull:!0,allowVoucherFallback:!1,countsForReform:!1}
+),delete $.shops[X],W;
+return G.shopIds||=[],G.shopIds.push(X),g0($,N),q0($,`${G.name}在商业街开出${O.name}。`,N,{
+day:$.day+1}
+),{
+ok:!0,shopId:X,householdId:G.id,startupVoucher:q/$0(N)}
+}
+function d7($,Z,z,N){
+let M=w1($,N)[Z];
+if(!M)return{
+ok:!1,reason:"店铺不存在"}
+;
+if(g0($,N),M.status!=="open")return{
+ok:!1,reason:"店铺未营业"}
+;
+let Q=N.rules.shopMaxMerchants||4,_=Math.max(1,Math.min(Q,Math.floor(Number(z)||1))),f=y1($,M),O=U0($,L1(M),_,N,{
+type:"shop",id:Z}
+);
+if(!O.ok)return U0($,L1(M),f,N,{
+type:"shop",id:Z}
+),{
+ok:!1,reason:`还缺${Math.max(0,_-O.assigned)}名可用劳动力`}
+;
+let Y=$.households?.byId?.[M.ownerHouseholdId];
+if(Y&&(Y.jobs?.[L1(M)]||0)<1){
+let G=f1($,L1(M)).find((q)=>q.householdId!==Y.id&&q.count>0);
+if(G)D2($,G.householdId,L1(M),G.count-1,null);
+if(!D2($,Y.id,L1(M),1,N).ok)return U0($,L1(M),f,N,{
+type:"shop",id:Z}
+),{
+ok:!1,reason:"业主必须保留至少1名商人岗位"}
+}
+return g0($,N),{
+ok:!0,assigned:y1($,M)}
+}
+function b$($,Z,z,N){
+let M=w1($,N)[Z];
+if(!M)return{
+ok:!1,reason:"店铺不存在"}
+;
+g0($,N);
+let Q=a4(M,N),_=Math.max(0,Math.min(Q,Math.floor(Number(z)||0)));
+if(M.status!=="open"){
+if(M.status==="paused"&&_===0)return{
+ok:!0,assigned:0,paused:!0}
+;
+return{
+ok:!1,reason:M.status==="paused"?"商人缺位，店员已遣散":"店铺未营业"}
+}
+let f=S1($,M),O=u7($,M,N).slice();
+if(_<f){
+let X=l7($,M,N);
+if(_<X)return{
+ok:!1,assigned:f,reason:`有${X}名店员工作未满${N.rules.shopMinimumEmploymentDays||30}天，暂不能解雇`}
+}
+let Y=U0($,C2(M),_,N,{
+type:"shop",id:Z}
+);
+if(!Y.ok)return U0($,C2(M),f,N,{
+type:"shop",id:Z}
+),{
+ok:!1,reason:`还缺${Math.max(0,_-Y.assigned)}名可用劳动力`}
+;
+let G=S1($,M);
+if(G>f)for(let X=0;
+X<G-f;
+X+=1)O.push(v5($,N));
+else if(G<f){
+let X=v5($,N),q=Math.max(0,N.rules.shopMinimumEmploymentDays||30),J=O.filter((W)=>X-W<q),F=O.filter((W)=>X-W>=q);
+F.splice(0,Math.min(F.length,f-G)),O.length=0,O.push(...J,...F)}
+return M.staffing.clerkHiredSerials=O.slice(0,G),g0($,N),{
+ok:!0,assigned:S1($,M)}
+}
+function f5($,Z,z){
+if(!Z||Z.status!=="open"||!v$($,Z)||_5(Z,z))return 0;
+if(o0(z,Z.typeId)?.id==="general"){
+let _=n4($,Z,z);
+return Math.round(_*(z.rules.foodPerPersonDay||2)*z.precision.inventoryUnitsPerJin)}
+let N=S1($,Z),Q=y1($,Z)*(z.rules.shopMerchantSalesCapacityJin||60)+N*(z.rules.shopClerkSalesCapacityJin||120);
+return Math.round(Q*z.precision.inventoryUnitsPerJin)}
+function h2($,Z,z){
+if(!Z||Z.status!=="open"||!v$($,Z))return 0;
+let N=o0(z,Z.typeId);
+if(N?.kind!=="service")return 0;
+let M=z.rules.serviceTypes?.[N.serviceId];
+if(!M)return 0;
+let Q=M.employeeOnlyCapacity?0:y1($,Z)*(M.merchantCapacity||0),_=Math.max(0,Math.floor(Q+S1($,Z)*(M.clerkCapacity||0)));
+return Number.isFinite(M.maxCapacity)?Math.min(Math.max(0,M.maxCapacity),_):_}
+function OM($,Z,z){
+let N=z.rules.shopWorkingCapitalReserveDays||7,M=o0(z,Z.typeId);
+if(M?.kind==="service"){
+let f=z.rules.serviceTypes?.[M.serviceId];
+return Math.round(h2($,Z,z)*(f?.priceVoucher||0)*N*$0(z)*0.25)}
+let Q=k2(Z,z);
+if(!Q.length)return 0;
+let _=Q.reduce((f,O)=>f+(y2($,Z.typeId,z,O)?.wholesaleVoucherPerUnit||0),0)/Q.length;
+return Math.round(f5($,Z,z)/z.precision.inventoryUnitsPerJin*_*N*$0(z))}
+function c7($,Z,z){
+let N=$.inventory[Z]||0,M=$.inventoryCostVoucherUnits[Z]||0,Q=z===N?M:N>0?Math.floor(M*z/N):0;
+return $.inventoryCostVoucherUnits[Z]=Math.max(0,M-Q),Q}
+function i7($,Z,z,N){
+let M=$.shops?.[Z];
+if(!M||M.status!=="open"||!(z>0))return 0;
+let Q=Math.max(1,(N.rules.foodPerPersonDay||2)*N.precision.inventoryUnitsPerJin),_=Math.ceil(z/Q);
+for(let f of["day","year","cumulative"])M.accounts[f].rejectedCustomerCount=(M.accounts[f].rejectedCustomerCount||0)+_;
+return _}
+function r7($,Z,z,N,M,Q="店铺零售",_=null){
+let f=w1($,M)[Z];
+if(!f||f.status!=="open")return{
+ok:!1,reason:f?.status==="paused"?"商人缺位，店铺已暂停":"店铺未营业"}
+;
+let O=k2(f,M),Y=_||f.primaryItemId||O[0];
+if(!O.includes(Y))return{
+ok:!1,reason:"该店不经营这种商品"}
+;
+let G=y2($,f.typeId,M,Y),X=Math.min(Math.max(0,Math.floor(N)),f.inventory[Y]||0);
+if(X<=0)return{
+ok:!1,reason:"店铺缺货"}
+;
+let q=n4($,f,M);
+if((f.accounts.day.customerCount||0)>=q){
+for(let I of["day","year","cumulative"])f.accounts[I].rejectedCustomerCount=(f.accounts[I].rejectedCustomerCount||0)+1;
+return{
+ok:!1,reason:"今日客流接待能力已满"}
+}
+let J=Object.values(f.accounts.day.soldUnits||{
+}
+).reduce((I,T)=>I+Math.max(0,T||0),0),F=Math.max(0,f5($,f,M)-J),W=Math.min(X,F);
+if(W<=0)return{
+ok:!1,reason:"今日接待能力已满"}
+;
+let K=Math.round(W/M.precision.inventoryUnitsPerJin*G.retailVoucherPerUnit*$0(M)),L=typeof z==="string"&&z.startsWith("household:")?z.slice(10):null,x=L?$.households?.byId?.[L]:null,R=x?D0($,x,M,M.rules.basicCommerceFoodReserveDays??30):void 0,C=x0($,z,`shop:${Z}`,F0($,K),M,"shop_retail_sale",Q,{
+requireFull:!0,...R===void 0?{
+}
+:{
+maxWheatUnits:R}
+}
+);
+if(!C.ok)return C;
+let B=c7(f,Y,W);
+f.inventory[Y]-=W,J2(f,"revenueVoucherUnits",K),J2(f,"cogsVoucherUnits",B),I$(f,"soldUnits",Y,W);
+for(let I of["day","year","cumulative"])f.accounts[I].customerCount=(f.accounts[I].customerCount||0)+1;
+return g$(f,K-B),{
+ok:!0,itemId:Y,quantityUnits:W,paidVoucherUnits:K,paidValueUnits:K,cogsVoucherUnits:B,transactionId:C.transactionId}
+}
+function s7($,Z,z,N,M){
+let Q=w1($,M)[Z],_=o0(M,Q?.typeId);
+if(!Q||Q.status!=="open"||_?.kind!=="service"||_.serviceId!==N)return{
+ok:!1,reason:"服务店当前不可用"}
+;
+let f=M.rules.serviceTypes?.[N];
+if(!f)return{
+ok:!1,reason:"服务配置不存在"}
+;
+if((Q.accounts.day.serviceUses?.[N]||0)>=h2($,Q,M))return{
+ok:!1,reason:"今日接待能力已满"}
+;
+let Y=$.households?.byId?.[z];
+if(!Y||!J0(Y))return{
+ok:!1,reason:"家庭不存在"}
+;
+let G=$.services?.pricesVoucherPerUse?.[N],X=Math.round(Math.max(0,Number.isFinite(G)?G:f.priceVoucher||0)*$0(M)),q=f.consumables||[];
+for(let K of q){
+let L=Math.round(Math.max(0,K.quantity||0)*M.precision.inventoryUnitsPerJin);
+if((Q.inventory?.[K.itemId]||0)<L)return{
+ok:!1,reason:`缺${M.items[K.itemId]?.name||K.itemId}`}
+}
+let J=D0($,Y,M,M.rules.householdFoodReserveDays??30),F=x0($,`household:${z}`,`shop:${Z}`,F0($,X),M,"shop_service_sale",`${Y.name}购买${f.name}`,{
+requireFull:!0,maxWheatUnits:J}
+);
+if(!F.ok)return F;
+let W=0;
+for(let K of q){
+let L=Math.round(Math.max(0,K.quantity||0)*M.precision.inventoryUnitsPerJin);
+W+=c7(Q,K.itemId,L),Q.inventory[K.itemId]-=L,I$(Q,"soldUnits",K.itemId,L)}
+J2(Q,"revenueVoucherUnits",X),J2(Q,"cogsVoucherUnits",W),I$(Q,"serviceUses",N,1);
+for(let K of["day","year","cumulative"])Q.accounts[K].customerCount=(Q.accounts[K].customerCount||0)+1;
+return g$(Q,X-W),{
+ok:!0,paidValueUnits:X,cogsVoucherUnits:W,transactionId:F.transactionId}
+}
+function XM($,Z,z,N){
+let M=N.precision.inventoryUnitsPerJin,Q=$0(N),_=Math.max(0,P0($,`shop:${Z.id}`,N)),f=$.wholesaleMarket?.inventory||{
+}
+,O=z.map((X)=>{
+X={
+...X,units:Math.min(X.units,Math.max(0,f[X.itemId]||0))}
+;
+let q=T2($,X.itemId,N)*Q/M;
+return{
+...X,unitValue:q,value:X.units*q}
+}
+),Y=O.reduce((X,q)=>X+q.value,0),G=Y>_&&Y>0?_/Y:1;
+return Object.fromEntries(O.map((X)=>[X.itemId,G>=1?X.units:Math.floor(X.units*G)]))}
+function GM($,Z,z){
+if(Z.status!=="open")return{
+purchasedUnits:0,purchasedByItem:{
+}
+,reason:Z.status==="paused"?"暂停经营":"已停业"}
+;
+let N=z.precision.inventoryUnitsPerJin,M=o0(z,Z.typeId),Q=[];
+if(M?.kind==="retail"){
+let G=k2(Z,z),X=f5($,Z,z),q=Z.history||[],J=Math.max(1,z.rules.shopInventoryTargetDays||2);
+for(let F of G){
+let W=q.length?q.reduce((R,C)=>R+Math.max(0,C.soldUnitsByItem?.[F]||0),0)/Math.max(1,Math.min(q.length,z.rules.operatingObservationDays||7)):0,L=q.some((R)=>Math.max(0,R.soldUnitsByItem?.[F]||0)>0)?0:Math.floor(X/Math.max(1,G.length)*0.5),x=Math.max(W,L);
+Q.push({
+itemId:F,targetUnits:Math.max(L,Math.round(x*J))}
+)}
+}
+else if(M?.kind==="service"){
+let G=z.rules.serviceTypes?.[M.serviceId];
+for(let X of G?.consumables||[])Q.push({
+itemId:X.itemId,targetUnits:Math.round(h2($,Z,z)*Math.max(0,X.quantity||0)*N)}
+)}
+if(!Q.length)return{
+purchasedUnits:0,purchasedByItem:{
+}
+,reason:M?.kind==="service"?"服务无需原料":"无经营商品"}
+;
+let _=XM($,Z,Q.map((G)=>({
+itemId:G.itemId,units:Math.max(0,G.targetUnits-(Z.inventory[G.itemId]||0))}
+)),z),f={
+}
+,O=0,Y=!1;
+for(let G of Q){
+if(Math.max(0,G.targetUnits-(Z.inventory[G.itemId]||0))<=0){
+f[G.itemId]=0;
+continue}
+Y=!0;
+let q=_[G.itemId]||0;
+if(q<=0){
+f[G.itemId]=0;
+continue}
+let J=Q5($,`shop:${Z.id}`,G.itemId,q,z,`${Z.name}从批发市场进货`),F=J.boughtUnits||0;
+if(F>0)Z.inventory[G.itemId]=(Z.inventory[G.itemId]||0)+F,Z.inventoryCostVoucherUnits[G.itemId]=(Z.inventoryCostVoucherUnits[G.itemId]||0)+(J.paidVoucherUnits||0),J2(Z,"purchaseVoucherUnits",J.paidVoucherUnits||0),I$(Z,"purchasedUnits",G.itemId,F);
+f[G.itemId]=F,O+=F}
+if(Y&&O<=0)Z.statusReason=!Q.some((G)=>($.wholesaleMarket?.inventory?.[G.itemId]||0)>0)?"批发市场缺货":"缺资金";
+return{
+purchasedUnits:O,purchasedByItem:f,reason:!Y?"库存充足":O>0?"已从批发市场补货":Z.statusReason}
+}
+function a7($,Z){
+Z.liabilities||={
+}
+,Z.liabilities.claimsVoucherUnits||={
+}
+,Z.liabilities.claimsPayment||={
+}
+;
+let z=V1(Z.liabilities);
+Z.liabilities.legacyUnattributedWageVoucherUnits??=Math.max(0,(Z.liabilities.wageVoucherUnits||0)-z);
+let N=Math.max(0,(Z.liabilities.wageVoucherUnits||0)-z);
+if(N>0){
+let M=f1($,L1(Z)).concat(f1($,C2(Z))),Q=q2($,Z.liabilities,N,M);
+Z.liabilities.legacyUnattributedWageVoucherUnits=Math.max(0,N-Q.attributed)}
+else Z.liabilities.legacyUnattributedWageVoucherUnits=0;
+if(Z.liabilities.legacyUnattributedWageVoucherUnits>0){
+let M=Z.liabilities.legacyUnattributedWageVoucherUnits;
+Z.liabilities.legacyUnattributedWagePaymentClaim={
+valueUnits:M,wheatValueUnits:0,voucherValueUnits:M}
+}
+else delete Z.liabilities.legacyUnattributedWagePaymentClaim;
+Z.liabilities.wageVoucherUnits=V1(Z.liabilities)+(Z.liabilities.legacyUnattributedWageVoucherUnits||0)}
+function YM($,Z,z){
+a7($,Z);
+let N=$0(z),M=$.employment.wageRates?.merchants??z.rules.shopMerchantDefaultWageVoucher??10,Q=W2($,Z,z),_=f1($,L1(Z)),f=f1($,C2(Z)),O=Math.round(_.reduce((q,J)=>q+J.count,0)*M*N),Y=Math.round(f.reduce((q,J)=>q+J.count,0)*Q*N),G=O+Y,X=Math.round(($.policy?.shopRentVoucher??z.rules.shopRentDefaultVoucher??1)*N);
+return w2($,Z.liabilities,_,O,z),w2($,Z.liabilities,f,Y,z),Z.liabilities.wageVoucherUnits=V1(Z.liabilities)+(Z.liabilities.legacyUnattributedWageVoucherUnits||0),Z.liabilities.rentVoucherUnits+=X,Z.liabilities.rentPaymentClaim=H2(Z.liabilities.rentPaymentClaim,F0($,X)),J2(Z,"wageExpenseVoucherUnits",G),J2(Z,"rentExpenseVoucherUnits",X),g$(Z,-(G+X)),{
+wage:G,rent:X}
+}
+function w7($,Z,z,N,M,Q,_){
+let f=Z.liabilities[z]||0;
+if(f<=0)return 0;
+let O=z==="rentVoucherUnits"?"rentPaymentClaim":"taxPaymentClaim",Y=Z2(Z.liabilities[O]||f,$),G=x0($,`shop:${Z.id}`,N,Y,M,Q,_,{
+requireFull:!1,trackUnpaid:!0,shortfallKey:`${Q}:${Z.id}`}
+),X=G.paidValueUnits||0;
+return Z.liabilities[z]=Math.max(0,f-X),Z.liabilities[O]=G.remainingComposition,X}
+function P2($,Z,z){
+a7($,Z);
+let N=Boolean($._deferHouseholdSync);
+if($._deferHouseholdSync=!0,b5($,Z.liabilities,`shop:${Z.id}`,z,"shop_wage_payment",`${Z.name}偿付具体债权家庭员工工资`,{
+shortfallPrefix:`shop-wage:${Z.id}`}
+),$._deferHouseholdSync=N,!N)M0($,z);
+Z.liabilities.wageVoucherUnits=V1(Z.liabilities)+(Z.liabilities.legacyUnattributedWageVoucherUnits||0),w7($,Z,"rentVoucherUnits","town",z,"shop_rent_payment",`${Z.name}支付店租`),w7($,Z,"taxVoucherUnits","town",z,"shop_profit_tax_payment",`${Z.name}缴纳商业利润税`)}
+function n7($,Z,z,N=!1,M={
+}
+){
+let Q=z.rules.shopSettlementDays||30;
+if(!N&&Z.settlement.days<Q)return{
+settled:!1}
+;
+let _=Z.settlement.profitVoucherUnits||0,f=_+(Z.settlement.lossCarryVoucherUnits||0),O=0;
+if(f>0)O=Math.floor(f*Math.max(0,Math.min(z.rules.shopProfitTaxMaximumPercent||80,$.policy?.shopProfitTaxPercent??z.rules.shopProfitTaxDefaultPercent??10))/100),Z.settlement.lossCarryVoucherUnits=0;
+else Z.settlement.lossCarryVoucherUnits=f;
+if(O>0)Z.liabilities.taxVoucherUnits+=O,Z.liabilities.taxPaymentClaim=H2(Z.liabilities.taxPaymentClaim,F0($,O)),J2(Z,"taxExpenseVoucherUnits",O),g$(Z,-O);
+Z.settlement.lastTaxVoucherUnits=O,Z.settlement.lastSettlementYear=$.year,Z.settlement.lastSettlementDay=$.day+1,Z.settlement.days=0,Z.settlement.profitVoucherUnits=0,P2($,Z,z);
+let Y=M.allowDistribution===!1?0:OM($,Z,z),G=(Z.liabilities.wageVoucherUnits||0)+(Z.liabilities.rentVoucherUnits||0)+(Z.liabilities.taxVoucherUnits||0),X=M.allowDistribution===!1?0:Math.max(0,P0($,`shop:${Z.id}`,z)-Y-G),q=M.allowDistribution===!1?0:j1($,`shop:${Z.id}`,Math.min(Math.max(0,Z.retainedEarningsVoucherUnits||0),X),z),J=0;
+if(q>0){
+if(x0($,`shop:${Z.id}`,`household:${Z.ownerHouseholdId}`,F0($,q),z,"shop_profit_distribution",`${Z.name}向商人家庭分配利润`,{
+requireFull:!0}
+).ok)J=q,Z.retainedEarningsVoucherUnits-=J,J2(Z,"distributedVoucherUnits",J)}
+return{
+settled:!0,periodProfitVoucherUnits:_,taxVoucherUnits:O,lossCarryVoucherUnits:Z.settlement.lossCarryVoucherUnits,distributedVoucherUnits:J,retainedEarningsVoucherUnits:Z.retainedEarningsVoucherUnits,reserveVoucherUnits:Y}
+}
+function qM($,Z,z){
+let N=($.year-1)*(z.rules.daysPerYear||365)+$.day;
+if(N<=0||Z.plan?.lastArchivedSerial===N)return;
+let M={
+...Z.accounts?.day?.soldUnits||{
+}
+}
+,Q=Object.values(M).reduce((Y,G)=>Y+Math.max(0,G||0),0),_={
+...Z.accounts?.day?.serviceUses||{
+}
+}
+,f={
+serial:N,soldUnits:Q,soldUnitsByItem:M,serviceUses:_,customerCount:Z.accounts?.day?.customerCount||0,rejectedCustomerCount:Z.accounts?.day?.rejectedCustomerCount||0,revenueVoucherUnits:Z.accounts?.day?.revenueVoucherUnits||0,profitVoucherUnits:Z.accounts?.day?.profitVoucherUnits||0}
+;
+Z.history||=[],Z.history.push(f);
+let O=Math.max(14,(z.rules.operatingObservationDays||7)*4);
+if(Z.history.length>O)Z.history.splice(0,Z.history.length-O);
+Z.plan||={
+}
+,Z.plan.lastArchivedSerial=N}
+function o7($,Z){
+w1($,Z);
+for(let z of Object.values($.shops))if(z.status==="open"||z.status==="paused")qM($,z,Z),z.accounts.day=z2()}
+function JM($,Z,z,N=null){
+let M=($.year-1)*(z.rules.daysPerYear||365)+$.day,Q=Math.max(1,z.rules.operatingPlanIntervalDays||3);
+if(Z.plan||={
+lastAdjustedSerial:-1}
+,Z.plan.lastAdjustedSerial>=0&&M-Z.plan.lastAdjustedSerial<Q)return;
+Z.plan.lastAdjustedSerial=M;
+let _=Math.max(1,z.rules.operatingObservationDays||7),f=(Z.history||[]).slice(-_),O=S1($,Z),Y=W2($,Z,z),G=O,X=0;
+if(_5(Z,z)){
+let J=o0(z,Z.typeId),F=z.rules.serviceTypes?.[J?.serviceId];
+if(!F)return;
+let W=f.length?f.reduce((y,j)=>y+Math.max(0,j.serviceUses?.[J.serviceId]||0),0)/f.length:0,K=[...($.services?.history||[]).slice(-_),$.services?.day||{
+}
+],L=K.reduce((y,j)=>y+Math.max(0,j.capacityUnmetUses?.[J.serviceId]||0),0)/Math.max(1,K.length),x=K.reduce((y,j)=>y+Math.max(0,j.unaffordableUses?.[J.serviceId]||0),0)/Math.max(1,K.length),R=Math.max(1,Object.values($.shops||{
+}
+).filter((y)=>y.status==="open"&&o0(z,y.typeId)?.serviceId===J.serviceId).length);
+X=W+L/R;
+let C=F.employeeOnlyCapacity?0:Math.max(0,F.merchantCapacity||0)*y1($,Z),B=Math.max(1,F.clerkCapacity||1),I=C+O*B,T=$.services?.pricesVoucherPerUse?.[J.serviceId],b=B*Math.max(0,Number.isFinite(T)?T:F.priceVoucher||0);
+if(Z.plan.staffingDiagnosis=L>0?b>Y?"容量不足，可增员":"增员后不盈利":x>0?"居民支付不起":"需求不足",f.length>=_){
+if(b>Y&&L>0&&X>I*(z.rules.shopClerkUtilizationHireThreshold||0.85))G=O+1;
+let y=Math.max(C,I-B);
+if(O>0&&L<=0&&X<y*(z.rules.shopClerkUtilizationReleaseThreshold||0.45))G=O-1}
+Z.plan.expectedDailyServiceUses=X}
+else{
+let J=k2(Z,z);
+if(!J.length)return;
+let F=f.length?f.reduce((L,x)=>L+Math.max(0,x.soldUnits||0),0)/f.length:0,W=f.length?f.reduce((L,x)=>L+Math.max(0,x.customerCount||0),0)/f.length:0,K=f.length?f.reduce((L,x)=>L+Math.max(0,x.rejectedCustomerCount||0),0)/f.length:0;
+if(X=W+K,o0(z,Z.typeId)?.id==="general"){
+let L=Math.max(1,z.rules.generalStoreCustomersPerStaff||20),x=Math.max(0,Math.ceil(Math.min(z.rules.generalStoreMaxDailyCustomers||1000,X)/L)-y1($,Z)),R={
+}
+;
+for(let k of f)for(let[S,w]of Object.entries(k.soldUnitsByItem||{
+}
+))R[S]=(R[S]||0)+Math.max(0,w||0);
+let C=Object.values(R).reduce((k,S)=>k+S,0),B=(z.rules.generalStoreMarkupPercent??20)/100,I=C>0?Object.entries(R).reduce((k,[S,w])=>k+w*T2($,S,z),0)/C:J.reduce((k,S)=>k+T2($,S,z),0)/J.length,T=L*(z.rules.foodPerPersonDay||2),b=T*I*B,y=P0($,`shop:${Z.id}`,z)/$0(z),j=$.employment.wageRates?.merchants??z.rules.shopMerchantDefaultWageVoucher??10,l=O+1+y1($,Z),e=(O+1)*Y+y1($,Z)*j,u=y>=l*T*I+e*3,H=b>Y;
+if(f.length>=_&&K>0&&x>O&&H&&u)G=Math.min(O+1,x);
+if(f.length>=_&&O>0&&K<=0&&x<O)G=O-1;
+Z.plan.expectedDailyCustomers=X,Z.plan.staffingDiagnosis=K>0?!H?"客流超载，但增员不盈利":!u?"客流超载，资金不足暂不增员":"客流超载，可增员":x<O?"客流下降，满30日后可减员":"客流与用工匹配"}
+else Z.plan.expectedDailySalesUnits=F}
+if(G=Math.max(l7($,Z,z),Math.min(a4(Z,z),G)),G!==O)b$($,Z.id,G,z);
+let q=S1($,Z);
+if(G>q&&N?.mood==="tight"){
+if(y$($,W2($,Z,z),G-q,z,{
+toKey:C2(Z),toLabel:Z.name,excludeKeys:[L1(Z)]}
+)>0)b$($,Z.id,G,z)}
+Z.plan.targetClerks=G,NM($,Z,f,_,O,G>S1($,Z),z,N)}
+function e7($,Z){
+w1($,Z),g0($,Z);
+let z=Object.values($.shops).filter((_)=>_.status==="open"),N=Object.values($.shops).filter((_)=>_.status==="paused"),M=z.length?m2($,Z):null;
+for(let _ of z)JM($,_,Z,M);
+g0($,Z);
+let Q=[];
+for(let _ of z){
+s4(_),_.settlement.days+=1,YM($,_,Z),P2($,_,Z);
+let f=GM($,_,Z);
+Q.push({
+shopId:_.id,procurement:f}
+)}
+for(let _ of N)P2($,_,Z),Q.push({
+shopId:_.id,procurement:{
+purchasedUnits:0,reason:"暂停经营"}
+}
+);
+return Q}
+function t7($,Z,z=!1){
+let N=[];
+for(let M of Object.values(w1($,Z)).filter((Q)=>Q.status==="open")){
+P2($,M,Z);
+let Q=Object.values(M.accounts.day.soldUnits||{
+}
+).reduce((q,J)=>q+J,0),_=Object.values(M.accounts.day.serviceUses||{
+}
+).reduce((q,J)=>q+J,0),f=Q+_,O=(M.liabilities.wageVoucherUnits||0)+(M.liabilities.rentVoucherUnits||0)+(M.liabilities.taxVoucherUnits||0),Y=k2(M,Z).reduce((q,J)=>q+(M.inventory[J]||0),0),G=_5(M,Z)?!1:Y<=0;
+if(f<=0&&(G||P0($,`shop:${M.id}`,Z)<=0||O>0))M.badDays=(M.badDays||0)+1;
+else if(f>0||O<=0)M.badDays=0;
+let X=n7($,M,Z,z);
+if((M.liabilities.wageVoucherUnits||0)>0)M.statusReason="欠薪";
+else if(P0($,`shop:${M.id}`,Z)<=0&&O>0)M.statusReason="资金不足";
+else if(!_5(M,Z)&&Y<=0)M.statusReason="缺货";
+else if(f<=0)M.statusReason=_5(M,Z)?"需求不足":"销量不足";
+else M.statusReason="营业中";
+if(M.badDays>=(Z.rules.shopClosureBadDays||30)&&f<=0){
+let q=o4($,M.id,Z,!0);
+N.push({
+shopId:M.id,closed:!0,liquidationPending:q.liquidationPending,settlement:X}
+)}
+else N.push({
+shopId:M.id,closed:!1,settlement:X}
+)}
+for(let M of Object.values($.shops).filter((Q)=>Q.status==="paused"))P2($,M,Z),N.push({
+shopId:M.id,closed:!1,paused:!0,settlement:{
+settled:!1}
+}
+);
+return g0($,Z),N}
+function $8($,Z){
+for(let z of Object.values(w1($,Z)))z.accounts.year=z2()}
+function y5($){
+return($.liabilities.wageVoucherUnits||0)+($.liabilities.rentVoucherUnits||0)+($.liabilities.taxVoucherUnits||0)}
+function i4($,Z,z){
+if(Z.status!=="liquidating"||y5(Z)>0)return!1;
+let N=$.households?.byId?.[Z.ownerHouseholdId];
+if(!N)return!1;
+for(let[_,f]of Object.entries(Z.inventory||{
+}
+)){
+if(f<=0)continue;
+N.inventory[_]=(N.inventory[_]||0)+f,Z.inventory[_]=0,Z.inventoryCostVoucherUnits[_]=0}
+let M=l0(Z.cashWheatUnits||0,z,"floor"),Q=Z.cashVoucherUnits||0;
+if(M+Q>0){
+if(!x0($,`shop:${Z.id}`,`household:${N.id}`,{
+valueUnits:M+Q,wheatValueUnits:M,voucherValueUnits:Q}
+,z,"shop_close_distribution",`${Z.name}清算完成后返还剩余资金`,{
+requireFull:!0,allowVoucherFallback:!1,countsForReform:!1}
+).ok)return!1}
+return Z.status="closed",Z.statusReason="清算完成，已停业",M0($,z),!0}
+function o4($,Z,z,N=!1){
+let M=w1($,z)[Z];
+if(!M)return{
+ok:!1,reason:"店铺不存在"}
+;
+if(M.status==="closed")return{
+ok:!0,shopId:Z,alreadyClosed:!0,liquidationPending:!1}
+;
+if(M.status!=="liquidating")n7($,M,z,!0,{
+allowDistribution:!1}
+),U0($,L1(M),0,null),U0($,C2(M),0,null),M.status="liquidating",M.statusReason=N?"自动停业，待清算":"已停业，待清算",q0($,`${M.name}${N?"长期无法经营，进入清算":"停业并进入清算"}。`,z,{
+day:$.day+1}
+);
+P2($,M,z);
+let Q=i4($,M,z);
+return g0($,z),{
+ok:!0,shopId:Z,liquidationPending:!Q,status:M.status,liabilitiesVoucherUnits:y5(M)}
+}
+function Z8($,Z,z){
+let N=w1($,z)[Z];
+if(!N||N.status!=="liquidating")return{
+ok:!1,reason:"店铺当前不在清算中"}
+;
+let M=$.households?.byId?.[N.ownerHouseholdId];
+if(!M)return{
+ok:!1,reason:"店铺缺少业主家庭"}
+;
+P2($,N,z);
+let Q=y5(N);
+if(Q<=0){
+let G=i4($,N,z);
+return g0($,z),{
+ok:!0,contributedVoucherUnits:0,liquidationPending:!G,status:N.status}
+}
+let _=D0($,M,z,z.rules.householdFoodReserveDays??30),f=j1($,`household:${M.id}`,Q,z,{
+maxWheatUnits:_}
+);
+if(f<=0)return{
+ok:!1,reason:"业主家庭没有可用于清偿的支付资产"}
+;
+let O=x0($,`household:${M.id}`,`shop:${N.id}`,F0($,f),z,"shop_liquidation_capital",`${M.name}为${N.name}补资清偿`,{
+requireFull:!0,maxWheatUnits:_}
+);
+if(!O.ok)return O;
+P2($,N,z);
+let Y=i4($,N,z);
+return g0($,z),{
+ok:!0,contributedVoucherUnits:f,liquidationPending:!Y,status:N.status,liabilitiesVoucherUnits:y5(N)}
+}
+function WM($,Z){
+let z=Z.rules.shopTypes?.[$.typeId],N=z?.aliasOf||$.typeId,M=Z.rules.shopTypes?.[N],Q=$.primaryItemId||$.itemId||(z?.aliasOf?z.itemId:null)||M?.itemIds?.[0]||null,_=(f)=>({
+...z2(),...f||{
+}
+,soldUnits:{
+...f?.soldUnits||{
+}
+}
+,purchasedUnits:{
+...f?.purchasedUnits||{
+}
+}
+,serviceUses:{
+...f?.serviceUses||{
+}
+}
+,customerCount:f?.customerCount||0,rejectedCustomerCount:f?.rejectedCustomerCount||0}
+);
+return{
+...$,typeId:N,primaryItemId:Q,itemId:Q,itemIds:M?.kind==="retail"?[...M.itemIds||[]]:[],serviceId:M?.kind==="service"?M.serviceId:null,inventory:{
+...r4(Z),...$.inventory||{
+}
+}
+,accounts:{
+day:_($.accounts?.day),year:_($.accounts?.year),cumulative:_($.accounts?.cumulative)}
+,liabilities:{
+wageVoucherUnits:0,rentVoucherUnits:0,taxVoucherUnits:0,...$.liabilities||{
+}
+,claimsVoucherUnits:{
+...$.liabilities?.claimsVoucherUnits||{
+}
+}
+}
+,inventoryCostVoucherUnits:{
+...$.inventoryCostVoucherUnits||{
+}
+}
+,settlement:{
+days:0,profitVoucherUnits:0,lossCarryVoucherUnits:0,lastTaxVoucherUnits:0,lastSettlementYear:0,lastSettlementDay:0,...$.settlement||{
+}
+}
+,retainedEarningsVoucherUnits:$.retainedEarningsVoucherUnits||0,cashVoucherUnits:$.cashVoucherUnits||0,cashWheatUnits:$.cashWheatUnits||0,history:$.history||[],plan:$.plan||{
+lastAdjustedSerial:-1}
+}
+}
+function z8($,Z){
+let z=$0(Z),N=Z.precision.inventoryUnitsPerJin;
+return Object.values($.shops||{
+}
+).map((M)=>{
+let Q=WM(M,Z),_=o0(Z,Q.typeId),f=_?.kind||"retail",O=k2(Q,Z),Y=Q.primaryItemId||O[0]||null,G=Y?y2($,Q.typeId,Z,Y):null,X=[...Q.history||[],{
+soldUnits:Object.values(Q.accounts?.day?.soldUnits||{
+}
+).reduce((u,H)=>u+H,0),serviceUses:{
+...Q.accounts?.day?.serviceUses||{
+}
+}
+,customerCount:Q.accounts?.day?.customerCount||0,rejectedCustomerCount:Q.accounts?.day?.rejectedCustomerCount||0,profitVoucherUnits:Q.accounts?.day?.profitVoucherUnits||0}
+],q=Y2(X,"soldUnits",Z),J=Y2(X,"profitVoucherUnits",Z),F=Math.max(1,Z.rules.operatingObservationDays||7),W=X.slice(-F),K=W.reduce((u,H)=>u+Math.max(0,H.customerCount||0),0)/W.length,L=_?.serviceId||null,x=L?W.reduce((u,H)=>u+Math.max(0,H.serviceUses?.[L]||0),0)/W.length:0,R=L?Object.values($.services?.demandByHousehold||{
+}
+).reduce((u,H)=>u+Math.max(0,H?.[L]||0),0)/1000:0,C=L?[...($.services?.history||[]).slice(-F),$.services?.day||{
+}
+]:[],B=L?C.reduce((u,H)=>u+Math.max(0,H.attemptedUses?.[L]??H.demandedUses?.[L]??0),0)/Math.max(1,C.length):0,I=L?C.reduce((u,H)=>u+Math.max(0,H.servedUses?.[L]||0),0)/Math.max(1,C.length):0,T=L?C.reduce((u,H)=>u+Math.max(0,H.unaffordableUses?.[L]||0),0)/Math.max(1,C.length):0,b=L?C.reduce((u,H)=>u+Math.max(0,H.capacityUnmetUses?.[L]||0),0)/Math.max(1,C.length):0,y=O.map((u)=>{
+let H=y2($,Q.typeId,Z,u),k=Q.inventory[u]||0,S=W.reduce((w,s)=>w+Math.max(0,s.soldUnitsByItem?.[u]||0),0)/W.length;
+return{
+itemId:u,itemName:Z.items[u]?.name||u,stock:k/N,averageDailySales:S/N,inventoryDays:S>0?k/S:null,wholesaleVoucher:H?.wholesaleVoucherPerUnit||0,retailVoucher:H?.retailVoucherPerUnit||0}
+}
+),j=Y?Q.inventory[Y]||0:0,l=q>0?O.reduce((u,H)=>u+(Q.inventory[H]||0),0)/q:null,e=Q.statusReason||"营业中";
+if(Q.status==="liquidating")e=y5(Q)>0?"待清算":"待返还剩余资产";
+else if(Q.status==="paused")e="商人缺位，店员已遣散";
+else if((Q.liabilities.wageVoucherUnits||0)>0)e="欠薪";
+else if((Q.liabilities.rentVoucherUnits||0)>0||(Q.liabilities.taxVoucherUnits||0)>0)e="资金不足";
+else if(Number.isFinite(Q.plan?.targetClerks)&&Q.plan.targetClerks>S1($,Q))e="缺员工";
+else if(f==="service"&&x<=0)e="需求不足";
+else if(f==="retail"&&q<=0)e="暂无销量";
+else if(Number.isFinite(Q.plan?.targetClerks)&&Q.plan.targetClerks<S1($,Q))e="用工偏多";
+return{
+id:Q.id,name:Q.name,buildingId:Q.buildingId,typeId:Q.typeId,typeName:_?.name||Q.typeId,kind:f,itemId:Y,itemName:Y?Z.items[Y]?.name||Y:"",itemIds:O,inventoryRows:y,serviceId:L,serviceName:L?Z.rules.serviceTypes?.[L]?.name||L:null,ownerHouseholdId:Q.ownerHouseholdId,ownerName:$.households?.byId?.[Q.ownerHouseholdId]?.name||Q.ownerHouseholdId,merchantHouseholdId:Q.ownerHouseholdId,merchantOnDuty:v$($,Q),merchants:y1($,Q),maxMerchants:Z.rules.shopMaxMerchants||4,clerks:S1($,Q),maxClerks:a4(Q,Z),occupiesStreet:m7(Q),cashVoucher:Q.cashVoucherUnits/z,cashWheatJin:(Q.cashWheatUnits||0)/N,cashValue:P0($,`shop:${Q.id}`,Z)/z,inventory:j/N,capacityJin:f5($,Q,Z)/N,customerCapacity:n4($,Q,Z),serviceCapacity:L?h2($,Q,Z):0,wholesaleVoucher:G?.wholesaleVoucherPerUnit||0,retailVoucher:G?.retailVoucherPerUnit||0,status:Q.status,statusReason:e,averageDailySales:q/N,averageDailyServiceUses:x,recentCustomers:K,outstandingServiceUses:R,recentDemandUses:B,recentServedUses:I,recentUnaffordableUses:T,recentCapacityUnmetUses:b,serviceFulfillmentRate:B>0?I/B:null,nextClerkServiceCapacity:L?Math.max(0,Z.rules.serviceTypes?.[L]?.clerkCapacity||0):0,staffingDiagnosis:Q.plan?.staffingDiagnosis||null,averageDailyProfitVoucher:J/z,inventoryDays:l,revenueDayVoucher:(Q.accounts.day.revenueVoucherUnits||0)/z,cogsDayVoucher:(Q.accounts.day.cogsVoucherUnits||0)/z,wageDayVoucher:(Q.accounts.day.wageExpenseVoucherUnits||0)/z,clerkWageVoucher:W2($,Q,Z),townClerkWageVoucher:h7($,Z),wageDiagnosis:Q.plan?.wageDiagnosis||null,wageTarget:Number.isFinite(Q.plan?.wageTarget)?Q.plan.wageTarget:null,rentDayVoucher:(Q.accounts.day.rentExpenseVoucherUnits||0)/z,profitDayVoucher:(Q.accounts.day.profitVoucherUnits||0)/z,wageArrearsVoucher:(Q.liabilities.wageVoucherUnits||0)/z,rentArrearsVoucher:(Q.liabilities.rentVoucherUnits||0)/z,taxArrearsVoucher:(Q.liabilities.taxVoucherUnits||0)/z,lastTaxVoucher:(Q.settlement.lastTaxVoucherUnits||0)/z,lossCarryVoucher:(Q.settlement.lossCarryVoucherUnits||0)/z,retainedEarningsVoucher:(Q.retainedEarningsVoucherUnits||0)/z}
+}
+)}
+function u2($,Z){
+let z=Z.agriculture,N=u0($,z.farmerRoleId);
+if(N<=0)return 0;
+let M=z.acresPerFarmer*z.yieldPerAcre,Q=X1($,Z)*z.yieldPerAcre/N,_=$.policy?.agricultureTaxPercent??Z.rules.agricultureTaxDefaultPercent??40,f=Math.max(0,Math.min(1,1-_/100));
+return Math.min(M,Q)*f/Math.max(1,Z.rules.daysPerYear||365)}
+function w$($,Z,z,N=null){
+let M=Math.max(0,Z?.jobs?.[z.agriculture.farmerRoleId]||0);
+if(M<=0)return 0;
+let Q=N??u2($,z);
+return Math.floor(M*Q*W0($,z.agriculture.cropItemId,z)*$0(z))}
+function N8($,Z,z,N){
+if((Z?.jobs?.[z.agriculture.farmerRoleId]||0)<=0)return N;
+let M=Math.max(1,z.rules.daysPerYear||365),Q=((z.rules.growingDays-$.day)%M+M)%M;
+return N+Q}
+function FM($,Z,z){
+let N=$.employment?.wageRates||{
+}
+;
+if(!Z.includes("::")){
+let f=z.roles?.[Z],O=N[Z]??f?.wagePerWorkerDay??0;
+return O>0?O:null}
+let M=Z.split("::");
+if(M.length!==2)return null;
+let Q=$.buildings?.find((f)=>f.id===M[0]),_=z.buildings?.[Q?.typeId]?.jobs?.find((f)=>f.id===M[1]);
+if(!_||_.managedBy==="shops")return null;
+return N[_.id]??_.wagePerWorkerDay??0}
+function m2($,Z){
+let z=0,N=0,M=0,Q=0;
+for(let K of m($)){
+z+=i1(K),N+=y0(K);
+for(let[L,x]of Object.entries(K.jobs||{
+}
+)){
+if(!(x>0))continue;
+let R=FM($,L,Z);
+if(R===null)continue;
+M+=R*x,Q+=x}
+}
+let _=Math.max(0,z-N),O=($.employment?.wageRates||{
+}
+).builders??Z.roles?.builders?.wagePerWorkerDay??10,Y=Q>0?M/Q:O,G=z>0?_/z:0,X=Z.rules.laborUnemploymentHighPercent??8,q=Z.rules.laborUnemploymentLowPercent??5,J=G*100,F=J>X?"slack":J<q?"tight":"normal",W=F==="slack"?Z.rules.shopWageSlackFactor??0.85:F==="tight"?Z.rules.shopWageTightFactor??1.2:1;
+return{
+workers:z,employed:N,idle:_,unemploymentRate:G,referenceWage:Y,publicWorkers:Q,mood:F,targetShopWage:Y*W}
+}
+function Q8($,Z,z,N=null){
+if(N?.has(Z))return N.get(Z);
+let M=null,Q=$.employment?.wageRates||{
+}
+;
+if(Z.startsWith("shop:")){
+let _=Z.match(/^shop:(.+):clerk$/),f=_?$.shops?.[_[1]]:null;
+if(f)M=W2($,f,z)}
+else if(!Z.includes("::")){
+if(Z===z.agriculture.farmerRoleId)M=u2($,z)*W0($,z.agriculture.cropItemId,z);
+else if(Z!=="builders"&&z.roles?.[Z]){
+let _=Q[Z]??z.roles[Z].wagePerWorkerDay??0;
+M=_>0?_:null}
+}
+else{
+let[_,f,O]=Z.split("::"),Y=$.buildings?.find((X)=>X.id===_),G=z.buildings?.[Y?.typeId]?.jobs?.find((X)=>X.id===f);
+if(G&&G.managedBy!=="shops"){
+if(O==="listed"){
+let X=Object.values($.companies||{
+}
+).find((q)=>q.buildingId===_);
+M=Number.isFinite(X?.settings?.wagePerWorkerDay)?X.settings.wagePerWorkerDay:Q[G.id]??G.wagePerWorkerDay??0}
+else if(!O||O==="private")M=Q[G.id]??G.wagePerWorkerDay??0}
+}
+return N?.set(Z,M),M}
+function M8($,Z,z){
+if(Z===z.agriculture.farmerRoleId)return"农田";
+if(Z.startsWith("shop:"))return $.shops?.[Z.split(":")[1]]?.name||"店铺";
+if(!Z.includes("::"))return z.roles?.[Z]?.name||Z;
+let[N,M,Q]=Z.split("::"),_=$.buildings?.find((Y)=>Y.id===N),f=z.buildings?.[_?.typeId],O=f?.jobs?.find((Y)=>Y.id===M);
+return`${f?.name||"作坊"}${O?.name||""}${Q==="private"?"（民营）":Q==="listed"?"（企业）":""}`}
+function VM($){
+$.laborCompetition||={
+dayKey:null,day:{
+moves:0}
+,year:{
+moves:0}
+,recent:[]}
+;
+let Z=`${$.year}-${$.day}`;
+if($.laborCompetition.dayKey!==Z)$.laborCompetition.dayKey=Z,$.laborCompetition.day={
+moves:0}
+;
+return $.laborCompetition}
+function _8($){
+if($.laborCompetition)$.laborCompetition.year={
+moves:0}
+}
+function y$($,Z,z,N,{
+toKey:M,toLabel:Q,allowFarmers:_=!0,excludeKeys:f=[]}
+={
+}
+){
+if(!(z>0)||!(Z>0))return 0;
+let O=1+(N.rules.laborPoachPremiumPercent??15)/100,Y=Z/O,G=new Map,X=new Set([M,...f]),q=[];
+for(let W of m($))for(let[K,L]of Object.entries(W.jobs||{
+}
+)){
+if(!(L>0)||X.has(K))continue;
+if(!_&&K===N.agriculture.farmerRoleId)continue;
+let x=Q8($,K,N,G);
+if(x===null||x>Y)continue;
+q.push({
+household:W,key:K,wage:x,held:L}
+)}
+q.sort((W,K)=>W.wage-K.wage||W.household.id.localeCompare(K.household.id)||W.key.localeCompare(K.key));
+let J=0,F=VM($);
+for(let W of q){
+if(J>=z)break;
+let K=Math.min(W.held,z-J),L=C5($,W.household.id,W.key,K);
+if(L<=0)continue;
+J+=L;
+let x=M8($,W.key,N);
+F.recent.unshift({
+year:$.year,day:$.day+1,from:x,to:Q||M8($,M||"",N),count:L,fromWage:Math.round(W.wage*10)/10,toWage:Math.round(Z*10)/10}
+),F.recent.length=Math.min(F.recent.length,12),q0($,`人手紧：${Q||"高薪岗位"}以日薪${Math.round(Z*10)/10}从${x}挖走${L}人。`,N,{
+day:$.day+1,mergeKey:"labor-poach",mergeWindowDays:30,amount:L,mergedText:(R,C)=>`近来人手紧，高薪岗位 ${R} 次共挖走 ${C} 人（最近一次：${Q||"高薪岗位"}从${x}挖人）。`}
+)}
+return F.day.moves+=J,F.year.moves+=J,J}
+function f8($,Z){
+let z=new Map,N=[];
+for(let Q of m($))for(let[_,f]of Object.entries(Q.jobs||{
+}
+)){
+if(!(f>0)||_===Z.agriculture.farmerRoleId)continue;
+let O=Q8($,_,Z,z);
+if(O===null)continue;
+for(let Y=0;
+Y<f;
+Y+=1)N.push(O)}
+N.sort((Q,_)=>Q-_);
+let M=1+(Z.rules.laborPoachPremiumPercent??15)/100;
+return(Q)=>{
+let _=Q/M,f=0,O=N.length;
+while(f<O){
+let Y=f+O>>1;
+if(N[Y]<=_)f=Y+1;
+else O=Y}
+return f}
+}
+function h1($,Z){
+return $+"::"+Z}
+function G1($,Z){
+return $+"::"+Z+"::private"}
+function N1($,Z){
+return $+"::"+Z+"::listed"}
+function O0($,Z,z=null){
+return z?.jobCounts?z.jobCounts.get(Z)||0:u0($,Z)}
+function A0($){
+let Z={
+children:0,workers:0,elders:0,total:0,marriedCouples:0,marriedWomen:0}
+,z=0;
+for(let N of $.cohorts){
+let M=N.m+N.f;
+if(Z.total+=M,N.age<E1)Z.children+=M;
+else if(N.age<c1)Z.workers+=M;
+else Z.elders+=M;
+z+=N.marriedM,Z.marriedWomen+=N.marriedF}
+return Z.marriedCouples=Math.min(z,Z.marriedWomen),Z}
+function xM($,Z,z,N=null){
+let M=z==="merchants"?":merchant":z==="shop_clerks"?":clerk":null;
+if(!M)return 0;
+return Object.values($.shops||{
+}
+).filter((Q)=>Q.buildingId===Z&&Q.status!=="closed"&&Q.status!=="liquidating").reduce((Q,_)=>Q+O0($,`shop:${_.id}${M}`,N),0)}
+function LM($,Z,z=null){
+return z?.companyByBuildingId?.get(Z)||Object.values($.companies||{
+}
+).find((N)=>N.buildingId===Z)||null}
+function $1($,Z,z=null){
+let N=A0($),M=[];
+for(let q of Object.values(Z.roles||O$)){
+let J=0;
+if(q.capacity==="farmland")J=Math.floor(X1($,Z)/Z.agriculture.acresPerFarmer);
+else if(q.capacity==="project")J=($.projects||[]).reduce(function(K,L){
+return K+Math.max(0,Math.floor(L.workers||0))}
+,0);
+else J=Math.max(0,Number(q.capacity)||0);
+let F=O0($,q.id,z),W=q.id===Z.agriculture.farmerRoleId?Math.max(0,Math.min(J,Math.floor(Number($.employment?.targets?.farmers??F)))):F;
+M.push({
+key:q.id,roleId:q.id,name:q.name,note:q.note||"",count:F,targetCount:W,targetShortage:Math.max(0,W-F),capacity:J,wagePerWorkerDay:$.employment.wageRates?.[q.id]??q.wagePerWorkerDay??0,releasePriority:q.releasePriority||0,scope:q.scope||"core"}
+)}
+for(let q of $.buildings){
+let J=Z.buildings[q.typeId];
+if(!J)continue;
+for(let F of J.jobs||[]){
+let W=q.ownership||{
+townLevels:q.level||1,privateLevels:0,listedLevels:0}
+,K=Math.max(0,Math.min(Z.rules.buildingMaxLevel||5,W.townLevels??q.level??1)),L=F.capacityMode==="building"?F.slots:F.slots*K,x=F.managedBy==="shops";
+M.push({
+key:h1(q.id,F.id),roleId:F.id,buildingId:q.id,buildingName:J.name,name:F.name,note:F.note||"",count:x?xM($,q.id,F.id,z):O0($,h1(q.id,F.id),z),capacity:L,wagePerWorkerDay:$.employment.wageRates?.[F.id]??F.wagePerWorkerDay??0,releasePriority:F.releasePriority||0,scope:x?"shop":"building",managedBy:F.managedBy||null,globalDemandKind:F.globalDemand||null}
+);
+let R=Math.max(0,W.privateLevels||0);
+if(R>0&&!F.managedBy)M.push({
+key:G1(q.id,F.id),roleId:F.id,buildingId:q.id,buildingName:J.name,name:F.name+"（民营）",note:"民营经营自动安排",count:O0($,G1(q.id,F.id),z),capacity:F.slots*R,wagePerWorkerDay:$.employment.wageRates?.[F.id]??F.wagePerWorkerDay??0,releasePriority:F.releasePriority||0,scope:"private"}
+);
+let C=Math.max(0,W.listedLevels||0);
+if(C>0&&!F.managedBy){
+let B=LM($,q.id,z),I=Number.isFinite(B?.settings?.wagePerWorkerDay)?B.settings.wagePerWorkerDay:$.employment.wageRates?.[F.id]??F.wagePerWorkerDay??0;
+M.push({
+key:N1(q.id,F.id),roleId:F.id,buildingId:q.id,buildingName:J.name,name:F.name+"（企业）",note:"独立公司雇佣并按当前货币制度支付工资",count:O0($,N1(q.id,F.id),z),capacity:F.slots*C,wagePerWorkerDay:I,wageKind:"company-wage",wageTarget:B?.id||null,releasePriority:F.releasePriority||0,scope:"listed"}
+)}
+}
+}
+let Q=z?.households||m($),_=Q.reduce((q,J)=>q+y0(J),0),f=Q.reduce((q,J)=>q+i1(J),0),O=Math.max(0,N.workers-_),Y=Math.ceil(N.total/(Z.rules.publicServiceDemandPopulation||500)),G=new Set(M.filter((q)=>q.globalDemandKind==="public_service").map((q)=>q.roleId));
+for(let q of G){
+let J=M.filter((K)=>K.roleId===q&&K.globalDemandKind==="public_service"),F=J.reduce((K,L)=>K+L.count,0),W=J.reduce((K,L)=>K+L.capacity,0);
+for(let K of J)K.globalDemand=Y,K.globalInPost=F,K.globalShortage=Math.max(0,Y-F),K.globalCapacity=W}
+let X=O<=0&&!z?.skipPoachable?f8($,Z):null;
+for(let q of M){
+q.poachable=X&&q.scope==="building"?X(q.wagePerWorkerDay||0):0;
+let J=Math.max(0,q.capacity-q.count);
+if(q.globalDemandKind==="public_service")J=Math.min(J,Math.max(0,q.globalDemand-q.globalInPost));
+q.maxAssignable=q.roleId===Z.agriculture.farmerRoleId&&q.key===Z.agriculture.farmerRoleId?q.capacity:q.count+Math.min(J,O+q.poachable)}
+return{
+rows:M,employed:_,idle:O,workingAge:N.workers,householdWorkingAge:f,publicServiceDemand:Y,civilServants:M.filter((q)=>q.roleId==="civil_servants").reduce((q,J)=>q+J.count,0),police:M.filter((q)=>q.roleId==="police").reduce((q,J)=>q+J.count,0)}
+}
+function KM($,Z){
+return Math.max(0,Math.floor(X1($,Z)/Z.agriculture.acresPerFarmer))}
+function DM($,Z){
+$.employment||={
+wageRates:{
+}
+}
+,$.employment.targets||={
+}
+;
+let z=KM($,Z),N=Math.min(z,u0($,Z.agriculture.farmerRoleId)),M=Number.isFinite($.employment.targets.farmers)?Math.floor($.employment.targets.farmers):N;
+return $.employment.targets.farmers=Math.max(0,Math.min(z,M)),$.employment.targets.farmers}
+function h$($,Z){
+let z=Z.agriculture.farmerRoleId,N=DM($,Z),M=u0($,z);
+if(M>=N)return{
+ok:!0,target:N,before:M,after:M,filled:0,shortage:0}
+;
+let Q=U0($,z,N,Z,{
+type:"town",id:"fields"}
+),_=u0($,z);
+return{
+ok:!0,target:N,before:M,after:_,filled:Math.max(0,_-M),shortage:Math.max(0,N-_),reason:Q.reason}
+}
+function O8($,Z,z,N){
+let M=$1($,N),Q=M.rows.find((F)=>F.key===Z);
+if(!Q)return{
+ok:!1,reason:"这个岗位目前无法安排"}
+;
+if(Q.scope==="private")return{
+ok:!1,reason:"民营岗位由经营计划自动安排"}
+;
+if(Q.scope==="listed")return{
+ok:!1,reason:"上市企业岗位由企业经营计划安排"}
+;
+if(Q.scope==="shop")return{
+ok:!1,reason:"商人与店员请在商业街店铺中安排"}
+;
+let _=M.employed-Q.count,f=Q.capacity;
+if(Q.roleId===N.agriculture.farmerRoleId&&Q.key===N.agriculture.farmerRoleId){
+let F=Math.max(0,Math.min(f,Math.floor(Number(z)||0)));
+if($.employment.targets||={
+}
+,$.employment.targets.farmers=F,Q.count>F)U0($,Q.key,F,N,{
+type:"town",id:"fields"}
+);
+else h$($,N);
+let W=u0($,Q.key);
+return{
+ok:!0,changed:F!==(Q.targetCount??Q.count),assigned:W,target:F,shortage:Math.max(0,F-W),limit:f}
+}
+if(Q.globalDemandKind==="public_service"){
+let F=M.rows.filter((W)=>W.roleId===Q.roleId&&W.key!==Q.key).reduce((W,K)=>W+K.count,0);
+f=Math.min(f,Math.max(0,Q.globalDemand-F))}
+let O=Math.max(0,A0($).workers-M.employed),Y=Math.max(0,Math.min(f,Q.count+O+(Q.poachable||0))),G=Math.floor(Math.max(0,Math.min(Y,Number(z)||0))),X=G!==Q.count,q=G-Q.count-O;
+if(q>0&&Q.scope==="building")y$($,Q.wagePerWorkerDay||0,q,N,{
+toKey:Z,toLabel:`${Q.buildingName||""}${Q.name}`,allowFarmers:!1}
+),g0($,N);
+let J=U0($,Z,G,N,{
+type:"town",id:Q.buildingId||Q.roleId}
+);
+return{
+ok:J.ok,changed:X,assigned:J.assigned,limit:Y,reason:J.reason}
+}
+function X8(){
+}
+function G8($,Z){
+let z=[];
+P5($);
+let N=$1($,Z).rows;
+for(let Q of N){
+if(Q.scope==="shop")continue;
+if(Q.count>Q.capacity){
+let _=Q.count;
+U0($,Q.key,Q.capacity,Z),z.push({
+key:Q.key,roleId:Q.roleId,buildingId:Q.buildingId||null,name:Q.name,buildingName:Q.buildingName||null,before:_,after:Q.capacity,reason:"岗位容量变化"}
+)}
+}
+N=$1($,Z).rows;
+for(let Q of["civil_servants","police"]){
+let _=N.filter((Y)=>Y.roleId===Q&&Y.globalDemandKind==="public_service");
+if(!_.length)continue;
+let f=_[0].globalDemand||0,O=_.reduce((Y,G)=>Y+G.count,0)-f;
+if(O<=0)continue;
+for(let Y of _.slice().reverse()){
+if(O<=0)break;
+let G=O0($,Y.key),X=Math.min(G,O);
+if(X<=0)continue;
+let q=G-X;
+U0($,Y.key,q,Z),z.push({
+key:Y.key,roleId:Y.roleId,buildingId:Y.buildingId||null,name:Y.name,buildingName:Y.buildingName||null,before:G,after:q,reason:"全镇公共岗位需求变化"}
+),O-=X}
+}
+let M=h$($,Z);
+if(M.filled>0||M.shortage>0)z.push({
+key:Z.agriculture.farmerRoleId,roleId:Z.agriculture.farmerRoleId,buildingId:null,name:"农人",buildingName:null,before:M.before,after:M.after,target:M.target,shortage:M.shortage,reason:M.shortage>0?"农业目标缺员":"农业目标自动补员"}
+);
+return z}
+function Y8($,Z,z,N,M=null){
+let Q=Math.max(0,Math.floor(N));
+return U0($,G1(Z,z),Q,M,{
+type:"private",id:Z}
+)}
+function O5($,Z){
+let z=$1($,Z);
+return{
+employed:z.employed,idle:z.idle,workingAge:z.workingAge,rows:z.rows}
+}
+function m$($){
+let Z={
+...$}
+;
+if($.monetaryReform)Z.monetaryReform={
+...$.monetaryReform,paymentHistory:Array.isArray($.monetaryReform.paymentHistory)?$.monetaryReform.paymentHistory.slice():$.monetaryReform.paymentHistory,voucherShortfallByKey:$.monetaryReform.voucherShortfallByKey?{
+...$.monetaryReform.voucherShortfallByKey}
+:$.monetaryReform.voucherShortfallByKey}
+;
+if(!$.households?.byId)return Z;
+let z=`${$.year}:${$.day}`,N=$.households.exchange||{
+}
+,M,Q,_;
+if(N.dayKey===z)M={
+...N.eligibleByHousehold||{
+}
+}
+,Q={
+...N.usedByHousehold||{
+}
+}
+,_=Number.isInteger(N.peakEmploymentCount)&&N.peakEmploymentCount>=0?N.peakEmploymentCount:Object.values(M).reduce((f,O)=>f+Math.max(0,Number(O)||0),0);
+else M=Object.fromEntries(m($).map((f)=>[f.id,y0(f)])),Q={
+}
+,_=Object.values(M).reduce((f,O)=>f+Math.max(0,Number(O)||0),0);
+return Z.households={
+...$.households,exchange:{
+dayKey:z,eligibleByHousehold:M,usedByHousehold:Q,peakEmploymentCount:_}
+}
+,Z}
+var BM=new Set(["mill","bakery","lumberyard","saltworks"]);
+function X5(){
+return{
+revenueVoucherUnits:0,cogsVoucherUnits:0,wageExpenseVoucherUnits:0,wagesPaidVoucherUnits:0,inputPurchaseVoucherUnits:0,taxCostVoucherUnits:0,processingLossVoucherUnits:0,profitVoucherUnits:0,producedUnits:{
+}
+,soldUnits:{
+}
+,taxedUnits:{
+}
+,purchasedInputUnits:{
+}
+}
+}
+function j2($){
+$.accounts||={
+day:X5(),year:X5(),cumulative:X5()}
+;
+for(let Z of["day","year","cumulative"]){
+$.accounts[Z]={
+...X5(),...$.accounts[Z]||{
+}
+}
+;
+for(let z of["producedUnits","soldUnits","taxedUnits","purchasedInputUnits"])$.accounts[Z][z]||={
+}
+}
+return $.inventory||={
+}
+,$.inventoryCostVoucherUnits||={
+}
+,$.payroll||={
+arrearsVoucherUnits:0,cumulativePaidVoucherUnits:0,cumulativeAccruedVoucherUnits:0,claimsVoucherUnits:{
+}
+,legacyUnattributedArrearsVoucherUnits:0}
+,$.payroll.claimsVoucherUnits||={
+}
+,$.payroll.legacyUnattributedArrearsVoucherUnits??=0,$.shareSale||={
+offeredShares:0,sharePriceVoucherUnits:0,cumulativeProceedsVoucherUnits:0,lastSaleVoucherUnits:0,lastSoldShares:0}
+,$.listing||={
+listed:($.totalShares||0)>0,ticker:null,listedAt:null}
+,$.settings||={
+wagePerWorkerDay:null,targetWorkers:null,salePricesVoucherPerUnit:{
+}
+}
+,$.settings.salePricesVoucherPerUnit||={
+}
+,$.annualSettlement||={
+lastSettledYear:0,lastYearNetProfitVoucherUnits:0,workingCapitalTargetVoucherUnits:0,distributedVoucherUnits:0,undistributedVoucherUnits:$.retainedEarningsVoucherUnits||0}
+,$.dividendHistory||=[],$.householdShares||={
+}
+,$.retainedEarningsVoucherUnits||=0,$.cashVoucherUnits||=0,$.cashWheatUnits||=0,$.operatingDays||=0,$.lastDividendYear||=0,$.history||=[],$.plan||={
+ageDays:0}
+,$}
+function U2($,Z){
+$.companies||={
+}
+,$.nextCompanyNumber||=1,$.employment||={
+}
+;
+for(let z of Object.values($.companies)){
+j2(z);
+for(let N of Object.keys(Z.items))z.inventory[N]??=0,z.inventoryCostVoucherUnits[N]??=0}
+return $.companies}
+function RM($,Z,z){
+$[Z]=($[Z]||0)+z}
+function l2($,Z,z){
+if(!z)return;
+for(let N of[$.accounts.day,$.accounts.year,$.accounts.cumulative])N[Z]=(N[Z]||0)+z}
+function l$($,Z,z,N){
+if(!N)return;
+for(let M of[$.accounts.day,$.accounts.year,$.accounts.cumulative])RM(M[Z],z,N)}
+function p$($,Z){
+if(!Z)return;
+for(let z of[$.accounts.day,$.accounts.year,$.accounts.cumulative])z.profitVoucherUnits=(z.profitVoucherUnits||0)+Z;
+$.retainedEarningsVoucherUnits=($.retainedEarningsVoucherUnits||0)+Z}
+function e4($,Z,z){
+let N=$.inventory[Z]||0;
+if(!Number.isSafeInteger(z)||z<0||z>N)throw RangeError("企业库存扣除超限："+Z);
+let M=$.inventoryCostVoucherUnits[Z]||0,Q=z===N?M:N===0?0:Math.floor(M*z/N);
+return $.inventory[Z]=N-z,$.inventoryCostVoucherUnits[Z]=M-Q,Q}
+function t4($,Z,z,N=0){
+$.inventory[Z]=($.inventory[Z]||0)+z,$.inventoryCostVoucherUnits[Z]=($.inventoryCostVoucherUnits[Z]||0)+N}
+function $3($,Z,z){
+return W0($,Z,z)}
+function Z3($,Z,z){
+let N=$/z.precision.inventoryUnitsPerJin;
+return Math.max(0,Math.round(N*Z*$0(z)))}
+function EM($,Z,z,N,M){
+if(N<=0)return{
+boughtUnits:0,paidVoucherUnits:0}
+;
+let Q=Q5($,`company:${Z.id}`,z,N,M,`${Z.name}从批发市场采购${M.items[z]?.name||z}`);
+if((Q.boughtUnits||0)>0)t4(Z,z,Q.boughtUnits,Q.paidVoucherUnits||0),l2(Z,"inputPurchaseVoucherUnits",Q.paidVoucherUnits||0),l$(Z,"purchasedInputUnits",z,Q.boughtUnits);
+return{
+boughtUnits:Q.boughtUnits||0,paidVoucherUnits:Q.paidVoucherUnits||0,missingUnits:Math.max(0,N-(Q.boughtUnits||0)),reason:Q.reason}
+}
+function z3($,Z,z,N){
+U2($,N);
+let M=$.buildings.find((x)=>x.id===Z);
+if(!M)return{
+ok:!1,reason:"建筑不存在"}
+;
+if(!BM.has(M.typeId))return{
+ok:!1,reason:"此建筑暂不支持成立独立公司"}
+;
+if(Object.values($.companies).some((x)=>x.buildingId===Z))return{
+ok:!1,reason:"同一建筑最多对应一家公司"}
+;
+M.ownership||={
+townLevels:M.level||1,privateLevels:0,listedLevels:0}
+,M.ownership.listedLevels||=0;
+let Q=Math.floor(Number(z?.levels)||0);
+if(Q<=0||Q>(M.ownership.townLevels||0))return{
+ok:!1,reason:"公司等级必须来自尚属镇营的等级"}
+;
+let _=Math.round(Math.max(0,Number(z?.operatingCapitalVoucher||0))*$0(N));
+if(_>0){
+if(!A2($,"town",F0($,_),N).full)return{
+ok:!1,reason:"镇库可支付资产不足，无法投入所设营运资金"}
+}
+let f=N.buildings[M.typeId],O=N.recipes[f.recipeId],Y=z?.initialMaterials&&typeof z.initialMaterials==="object"?z.initialMaterials:Object.fromEntries((O?.inputs||[]).slice(0,1).map((x)=>[x.itemId,Math.max(0,Number(z?.initialMaterialQuantity||0))])),G=[];
+for(let x of O?.inputs||[]){
+let R=Math.max(0,Number(Y[x.itemId]||0)),C=Math.round(R*N.precision.inventoryUnitsPerJin);
+if(C>($.accounts.town[x.itemId]||0))return{
+ok:!1,reason:`镇库${N.items[x.itemId]?.name||x.itemId}不足，不能作为企业初始投入`}
+;
+if(C>0)G.push({
+itemId:x.itemId,units:C}
+)}
+let X="company-"+($.nextCompanyNumber||1);
+$.nextCompanyNumber=($.nextCompanyNumber||1)+1;
+let q=Object.fromEntries(Object.keys(N.items).map((x)=>[x,0])),J=Object.fromEntries(Object.keys(N.items).map((x)=>[x,0])),F=String(z?.name||"").trim().slice(0,30)||f.name+"公司",W=$.employment.wageRates?.[f.jobs?.[0]?.id]??f.jobs?.[0]?.wagePerWorkerDay??10,K=j2({
+id:X,name:F,buildingId:Z,typeId:M.typeId,listedLevels:Q,totalShares:0,townShares:0,residentShares:0,householdShares:{
+}
+,cashVoucherUnits:0,cashWheatUnits:0,inventory:q,inventoryCostVoucherUnits:J,created:{
+year:$.year,day:Math.min(N.rules.daysPerYear,$.day+1)}
+,initialInvestment:{
+cashVoucherUnits:_,cashValueUnits:_,cashVoucherPaidUnits:0,cashWheatValueUnits:0,materials:[]}
+,retainedEarningsVoucherUnits:0,operatingDays:0,lastDividendYear:0,status:"待开工",listing:{
+listed:!1,ticker:null,listedAt:null}
+,settings:{
+wagePerWorkerDay:W,targetWorkers:Math.min(Q*(f.jobs?.[0]?.slots||0),Q*(f.jobs?.[0]?.slots||0)),salePricesVoucherPerUnit:{
+}
+}
+}
+);
+$.companies[X]=K,M.ownership.townLevels-=Q,M.ownership.listedLevels+=Q;
+let L=f.jobs?.[0];
+if(L){
+let x=Z+"::"+L.id,R=N1(Z,L.id),C=O0($,x),B=L.slots*M.ownership.townLevels,I=Math.max(0,C-B);
+U0($,x,Math.min(C,B),N),U0($,R,Math.min(I,L.slots*Q),N,{
+type:"company",id:X}
+)}
+if(_>0){
+let x=x0($,"town","company:"+X,F0($,_),N,"enterprise_capital_injection",`镇库向${K.name}投入营运资金`,{
+requireFull:!0}
+);
+if(!x.ok)throw Error("企业营运资金预检后转账失败："+(x.reason||"未知错误"));
+K.initialInvestment.cashVoucherPaidUnits=x.voucherPaidValueUnits||0,K.initialInvestment.cashWheatValueUnits=x.wheatPaidValueUnits||0}
+for(let x of G){
+let R=$5($,x.itemId,x.units,N).costWheatUnits,C=Z3(x.units,$3($,x.itemId,N),N);
+t4(K,x.itemId,x.units,R),K.initialInvestment.materials.push({
+itemId:x.itemId,quantityUnits:x.units,referenceVoucherUnits:C,costBasisVoucherUnits:R}
+),V0($,{
+type:"enterprise_material_contribution",transactionId:E0($),source:"town",destination:"company:"+X,itemId:x.itemId,quantityUnits:x.units,qeqUnits:0,reason:`${K.name}设立时的实物资本投入；不计经营收入`}
+,N)}
+if($.market?.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return q0($,`${K.name}成立：${Q}级产能划归公司，由镇库100%持有；成立不等于上市。`,N,{
+day:$.day+1}
+),{
+ok:!0,companyId:X,levels:Q}
+}
+function q8($,Z,z,N){
+let M=$.companies?.[Z],Q=Number(z);
+if(!M)return{
+ok:!1,reason:"企业不存在"}
+;
+if(!Number.isFinite(Q)||Q<0||Q>1e5)return{
+ok:!1,reason:"企业日薪须为有限的非负数"}
+;
+return j2(M).settings.wagePerWorkerDay=Q,{
+ok:!0,value:Q}
+}
+function J8($,Z,z,N){
+let M=$.companies?.[Z];
+if(!M)return{
+ok:!1,reason:"企业不存在"}
+;
+let _=(N.buildings[M.typeId].jobs?.[0]?.slots||0)*M.listedLevels,f=Math.floor(Number(z));
+if(!Number.isFinite(f)||f<0||f>_)return{
+ok:!1,reason:`目标用工须为0—${_}人`}
+;
+return j2(M).settings.targetWorkers=f,{
+ok:!0,value:f}
+}
+function W8($,Z,z,N,M){
+let Q=$.companies?.[Z],_=Number(N);
+if(!Q)return{
+ok:!1,reason:"企业不存在"}
+;
+if(!(M.recipes[M.buildings[Q.typeId]?.recipeId]?.outputs||[]).map((O)=>O.itemId).includes(z))return{
+ok:!1,reason:"该商品不是此公司的产品"}
+;
+if(!Number.isFinite(_)||_<=0||_>1e6)return{
+ok:!1,reason:"售价须为正的有限数值"}
+;
+return j2(Q).settings.salePricesVoucherPerUnit[z]=_,{
+ok:!0,itemId:z,value:_}
+}
+function F8($,Z,z,N){
+let M=j2(Z).settings.salePricesVoucherPerUnit[z];
+return Number.isFinite(M)&&M>0?M:$3($,z,N)}
+function d$($,Z,z,N){
+let M=$.companies?.[Z];
+if(!M)return{
+available:!1,reason:"企业不存在",direction:z}
+;
+let Q=$.buildings.find((X)=>X.id===M.buildingId);
+if(!Q)return{
+available:!1,reason:"公司建筑不存在",direction:z}
+;
+let _=Boolean(M.listing?.listed),f=M.listedLevels,O=M.totalShares||0,Y=M.townShares||0,G=O>0?Y/O*100:0;
+if(z==="add"){
+if((Q.ownership?.townLevels||0)<=0)return{
+available:!1,reason:"没有可划入的镇营等级",direction:z,levelsBefore:f}
+;
+let X=0;
+if(_){
+if(O<=0||O%f!==0)return{
+available:!1,reason:"当前总股本不能按每级等量股份划分",direction:z,levelsBefore:f}
+;
+X=O/f}
+let q=O+X,J=Y+X;
+return{
+available:!0,direction:z,listed:_,levelDelta:1,levelsBefore:f,levelsAfter:f+1,issuedShares:X,cancelledShares:0,totalSharesBefore:O,totalSharesAfter:q,townSharesBefore:Y,townSharesAfter:J,townPercentBefore:G,townPercentAfter:q>0?J/q*100:0}
+}
+if(z==="remove"){
+if(f<=1)return{
+available:!1,reason:"全部等级划回须先完成居民股权回购与公司清算",direction:z,levelsBefore:f}
+;
+let X=0;
+if(_){
+if(O<=0||O%f!==0)return{
+available:!1,reason:"当前总股本不能按每级等量股份划分",direction:z,levelsBefore:f}
+;
+if(X=O/f,Y<X)return{
+available:!1,reason:`镇库还缺${X-Y}股；须先由镇库回购居民股份`,direction:z,listed:_,levelsBefore:f,cancelledShares:X,requiredTownShares:X,totalSharesBefore:O,townSharesBefore:Y,townPercentBefore:G}
+}
+let q=O-X,J=Y-X;
+return{
+available:!0,direction:z,listed:_,levelDelta:-1,levelsBefore:f,levelsAfter:f-1,issuedShares:0,cancelledShares:X,totalSharesBefore:O,totalSharesAfter:q,townSharesBefore:Y,townSharesAfter:J,townPercentBefore:G,townPercentAfter:q>0?J/q*100:0}
+}
+return{
+available:!1,reason:"未知等级变动",direction:z,levelsBefore:f}
+}
+function V8($,Z,z){
+let N=d$($,Z,"add",z);
+if(!N.available)return{
+ok:!1,reason:N.reason,preview:N}
+;
+let M=$.companies[Z],Q=$.buildings.find((f)=>f.id===M.buildingId);
+if(N.listed)M.totalShares=N.totalSharesAfter,M.townShares=N.townSharesAfter;
+M.listedLevels=N.levelsAfter,Q.ownership.townLevels-=1,Q.ownership.listedLevels+=1;
+let _=z.buildings[M.typeId]?.jobs?.[0];
+if(_)M.settings.targetWorkers=Math.min(M.settings.targetWorkers??0,_.slots*M.listedLevels);
+if($.market?.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0,issuedShares:N.issuedShares,levels:M.listedLevels,totalShares:M.totalShares,townShares:M.townShares,preview:N}
+}
+function x8($,Z,z){
+let N=d$($,Z,"remove",z);
+if(!N.available)return{
+ok:!1,reason:N.reason,requiredTownShares:N.requiredTownShares,preview:N}
+;
+let M=$.companies[Z],Q=$.buildings.find((f)=>f.id===M.buildingId);
+if(N.listed){
+if(M.totalShares=N.totalSharesAfter,M.townShares=N.townSharesAfter,M.shareSale)M.shareSale.offeredShares=Math.min(M.shareSale.offeredShares||0,M.townShares)}
+M.listedLevels=N.levelsAfter,Q.ownership.townLevels+=1,Q.ownership.listedLevels-=1;
+let _=z.buildings[M.typeId]?.jobs?.[0];
+if(_){
+let f=N1(M.buildingId,_.id),O=_.slots*M.listedLevels;
+if(O0($,f)>O)U0($,f,O,z,{
+type:"company",id:M.id}
+);
+M.settings.targetWorkers=Math.min(M.settings.targetWorkers??O,O)}
+if($.market?.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0,cancelledShares:N.cancelledShares,levels:M.listedLevels,totalShares:M.totalShares,townShares:M.townShares,preview:N}
+}
+function L8($,Z,z){
+let N=$.companies?.[Z];
+if(!N)return{
+ok:!1,reason:"企业不存在"}
+;
+if(N.listing?.listed&&(N.residentShares||0)>0)return{
+ok:!1,reason:"仍有居民持股，须先完成镇库回购"}
+;
+if((N.payroll?.arrearsVoucherUnits||0)>0)return{
+ok:!1,reason:"公司仍有工资债务，不能先向股东返还资产"}
+;
+let M=$.buildings.find((Y)=>Y.id===N.buildingId);
+if(!M)return{
+ok:!1,reason:"公司建筑不存在"}
+;
+let Q=P0($,"company:"+N.id,z),_=j1($,"company:"+N.id,Q,z);
+if(_>0){
+let Y=x0($,"company:"+N.id,"town",F0($,_),z,"enterprise_liquidation",`${N.name}清算返还镇库`,{
+requireFull:!0}
+);
+if(!Y.ok)return{
+ok:!1,reason:Y.reason||"公司现金清算失败"}
+}
+for(let Y of Object.keys(z.items)){
+let G=N.inventory?.[Y]||0;
+if(G<=0)continue;
+let X=e4(N,Y,G);
+$.accounts.town[Y]=($.accounts.town[Y]||0)+G,n0($,Y,X)}
+let f=N.listedLevels;
+M.ownership.townLevels+=f,M.ownership.listedLevels-=f;
+let O=z.buildings[N.typeId]?.jobs?.[0];
+if(O)U0($,N1(N.buildingId,O.id),0,z,{
+type:"company",id:N.id}
+);
+for(let Y of m($))if(Y.shares)delete Y.shares[N.id];
+if(delete $.companies[N.id],$.market?.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return q0($,`${N.name}完成债务优先清算，全部等级划回镇营。`,z,{
+day:$.day+1}
+),{
+ok:!0,levelsReturned:f}
+}
+function K8($,Z,z){
+let N=$.companies?.[Z],M=Number(z);
+if(!N)return{
+ok:!1,reason:"企业不存在"}
+;
+if(!Number.isFinite(M)||M<0||M>100)return{
+ok:!1,reason:"分红比例须为0%—100%"}
+;
+return N.dividendPercent=Math.round(M*100)/100,{
+ok:!0,value:N.dividendPercent}
+}
+function D8($,Z,z,N){
+if(!["flour","bread","wood"].includes(Z))return{
+ok:!1,reason:"该商品价格本版不开放调整"}
+;
+let M=Number(z);
+if(!Number.isFinite(M)||M<=0||M>1e6)return{
+ok:!1,reason:"价格须为正的有限数值"}
+;
+return j$($,Z,M,N)}
+function u$($,Z,z,N){
+if(z<=0)return 0;
+let M=$0(N),Q=N.rules.shareFoodReserveDays||90,_=N.rules.shareLivingVoucherReserveDays||30,f=D0($,Z,N,Q),O=B0($,`household:${Z.id}`)+l0(f,N,"floor"),Y=Math.round(f0(Z)*N.rules.foodPerPersonDay*_*M),G=Math.max(0,Math.floor((O-Y)/z)),X=0;
+while(X<G){
+let q=Math.ceil((X+G)/2);
+if(A2($,`household:${Z.id}`,F0($,q*z),N,{
+maxWheatUnits:f}
+).full)X=q;
+else G=q-1}
+return X}
+function HM($,Z){
+let z=0;
+for(let[N,M]of Object.entries(Z.items)){
+if(!M.edible||!M.qeq)continue;
+let Q=$.accounts.residents[N]||0;
+z+=Q*Z.precision.qeqUnitsPerJin*M.qeq.numerator/(Z.precision.inventoryUnitsPerJin*M.qeq.denominator)}
+return z}
+function w5($,Z,z){
+let N=m$($),M=$.companies?.[Z];
+if(!M)return{
+available:!1,reason:"企业不存在"}
+;
+if(!M.listing?.listed)return{
+available:!1,reason:"公司尚未上市"}
+;
+if($.monetaryReform?.stage!=="voucher")return{
+available:!1,reason:"股票认购须在货币改革完成后使用粮券"}
+;
+if(!($.buildings||[]).some((u)=>u.typeId==="stock_exchange")&&!$.stockExchange?.legacyAccess)return{
+available:!1,reason:"尚未建成交易所"}
+;
+let Q=$0(z),_=M.shareSale||{
+}
+,f=Math.min(_.offeredShares||0,M.townShares||0),O=_.sharePriceVoucherUnits||0;
+if(f<=0||O<=0)return{
+available:!1,reason:"请先设置出售股数和每股售价",offeredShares:f}
+;
+let Y=A0($).total,G=Y*z.rules.foodPerPersonDay*(z.rules.shareFoodReserveDays||90)*z.precision.qeqUnitsPerJin,X=HM($,z)>=G,q=Math.round(Y*z.rules.foodPerPersonDay*(z.rules.shareLivingVoucherReserveDays||30)*Q),J=m($).filter(J0).reduce((u,H)=>u+u$(N,H,O,z),0),F=P0(N,"residents",z),W=G5($,M,z),K=W.observedDays,L=W.actualProfitVoucherUnits,x=W.annualizedProfitVoucherUnits,R=W.referenceCompanyValueVoucherUnits||0,C=M.totalShares>0?Math.floor(R/M.totalShares):0,B=M.totalShares>0?x/M.totalShares:0,I=Math.max(0,B),T=O>0?I/O:0,b=0,y=W.performanceStatus||"暂无业绩";
+if(W.validProfitMethod&&C>0)b=Math.max(0,Math.min(1,C/O)),y=`按${K}个日历日真实净利润、投入资本利润率统一估值；停工日计入观察窗口`;
+else if(K<(z.rules.sharePerformanceObservationDays||30))b=Math.max(0,Math.min(1,(z.rules.shareNoHistoryMaxTakePercent||10)/100)),y=K>0?`已观察${K}个日历日，尚未达到${z.rules.sharePerformanceObservationDays||30}日业绩窗口；估值为0，仅允许小比例试购`:"暂无业绩；估值为0，仅允许小比例试购";
+else y=`已观察${K}个日历日，但净利润未形成正估值`;
+let j=Math.floor(f*b),l=X?Math.min(f,J,j):0,e=l*O;
+return{
+available:X&&l>0,reason:!X?`居民未达到${z.rules.shareFoodReserveDays||90}日基本口粮储备`:J<=0?"居民可投资资产不足":j<=0?"当前售价相对实际经营表现缺乏认购吸引力":null,offeredShares:f,subscribedShares:l,proceedsVoucherUnits:e,priceVoucherUnits:O,residentCashUnits:F,livingVoucherReserveUnits:q,affordableShares:J,demandFactor:b,observedDays:K,realizedProfitVoucherUnits:L,annualizedProfitVoucherUnits:x,epsVoucherUnits:B,referenceDividendYield:T,referenceCompanyValueVoucherUnits:R,referencePerShareVoucherUnits:C,investedCapitalVoucherUnits:W.investedCapitalVoucherUnits,annualizedProfitRateBps:W.annualizedProfitRateBps,bookValuePerShareVoucherUnits:0,basis:y}
+}
+function B8($,Z,z){
+let N=$.companies?.[Z],M=w5($,Z,z);
+if(!N||!M.available)return{
+ok:!1,reason:M.reason||"当前无认购成交",preview:M}
+;
+let Q=N.shareSale.sharePriceVoucherUnits||0,_=$0(z),f=M.subscribedShares,O=0,Y=[],G=m($).filter(J0).slice().sort((q,J)=>u$($,J,Q,z)-u$($,q,Q,z)||q.id.localeCompare(J.id));
+for(let q of G){
+if(f<=0)break;
+let J=Math.min(f,u$($,q,Q,z));
+if(J<=0)continue;
+let F=J*Q;
+if(!x0($,`household:${q.id}`,"town",F0($,F),z,"share_subscription",`${q.name}认购${N.name}股份`,{
+requireFull:!0,maxWheatUnits:D0($,q,z,z.rules.shareFoodReserveDays||90)}
+).ok)continue;
+N.householdShares[q.id]=(N.householdShares[q.id]||0)+J,q.shares||={
+}
+,q.shares[N.id]=(q.shares[N.id]||0)+J,Y.push({
+householdId:q.id,shares:J,voucherUnits:F}
+),f-=J,O+=F}
+let X=M.subscribedShares-f;
+if(X<=0)return{
+ok:!1,reason:"没有家庭具备足够的可投资资产",preview:M}
+;
+return N.townShares-=X,N.residentShares+=X,N.shareSale.cumulativeProceedsVoucherUnits+=O,N.shareSale.lastSaleVoucherUnits=O,N.shareSale.lastSoldShares=X,N.shareSale.offeredShares=Math.max(0,N.shareSale.offeredShares-X),q0($,`居民家庭认购${N.name}${X.toLocaleString("zh-CN")}股；售股收入归镇库。`,z,{
+day:$.day+1}
+),{
+ok:!0,...M,subscribedShares:X,proceedsVoucherUnits:O,buyers:Y}
+}
+function R8($,Z,z,N){
+let M=$.companies?.[Z];
+if(!M)return{
+ok:!1,reason:"企业不存在"}
+;
+let Q=Math.round(Number(z)*$0(N));
+if(!Number.isSafeInteger(Q)||Q<=0)return{
+ok:!1,reason:"投入金额必须大于0"}
+;
+let _=x0($,"town","company:"+Z,F0($,Q),N,"enterprise_capital_injection",`镇库追加${M.name}营运资金`,{
+requireFull:!0}
+);
+if(!_.ok)return _;
+return M.initialInvestment||={
+cashVoucherUnits:0,materials:[]}
+,M.initialInvestment.cashVoucherUnits=(M.initialInvestment.cashVoucherUnits||0)+Q,M.initialInvestment.cashValueUnits=(M.initialInvestment.cashValueUnits||0)+Q,M.initialInvestment.cashVoucherPaidUnits=(M.initialInvestment.cashVoucherPaidUnits||0)+(_.voucherPaidValueUnits||0),M.initialInvestment.cashWheatValueUnits=(M.initialInvestment.cashWheatValueUnits||0)+(_.wheatPaidValueUnits||0),{
+ok:!0,voucherUnits:Q,payment:_}
+}
+function E8($,Z){
+U2($,Z);
+let z=$1($,Z).idle;
+for(let N of Object.values($.companies).sort((M,Q)=>M.id.localeCompare(Q.id))){
+let M=$.buildings.find((q)=>q.id===N.buildingId),_=Z.buildings[N.typeId]?.jobs?.[0];
+if(!M||!_)continue;
+let f=N1(M.id,_.id),O=Math.min(O0($,f),_.slots*N.listedLevels),Y=P$($,`company:${N.id}`),G=Number.isInteger(N.settings?.targetWorkers)?N.settings.targetWorkers:Y==null?O:Y,X=Math.min(G,O+z);
+U0($,f,X,Z,{
+type:"company",id:N.id}
+),z+=O-O0($,f)}
+}
+function H8($,Z){
+let z=$0(Z),N=[];
+for(let M of Object.values(U2($,Z))){
+let _=Z.buildings[M.typeId]?.jobs?.[0];
+if(!_)continue;
+let f=N1(M.buildingId,_.id),O=O0($,f),Y=Number.isFinite(M.settings?.wagePerWorkerDay)?M.settings.wagePerWorkerDay:$.employment.wageRates?.[_.id]??_.wagePerWorkerDay??10,G=Math.round(O*Y*z),X=f1($,f);
+if(w2($,M.payroll,X,G,Z),M.payroll.legacyUnattributedArrearsVoucherUnits??=Math.max(0,(M.payroll.arrearsVoucherUnits||0)-V1(M.payroll)),M.payroll.legacyUnattributedArrearsVoucherUnits>0){
+let F=q2($,M.payroll,M.payroll.legacyUnattributedArrearsVoucherUnits,X);
+M.payroll.legacyUnattributedArrearsVoucherUnits=Math.max(0,M.payroll.legacyUnattributedArrearsVoucherUnits-F.attributed)}
+M.payroll.arrearsVoucherUnits=V1(M.payroll)+M.payroll.legacyUnattributedArrearsVoucherUnits,M.payroll.cumulativeAccruedVoucherUnits+=G,l2(M,"wageExpenseVoucherUnits",G),p$(M,-G);
+let q=Boolean($._deferHouseholdSync);
+$._deferHouseholdSync=!0;
+let J=b5($,M.payroll,"company:"+M.id,Z,"enterprise_wage_payment",`${M.name}偿付具体债权家庭工资`,{
+shortfallPrefix:`company-wage:${M.id}`}
+);
+if($._deferHouseholdSync=q,!q)M0($,Z);
+M.payroll.arrearsVoucherUnits=V1(M.payroll)+M.payroll.legacyUnattributedArrearsVoucherUnits,M.payroll.cumulativePaidVoucherUnits+=J.paid,l2(M,"wagesPaidVoucherUnits",J.paid),N.push({
+companyId:M.id,workers:O,dueVoucherUnits:G,paidVoucherUnits:J.paid,arrearsVoucherUnits:M.payroll.arrearsVoucherUnits}
+)}
+return N}
+function AM($,Z,z){
+let N=z.buildings[$.typeId],M=z.recipes[N?.recipeId],Q=N?.jobs?.[0];
+if(!M||!Q)return{
+workers:0,capacity:0,recipe:M,definition:N}
+;
+let _=O0(Z,N1($.buildingId,Q.id));
+return{
+workers:_,capacity:_*M.batchesPerWorkerDay,recipe:M,definition:N}
+}
+function TM($,Z,z,N,M){
+let Q=$.policy?.privateProductionTaxPercent?.[Z.typeId]??M.rules.privateProductionTaxDefaultPercent??10;
+Z.taxRemainders||={
+}
+;
+let _=Z.taxRemainders[z]||0,f=N*Math.round(Q*100)+_,O=Math.floor(f/1e4);
+return Z.taxRemainders[z]=f%1e4,O}
+function CM($,Z,z){
+j2(Z);
+let{
+workers:N,capacity:M,recipe:Q,definition:_}
+=AM(Z,$,z);
+if(N<=0||M<=0)return Z.status="缺工人",{
+companyId:Z.id,status:"no_workers",batches:0}
+;
+let f=C$($,`company:${Z.id}`),O=Math.min(M,f==null?M:f);
+if(O<=0)return Z.status="缺订单",{
+companyId:Z.id,status:"no_demand",workers:N,batches:0}
+;
+let Y=O;
+for(let x of Q.inputs){
+let R=Math.round(x.quantity*z.precision.inventoryUnitsPerJin),C=R*O,B=Z.inventory[x.itemId]||0;
+if(B<C)EM($,Z,x.itemId,C-B,z);
+Y=Math.min(Y,Math.floor((Z.inventory[x.itemId]||0)/R))}
+if(Y<=0)return Z.status=P0($,"company:"+Z.id,z)<=0?"缺资金/原料":"缺原料",{
+companyId:Z.id,status:P0($,"company:"+Z.id,z)<=0?"no_cash_or_materials":"no_materials",batches:0}
+;
+Z.operatingDays+=1;
+let G=0;
+for(let x of Q.inputs){
+let R=Math.round(x.quantity*Y*z.precision.inventoryUnitsPerJin);
+G+=e4(Z,x.itemId,R)}
+let X=Q.outputs.map((x)=>({
+itemId:x.itemId,units:Math.round(x.quantity*Y*z.precision.inventoryUnitsPerJin)}
+)),q=Q.losses.map((x)=>({
+itemId:x.itemId,units:Math.round(x.quantity*Y*z.precision.inventoryUnitsPerJin)}
+)),J=X.reduce((x,R)=>x+R.units,0),F=q.reduce((x,R)=>x+R.units,0),W=J+F,K=0,L=0;
+for(let x of q){
+let R=W>0?Math.floor(G*x.units/W):0;
+K+=R,L+=R}
+if(L)l2(Z,"processingLossVoucherUnits",L),p$(Z,-L);
+return X.forEach((x,R)=>{
+let C=R===X.length-1?G-K:W>0?Math.floor(G*x.units/W):0;
+K+=R===X.length-1?G-K:C;
+let B=TM($,Z,x.itemId,x.units,z),I=x.units-B,T=x.units>0?Math.floor(C*B/x.units):0,b=C-T;
+if(B>0)$.accounts.town[x.itemId]=($.accounts.town[x.itemId]||0)+B,n0($,x.itemId,T),l$(Z,"taxedUnits",x.itemId,B),l2(Z,"taxCostVoucherUnits",T),p$(Z,-T),V0($,{
+type:"enterprise_production_tax",transactionId:E0($),source:"company:"+Z.id,destination:"town",itemId:x.itemId,quantityUnits:B,qeqUnits:0,reason:`${Z.name}按行业生产税以实物缴税；不再重复扣粮券税`}
+,z);
+t4(Z,x.itemId,I,b),l$(Z,"producedUnits",x.itemId,x.units)}
+),Z.status=Y<O?"原料有限":O<M?"按订单生产":"生产中",{
+companyId:Z.id,status:Y<O?"limited_materials":"ready",workers:N,batches:Y,plannedBatches:O}
+}
+function A8($,Z){
+let z=[];
+for(let N of Object.values(U2($,Z)))z.push(CM($,N,Z));
+return z}
+function h5($,Z,z,N,M,Q,_,f){
+let O=$.companies?.[Z];
+if(!O||M<=0)return{
+ok:!1,reason:"企业或数量无效"}
+;
+let Y=O.inventory[N]||0,G=Math.min(Y,M);
+if(G<=0)return{
+ok:!1,reason:"企业库存不足"}
+;
+let X=Number(Q),q=Z3(G,X,_),J=typeof z==="string"&&z.startsWith("household:")?z.slice(10):null,F=J?$.households?.byId?.[J]:null,W=F?D0($,F,_,_.rules.basicCommerceFoodReserveDays??30):void 0,K=x0($,z,"company:"+Z,F0($,q),_,"enterprise_sale",f||`${O.name}销售${_.items[N]?.name||N}`,{
+requireFull:!0,...W===void 0?{
+}
+:{
+maxWheatUnits:W}
+}
+);
+if(!K.ok)return K;
+let L=e4(O,N,G);
+return l2(O,"revenueVoucherUnits",q),l2(O,"cogsVoucherUnits",L),l$(O,"soldUnits",N,G),p$(O,q-L),{
+ok:!0,quantityUnits:G,revenueVoucherUnits:q,cogsVoucherUnits:L,transactionId:K.transactionId}
+}
+function T8($,Z){
+if(!U1($))return{
+active:!1,soldUnits:{
+}
+}
+;
+let z={
+}
+;
+for(let N of Object.values(U2($,Z))){
+let M=Z.buildings[N.typeId],Q=M?.recipeId?Z.recipes[M.recipeId]:null;
+for(let _ of Q?.outputs||[]){
+let f=_.itemId,O=Math.max(0,N.inventory?.[f]||0);
+if(O<=0)continue;
+let Y=T2($,f,Z),G=h5($,N.id,"town",f,O,Y,Z,`批发市场收购${N.name}的${Z.items[f]?.name||f}`);
+if(!G.ok||G.quantityUnits<=0)continue;
+S7($,f,G.quantityUnits,G.revenueVoucherUnits,Z),z[f]=(z[f]||0)+G.quantityUnits}
+}
+return{
+active:!0,soldUnits:z}
+}
+function N3($,Z,z){
+let N=z.buildings[$.typeId],M=N?.jobs?.[0];
+if(!M)return 0;
+let Q=O0(Z,N1($.buildingId,M.id)),_=Math.max(0,M.slots*$.listedLevels),f=Number.isInteger($.settings?.targetWorkers)?$.settings.targetWorkers:null,O=Number.isInteger($.plan?.desiredWorkers)?$.plan.desiredWorkers:null,Y=Math.min(_,Math.max(0,f??O??_)),G=Number.isFinite($.settings?.wagePerWorkerDay)?$.settings.wagePerWorkerDay:Z.employment.wageRates?.[M.id]??M.wagePerWorkerDay??10,X=z.rules.companyOperatingReserveDays||360,q=Math.round(Y*G*X*$0(z)),J=N?.recipeId?z.recipes[N.recipeId]:null,F=0;
+if(J&&Y>0){
+let W=Y*(J.batchesPerWorkerDay||0);
+for(let K of J.inputs||[]){
+let L=Math.round(K.quantity*W*z.precision.inventoryUnitsPerJin);
+F+=Z3(L*X,$3(Z,K.itemId,z),z)}
+}
+return q+F}
+function PM($,Z,z){
+let N=[];
+for(let M of Object.values(U2($,z))){
+if(j2(M),M.annualSettlement||={
+lastSettledYear:0}
+,(M.annualSettlement.lastSettledYear||0)>=Z)continue;
+let Q=M.pendingAnnualSettlement,_=Q?.year===Z?Q.accounts?.profitVoucherUnits||0:0;
+if((M.payroll.legacyUnattributedArrearsVoucherUnits||0)>0){
+let x=z.buildings[M.typeId]?.jobs?.[0],R=x?f1($,N1(M.buildingId,x.id)):[],C=q2($,M.payroll,M.payroll.legacyUnattributedArrearsVoucherUnits,R);
+M.payroll.legacyUnattributedArrearsVoucherUnits=Math.max(0,M.payroll.legacyUnattributedArrearsVoucherUnits-C.attributed)}
+let f=b5($,M.payroll,"company:"+M.id,z,"enterprise_wage_debt_settlement",`${M.name}年度结算前偿付工资债务`,{
+shortfallPrefix:`company-wage:${M.id}`}
+);
+M.payroll.arrearsVoucherUnits=V1(M.payroll)+(M.payroll.legacyUnattributedArrearsVoucherUnits||0);
+let O=Math.max(0,M.retainedEarningsVoucherUnits||0),Y=N3(M,$,z),G=P0($,"company:"+M.id,z),X=Math.max(0,G-Y),q=Math.min(O,X);
+if((M.payroll.arrearsVoucherUnits||0)>0||q<=0)q=0;
+q=j1($,"company:"+M.id,q,z);
+let J=0,F=[];
+if(q>0&&M.listing?.listed&&M.totalShares>0)for(let[L,x]of Object.entries(M.householdShares||{
+}
+)){
+let R=Math.floor(q*Math.max(0,x||0)/M.totalShares);
+if(R<=0)continue;
+if(!x0($,"company:"+M.id,`household:${L}`,F0($,R),z,"enterprise_annual_distribution",`${M.name}第${Z}年家庭股东利润分配`,{
+requireFull:!0}
+).ok)throw Error("企业家庭股东年度分配转账失败");
+J+=R,F.push({
+householdId:L,shares:x,voucherUnits:R}
+)}
+let W=q-J;
+if(W>0){
+if(!x0($,"company:"+M.id,"town",F0($,W),z,"enterprise_annual_distribution",`${M.name}第${Z}年镇库利润上交`,{
+requireFull:!0}
+).ok)throw Error("企业镇库年度分配转账失败")}
+M.retainedEarningsVoucherUnits-=q,M.lastDividendYear=Z,M.annualSettlement={
+lastSettledYear:Z,lastYearNetProfitVoucherUnits:_,workingCapitalTargetVoucherUnits:Y,distributedVoucherUnits:q,townVoucherUnits:W,residentVoucherUnits:J,undistributedVoucherUnits:M.retainedEarningsVoucherUnits,debtPaidVoucherUnits:f?.paid||0}
+;
+let K={
+year:Z,totalVoucherUnits:q,townVoucherUnits:W,residentVoucherUnits:J,householdRows:F,retainedBeforeVoucherUnits:O,lastYearNetProfitVoucherUnits:_,workingCapitalReserveVoucherUnits:Y,debtPaidVoucherUnits:f?.paid||0}
+;
+M.dividendHistory.push(K),M.pendingAnnualSettlement=null,N.push({
+companyId:M.id,...K}
+)}
+return N}
+var C8=PM;
+function G5($,Z,z){
+let N=z.rules.operatingRightValuationDays||365,M=($.year-1)*(z.rules.daysPerYear||365)+$.day,Q=(Z.history||[]).filter((y)=>Number.isInteger(y.serial)&&y.serial>M-N&&y.serial<=M),_=M,O=$.day>0&&!Q.some((y)=>y.serial===_)?[{
+serial:_,profitVoucherUnits:Z.accounts?.day?.profitVoucherUnits||0,revenueVoucherUnits:Z.accounts?.day?.revenueVoucherUnits||0}
+]:[],Y=Q.concat(O),G=Math.max(0,Z.initialInvestment?.cashValueUnits??Z.initialInvestment?.cashVoucherUnits??0)+(Z.initialInvestment?.materials||[]).reduce((y,j)=>y+Math.max(0,j.referenceVoucherUnits||0),0);
+if(!Y.length)return{
+observedDays:0,actualRevenueVoucherUnits:0,actualProfitVoucherUnits:0,annualizedProfitVoucherUnits:0,investedCapitalVoucherUnits:G,annualizedProfitRateBps:0,valuationRateFactor:0,referenceCompanyValueVoucherUnits:0,fiveYearReferenceVoucherUnits:0,validProfitMethod:!1,performanceStatus:"暂无业绩"}
+;
+let X=Math.min(...Y.map((y)=>y.serial)),q=Math.min(N,Math.max(1,M-X+1)),J=Y.reduce((y,j)=>y+(j.revenueVoucherUnits||0),0),F=Y.reduce((y,j)=>y+(j.profitVoucherUnits||0),0),W=Math.round(F*(z.rules.daysPerYear||365)/q),K=G>0?Math.round(W*1e4/G):0,L=z.rules.sharePerformanceObservationDays||30,x=Math.max(1,Math.round((z.rules.companyValuationTargetProfitRatePercent||20)*100)),R=Math.max(0,Number(z.rules.companyValuationRateFactorMinimum??0.5)),C=Math.max(R,Number(z.rules.companyValuationRateFactorMaximum??1.5)),B=G>0?Math.max(R,Math.min(C,K/x)):1,I=q>=L&&W>0,T=Math.max(1,z.rules.companyValuationProfitYears||5),b=I?Math.max(0,Math.round(W*T*B)):0;
+return{
+observedDays:q,actualRevenueVoucherUnits:J,actualProfitVoucherUnits:F,annualizedProfitVoucherUnits:W,investedCapitalVoucherUnits:G,annualizedProfitRateBps:K,valuationRateFactor:B,referenceCompanyValueVoucherUnits:b,fiveYearReferenceVoucherUnits:b,validProfitMethod:I,performanceStatus:q<L?"观察中":W>0?"已有业绩":"暂无正收益"}
+}
+function P8($,Z,z){
+let N=($.year-1)*(z.rules.daysPerYear||365)+$.day;
+if(N<=0||Z.plan?.lastArchivedSerial===N)return;
+let M=Object.values(Z.accounts?.day?.soldUnits||{
+}
+).reduce((f,O)=>f+O,0),Q=Object.values(Z.accounts?.day?.producedUnits||{
+}
+).reduce((f,O)=>f+O,0);
+Z.history||=[],Z.history.push({
+serial:N,soldUnits:M,producedUnits:Q,revenueVoucherUnits:Z.accounts?.day?.revenueVoucherUnits||0,inputPurchaseVoucherUnits:Z.accounts?.day?.inputPurchaseVoucherUnits||0,wageExpenseVoucherUnits:Z.accounts?.day?.wageExpenseVoucherUnits||0,profitVoucherUnits:Z.accounts?.day?.profitVoucherUnits||0}
+);
+let _=Math.max(z.rules.operatingRightValuationDays||365,(z.rules.operatingObservationDays||7)*4);
+if(Z.history.length>_)Z.history.splice(0,Z.history.length-_);
+Z.plan||={
+}
+,Z.plan.lastArchivedSerial=N}
+function k8($,Z){
+for(let z of Object.values(U2($,Z)))P8($,z,Z),z.accounts.day=X5()}
+function j8($,Z,z=null){
+for(let N of Object.values(U2($,Z))){
+if(z)P8($,N,Z);
+if(z&&N.accounts?.year)N.pendingAnnualSettlement={
+year:z,accounts:JSON.parse(JSON.stringify(N.accounts.year))}
+;
+N.accounts.year=X5()}
+}
+function U8($,Z,z){
+let N=$0(z),Q=G5($,Z,z).annualizedProfitVoucherUnits,_=Z.totalShares>0?Q/Z.totalShares:0,f=Z.shareSale?.sharePriceVoucherUnits||0,O=f>0?Math.max(0,_)/f:0,Y=z.buildings[Z.typeId],G=Y?.jobs?.[0],X=G?O0($,N1(Z.buildingId,G.id)):0,F=((Y?.recipeId?z.recipes[Y.recipeId]:null)?.outputs||[]).map((j)=>j.itemId).reduce((j,l)=>j+(Z.inventory?.[l]||0),0),W=Object.values(Z.accounts?.day?.soldUnits||{
+}
+).reduce((j,l)=>j+l,0),K=[...Z.history||[],{
+soldUnits:W,revenueVoucherUnits:Z.accounts?.day?.revenueVoucherUnits||0,inputPurchaseVoucherUnits:Z.accounts?.day?.inputPurchaseVoucherUnits||0,wageExpenseVoucherUnits:Z.accounts?.day?.wageExpenseVoucherUnits||0,profitVoucherUnits:Z.accounts?.day?.profitVoucherUnits||0}
+],L=Y2(K,"soldUnits",z),x=Y2(K,"profitVoucherUnits",z),R=Y2(K,"revenueVoucherUnits",z),C=Y2(K,"inputPurchaseVoucherUnits",z),B=Y2(K,"wageExpenseVoucherUnits",z),I=L>0?F/L:null,T=Z.status||"运营中",b=G?Number.isFinite(Z.settings?.wagePerWorkerDay)?Z.settings.wagePerWorkerDay:$.employment?.wageRates?.[G.id]??G.wagePerWorkerDay??10:0,y=Math.round(Math.max(1,X)*b*N);
+if((Z.payroll?.arrearsVoucherUnits||0)>0)T="欠薪";
+else if((Z.plan?.plannedBatches||0)>0&&P0($,"company:"+Z.id,z)<y)T="资金不足";
+else if(X<=0&&(Z.plan?.desiredWorkers||0)>0)T="缺工人";
+else if(X>(Z.plan?.desiredWorkers??X))T="用工偏多";
+else if(x<0&&C>B&&C>R*0.5)T="原料成本高";
+else if(x<0&&B>=C)T="工资压力高";
+else if(L<=0&&F>0)T="暂无销量";
+else if(F>0&&W<=0&&["生产中","原料有限","按订单生产"].includes(T))T="缺订单";
+return{
+...Z,status:T,workers:X,capacity:G?G.slots*Z.listedLevels:0,cashVoucher:(Z.cashVoucherUnits||0)/N,cashWheatJin:(Z.cashWheatUnits||0)/z.precision.inventoryUnitsPerJin,cashValue:P0($,"company:"+Z.id,z)/N,arrearsVoucher:(Z.payroll?.arrearsVoucherUnits||0)/N,retainedEarningsVoucher:(Z.retainedEarningsVoucherUnits||0)/N,averageDailySales:L/z.precision.inventoryUnitsPerJin,averageDailyProfitVoucher:x/N,inventoryDays:I,plannedWorkers:Number.isInteger(Z.settings?.targetWorkers)?Z.settings.targetWorkers:Z.plan?.desiredWorkers||0,plannedBatches:Z.plan?.plannedBatches||0,demandBasis:Z.plan?.demandBasis||"暂无经营计划",annualizedProfitVoucher:Q/N,epsVoucher:_/N,referenceDividendYield:O,townSharePercent:Z.totalShares?Z.townShares/Z.totalShares:0,residentSharePercent:Z.totalShares?Z.residentShares/Z.totalShares:0}
+}
+function M3($,Z,z){
+return Math.max(0,Math.round($/z.precision.inventoryUnitsPerJin*Z*$0(z)))}
+function S8($,Z,z,N,M){
+let Q=0,_=Math.max(0,Math.floor(z)),f=P0($,Z,M);
+while(Q<_){
+let O=Math.ceil((Q+_)/2);
+if(M3(O,N,M)<=f)Q=O;
+else _=O-1}
+return Q}
+function I8($,Z){
+if(!$.length)return $;
+let z=((Z||0)%$.length+$.length)%$.length;
+return $.slice(z).concat($.slice(0,z))}
+function kM($,Z,z){
+let N=$,M=new Map(Z.map((_)=>[_.id,0])),Q=I8(Z.slice(),z);
+while(N>0&&Q.length){
+let _=Math.max(1,Math.ceil(N/Q.length)),f=[],O=0;
+for(let Y of Q){
+if(N<=0)break;
+let G=M.get(Y.id)||0,X=Math.max(0,Y.stockUnits-G);
+if(X<=0)continue;
+let q=Math.min(X,_,N);
+if(M.set(Y.id,G+q),N-=q,O+=q,X>q)f.push(Y)}
+if(O<=0)break;
+Q=f}
+return M}
+function b8($,Z){
+let z=[];
+for(let N of m($)){
+let M=N.inventory?.[Z]||0;
+if(M>0)z.push({
+id:`household:${N.id}`,householdId:N.id,stockUnits:M}
+)}
+for(let N of Object.values($.companies||{
+}
+))if((N.inventory?.[Z]||0)>0)z.push({
+id:"company:"+N.id,stockUnits:N.inventory[Z]||0}
+);
+return z}
+function g8($,Z,z){
+if($.market||={
+}
+,$.market.publicProcurementDemand||={
+}
+,!Z){
+if(delete $.market.publicProcurementDemand.wood,$.market.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0,cleared:!0}
+}
+let N=[],M="公共建设";
+if(Z.kind==="build"){
+let O=z.buildings[Z.typeId];
+if(!O)return{
+ok:!1,reason:"未知建设项目"}
+;
+N=O.materialRequirements||[],M=O.name+"建设"}
+else if(Z.kind==="upgrade"){
+let O=$.buildings.find((G)=>G.id===Z.buildingId),Y=O?z.buildings[O.typeId]:null;
+if(!Y?.upgrade)return{
+ok:!1,reason:"未知升级项目"}
+;
+N=Y.upgrade.materialRequirements||[],M=Y.name+"升级"}
+else return{
+ok:!1,reason:"未知采购意向"}
+;
+let Q=N.find((O)=>O.itemId==="wood");
+if(!Q){
+if(delete $.market.publicProcurementDemand.wood,$.market.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0,cleared:!0}
+}
+let _=Math.round(Q.quantity*z.precision.inventoryUnitsPerJin),f=Math.max(0,_-($.accounts.town.wood||0));
+if(f<=0){
+if(delete $.market.publicProcurementDemand.wood,$.market.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0,cleared:!0}
+}
+if($.market.publicProcurementDemand.wood={
+itemId:"wood",requiredUnits:_,wantedUnits:f,label:M,kind:Z.kind,typeId:Z.typeId||null,buildingId:Z.buildingId||null,createdYear:$.year,createdDay:Math.max(1,$.day+1)}
+,$.market.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0,demand:$.market.publicProcurementDemand.wood}
+}
+function Y5($,Z="wood"){
+if($.market?.publicProcurementDemand)delete $.market.publicProcurementDemand[Z];
+if($.market?.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return{
+ok:!0}
+}
+function c$($,Z,z){
+let N=$.market?.publicProcurementDemand?.[Z]||null,M=W0($,Z,z),Q=Math.max(0,Math.floor(N?.wantedUnits||0));
+if(!N||Q<=0)return{
+active:!1,wantedUnits:0,fundedUnits:0,priceVoucherPerUnit:M,reason:"暂无采购需求",label:null}
+;
+if(!Number.isFinite(M)||M<=0)return{
+active:!0,wantedUnits:Q,fundedUnits:0,priceVoucherPerUnit:M,reason:"采购价格无效",label:N.label}
+;
+let _=S8($,"town",Q,M,z),f=Math.min(Q,_);
+return{
+active:!0,wantedUnits:Q,fundedUnits:f,affordableUnits:_,priceVoucherPerUnit:M,label:N.label,reason:f<=0?"镇库可支付资产不足":f<Q?"采购预算仅能覆盖部分需求":"存在明确公共建设采购需求"}
+}
+function jM($,Z){
+if(!U1($))return 0;
+let z=$.wholesaleMarket;
+if(!z)return 0;
+return Math.max(0,Math.floor(z.inventory?.[Z]||0))}
+function S2($,Z,z,N){
+let M=Math.max(0,Math.floor(Number(z)||0)),Q=W0($,Z,N),_=b8($,Z),f=_.filter((L)=>L.id.startsWith("household:")).reduce((L,x)=>L+x.stockUnits,0),O=_.filter((L)=>L.id.startsWith("company:")).reduce((L,x)=>L+x.stockUnits,0),Y=f+O,G=jM($,Z),X=Y+G;
+if(M<=0)return{
+wantedUnits:0,residentAvailableUnits:f,companyAvailableUnits:O,wholesaleAvailableUnits:G,wholesaleUsableUnits:0,totalAvailableUnits:X,purchasableUnits:0,costVoucherUnits:0,priceVoucherPerUnit:Q,reason:"暂无采购需求"}
+;
+if(!Number.isFinite(Q)||Q<=0)return{
+wantedUnits:M,residentAvailableUnits:f,companyAvailableUnits:O,wholesaleAvailableUnits:G,wholesaleUsableUnits:0,totalAvailableUnits:X,purchasableUnits:0,costVoucherUnits:0,priceVoucherPerUnit:Q,reason:"采购价格无效"}
+;
+let q=Math.min(M,G),J=M-q,F=S8($,"town",Math.min(J,Y),Q,N),W=Math.min(J,Y,F),K=q+W;
+return{
+wantedUnits:M,residentAvailableUnits:f,companyAvailableUnits:O,wholesaleAvailableUnits:G,wholesaleUsableUnits:q,totalAvailableUnits:X,affordableUnits:F,purchasableUnits:K,costVoucherUnits:M3(W,Q,N),priceVoucherPerUnit:Q,reason:K>=M?"可完整采购":X<M?"市场库存不足":"镇库可支付资产不足"}
+}
+function i$($,Z,z,N){
+let M=S2($,Z,z,N);
+if(M.purchasableUnits<=0)return{
+boughtUnits:0,paidVoucherUnits:0,missingUnits:M.wantedUnits,reason:M.reason,sellerRows:[]}
+;
+let Q=[],_=0,f=0,O=Math.min(M.wholesaleUsableUnits||0,M.purchasableUnits);
+if(O>0){
+let G=S$($,Z,O,N,`镇营建造从批发市场领用${N.items[Z]?.name||Z}`);
+if(G.ok&&G.boughtUnits>0)Q.push({
+seller:"wholesale_market",quantityUnits:G.boughtUnits,paidVoucherUnits:0}
+),_+=G.boughtUnits}
+let Y=M.purchasableUnits-_;
+if(Y>0){
+let G=b8($,Z);
+$.market.sellerRotation||={
+}
+;
+let X="town:"+Z,q=$.market.sellerRotation[X]||0,J=kM(Y,G,q),F=0;
+for(let W of I8(G,q)){
+let K=J.get(W.id)||0;
+if(K<=0)continue;
+let L=M3(K,M.priceVoucherPerUnit,N);
+if(W.id.startsWith("household:")){
+let x=$.households.byId[W.householdId],R=x0($,"town",W.id,F0($,L),N,"public_material_purchase",`镇库向${x.name}采购${N.items[Z]?.name||Z}`,{
+requireFull:!0}
+);
+if(!R.ok)break;
+if((x.inventory?.[Z]||0)<K)throw Error("家庭材料库存预检后不足");
+x.inventory[Z]-=K,$.accounts.town[Z]=($.accounts.town[Z]||0)+K,n0($,Z,L),M0($,N),V0($,{
+type:"public_material_purchase",transactionId:R.transactionId||E0($),source:W.id,destination:"town",itemId:Z,quantityUnits:K,qeqUnits:0,reason:`${x.name}向镇库出售${N.items[Z]?.name||Z}`}
+,N)}
+else{
+let x=W.id.slice(8),R=h5($,x,"town",Z,K,M.priceVoucherPerUnit,N,`镇库采购${N.items[Z]?.name||Z}用于公共建设`);
+if(!R.ok)break;
+$.accounts.town[Z]=($.accounts.town[Z]||0)+R.quantityUnits,n0($,Z,R.revenueVoucherUnits)}
+Q.push({
+seller:W.id,quantityUnits:K,paidVoucherUnits:L}
+),_+=K,f+=L,F+=1}
+if(F>0&&G.length)$.market.sellerRotation[X]=(q+1)%G.length}
+return{
+boughtUnits:_,paidVoucherUnits:f,missingUnits:Math.max(0,M.wantedUnits-_),sellerRows:Q}
+}
+function Q3($,Z,z){
+let N=new Map;
+for(let M of Z||[]){
+if(M.itemId==="wood")continue;
+N.set(M.itemId,(N.get(M.itemId)||0)+Math.max(0,M.quantityUnits||0))}
+for(let[M,Q]of N){
+let _=$.accounts?.town?.[M]||0;
+if(_<Q){
+let f=z.items[M],O=(Q-_)/z.precision.inventoryUnitsPerJin;
+return{
+ok:!1,itemId:M,reason:`镇库${f?.name||M}不足，还缺${O.toLocaleString("zh-CN",{maximumFractionDigits:3})}${f?.name||M}`}
+}
+}
+return{
+ok:!0}
+}
+function v8($){
+return($.projects||[]).reduce(function(Z,z){
+return Z+Math.max(0,Math.floor(z.workers||0))}
+,0)}
+function r$($,Z,z,N){
+let M=Math.max(0,Math.floor(Number(z)||0)),Q=Math.max(0,Math.floor(Z.workers||0)),_=v8($)-Q,f=O5($,N),O=Math.max(0,O0($,"builders")-v8($)),Y=Math.max(0,Q+_+f.idle+O),G=Math.min(M,Y),X=_+G;
+if(X!==O0($,"builders"))U0($,"builders",X,N,{
+type:"town",id:"projects"}
+);
+let q=O0($,"builders"),J=Math.max(0,Math.min(G,q-_));
+return Z.workers=J,{
+ok:!0,requested:M,assigned:J,limit:Y,idle:f.idle,unassignedBuilders:O}
+}
+function w8($,Z,z,N){
+let M=($.projects||[]).find(function(f){
+return f.instanceId===Z}
+);
+if(!M)return{
+ok:!1,reason:"工程不存在或已完工"}
+;
+let Q=Math.max(0,Math.floor(Number(z)||0)),_=r$($,M,Q,N);
+return{
+ok:!0,changed:_.assigned!==(M.workers||0),assigned:_.assigned,requested:Q,limit:_.limit,reason:_.assigned<Q?"全镇待业劳力不足":null}
+}
+function h8($,Z,z,N,M={
+}
+){
+let Q=N.buildings[Z];
+if(!Q)return{
+ok:!1,reason:"未知建筑"}
+;
+let _=$.buildings.filter(function(L){
+return L.typeId===Z}
+).length,f=$.projects.filter(function(L){
+return L.kind!=="upgrade"&&L.typeId===Z}
+).length;
+if(_+f>=(Q.maxInstances??1/0))return{
+ok:!1,reason:"同类建筑已达到可建数量"}
+;
+let O=$.plots.find(function(L){
+return L.id===z}
+);
+if(!O)return{
+ok:!1,reason:"请在地图空地上选址"}
+;
+if(Q.requiredPlotFeature&&O.feature!==Q.requiredPlotFeature){
+let L=Q.requiredPlotFeature==="salt_mine"?"盐矿":"南部森林资源点";
+return{
+ok:!1,reason:Q.name+"只能建在"+L+"地块"}
+}
+if($.buildings.some(function(L){
+return L.plotId===z}
+))return{
+ok:!1,reason:"这块地已经有建筑"}
+;
+if($.projects.some(function(L){
+return L.plotId===z}
+))return{
+ok:!1,reason:"这块地已有工程"}
+;
+let Y=null,G=(Q.materialRequirements||[]).map(function(L){
+return{
+owner:"town",sourceOwner:"town",itemId:L.itemId,quantityUnits:Q1(L.quantity,N)}
+}
+);
+if(G.length){
+let L=Q3($,G,N);
+if(!L.ok)return L;
+for(let R of G){
+let C=Math.max(0,R.quantityUnits-($.accounts.town[R.itemId]||0));
+if(C>0&&R.itemId==="wood"){
+let B=S2($,R.itemId,C,N);
+if(B.purchasableUnits<C){
+let T=N.items[R.itemId],b=(C-B.purchasableUnits)/N.precision.inventoryUnitsPerJin;
+return{
+ok:!1,reason:`镇库及企业市场${T?.name||R.itemId}不足或镇库粮券不足，还缺${b.toLocaleString("zh-CN",{maximumFractionDigits:3})}${T?.name||R.itemId}`}
+}
+if(i$($,R.itemId,C,N).boughtUnits<C)return{
+ok:!1,reason:`采购${N.items[R.itemId]?.name||R.itemId}未完整成交，未扣施工材料`}
+}
+}
+let x=K2($,{
+inputs:G,inputType:"construction_material",inputDestination:"construction_asset",reason:Q.name+"施工材料；开工时一次性入工程"}
+,N);
+if(!x.ok){
+let R=N.items[x.itemId],C=G.find((T)=>T.itemId===x.itemId)?.quantityUnits||0,B=$.accounts.town[x.itemId]||0,I=Math.max(0,C-B)/N.precision.inventoryUnitsPerJin;
+return{
+ok:!1,reason:"镇库"+(R?.name||x.itemId)+"不足，还缺"+I.toLocaleString("zh-CN",{
+maximumFractionDigits:3}
+)+(R?.name||x.itemId)}
+}
+Y=x.transactionId}
+let X=Q.construction,q=$.nextInstanceNumber||1,J="building-"+q;
+$.nextInstanceNumber=q+1;
+let F={
+kind:"build",instanceId:J,typeId:Z,plotId:z,workDone:0,workRequired:X.workDays,recommendedWorkers:X.recommendedWorkers,workers:0,prepaidWageCreditUnits:0,materialsConsumed:G.map((L)=>({
+itemId:L.itemId,quantityUnits:L.quantityUnits,sourceOwner:L.sourceOwner,transactionId:Y}
+)),started:{
+year:$.year,day:Math.min(N.rules.daysPerYear,$.day+1)}
+}
+;
+$.projects.push(F);
+let W=Number.isFinite(M.workers)?M.workers:X.recommendedWorkers,K=r$($,F,W,N).assigned;
+return q0($,"在"+O.label+"动工修建"+Q.name+"，投入建筑工"+K+"人，按实际施工日领取粮券工资。",N,{
+day:$.day+1}
+),Y5($,"wood"),{
+ok:!0,assignedBuilders:K,instanceId:J,workers:K}
+}
+function m8($,Z){
+let z=$.projects||[];
+if(!z.length)return null;
+let N=[],M=[];
+for(let Q of z.slice()){
+let _=Math.max(0,Math.floor(Q.workers||0));
+if(_<=0){
+N.push({
+instanceId:Q.instanceId,status:"no_workers",completed:!1,workers:0}
+);
+continue}
+if(Q.workDone=Math.min(Q.workRequired,Q.workDone+_),Q.workDone<Q.workRequired){
+N.push({
+instanceId:Q.instanceId,status:"working",completed:!1,workers:_,workDone:Q.workDone}
+);
+continue}
+M.push(UM($,Q,Z,N))}
+for(let Q of M)$.projects=$.projects.filter(function(_){
+return _.instanceId!==Q.instanceId}
+);
+if(!$.projects.length&&O0($,"builders")!==0)U0($,"builders",0,Z);
+return{
+status:M.length?"completed":N.some((Q)=>Q.status==="working")?"working":"no_workers",completed:M.length>0,projects:N,finished:M.map((Q)=>Q.result)}
+}
+function y8($,Z,z){
+let N=Math.max(0,Math.floor(Z.workers||0));
+if(Z.workers=0,N<=0)return 0;
+let M=O0($,"builders"),Q=Math.max(0,M-N);
+if(Q!==M)U0($,"builders",Q,z);
+return N}
+function UM($,Z,z,N){
+if(Z.kind==="upgrade"){
+let Y=$.buildings.find((q)=>q.id===Z.buildingId);
+if(!Y)throw Error("升级工程关联的建筑实例不存在");
+Y.level=Z.targetLevel,Y.ownership||={
+townLevels:(Y.level||1)-1,privateLevels:0,listedLevels:0}
+,Y.ownership.listedLevels||=0,Y.ownership.townLevels=(Y.ownership.townLevels||0)+1,Y.materialInvestments||=[];
+for(let q of Z.materialsConsumed||[])Y.materialInvestments.push({
+itemId:q.itemId,quantityUnits:q.quantityUnits,sourceOwner:q.sourceOwner||"town",projectId:Z.instanceId,transactionId:q.transactionId||null,purpose:"upgrade",level:Z.targetLevel}
+);
+let G=z.buildings[Z.typeId]?.name||Z.typeId,X=Z.prepaidWageCreditUnits||0;
+return y8($,Z,z),q0($,`${G}原地扩建完成，现为${Y.level}级；新增岗位保持空缺。`,z,{
+day:$.day+1}
+),N.push({
+instanceId:Z.instanceId,status:"completed",completed:!0,upgraded:!0,building:Y,unusedCredit:X,workers:0}
+),{
+instanceId:Z.instanceId,result:{
+status:"completed",completed:!0,building:Y,upgraded:!0,unusedCredit:X}
+}
+}
+let M=$.plots.find(function(Y){
+return Y.id===Z.plotId}
+),Q=z.buildings[Z.typeId],_={
+id:Z.instanceId,typeId:Z.typeId,level:1,ownership:{
+townLevels:1,privateLevels:0,listedLevels:0}
+,materialInvestments:(Z.materialsConsumed||[]).map((Y)=>({
+itemId:Y.itemId,quantityUnits:Y.quantityUnits,sourceOwner:Y.sourceOwner||"town",projectId:Z.instanceId,transactionId:Y.transactionId||null,purpose:"construction",level:1}
+)),plotId:Z.plotId,x:M.x,y:M.y,housingCapacity:Q.housingCapacity||0,completed:{
+year:$.year,day:Math.min(z.rules.daysPerYear,$.day+1)}
+}
+;
+$.buildings.push(_),X8($,_,z);
+let f=Q?Q.name:Z.typeId,O=Z.prepaidWageCreditUnits||0;
+if(O>0){
+if(!$.payroll)$.payroll={
+arrearsWheatUnits:{
+}
+,totals:{
+}
+}
+;
+if(!$.payroll.closedProjectCredits)$.payroll.closedProjectCredits={
+}
+;
+$.payroll.closedProjectCredits[Z.instanceId]=O,V0($,{
+type:"construction_prepaid_remainder",transactionId:E0($),source:Z.instanceId,destination:"construction_investment",itemId:"wheat",quantityUnits:O,qeqUnits:O*z.precision.qeqUnitsPerJin/z.precision.inventoryUnitsPerJin,reason:"工程完工时尚未抵扣的旧预付施工粮酬，保留为已付建设投入"}
+,z)}
+return y8($,Z,z),q0($,f+"落成，可以安排工人开工了。"+(O>0?"剩余旧预付款仍记作已付建设投入。":""),z,{
+day:$.day+1}
+),N.push({
+instanceId:Z.instanceId,status:"completed",completed:!0,building:_,workers:0}
+),{
+instanceId:Z.instanceId,result:{
+status:"completed",completed:!0,building:_}
+}
+}
+function _3($,Z,z){
+let N=z.buildings[Z.typeId];
+if(!N||!N.recipeId)return{
+status:"no_recipe",batches:0,workers:0}
+;
+let M=z.recipes[N.recipeId];
+if(!M)return{
+status:"no_recipe",batches:0,workers:0}
+;
+let Q=(N.jobs||[]).find(function(Y){
+return Y.id===N.productionRoleId}
+),_=Q?O0($,h1(Z.id,Q.id)):0;
+if(_<=0)return{
+status:"no_workers",batches:0,workers:_,recipe:M}
+;
+let f=_*M.batchesPerWorkerDay,O=f;
+for(let Y of M.inputs){
+let G=Math.round(Y.quantity*z.precision.inventoryUnitsPerJin);
+O=Math.min(O,Math.floor(($.accounts.town[Y.itemId]||0)/G))}
+if(O<=0)return{
+status:"no_materials",batches:0,workers:_,recipe:M,capacity:f}
+;
+if(O<f)return{
+status:"limited_materials",batches:O,workers:_,recipe:M,capacity:f}
+;
+return{
+status:"ready",batches:O,workers:_,recipe:M,capacity:f}
+}
+function u8($,Z,z){
+let N=_3($,Z,z),M=z.buildings[Z.typeId];
+if(!M||!M.recipeId||N.status==="no_recipe"){
+let f=M?.jobs||[],O=f.reduce((Y,G)=>Y+O0($,h1(Z.id,G.id)),0);
+return{
+...N,label:!f.length?"已落成":O>0?"运作中":"待安排人手"}
+}
+if(N.status==="no_workers")return{
+...N,label:"缺人停工"}
+;
+let Q=SM($,N.recipe,N.workers,z);
+if(Q.batches<=0)return{
+...N,status:"no_materials",batches:0,label:Q.reason==="尚未建成批发市场"?"缺料停工（未建批发市场）":"缺料停工（待镇库调拨）",reason:Q.reason}
+;
+let _=Q.batches<N.capacity;
+return{
+...N,batches:Q.batches,status:_?"limited_materials":"ready",label:_?"原料有限，正在加工":"正在加工",reason:Q.batches<N.batches?"部分原料待镇库向批发市场调拨":null}
+}
+function SM($,Z,z,N){
+let M=$.wholesaleMarket;
+if(!U1($)||!M)return{
+batches:0,reason:"尚未建成批发市场"}
+;
+let Q=z*(Z.batchesPerWorkerDay||0),_=Q,f=null;
+for(let O of Z.inputs||[]){
+let Y=Math.round(O.quantity*N.precision.inventoryUnitsPerJin),G=Math.max(0,M.inventory?.[O.itemId]||0),X=Math.min(Q,Math.floor(G/Math.max(1,Y)));
+if(X<_)_=X,f=N.items[O.itemId]?.name||O.itemId}
+if(_<=0)return{
+batches:0,reason:`批发市场${f||"原料"}缺货，待镇库调拨`}
+;
+return{
+batches:_,reason:null}
+}
+function IM($,Z,z){
+let N=[];
+for(let _ of $.inputs)N.push({
+owner:"town",itemId:_.itemId,quantityJin:_.quantity*Z}
+);
+let M=[];
+for(let _ of $.outputs)M.push({
+owner:"town",itemId:_.itemId,quantityJin:_.quantity*Z}
+);
+let Q=$.losses.map(function(_){
+return{
+itemId:_.itemId,quantityJin:_.quantity*Z}
+}
+);
+return{
+inputs:N,outputs:M,losses:Q}
+}
+function f3($,Z,z,N,M){
+for(let Q of Z){
+let _=Q.boughtUnits-Q.perBatch*z;
+if(_>0)g5($,Q.itemId,_,M,`${N?.name||"生产"}多领退回${M.items[Q.itemId]?.name||Q.itemId}`)}
+}
+function bM($,Z){
+let z=Number($?.outputTargetJin||0),N=Z?.outputs?.[0]?.quantity||0;
+if(!(z>0)||!(N>0))return Number.POSITIVE_INFINITY;
+return Math.ceil(z/N)}
+function l8($,Z,z,N){
+let M=($.buildings||[]).find((f)=>f.id===Z);
+if(!M)return{
+ok:!1,reason:"找不到这座建筑"}
+;
+if(!N.buildings[M.typeId]?.recipeId)return{
+ok:!1,reason:"这座建筑没有生产配方"}
+;
+let _=Number(z);
+if(!Number.isFinite(_)||_<0||_>1e9)return{
+ok:!1,reason:"目标日产量须为非负数"}
+;
+if(_>0)M.outputTargetJin=Math.round(_*1000)/1000;
+else delete M.outputTargetJin;
+return{
+ok:!0,buildingId:Z,quantityJin:M.outputTargetJin||0}
+}
+function gM($,Z,z){
+let N=z.buildings[Z.typeId],M=N?.recipeId?z.recipes[N.recipeId]:null,Q=(N?.jobs||[]).find((K)=>K.id===N.productionRoleId),_=Q?O0($,h1(Z.id,Q.id)):0,f=Number.POSITIVE_INFINITY,O=[],Y=bM(Z,M);
+if(M&&_>0&&(M.inputs||[]).length){
+let K=Math.min(_*(M.batchesPerWorkerDay||0),Y);
+f=K;
+for(let L of M.inputs||[]){
+let x=Math.round(L.quantity*z.precision.inventoryUnitsPerJin),R=x*K,C=S$($,L.itemId,R,z,`${N.name}从批发市场领用${z.items[L.itemId]?.name||L.itemId}`).boughtUnits||0;
+O.push({
+itemId:L.itemId,boughtUnits:C,perBatch:x}
+),f=Math.min(f,Math.floor(C/Math.max(1,x)))}
+}
+let G=_3($,Z,z),X=Math.min(G.batches||0,f,Y);
+if(!N||!N.recipeId||G.status==="no_workers"||X<=0)return f3($,O,0,N,z),{
+buildingId:Z.id,status:G.status==="no_workers"?"no_workers":"no_materials",batches:0}
+;
+let q=G.recipe,J=IM(q,X,z),F=c6($,Z,q,X,z),W=K2($,{
+inputs:J.inputs,outputs:J.outputs,losses:J.losses,reason:N.name+"生产："+q.name,lossReason:q.name+"加工损耗（未作为口粮）"}
+,z);
+if(!W.ok)return f3($,O,0,N,z),{
+buildingId:Z.id,status:"no_materials",batches:0,reason:W.reason}
+;
+return i6($,F),f3($,O,X,N,z),{
+buildingId:Z.id,status:X>=Y?"target_capped":X<(G.batches||0)?"limited_materials":G.status,batches:X,transactionId:W.transactionId,outputUnits:F.outputs.reduce(function(K,L){
+return K[L.itemId]=(K[L.itemId]||0)+L.quantityUnits,K}
+,{
+}
+)}
+}
+function p8($,Z){
+return $.buildings.map(function(z){
+return gM($,z,Z)}
+)}
+function vM($,Z){
+return f0($)*Z.rules.foodPerPersonDay*Z.precision.qeqUnitsPerJin}
+function d8($,Z,z){
+return vM($,z)*Z}
+function yM($,Z){
+let z=Z.precision.qeqUnitsPerJin/Z.precision.inventoryUnitsPerJin;
+return Math.max(0,Math.ceil($/z))}
+function c8($,Z,z,N,M){
+let Q=Math.max(0,z-a0($,Z,N));
+if(Q<=0||(Z.voucherUnits||0)<=0||($.accounts?.town?.wheat||0)<=0)return{
+redeemedUnits:0}
+;
+let _=yM(Q,N),f=Math.min(_,Z.voucherUnits||0,$.accounts?.town?.wheat||0);
+if(f<=0)return{
+redeemedUnits:0}
+;
+return E$($,`household:${Z.id}`,f,N,M).ok?{
+redeemedUnits:f}
+:{
+redeemedUnits:0}
+}
+function wM($,Z){
+let z=Z.rules.householdFoodRedemptionTargetDays||3,N=0,M=0;
+for(let Q of m($)){
+let _=c8($,Q,d8(Q,z,Z),Z,"家庭口粮不足，按1券兑1斤小麦正常兑付");
+if(_.redeemedUnits>0)N+=_.redeemedUnits,M+=1}
+return{
+redeemedUnits:N,households:M}
+}
+function hM($,Z){
+return m($).filter(J0).map((z)=>({
+household:z,foodDays:g2($,z,Z)}
+)).sort((z,N)=>z.foodDays-N.foodDays||z.household.id.localeCompare(N.household.id))}
+function i8($,Z){
+let z=Z.rules.automaticReliefTriggerDays||7,N=Z.rules.automaticReliefTargetDays||14,M=hM($,Z).filter((O)=>O.foodDays<z),Q=[],_=0,f=0;
+for(let O of M){
+let Y=O.household,G=d8(Y,N,Z),X=c8($,Y,G,Z,"救济资格核算：家庭先用自身粮券按1券兑1斤小麦补足口粮");
+if(X.redeemedUnits>0)_+=X.redeemedUnits,f+=1;
+let q=a0($,Y,Z),J=Math.max(0,G-q);
+if(J>0)Q.push({
+household:Y,foodDays:g2($,Y,Z),needQeqUnits:J,targetQeqUnits:G}
+)}
+return Q.sort((O,Y)=>O.foodDays-Y.foodDays||O.household.id.localeCompare(Y.household.id)),{
+candidates:M,eligible:Q,redeemedUnits:_,redeemedHouseholds:f,targetDays:N}
+}
+function r8($,Z,z,N,M){
+let Q=Z.reduce((G,X)=>G+X.needQeqUnits,0),_=Math.min(Math.max(0,z),Q),f=_,O=0,Y=[];
+for(let G of Z){
+if(f<=0)break;
+let X=Math.max(0,G.targetQeqUnits-a0($,G.household,N)),q=Math.min(f,X);
+if(q<=0)continue;
+let J=q$($,"town",`household:${G.household.id}`,q,M,"relief",N,{
+allowPartial:!0}
+);
+if(J.movedQeqUnits>0)O1($,G.household.id,"reliefQeqUnits",J.movedQeqUnits,N),O1($,G.household.id,"inKindIncomeQeqUnits",J.movedQeqUnits,N),Y.push({
+householdId:G.household.id,qeqUnits:J.movedQeqUnits}
+),O+=J.movedQeqUnits,f-=J.movedQeqUnits;
+if(!J.movedQeqUnits)break}
+return M0($,N),{
+movedQeqUnits:O,missingQeqUnits:Math.max(0,_-O),rows:Y}
+}
+function s8($,Z,z){
+let N=Math.max(0,Math.round(Z*z.precision.qeqUnitsPerJin));
+if(N<=0)return{
+movedQeqUnits:0,missingQeqUnits:0,rows:[],redeemedWheatUnits:0,eligibleHouseholds:0,servedHouseholds:0,unmetHouseholds:0}
+;
+let M=i8($,z),Q=r8($,M.eligible,N,z,"镇长手动救济：家庭先自费兑付，再按口粮紧迫度补足缺口"),_={
+...Q,redeemedWheatUnits:M.redeemedUnits,eligibleHouseholds:M.eligible.length,servedHouseholds:Q.rows.length,unmetHouseholds:M.eligible.filter((f)=>a0($,f.household,z)<f.targetQeqUnits).length}
+;
+if(Q.movedQeqUnits>0)q0($,"镇长按家庭口粮缺口拨出 "+Math.round(Q.movedQeqUnits/z.precision.qeqUnitsPerJin).toLocaleString("zh-CN")+"斤口粮。",z,{
+day:$.day+1}
+);
+return _}
+function a8($,Z){
+return $.autoRelief=Boolean(Z),$.autoRelief}
+function n8($,Z,z){
+if(!$.autoRelief||Z<=0){
+let _=wM($,z);
+return $.relief||={
+}
+,$.relief.lastDay={
+redeemedWheatUnits:_.redeemedUnits,eligibleHouseholds:0,servedHouseholds:0,movedQeqUnits:0,missingQeqUnits:0,unmetHouseholds:0}
+,$.relief.lastDay}
+let N=i8($,z),M=N.eligible.reduce((_,f)=>_+f.needQeqUnits,0),Q=r8($,N.eligible,M,z,"自动救济：家庭先自费兑付，再按口粮缺口和紧迫程度拨付");
+if($.relief||={
+}
+,$.relief.lastDay={
+...Q,redeemedWheatUnits:N.redeemedUnits,eligibleHouseholds:N.eligible.length,servedHouseholds:Q.rows.length,unmetHouseholds:N.eligible.filter((_)=>a0($,_.household,z)<_.targetQeqUnits).length}
+,Q.movedQeqUnits>0){
+let _=Math.round(Q.movedQeqUnits/z.precision.qeqUnitsPerJin);
+q0($,"镇库按家庭缺粮紧迫度拨出 "+_.toLocaleString("zh-CN")+"斤口粮。",z,{
+day:$.day+1,mergeKey:"auto-relief",mergeWindowDays:30,amount:_,mergedText:(f,O)=>`镇库近来已 ${f} 次给缺粮家庭拨口粮，累计 ${O.toLocaleString("zh-CN")}斤（最近一次 ${_.toLocaleString("zh-CN")}斤）。`}
+)}
+return $.relief.lastDay}
+function mM($,Z){
+return f0($)*Z.rules.foodPerPersonDay*Z.precision.qeqUnitsPerJin}
+function O3(){
+return{
+aidEvents:0,helpedHouseholds:0,movedQeqUnits:0}
+}
+function o8($){
+return $.neighborAid||={
+}
+,$.neighborAid.year||=O3(),$.neighborAid.cumulative||=O3(),$.neighborAid.lastDay||={
+needyHouseholds:0,helpedHouseholds:0,donorHouseholds:0,movedQeqUnits:0,pairs:[]}
+,$.neighborAid}
+function e8($){
+o8($).year=O3()}
+function t8($,Z){
+let z=o8($),N=Z.rules,M=N.neighborAidTriggerDays??3,Q=N.neighborAidTargetDays??7,_=N.neighborAidDonorMinDays??60,f=N.neighborAidDonorShare??0.1,O=Z.precision.qeqUnitsPerJin/Z.precision.inventoryUnitsPerJin,Y=$.accounts?.town?.wheat||0,G=[],X=[];
+for(let L of m($)){
+if(!J0(L))continue;
+let x=mM(L,Z);
+if(x<=0)continue;
+let R=a0($,L,Z);
+if(R<x*M){
+if(Math.min(L.voucherUnits||0,Y)*O<x)G.push({
+household:L,need:Math.ceil(x*Q-R),days:R/x}
+)}
+else if(R>x*_){
+let C=Math.floor((R-x*_)*f);
+if(C>0)X.push({
+household:L,budget:C}
+)}
+}
+G.sort((L,x)=>L.days-x.days||L.household.id.localeCompare(x.household.id)),X.sort((L,x)=>x.budget-L.budget||L.household.id.localeCompare(x.household.id));
+let q=[],J=new Set,F=new Set,W=0,K=0;
+for(let L of G){
+let x=L.need;
+while(x>0&&K<X.length){
+let R=X[K],C=Math.min(x,R.budget),I=q$($,`household:${R.household.id}`,`household:${L.household.id}`,C,`邻里互助：${R.household.name}接济${L.household.name}口粮`,"neighbor_aid",Z,{
+allowPartial:!0}
+).movedQeqUnits||0;
+if(R.budget-=I,I>0)x-=I,W+=I,J.add(L.household.id),F.add(R.household.id),O1($,L.household.id,"inKindIncomeQeqUnits",I,Z),O1($,L.household.id,"neighborAidReceivedQeqUnits",I,Z),O1($,R.household.id,"neighborAidGivenQeqUnits",I,Z),q.push({
+donorId:R.household.id,receiverId:L.household.id,qeqUnits:I}
+);
+if(R.budget<=0||I<=0)K+=1}
+if(K>=X.length)break}
+if(W>0)M0($,Z);
+z.lastDay={
+needyHouseholds:G.length,helpedHouseholds:J.size,donorHouseholds:F.size,movedQeqUnits:W,pairs:q.slice(0,20)}
+;
+for(let L of[z.year,z.cumulative])L.aidEvents+=q.length,L.helpedHouseholds+=J.size,L.movedQeqUnits+=W;
+if(W>0){
+let L=Math.round(W/Z.precision.qeqUnitsPerJin),x=q[0],R=$.households.byId[x.donorId]?.name||"富户",C=$.households.byId[x.receiverId]?.name||"邻家",B=J.size>1?`${C}等${J.size}户`:C,I=F.size>1?`${R}等${F.size}户`:R;
+q0($,`${I}接济了断粮的${B}，共${L.toLocaleString("zh-CN")}斤口粮。`,Z,{
+day:$.day+1,mergeKey:"neighbor-aid",mergeWindowDays:30,amount:L,mergedText:(T,b)=>`近来邻里互助 ${T} 次，富户共接济缺粮人家 ${b.toLocaleString("zh-CN")}斤口粮（最近一次：${I}接济${B}）。`}
+)}
+return z.lastDay}
+function $9($,Z){
+let z={
+}
+;
+for(let N of["residents","town"]){
+let M=$.accounts[N]||{
+}
+,Q={
+}
+;
+for(let[_,f]of Object.entries(Z.items)){
+let O=M[_]||0;
+Q[_]={
+itemId:_,name:f.name,unit:f.unit,quantity:A6(O,Z),quantityUnits:O,qeq:_1(g1(f,Z)*O,Z)}
+}
+z[N]={
+items:Q,qeqUnits:z1($,N,Z),qeq:_1(z1($,N,Z),Z)}
+}
+return z}
+function m5($,Z,z){
+let M=$.cohorts.reduce(function(f,O){
+return f+O.m+O.f}
+,0)*Z.rules.foodPerPersonDay*Z.precision.qeqUnitsPerJin;
+if(M<=0)return 1/0;
+let Q=z1($,"residents",Z),_=z?z1($,"town",Z):0;
+return(Q+_)/M}
+function Z9($,Z){
+return _1(z1($,"residents",Z)+z1($,"town",Z),Z)}
+function uM($,Z){
+let z=0,N=0;
+for(let M of Object.values($.shops||{
+}
+)){
+if(M.status!=="open")continue;
+let Q=u0($,`shop:${M.id}:clerk`);
+if(Q<=0)continue;
+z+=W2($,M,Z)*Q,N+=Q}
+return N>0?z/N:null}
+function lM($,Z,z=null){
+z||=m2($,Z);
+let N=m5($,Z,!1);
+return{
+year:$.year,day:$.day,unemploymentPercent:Math.round(z.unemploymentRate*1000)/10,idle:z.idle,publicWage:Math.round(z.referenceWage*10)/10,shopWage:(()=>{
+let M=uM($,Z);
+return M===null?null:Math.round(M*10)/10}
+)(),wheatPrice:W0($,"wheat",Z),townWheatJin:Math.round(($.accounts?.town?.wheat||0)/Z.precision.inventoryUnitsPerJin),residentFoodDays:Number.isFinite(N)?Math.round(N*10)/10:null}
+}
+function z9($,Z){
+$.economyHistory=Array.isArray($.economyHistory)?$.economyHistory:[],$.economyHistory.push(lM($,Z));
+let z=Z.rules.economyHistoryDays??60;
+if($.economyHistory.length>z)$.economyHistory.splice(0,$.economyHistory.length-z)}
+function M9($){
+return $.payroll||={
+arrearsVoucherUnits:{
+}
+,totals:{
+}
+,year:{
+}
+}
+,$.payroll.arrearsVoucherUnits||=$.payroll.arrearsWheatUnits||{
+}
+,$.payroll.arrearsWheatUnits=$.payroll.arrearsVoucherUnits,$.payroll.totals||={
+}
+,$.payroll.year||={
+}
+,$.payroll}
+function pM($,Z,z,N,M){
+if(z<=0)return;
+let Q=E0($);
+V0($,{
+type:"wage_expense",transactionId:Q,source:N==="construction"?"construction":Z.buildingId||"town_workshop",destination:"wage_expense",itemId:"grain_voucher",quantityUnits:z,qeqUnits:0,reason:(Z.buildingName||Z.name)+"本日粮券工资已计提"}
+,M);
+let _=Z.buildingId&&$.buildings.find((O)=>O.id===Z.buildingId),f=_?M.buildings[_.typeId]?.accountingSector||"bread":"bread";
+r6($,N,z,f)}
+function dM($,Z){
+let z=Object.fromEntries(f1($,Z).map((N)=>[N.householdId,N.count]));
+return{
+householdIds:Object.keys(z),weights:z}
+}
+function N9($){
+return Object.values($||{
+}
+).reduce((Z,z)=>Z+Math.max(0,Number(z)||0),0)}
+function cM($,Z){
+Z.creditorClaims||={
+}
+,Z.creditorPaymentClaims||={
+}
+,Z.legacyUnattributedArrearsVoucherUnits||={
+}
+,Z.legacyUnattributedPaymentClaims||={
+}
+;
+let z=new Set([...Object.keys(Z.arrearsVoucherUnits||{
+}
+),...Object.keys(Z.legacyUnattributedArrearsVoucherUnits||{
+}
+)]);
+for(let N of[...z].sort()){
+let M=Math.max(0,Math.round(Number(Z.arrearsVoucherUnits?.[N])||0)),Q=Z.creditorClaims[N]||={
+}
+,_=Z.creditorPaymentClaims[N]||={
+}
+,f=Math.max(0,M-N9(Q));
+if(f<=0){
+delete Z.legacyUnattributedArrearsVoucherUnits[N],delete Z.legacyUnattributedPaymentClaims[N];
+continue}
+let O={
+claimsVoucherUnits:Q,claimsPayment:_}
+,Y=N.startsWith("builders::")?"builders":N,G=q2($,O,f,f1($,Y)),X=Math.max(0,M-N9(Q));
+if(X>0)Z.legacyUnattributedArrearsVoucherUnits[N]=X,Z.legacyUnattributedPaymentClaims[N]={
+valueUnits:X,wheatValueUnits:0,voucherValueUnits:X}
+;
+else delete Z.legacyUnattributedArrearsVoucherUnits[N],delete Z.legacyUnattributedPaymentClaims[N];
+if(G.attributed<=0)continue}
+}
+function Q9($,Z,z){
+let N=M9($);
+N.creditorClaims||={
+}
+,N.creditorPaymentClaims||={
+}
+;
+let M=N.arrearsVoucherUnits,Q=new Set(Z.rows.filter((B)=>B.scope==="shop").map((B)=>B.key));
+for(let B of Object.keys(M))if(B.endsWith("::merchants")||B.endsWith("::shop_clerks"))Q.add(B);
+for(let B of Q){
+delete M[B],delete N.creditorClaims[B],delete N.creditorPaymentClaims[B],delete N.legacyUnattributedArrearsVoucherUnits?.[B],delete N.legacyUnattributedPaymentClaims?.[B];
+let I=`town-wage:${B}:`;
+for(let T of Object.keys($.monetaryReform?.voucherShortfallByKey||{
+}
+))if(T.startsWith(I))delete $.monetaryReform.voucherShortfallByKey[T]}
+cM($,N);
+let _=Z.rows.filter((B)=>!["private","listed","shop"].includes(B.scope)),f=$0(z),O=_.flatMap((B)=>{
+if(B.key!=="builders")return[B];
+let I=($.projects||[]).filter((T)=>Math.max(0,Math.floor(T.workers||0))>0);
+if(!I.length)return[];
+return I.map((T)=>({
+...B,key:"builders",payrollKey:"builders::"+T.instanceId,projectInstanceId:T.instanceId,buildingId:T.instanceId,buildingName:(z.buildings[T.typeId]?.name||T.typeId)+"施工",count:Math.max(0,Math.floor(T.workers||0))}
+))}
+),Y=(B)=>B.projectInstanceId?($.projects||[]).find((I)=>I.instanceId===B.projectInstanceId)?.prepaidWageCreditUnits||0:0,G=[],X={
+}
+,q={
+}
+,J={
+}
+,F={
+}
+;
+for(let B of Object.keys(N.creditorClaims).sort()){
+let I=N.creditorClaims[B]||{
+}
+,T=N.creditorPaymentClaims[B]||={
+}
+;
+X[B]=Object.values(I).reduce((y,j)=>y+(j||0),0);
+let b=0;
+for(let y of Object.keys(I).sort()){
+let j=I[y]||0;
+if(j<=0)continue;
+let l=Z2(T[y]||j,$),e=B.startsWith("builders::"),u=x0($,"town",`household:${y}`,l,z,e?"construction_wage_arrears_payment":"wage_arrears_payment","偿付原债权家庭历史欠薪",{
+requireFull:!1,trackUnpaid:!0,shortfallKey:`town-wage:${B}:${y}`}
+),H=u.paidValueUnits||0;
+I[y]=Math.max(0,j-H),T[y]=u.remainingComposition,M[B]=Math.max(0,(M[B]||0)-H),b+=H}
+q[B]=b}
+for(let B of O){
+let I=Number.isFinite(B.wagePerWorkerDay)?B.wagePerWorkerDay:$.employment.wageRates?.[B.roleId]??0,T=Math.round(Math.max(0,B.count*I)*f);
+if(!T)continue;
+let b=B.key==="builders",y=b?Y(B):0,j=b?Math.min(T,y):0,l=b&&B.projectInstanceId?($.projects||[]).find((o)=>o.instanceId===B.projectInstanceId):null;
+if(j&&l)l.prepaidWageCreditUnits-=j;
+let e=T-j,u=b&&l?"builders::"+l.instanceId:B.key,H=N.creditorClaims[u]||={
+}
+,k=N.creditorPaymentClaims[u]||={
+}
+;
+X[u]??=0,q[u]||=0;
+let S=dM($,B.key),w=S.weights,s=S.householdIds.map((o)=>$.households?.byId?.[o]).filter(Boolean),c=K1(e,s,(o)=>w[o.id]||0);
+if(c.ok)for(let{
+recipient:o,units:Q0}
+of c.rows)H[o.id]=(H[o.id]||0)+Q0,k[o.id]=H2(k[o.id],F0($,Q0)),Z5($,o.id,Q0,z);
+if(F[u]=(F[u]||0)+e,M[u]=(M[u]||0)+e,pM($,B,e,b?"construction":"operating",z),j>0)V0($,{
+type:"wage_prepaid_credit",transactionId:E0($),source:l.instanceId,destination:"construction_payroll",itemId:"legacy_prepaid_wage",quantityUnits:j,qeqUnits:0,reason:"旧版工程已预付工资抵扣本日应付；不再次支付"}
+,z);
+G.push({
+key:B.key,payrollKey:u,roleId:B.roleId,buildingId:B.buildingId||(b?l?.instanceId:null),buildingName:B.buildingName||(b?"施工工程":null),name:B.name,count:B.count,rate:I,due:T,credit:j,payable:e}
+)}
+for(let B of G){
+let I=N.creditorClaims[B.payrollKey]||{
+}
+,T=N.creditorPaymentClaims[B.payrollKey]||={
+}
+,b=0;
+for(let l of Object.keys(I).sort()){
+let e=I[l]||0;
+if(e<=0)continue;
+let u=Z2(T[l]||e,$),H=x0($,"town",`household:${l}`,u,z,B.key==="builders"?"construction_wage_payment":"wage_payment","支付具体债权家庭本日工资",{
+requireFull:!1,trackUnpaid:!0,shortfallKey:`town-wage:${B.payrollKey}:${l}`}
+),k=H.paidValueUnits||0;
+I[l]=Math.max(0,e-k),T[l]=H.remainingComposition,M[B.payrollKey]=Math.max(0,(M[B.payrollKey]||0)-k),b+=k}
+let y=Math.max(0,(X[B.payrollKey]||0)-(q[B.payrollKey]||0)),j=Math.min(y,b);
+q[B.payrollKey]=(q[B.payrollKey]||0)+j,J[B.payrollKey]=(J[B.payrollKey]||0)+Math.max(0,b-j)}
+let W=Object.values(q).reduce((B,I)=>B+I,0),K=Object.values(J).reduce((B,I)=>B+I,0),L=Object.values(F).reduce((B,I)=>B+I,0)-K,x=Object.values(M).reduce((B,I)=>B+I,0),R=O.reduce((B,I)=>B+Math.round(Math.max(0,I.count*(Number.isFinite(I.wagePerWorkerDay)?I.wagePerWorkerDay:$.employment.wageRates?.[I.roleId]??0))*f),0),C=W+K;
+for(let B of[N.totals,N.year])B.paidVoucherUnits=(B.paidVoucherUnits||0)+C,B.currentPaidVoucherUnits=(B.currentPaidVoucherUnits||0)+K,B.arrearsPaidVoucherUnits=(B.arrearsPaidVoucherUnits||0)+W,B.accruedVoucherUnits=(B.accruedVoucherUnits||0)+R,B.unpaidVoucherUnits=(B.unpaidVoucherUnits||0)+Math.max(0,L),B.paidWheatUnits=B.paidVoucherUnits,B.currentPaidWheatUnits=B.currentPaidVoucherUnits,B.arrearsPaidWheatUnits=B.arrearsPaidVoucherUnits,B.accruedWheatUnits=B.accruedVoucherUnits,B.unpaidWheatUnits=B.unpaidVoucherUnits;
+if(N.totals.unpaidBalanceVoucherUnits=x,N.totals.unpaidBalanceWheatUnits=x,N.lastDay={
+workers:G.map((B)=>({
+key:B.key,payrollKey:B.payrollKey,roleId:B.roleId,buildingId:B.buildingId,name:B.buildingName?B.buildingName+" · "+B.name:B.name,count:B.count,dailyRateVoucher:B.rate,dailyRateJin:B.rate,expectedVoucher:B.due/f,expectedWheatJin:B.due/f,prepaidCreditVoucher:B.credit/f,prepaidCreditWheatJin:B.credit/f,currentPaidVoucher:(J[B.payrollKey]||0)/f,currentPaidWheatJin:(J[B.payrollKey]||0)/f,arrearsPaidVoucher:(q[B.payrollKey]||0)/f,arrearsPaidWheatJin:(q[B.payrollKey]||0)/f,unpaidCurrentVoucher:Math.max(0,B.payable-(J[B.payrollKey]||0))/f,unpaidCurrentWheatJin:Math.max(0,B.payable-(J[B.payrollKey]||0))/f,arrearsBalanceVoucher:(M[B.payrollKey]||0)/f,arrearsBalanceWheatJin:(M[B.payrollKey]||0)/f}
+)),expectedVoucher:R/f,expectedWheatJin:R/f,currentPaidVoucher:K/f,currentPaidWheatJin:K/f,arrearsPaidVoucher:W/f,arrearsPaidWheatJin:W/f,totalPaidVoucher:C/f,totalPaidWheatJin:C/f,unpaidCurrentVoucher:Math.max(0,L)/f,unpaidCurrentWheatJin:Math.max(0,L)/f,arrearsBalanceVoucher:x/f,arrearsBalanceWheatJin:x/f}
+,L>0){
+let B=L/f;
+q0($,`镇库支付能力不足，本日新增欠薪 ${B.toLocaleString("zh-CN")}斤小麦等值。`,z,{
+day:$.day+1,mergeKey:"town-wage-arrears",mergeWindowDays:3,amount:B,mergedText:(I,T)=>`镇库支付能力不足，近来 ${I} 天新增欠薪共 ${T.toLocaleString("zh-CN",{maximumFractionDigits:2})}斤小麦等值（今日 ${B.toLocaleString("zh-CN")}斤）。`}
+)}
+return N.lastDay}
+function _9($,Z,z){
+let N=M9($),M=$.policy?.unemploymentBenefit,Q=$0(z),_=m($).map((J)=>({
+household:J,idle:P1(J)}
+)).filter((J)=>J.idle>0).sort((J,F)=>{
+let W=a0($,J.household,z)/Math.max(1,f0(J.household)),K=a0($,F.household,z)/Math.max(1,f0(F.household));
+return W-K||(J.household.voucherUnits||0)-(F.household.voucherUnits||0)||J.household.id.localeCompare(F.household.id)}
+);
+if(!M?.enabled)return $.policy.lastDay={
+eligible:Z.idle,eligibleHouseholds:_.length,paidPeople:0,uncoveredPeople:Z.idle,expectedVoucher:0,paidVoucher:0,shortVoucher:0,expectedWheatJin:0,paidWheatJin:0,shortWheatJin:0}
+,$.policy.lastDay;
+let f=Math.max(0,Number(M.dailyPerWorkerJin)||0),O=Math.round(Z.idle*f*Q),Y=Math.round(f*Q),G=0,X=0;
+for(let J of _){
+if(Y<=0)break;
+let F=J.idle*Y,W=x0($,"town",`household:${J.household.id}`,F0($,F),z,"unemployment_benefit","劳动年龄待业者失业金；镇库不足时优先口粮与货币储备更少的家庭",{
+requireFull:!1,countsForReform:!0}
+);
+G+=W.paidValueUnits||0,X+=Math.min(J.idle,Math.floor((W.paidValueUnits||0)/Y))}
+let q=Math.max(0,O-G);
+if(N.totals.unemploymentPaidVoucherUnits=(N.totals.unemploymentPaidVoucherUnits||0)+G,N.year.unemploymentPaidVoucherUnits=(N.year.unemploymentPaidVoucherUnits||0)+G,N.totals.unemploymentPaidWheatUnits=N.totals.unemploymentPaidVoucherUnits,N.year.unemploymentPaidWheatUnits=N.year.unemploymentPaidVoucherUnits,$.policy.lastDay={
+eligible:Z.idle,eligibleHouseholds:_.length,paidPeople:X,uncoveredPeople:Math.max(0,Z.idle-X),expectedVoucher:O/Q,paidVoucher:G/Q,shortVoucher:q/Q,expectedWheatJin:O/Q,paidWheatJin:G/Q,shortWheatJin:q/Q}
+,q>0)V0($,{
+type:"unemployment_shortfall",transactionId:E0($),source:"town",destination:"unpaid",itemId:"money_value",quantityUnits:q,qeqUnits:0,reason:"镇库可支付资产不足；失业金不足部分不形成债务"}
+,z);
+return $.policy.lastDay}
+function iM($,Z){
+if(!$.length)return $;
+let z=((Z||0)%$.length+$.length)%$.length;
+return $.slice(z).concat($.slice(0,z))}
+function rM($,Z){
+let z=K1($,Z,(N)=>f0(N));
+if(!z.ok)return[];
+return z.rows.map(({
+recipient:N,units:M}
+)=>({
+household:N,units:M}
+))}
+function sM($,Z,z,N,M={
+}
+){
+let Q=[],_=new Set(["flour","bread","salt"]).has(Z),f=$.accounts.town[Z]||0;
+if(!_&&M.excludeTownSellers!==!0&&f>0)Q.push({
+id:"town",type:"town",stockUnits:f,price:z}
+);
+if(!_)for(let O of Object.values($.companies||{
+}
+)){
+let Y=O.inventory?.[Z]||0;
+if(Y>0)Q.push({
+id:`company:${O.id}`,type:"company",companyId:O.id,stockUnits:Y,price:F8($,O,Z,N)}
+)}
+for(let O of Object.values($.shops||{
+}
+)){
+if(O.status!=="open"||!k2(O,N).includes(Z)&&!((O.inventory?.[Z]||0)>0&&o0(N,O.typeId)?.kind==="retail"))continue;
+let Y=o0(N,O.typeId);
+if(_&&Y?.id!=="general")continue;
+let G=y2($,O.typeId,N,Z),X=O.inventory?.[Z]||0,q=Object.values(O.accounts?.day?.soldUnits||{
+}
+).reduce((W,K)=>W+Math.max(0,K||0),0),J=Math.max(0,f5($,O,N)-q),F=Math.min(X,J);
+if(X>F&&Y&&G&&M.capped)M.capped.push({
+shopId:O.id,cappedUnits:X-F,price:G.retailVoucherPerUnit}
+);
+if(F>0&&Y&&G)Q.push({
+id:`shop:${O.id}`,type:"shop",shopId:O.id,stockUnits:F,price:G.retailVoucherPerUnit}
+)}
+if(!_)for(let O of m($).filter(J0)){
+let Y=O.inventory?.[Z]||0;
+if(Y<=0)continue;
+let G=Y,X=N.items[Z];
+if(X?.edible){
+let q=o2($,O,N,N.rules.householdFoodReserveDays??30),J=a0($,O,N),F=p0(X,1,N);
+G=Math.min(Y,Math.max(0,Math.floor((J-q)/Math.max(1,F))))}
+if(G>0)Q.push({
+id:`household:${O.id}`,type:"household",householdId:O.id,stockUnits:G,price:z}
+)}
+return Q}
+function O9($,Z,z,N,M){
+let Q=$0(N),_=N.precision.inventoryUnitsPerJin;
+if(z<=0)return 0;
+let f=`household:${Z.id}`,O=B0($,f),Y=D0($,Z,N,M),G=l0(Y,N,"floor"),X=N5($,f,N,{
+maxWheatUnits:Y}
+),q=(W)=>v4(X,W).full,J=0,F=Math.max(0,Math.floor((O+G)*_/(z*Q)));
+while(J<F){
+let W=Math.ceil((J+F)/2),K=Math.round(W/_*z*Q);
+if(q(K))J=W;
+else F=W-1}
+return J}
+function aM($,Z,z,N,M,Q,_,f={
+}
+){
+if(M<=0)return{
+ok:!1,reason:"成交量为0"}
+;
+let O=$0(Q),Y=Q.precision.inventoryUnitsPerJin,G=Math.round(M/Y*Z.price*O),X=D0($,z,Q,Q.rules.basicCommerceFoodReserveDays??30);
+if(Z.type==="town"){
+if(($.accounts.town?.[N]||0)<M)return{
+ok:!1,reason:"镇库库存不足"}
+;
+let J=x0($,`household:${z.id}`,"town",F0($,G),Q,f.paymentType||`${N}_trade`,_||`家庭购买${Q.items[N]?.name||N}`,{
+requireFull:!0,maxWheatUnits:X}
+);
+if(!J.ok)return J;
+let F=$5($,N,M,Q);
+return{
+ok:!0,quantityUnits:M,paidVoucherUnits:G,paidValueUnits:G,payment:J,sellerCostVoucherUnits:F.costWheatUnits}
+}
+if(Z.type==="company"){
+let J=h5($,Z.companyId,`household:${z.id}`,N,M,Z.price,Q,_||`家庭购买${Q.items[N]?.name||N}`);
+return J.ok?{
+ok:!0,quantityUnits:J.quantityUnits,paidVoucherUnits:J.revenueVoucherUnits}
+:J}
+if(Z.type==="household"){
+if(Z.householdId===z.id)return{
+ok:!1,reason:"家庭已有这批库存"}
+;
+let J=$.households?.byId?.[Z.householdId];
+if(!J||(J.inventory?.[N]||0)<M)return{
+ok:!1,reason:"卖方库存不足"}
+;
+let F=x0($,`household:${z.id}`,`household:${Z.householdId}`,F0($,G),Q,f.paymentType||`${N}_direct_trade`,_||`家庭购买${Q.items[N]?.name||N}`,{
+requireFull:!0,maxWheatUnits:X}
+);
+if(!F.ok)return F;
+return J.inventory[N]-=M,{
+ok:!0,quantityUnits:M,paidVoucherUnits:G}
+}
+let q=r7($,Z.shopId,`household:${z.id}`,M,Q,_||`家庭在店铺购买${Q.items[N]?.name||N}`,N);
+return q.ok?{
+ok:!0,quantityUnits:q.quantityUnits,paidVoucherUnits:q.paidVoucherUnits}
+:q}
+function f9($,Z,z,N,M,Q){
+if(!(z>0)||!N.length)return;
+let _=Math.min(...N.map((G)=>G.price)),f=Q.rules.basicCommerceFoodReserveDays??30,O=0;
+for(let G of m($).filter(J0)){
+if(O>=z)break;
+let X=M?M.get(G.id)||0:Math.ceil(z*f0(G)/Math.max(1,A0($).total));
+if(X<=0)continue;
+O+=Math.min(X,O9($,G,_,Q,f))}
+O=Math.min(z,O);
+let Y=N.reduce((G,X)=>G+X.cappedUnits,0);
+for(let G of N){
+let X=Math.min(G.cappedUnits,Math.round(O*G.cappedUnits/Math.max(1,Y)));
+if(X>0)i7($,G.shopId,X,Q)}
+}
+function q5($,Z,z,N,M,Q,_={
+}
+){
+let f=Number(N);
+if(!Number.isFinite(f)||f<=0||z<=0)return{
+purchasedUnits:0,paidVoucherUnits:0,sellerRows:[],reason:z<=0?"需求已满足":"售价无效"}
+;
+let O=[],Y=sM($,Z,f,M,{
+..._,capped:O}
+);
+if(!Y.length)return f9($,Z,z,O,null,M),{
+purchasedUnits:0,paidVoucherUnits:0,sellerRows:[],reason:O.length?"店铺接待能力已满":"市场没有可售库存"}
+;
+$.market.sellerRotation||={
+}
+;
+let G=$.market.sellerRotation[Z]||0,q=[...new Set(Y.map((T)=>T.price))].sort((T,b)=>T-b).flatMap((T)=>iM(Y.filter((b)=>b.price===T),G)),J=m($).filter(J0).slice().sort((T,b)=>{
+let y=(T.inventory?.[Z]||0)/Math.max(1,f0(T)),j=(b.inventory?.[Z]||0)/Math.max(1,f0(b));
+return y-j||T.id.localeCompare(b.id)}
+);
+if(!J.length)return{
+purchasedUnits:0,paidVoucherUnits:0,sellerRows:[],reason:"没有居民家庭"}
+;
+let F=_.householdNeedsUnits||null,W=F?J.map((T)=>({
+household:T,units:Math.max(0,Math.floor(F[T.id]||0))}
+)):rM(Math.max(0,Math.floor(z)),J),K=new Map(W.map((T)=>[T.household.id,T.units])),L=M.rules.basicCommerceFoodReserveDays??30,x=[],R=0,C=0,B=Boolean($._deferHouseholdSync);
+$._deferHouseholdSync=!0;
+for(let T of q){
+if(R>=z)break;
+let b=T.stockUnits;
+if(b<=0)continue;
+let y=0,j=0,l=0;
+for(let e of J){
+if(b<=0||R>=z)break;
+let u=K.get(e.id)||0;
+if(u<=0)continue;
+if(T.type==="household"&&T.householdId===e.id)continue;
+let H=O9($,e,T.price,M,L),k=Math.min(u,b,z-R,H);
+if(k<=0)continue;
+let S=aM($,T,e,Z,k,M,Q);
+if(!S.ok||S.quantityUnits<=0)continue;
+V$($,e.id,Z,S.quantityUnits,M),K.set(e.id,u-S.quantityUnits),b-=S.quantityUnits,y+=S.quantityUnits,j+=S.paidVoucherUnits,l+=S.sellerCostVoucherUnits||S.cogsVoucherUnits||0,R+=S.quantityUnits,C+=S.paidVoucherUnits}
+if(y>0)x.push({
+seller:T.id,quantityUnits:y,paidVoucherUnits:j,sellerCostVoucherUnits:l}
+)}
+if(R<z&&O.length)f9($,Z,z-R,O,K,M);
+if($._deferHouseholdSync=B,!B)M0($,M);
+if(x.length)$.market.sellerRotation[Z]=(G+1)%Math.max(1,Y.length);
+let I=Y.reduce((T,b)=>T+b.stockUnits,0);
+return{
+purchasedUnits:R,paidVoucherUnits:C,sellerRows:x,reason:R<z?R>=I?"市场库存不足，按现有库存部分成交":"居民粮券或今日换券额度限制了成交量":"按需求成交"}
+}
+function nM($){
+let Z=$.rules.stapleDemandShares;
+return{
+wheat:Z?.wheat??0.6,flour:Z?.flour??0.2,bread:Z?.bread??0.2}
+}
+function oM($,Z,z,N,M){
+let Q=W0($,N,z),_=z.items[N],f=Z*z.rules.foodPerPersonDay*z.precision.qeqUnitsPerJin,O=g1(_,z),Y=Math.floor(f*M),G=($.accounts.residents[N]||0)*O,X=O>0?Math.max(0,Math.floor((Y-G)/O)):0,q=$.accounts.town[N]||0,J=q5($,N,X,Q,z,`居民以粮券购买${_?.name||N}`),F=J.purchasedUnits/z.precision.inventoryUnitsPerJin,W=J.paidVoucherUnits/z.precision.currencyUnitsPerVoucher;
+return{
+itemId:N,targetShare:M,targetQeq:Y,targetQeqJin:Y/z.precision.qeqUnitsPerJin,targetUnits:X,price:Q,purchasedUnits:J.purchasedUnits,purchasedJin:F,paidVoucherUnits:J.paidVoucherUnits,paidVoucher:W,townStockBeforeJin:q/z.precision.inventoryUnitsPerJin,sellerRows:J.sellerRows,limitReason:X<=0?`居民自有${_?.name||N}已满足今日目标`:J.reason}
+}
+function X9($,Z,z){
+let N=nM(z),M=["wheat","flour","bread"].map((Y)=>oM($,Z,z,Y,N[Y])),Q=M.find((Y)=>Y.itemId==="bread"),_=Q.sellerRows.filter((Y)=>Y.seller==="town").reduce((Y,G)=>Y+G.quantityUnits,0),f=Q.sellerRows.filter((Y)=>Y.seller==="town").reduce((Y,G)=>Y+G.paidVoucherUnits,0),O=Q.sellerRows.filter((Y)=>Y.seller==="town").reduce((Y,G)=>Y+(G.sellerCostVoucherUnits||0),0);
+if(_>0)for(let Y of[$.business.day,$.business.year,$.business.cumulative])Y.soldBreadUnits=(Y.soldBreadUnits||0)+_,Y.revenueWheatUnits=(Y.revenueWheatUnits||0)+f,Y.breadCogsWheatUnits=(Y.breadCogsWheatUnits||0)+O;
+return $.market.staplesLastDay={
+shares:N,rows:M.map((Y)=>({
+itemId:Y.itemId,targetShare:Y.targetShare,targetQeqJin:Y.targetQeqJin,purchasedJin:Y.purchasedJin,paidVoucher:Y.paidVoucher,limitReason:Y.limitReason}
+)),purchasedJin:Object.fromEntries(M.map((Y)=>[Y.itemId,Y.purchasedJin])),paidVoucher:Object.fromEntries(M.map((Y)=>[Y.itemId,Y.paidVoucher])),sellerRows:M.flatMap((Y)=>Y.sellerRows)}
+,$.market.lastDay={
+targetShare:Q.targetShare,targetBreadQeqJin:Q.targetQeqJin,purchasedBreadJin:Q.purchasedJin,paidVoucher:Q.paidVoucher,paidWheatJin:Q.paidVoucher,townStockBeforeJin:Q.townStockBeforeJin,sellerRows:Q.sellerRows,limitReason:Q.limitReason,staples:$.market.staplesLastDay}
+,$.market.lastDay}
+function G9($){
+return Object.values($.items).filter((Z)=>Z.edible&&Z.qeq).sort((Z,z)=>(Z.transferPriority||0)-(z.transferPriority||0))}
+function eM($,Z,z){
+let N=K4($,Z,z,!0),M=N.moves.map((f)=>({
+...f,roundingExcessQeqUnits:0}
+));
+if(N.remainingQeqUnits<=0)return{
+...N,moves:M,roundingExcessQeqUnits:0}
+;
+let Q=0;
+for(let f of G9(z)){
+let O=g1(f,z);
+Q+=Math.max(0,Math.floor($[f.id]||0))*O}
+if(Q<N.requestedQeqUnits)return{
+...N,moves:M,roundingExcessQeqUnits:0}
+;
+let _=Object.fromEntries(M.map((f)=>[f.itemId,f.quantityUnits||0]));
+for(let f of G9(z)){
+let O=Math.max(0,Math.floor($[f.id]||0)),Y=_[f.id]||0;
+if(O<=Y)continue;
+let X=g1(f,z),q=X-N.remainingQeqUnits;
+if(q<0)continue;
+return{
+requestedQeqUnits:N.requestedQeqUnits,movedQeqUnits:N.movedQeqUnits+X,remainingQeqUnits:0,roundingExcessQeqUnits:q,moves:[...M,{
+itemId:f.id,quantityUnits:1,qeqUnits:X,roundingExcessQeqUnits:q}
+]}
+}
+return{
+...N,moves:M,roundingExcessQeqUnits:0}
+}
+function tM($,Z){
+let z=_1($,Z);
+if(z>0&&z<0.01)return"不足0.01斤";
+return z.toLocaleString("zh-CN",{
+maximumFractionDigits:2}
+)+"斤"}
+function Y9($,Z,z){
+let N=m($),M=new Map,Q=0,_=0,f=0;
+for(let G of N){
+let X=Math.min(f0(G),Math.max(0,$.services?.mealsByHousehold?.[G.id]||0)),J=Math.max(0,f0(G)-X)*z.rules.foodPerPersonDay*z.precision.qeqUnitsPerJin,F=eM(G.inventory,J,z);
+Q+=F.movedQeqUnits,_+=F.remainingQeqUnits,f+=F.roundingExcessQeqUnits||0,O1($,G.id,"foodConsumedQeqUnits",F.movedQeqUnits,z);
+let W=0;
+for(let K of F.moves)if(K.itemId==="bread")W+=K.qeqUnits;
+O1($,G.id,"breadConsumedQeqUnits",W,z);
+for(let K of F.moves){
+G.inventory[K.itemId]-=K.quantityUnits;
+let L=M.get(K.itemId)||{
+itemId:K.itemId,quantityUnits:0,qeqUnits:0,roundingExcessQeqUnits:0}
+;
+L.quantityUnits+=K.quantityUnits,L.qeqUnits+=K.qeqUnits,L.roundingExcessQeqUnits+=K.roundingExcessQeqUnits||0,M.set(K.itemId,L)}
+}
+M0($,z);
+let O=E0($),Y=[...M.values()];
+for(let G of Y)V0($,{
+type:"consume",transactionId:O,source:"residents",destination:"consumed",itemId:G.itemId,quantityUnits:G.quantityUnits,qeqUnits:G.qeqUnits,roundingExcessQeqUnits:G.roundingExcessQeqUnits||0,reason:"居民每日口粮"}
+,z);
+if($.yearTotals.consumptionQeq=($.yearTotals.consumptionQeq||0)+Q,$.shortageQeq=_,_>0)q0($,"居民口粮短缺 "+tM(_,z)+"，需拨粮或调整供应。",z,{
+day:$.day+1}
+);
+return{
+consumedQeqUnits:Q,missingQeqUnits:_,roundingExcessQeqUnits:f,moves:Y}
+}
+function p2($){
+return Math.max(0,Math.min(1,Number.isFinite($)?$:0))}
+function q9($){
+return Math.round($*100)/100}
+function J9($,Z,z,N,M={
+}
+){
+let Q=N.rules.householdSatisfaction||{
+}
+,_=N.precision.currencyUnitsPerVoucher,f=N.rules.saltAnnualDemandJinPerPerson*N.precision.inventoryUnitsPerJin/N.rules.daysPerYear,O=new Map((M.housing?.householdHousing||[]).map((W)=>[W.householdId,W])),Y=0,G=0,X={
+food:0,salt:0,housing:0,wage:0}
+,q=u2($,N),J=[];
+for(let W of m($).filter(J0)){
+let K=Math.max(1,f0(W)),L=v1(W,N),x=K*N.rules.foodPerPersonDay*N.precision.qeqUnitsPerJin,R=p2((L.day.foodConsumedQeqUnits||0)/Math.max(1,x)),C=K*f,B=M.saltGrace?1:p2((L.day.saltConsumedUnits||0)/Math.max(1,C)),I=O.get(W.id),T=I?p2((K-(I.unhousedPeople||0))/K):1,b=L.day.wageDueVoucherUnits||0,y=b>0?p2((L.day.wagePaidVoucherUnits||0)/b):1,j=g2($,W,N),l=p2(j/(Q.reserveTargetDays||30)),e=L.observation||{
+rows:[],totals:{
+}
+}
+,u=e.totals||{
+}
+,H=Math.max(1,(e.rows?.length||0)+1),k=w$($,W,N,q),S=(((u.incomeVoucherUnits||0)+(L.day.incomeVoucherUnits||0)-((u.lifeExpenseVoucherUnits||0)+(L.day.lifeExpenseVoucherUnits||0)))/H+k)/_/K,w=p2((S+(Q.disposableTargetVoucherPerCapitaDay||1.5))/(2*(Q.disposableTargetVoucherPerCapitaDay||1.5))),s=(Q.breadComfortMaximum||5)*p2((L.day.breadConsumedQeqUnits||0)/Math.max(1,x*0.25)),c=Math.max(0,Math.min(N.rules.serviceComfortDailyMaximum||3,L.day.serviceComfortPoints||0)),o=Math.max(0,Math.min(100,(Q.foodWeight||35)*R+(Q.saltWeight||12)*B+(Q.housingWeight||15)*T+(Q.wageWeight||15)*y+(Q.reserveWeight||13)*l+(Q.disposableWeight||5)*w+s+c)),Q0=Number.isFinite(L.satisfaction)?L.satisfaction:$.satisfaction||75,p=R<0.75?N.rules.satisfactionUrgentFoodSmoothing||0.55:N.rules.satisfactionSmoothing||0.18;
+L.satisfaction=q9(Q0*(1-p)+o*p),L.lastFactors={
+foodCoverage:R,saltCoverage:B,housingCoverage:T,wageCoverage:y,reserveCoverage:l,disposableCoverage:w,breadComfort:s,serviceComfort:c,target:o,foodDays:j,disposablePerCapitaDay:S}
+,L.satisfactionHistory.push({
+year:$.year,day:$.day+1,value:L.satisfaction}
+);
+let a=N.rules.householdLifeHistoryDays||90;
+if(L.satisfactionHistory.length>a)L.satisfactionHistory.splice(0,L.satisfactionHistory.length-a);
+if(R<0.999)X.food+=1;
+if(!M.saltGrace&&B<0.999)X.salt+=1;
+if(T<0.999)X.housing+=1;
+if(b>0&&y<0.999)X.wage+=1;
+Y+=L.satisfaction*K,G+=K,J.push({
+householdId:W.id,people:K,satisfaction:L.satisfaction,...L.lastFactors}
+)}
+$.satisfaction=q9(Y/Math.max(1,G)),$.satisfactionHistory||=[],$.satisfactionHistory.push({
+year:$.year,day:$.day+1,value:$.satisfaction}
+);
+let F=N.rules.householdLifeHistoryDays||90;
+if($.satisfactionHistory.length>F)$.satisfactionHistory.splice(0,$.satisfactionHistory.length-F);
+return $.satisfactionFactors={
+target:$.satisfaction,householdWeighted:!0,issueCounts:X,rows:J}
+,$.satisfactionFactors}
+function W9($,Z){
+if($.day>=Z.rules.growingDays)return;
+let z=Z.agriculture.farmerRoleId,N=u0($,z);
+$.agriculture.workUnits+=N;
+for(let Q of f1($,z)){
+let _=$.households?.byId?.[Q.householdId];
+if(_)_.agricultureWorkUnits=(_.agricultureWorkUnits||0)+Q.count}
+let M=Math.round(($.policy?.agricultureTaxPercent??Z.rules.agricultureTaxDefaultPercent??50)*100);
+$.agriculture.taxDays||=[],$.agriculture.taxDays.push({
+year:$.year,day:$.day+1,rateBps:M}
+)}
+function F9($,Z){
+if($.agriculture.lastHarvestYear===$.year)return{
+skipped:!0,reason:"本年已经收过麦"}
+;
+let z=X1($,Z),N=z/Z.agriculture.acresPerFarmer,M=z*Z.agriculture.yieldPerAcre,Q=N*Z.rules.growingDays,_=Math.max(0,Math.min(1,$.agriculture.workUnits/Q)),f=Q1(M*_,Z),O=($.agriculture.taxDays||[]).filter((L)=>L.year===$.year),Y=O.length?Math.round(O.reduce((L,x)=>L+x.rateBps,0)/O.length):Math.round((Z.rules.agricultureTaxDefaultPercent??50)*100),G=Math.floor(f*Y/1e4),X=f-G,q=Z.agriculture.cropItemId,J="harvest-y"+$.year;
+if(X>0){
+let L=Object.fromEntries(m($).map((R)=>[R.id,R.agricultureWorkUnits||0])),x=x$($,q,X,Z,{
+weights:L,byMembers:!1}
+);
+if(!x.ok)throw Error("农业家庭分粮失败："+x.reason);
+for(let R of x.rows||[]){
+let C=R.units*Z.precision.qeqUnitsPerJin/Z.precision.inventoryUnitsPerJin;
+O1($,R.householdId,"inKindIncomeQeqUnits",C,Z)}
+V0($,{
+type:"harvest",transactionId:J,source:"field",destination:"residents",itemId:q,quantityUnits:X,qeqUnits:X*Z.precision.qeqUnitsPerJin/Z.precision.inventoryUnitsPerJin,reason:"麦收：按农民实际劳动贡献分到家庭"}
+,Z,{
+day:$.day}
+)}
+if(G>0)C6($,"town",q,G,"麦收：入镇库的农业税粮","harvest",Z,J,{
+day:$.day}
+),n0($,q,G);
+$.yearTotals.harvestQeq+=f*Z.precision.qeqUnitsPerJin/Z.precision.inventoryUnitsPerJin,$.agriculture.lastHarvestYear=$.year,$.agriculture.taxHistory||=[],$.agriculture.taxHistory.push({
+year:$.year,farmDays:O.length,averageRateBps:Y,totalUnits:f,townUnits:G,residentUnits:X}
+),$.agriculture.taxDays=($.agriculture.taxDays||[]).filter((L)=>L.year!==$.year),$.agriculture.workUnits=0;
+for(let L of m($))L.agricultureWorkUnits=0;
+let F=f/Z.precision.inventoryUnitsPerJin,W=X/Z.precision.inventoryUnitsPerJin,K=G/Z.precision.inventoryUnitsPerJin;
+return q0($,"麦收入仓 "+Math.round(F).toLocaleString("zh-CN")+"斤：居民留得 "+Math.round(W).toLocaleString("zh-CN")+"斤，镇库收税粮 "+Math.round(K).toLocaleString("zh-CN")+"斤。",Z),{
+total:F,residentShare:W,townShare:K,proportion:_,averageTaxPercent:Y/100}
+}
+function $Q($){
+let Z=Math.imul($.rng.state,1664525)+1013904223>>>0;
+return $.rng.state=Z,Z/4294967296}
+function d2($,Z,z){
+let N=0;
+for(let M=0;
+M<Z;
+M+=1)if($Q($)<z)N+=1;
+return N}
+function F2($,Z){
+let z=A0($).total,N=$.housing?.villageCapacity??Z.rules.housingCapacity,M=[];
+for(let F of $.buildings){
+let W=Z.buildings[F.typeId];
+if(!W?.housingCapacity)continue;
+let K=W.housingCapacity*Math.max(1,Math.min(Z.rules.buildingMaxLevel||5,F.level||1));
+M.push({
+buildingId:F.id,plotId:F.plotId,name:W.name,capacity:K,occupied:0}
+)}
+let Q=N,_=M.map((F)=>F.capacity),f=[];
+for(let F of m($).filter(J0)){
+let W=f0(F),K=Math.min(W,Q);
+Q-=K,W-=K;
+let L=[];
+for(let R=0;
+R<M.length&&W>0;
+R+=1){
+let C=Math.min(W,_[R]);
+if(C<=0)continue;
+_[R]-=C,M[R].occupied+=C,W-=C,L.push({
+buildingId:M[R].buildingId,people:C}
+)}
+let x=L.reduce((R,C)=>R+C.people,0);
+f.push({
+householdId:F.id,people:f0(F),villagePeople:K,rentalPeople:x,unhousedPeople:W,rentals:L}
+)}
+let O=Math.max(0,z-f.reduce((F,W)=>F+W.people,0)),Y=Math.min(O,Q);
+Q-=Y,O-=Y;
+let G=0;
+for(let F=0;
+F<M.length&&O>0;
+F+=1){
+let W=Math.min(O,_[F]);
+_[F]-=W,M[F].occupied+=W,O-=W,G+=W}
+let X=M.map((F,W)=>({
+...F,vacancies:_[W],dailyRentDueWheatJin:F.occupied*(Z.rules.rentPerResidentDayWheatJin||1)}
+)),q=f.reduce((F,W)=>F+W.people-W.unhousedPeople,0)+Y+G,J=f.reduce((F,W)=>F+W.unhousedPeople,0)+O;
+return{
+villageCapacity:N,villageOccupied:N-Q,villageVacancies:Q,rentals:X,householdHousing:f,capacity:N+M.reduce((F,W)=>F+W.capacity,0),occupied:q,shortage:J,rentDuePeople:f.reduce((F,W)=>F+W.rentalPeople,0),unassignedRentalPeople:G,dailyRentDueWheatJin:f.reduce((F,W)=>F+W.rentalPeople,0)*(Z.rules.rentPerResidentDayWheatJin||1)}
+}
+function ZQ($){
+if($<5)return 0.004;
+if($<E1)return 0.001;
+if($<c1)return 0.0025;
+if($<75)return 0.025;
+if($<85)return 0.065;
+if($<95)return 0.14;
+return 0.28}
+function V9($,Z,z,N){
+if(N<=0)return;
+let M=$.find((Q)=>Q.age===Z);
+if(!M)M={
+age:Z,m:0,f:0,marriedM:0,marriedF:0}
+,$.push(M);
+M[z]+=N}
+function zQ($){
+let Z=0,z=0;
+for(let _ of $){
+if(_.age<20||_.age>39)continue;
+Z+=Math.max(0,_.m-_.marriedM),z+=Math.max(0,_.f-_.marriedF)}
+let N=Math.min(Math.floor(Z*0.08),Math.floor(z*0.08)),M=N,Q=N;
+for(let _ of $){
+if(_.age<20||_.age>39)continue;
+let f=Math.min(M,Math.max(0,_.m-_.marriedM)),O=Math.min(Q,Math.max(0,_.f-_.marriedF));
+_.marriedM+=f,_.marriedF+=O,M-=f,Q-=O}
+return N}
+function x9($){
+let Z=A0($),z=e1($);
+if(z.children!==Z.children||z.workers!==Z.workers||z.elders!==Z.elders)throw Error(`家庭人口与cohort不一致：家庭${z.children}/${z.workers}/${z.elders}，cohort${Z.children}/${Z.workers}/${Z.elders}`)}
+function L9($,Z){
+x9($);
+let z=A0($).workers,N=$.cohorts.slice().sort((c,o)=>c.age-o.age),M=[],Q=0,_=0,f=0,O=0,Y=0,G=0,X=0;
+for(let c of N){
+let o=ZQ(c.age),Q0=d2($,c.marriedM,o),p=d2($,c.marriedF,o),a=d2($,Math.max(0,c.m-c.marriedM),o),L0=d2($,Math.max(0,c.f-c.marriedF),o),G0=Q0+p+a+L0;
+if(Q+=G0,c.age<E1)Y+=G0;
+else if(c.age<c1)G+=G0,O+=G0;
+else X+=G0;
+let k0={
+age:c.age+1,m:c.m-Q0-a,f:c.f-p-L0,marriedM:c.marriedM-Q0,marriedF:c.marriedF-p}
+,g=k0.m+k0.f;
+if(c.age===E1-1)_+=g;
+if(c.age===c1-1)f+=g;
+if(k0.age<=Z.rules.maxAge&&g>0)M.push(k0);
+else if(g>0)Q+=g,X+=g}
+$.cohorts=M;
+let q=$.cohorts.reduce((c,o)=>c+o.marriedM,0),J=$.cohorts.reduce((c,o)=>c+o.marriedF,0),F=Math.abs(q-J),W=q>J?"marriedM":"marriedF";
+for(let c of $.cohorts.slice().reverse()){
+if(F<=0)break;
+let o=Math.min(c[W],F);
+c[W]-=o,F-=o}
+let K=A0($),L=z1($,"residents",Z)+z1($,"town",Z),x=Math.max(1,K.total*Z.rules.foodPerPersonDay*Z.rules.daysPerYear*Z.precision.qeqUnitsPerJin),R=Math.max(0.3,Math.min(1,L/(x*0.85))),C=F2($,Z).capacity,B=Math.max(0.35,Math.min(1,C/Math.max(C,K.total))),I=0.31*R*B,T=0;
+for(let c of $.cohorts)if(c.age>=20&&c.age<=39)T+=d2($,c.marriedF,I);
+let b=d2($,T,0.5);
+V9($.cohorts,0,"m",b),V9($.cohorts,0,"f",T-b);
+let y=zQ($.cohorts),j=b6($,{
+childDeaths:Y,workerDeaths:G,elderDeaths:X,adults:_,retirees:f,births:T}
+),l=G8($,Z);
+g0($,Z),x9($);
+let e=A0($).workers,u=z+_-f-O,H=e-u;
+if(H!==0)throw Error("年度劳动力账不平：年初"+z+" + 成年"+_+" - 退休"+f+" - 劳动年龄死亡"+O+" = "+u+"，实际年末"+e);
+let k={
+openingWorkers:z,adults:_,retirees:f,laborAgeDeaths:O,closingWorkers:e,netChange:e-z,balanceDifference:H}
+,S=j.employmentReleases.reduce((c,o)=>c+o.count,0),w=l.reduce((c,o)=>c+Math.max(0,o.before-o.after),0),s=S+w;
+if($.lastDemography={
+births:T,deaths:Q,marriages:y,laborChange:k,householdAllocation:{
+childDeaths:Y,workerDeaths:G,elderDeaths:X,adults:_,retirees:f,births:T,releasedJobs:s}
+}
+,T||Q||y)q0($,"一年将尽：新生"+T+"人，离世"+Q+"人，新结"+y+"对。",Z);
+if(S>0)q0($,`人口变化使家庭劳动力减少，稳定释放${S}个超额岗位。`,Z);
+for(let c of l){
+let o=c.buildingName?c.buildingName+"（"+c.buildingId+"）· "+c.name:c.name,Q0=c.before-c.after;
+q0($,c.reason+"："+o+"由"+c.before+"人调为"+c.after+"人"+(Q0>0?"，释放"+Q0+"个岗位。":"。"),Z)}
+return{
+births:T,deaths:Q,marriages:y,releasedJobs:s,employmentAdjustments:l,laborChange:k,householdAllocation:j}
+}
+function K9($,Z,z){
+let N=$0(z),M=z.rules.rentPerResidentDayWheatJin||1,Q=(Z.householdHousing||[]).filter((G)=>G.rentalPeople>0).map((G)=>({
+householdId:G.householdId,units:Math.round(G.rentalPeople*M*N)}
+)),_=Q.reduce((G,X)=>G+X.units,0),f=0,O=Boolean($._deferHouseholdSync);
+$._deferHouseholdSync=!0;
+for(let G of Q){
+let X=$.households?.byId?.[G.householdId];
+if(!X)continue;
+n6($,X.id,G.units,z);
+let q=D0($,X,z,z.rules.householdFoodReserveDays??30),F=x0($,`household:${X.id}`,"town",F0($,G.units),z,"rent_payment","家庭支付公租房日租金",{
+requireFull:!1,maxWheatUnits:q}
+).paidValueUnits||0;
+if(F>0)f+=F,o6($,X.id,F,z)}
+if($._deferHouseholdSync=O,!O)M0($,z);
+let Y=_-f;
+$.fiscal||={
+day:{
+}
+,year:{
+}
+,cumulative:{
+}
+}
+;
+for(let G of[$.fiscal.day,$.fiscal.year,$.fiscal.cumulative])G.dueWheatUnits=(G.dueWheatUnits||0)+_,G.collectedWheatUnits=(G.collectedWheatUnits||0)+f,G.waivedWheatUnits=(G.waivedWheatUnits||0)+Y,G.dueVoucherUnits=G.dueWheatUnits,G.collectedVoucherUnits=G.collectedWheatUnits,G.waivedVoucherUnits=G.waivedWheatUnits;
+if(Y>0)V0($,{
+type:"rent_waiver",transactionId:E0($),source:"rent_due",destination:"waived",itemId:"money_value",quantityUnits:Y,qeqUnits:0,reason:"实际入住公租房家庭支付不足，本日未收部分减免"}
+,z);
+return $.fiscal.lastRentDay={
+occupants:Z.rentDuePeople,households:Q.length,dueVoucher:_/N,collectedVoucher:f/N,waivedVoucher:Y/N,dueWheatJin:_/N,collectedWheatJin:f/N,waivedWheatJin:Y/N}
+,$.fiscal.lastRentDay}
+function D9($,Z){
+let z=m($),N=Q1(Z.rules.houseRepairWoodUnitsPerDay??5,Z),M=new Map(z.map((G)=>[G.id,G.inventory?.wood||0])),Q=z.reduce((G,X)=>G+(X.inventory?.wood||0),0),_=q5($,"wood",N,W0($,"wood",Z),Z,"居民购买木材修缮房屋",{
+excludeTownSellers:!0}
+),f=z.reduce((G,X)=>G+(X.inventory?.wood||0),0),O=Math.max(0,Math.min(N,f-Q)),Y=0;
+if(O>0){
+let G=z.map((q)=>({
+householdId:q.id,units:Math.max(0,(q.inventory?.wood||0)-(M.get(q.id)||0))}
+)).filter((q)=>q.units>0).sort((q,J)=>J.units-q.units||String(q.householdId).localeCompare(String(J.householdId))),X=[];
+for(let q of G){
+if(Y>=O)break;
+let J=Math.min(q.units,O-Y),F=$.households.byId[q.householdId];
+F.inventory.wood-=J,Y+=J,X.push({
+householdId:q.householdId,units:J}
+)}
+if(Y>0){
+M0($,Z);
+let q=E0($);
+for(let F of X)V0($,{
+type:"house_repair_wood",transactionId:q,source:`household:${F.householdId}`,destination:"consumed",itemId:"wood",quantityUnits:F.units,qeqUnits:0,reason:"房屋修缮消耗木材"}
+,Z);
+let J=Y/Z.precision.inventoryUnitsPerJin;
+q0($,`居民修缮房屋消耗木材${J.toLocaleString("zh-CN")}单位。`,Z,{
+mergeKey:"house-repair-wood",mergeWindowDays:3,amount:J,mergedText:(F,W)=>`居民近来 ${F} 天修缮房屋，共消耗木材${W.toLocaleString("zh-CN",{maximumFractionDigits:2})}单位。`}
+)}
+}
+return $.housing||={
+}
+,$.housing.lastRepairWoodDay={
+targetUnits:N,purchasedUnits:_.purchasedUnits,consumedUnits:Y,paidVoucherUnits:_.paidVoucherUnits,sellerRows:_.sellerRows,reason:_.reason}
+,$.housing.lastRepairWoodDay}
+function B9($,Z,z){
+let N=z.rules.saltAnnualDemandJinPerPerson*z.precision.inventoryUnitsPerJin,M=($.salt.demandCarry||0)+Z*N,Q=Math.floor(M/z.rules.daysPerYear);
+return $.salt.demandCarry=M%z.rules.daysPerYear,$.salt.todayDemandUnits=Q,$.salt.todaySatisfiedUnits=0,$.salt.day={
+demandUnits:Q,satisfiedUnits:0,purchasedUnits:0,paidWheatUnits:0}
+,Q}
+function R9($,Z){
+let z=$.salt.todayDemandUnits||0,N=m($).filter(J0),M=N.reduce((F,W)=>F+f0(W),0)||1,Q=0,_={
+}
+,f=N.reduce((F,W,K)=>{
+let L=K===N.length-1?z-Q:Math.floor(z*f0(W)/M);
+Q+=L;
+let x=Math.max(0,L-(W.inventory?.salt||0));
+return _[W.id]=x,F+x}
+,0),O=N.length?f:Math.max(0,z-($.accounts.residents.salt||0)),Y=W0($,"salt",Z),G=q5($,"salt",O,Y,Z,"家庭购买当日所需食盐",{
+householdNeedsUnits:_}
+),X=G.sellerRows.filter((F)=>F.seller==="town"),q=X.reduce((F,W)=>F+W.quantityUnits,0),J=X.reduce((F,W)=>F+W.paidVoucherUnits,0);
+if(q>0)for(let F of[$.industries.salt.day,$.industries.salt.year,$.industries.salt.cumulative])F.soldUnits=(F.soldUnits||0)+q,F.revenueWheatUnits=(F.revenueWheatUnits||0)+J;
+$.salt.day.purchasedUnits=G.purchasedUnits,$.salt.day.paidWheatUnits=G.paidVoucherUnits;
+for(let F of[$.salt.year,$.salt.lifetime])F.purchasedUnits=(F.purchasedUnits||0)+G.purchasedUnits,F.paidWheatUnits=(F.paidWheatUnits||0)+G.paidVoucherUnits;
+return $.salt.market={
+targetUnits:O,purchasedUnits:G.purchasedUnits,paidVoucherUnits:G.paidVoucherUnits,paidWheatUnits:G.paidVoucherUnits,priceVoucherPerJin:Y,priceWheatPerJin:Y,sellerRows:G.sellerRows,limitReason:O<=0?"家庭现有食盐已够今日使用":G.reason}
+,$.salt.market}
+function E9($,Z){
+let z=$.salt.todayDemandUnits||0,N=m($).filter(J0),M=N.reduce((f,O)=>f+f0(O),0)||1,Q=0,_=0;
+if(N.length){
+for(let f=0;
+f<N.length;
+f+=1){
+let O=N[f],Y=f===N.length-1?z-Q:Math.floor(z*f0(O)/M);
+Q+=Y;
+let G=Math.min(O.inventory?.salt||0,Math.max(0,Y));
+if(G<=0)continue;
+O.inventory.salt-=G,_+=G,O1($,O.id,"saltConsumedUnits",G,Z)}
+if(M0($,Z),_>0)V0($,{
+type:"salt_consume",transactionId:E0($),source:"households",destination:"consumption",itemId:"salt",quantityUnits:_,qeqUnits:0,reason:"家庭每日食盐消费"}
+,Z)}
+else{
+let f=$.accounts.residents.salt||0;
+_=Math.min(f,z),$.accounts.residents.salt-=_}
+$.salt.todaySatisfiedUnits=_,$.salt.day.satisfiedUnits=_;
+for(let f of[$.salt.year,$.salt.lifetime])f.demandUnits=(f.demandUnits||0)+z,f.satisfiedUnits=(f.satisfiedUnits||0)+_;
+if($.salt.history.push({
+demandUnits:z,satisfiedUnits:_}
+),$.salt.history.length>Z.rules.saltGraceDays)$.salt.history.splice(0,$.salt.history.length-Z.rules.saltGraceDays);
+return{
+demandUnits:z,satisfiedUnits:_,missingUnits:z-_}
+}
+function s$($,Z){
+let z=$.salt?.history||[],N=z.reduce((Q,_)=>Q+_.demandUnits,0),M=z.reduce((Q,_)=>Q+_.satisfiedUnits,0);
+return{
+coverage:N>0?M/N:1,demandUnits:N,satisfiedUnits:M,grace:($.salt?.graceDaysElapsed||0)<(Z?.rules?.saltGraceDays||30),daysObserved:z.length}
+}
+function H9($,Z){
+if($.salt.graceDaysElapsed<Z.rules.saltGraceDays)$.salt.graceDaysElapsed+=1}
+var G3=new Set(["mill","bakery","lumberyard","saltworks"]);
+function NQ($,Z){
+return C$($,`private:${Z.id}`)}
+function X3($,Z,z,N){
+let M=Math.max(0,Z.inventory?.[z]||0),Q=N.items[z];
+if(!Q?.edible)return M;
+let _=Y3($,Z.id,N),f=a0($,Z,N),O=p0(Q,1,N);
+if(O<=0)return M;
+return Math.max(0,Math.min(M,Math.floor((f-_)/O)))}
+function MQ($,Z,z,N,M){
+let Q=Math.max(0,Z.inventory?.[z]||0),_=M.items[z],f=Math.max(0,N-Q);
+if(!_?.edible)return f;
+let O=Y3($,Z.id,M),Y=a0($,Z,M),G=p0(_,1,M);
+if(G<=0)return f;
+let X=Math.max(0,Math.ceil((O+N*G-Y)/G));
+return Math.max(f,X)}
+function QQ($,Z,z,N,M,Q){
+let _=[],f=[];
+for(let O of N.inputs||[]){
+let G=Q1(O.quantity,Q)*M,X=X3($,Z,O.itemId,Q),q=MQ($,Z,O.itemId,G,Q);
+if(q>0){
+let J=Q5($,`household:${Z.id}`,O.itemId,q,Q,`${Z.name}为经营${z.name}从批发市场采购${Q.items[O.itemId]?.name||O.itemId}`);
+if(J.boughtUnits>0)V$($,Z.id,O.itemId,J.boughtUnits,Q);
+if(_.push({
+itemId:O.itemId,requestedUnits:q,purchasedUnits:J.boughtUnits||0,paidVoucherUnits:J.paidVoucherUnits||0,reason:J.reason}
+),X=X3($,Z,O.itemId,Q),X<G)f.push({
+itemId:O.itemId,missingUnits:G-X,reason:J.reason}
+)}
+}
+return{
+purchases:_,shortages:f}
+}
+function A9($,Z){
+let N=$1($,Z).idle,M=$.buildings.filter((Q)=>G3.has(Q.typeId)&&(Q.ownership?.privateLevels||0)>0).sort((Q,_)=>["bakery","saltworks","mill","lumberyard"].indexOf(Q.typeId)-["bakery","saltworks","mill","lumberyard"].indexOf(_.typeId)||Q.id.localeCompare(_.id));
+for(let Q of M){
+let f=Z.buildings[Q.typeId].jobs[0],O=G1(Q.id,f.id),Y=f.slots*Q.ownership.privateLevels,G=P$($,`private:${Q.id}`),X=Math.min(Y,G==null?O0($,O):G),q=O0($,O),J=Math.min(X,q+N);
+Y8($,Q.id,f.id,J,Z),N+=q-J}
+}
+function Y3($,Z,z){
+let N=$.households?.byId?.[Z];
+return N?o2($,N,z,z.rules.breadBasicReserveDays||30):0}
+function T9($,Z){
+let z=Math.max(0,$.ownership?.privateLevels||0);
+$.privateOwners||=[];
+while($.privateOwners.length<z){
+let N=m(Z).filter(J0).sort((Q,_)=>Q.id.localeCompare(_.id)),M=N[$.privateOwners.length%Math.max(1,N.length)];
+if(!M)break;
+$.privateOwners.push(M.id)}
+if($.privateOwners.length>z)$.privateOwners.length=z;
+return $.privateOwners.slice()}
+function _Q($,Z,z){
+let N=z.buildings[Z.typeId],M=N.jobs[0],Q=O0($,G1(Z.id,M.id));
+return{
+workers:Q,batches:Q*z.recipes[N.recipeId].batchesPerWorkerDay}
+}
+function C9($,Z){
+$.privateEconomy||={
+}
+,$.privateEconomy.payrollByBuilding||={
+}
+;
+let z=[],N=$0(Z);
+for(let M of $.buildings.filter((Q)=>G3.has(Q.typeId)&&(Q.ownership?.privateLevels||0)>0)){
+let Q=Z.buildings[M.typeId],_=Q?.jobs?.[0];
+if(!_)continue;
+let f=G1(M.id,_.id),O=O0($,f),Y=$.employment.wageRates?.[_.id]??_.wagePerWorkerDay??10,G=Math.round(O*Y*N),X=$.privateEconomy.payrollByBuilding[M.id]||={
+arrearsVoucherUnits:0,cumulativeAccruedVoucherUnits:0,cumulativePaidVoucherUnits:0,claimsVoucherUnits:{
+}
+}
+,q=f1($,f);
+if(w2($,X,q,G,Z),X.legacyUnattributedArrearsVoucherUnits??=Math.max(0,(X.arrearsVoucherUnits||0)-V1(X)),X.legacyUnattributedArrearsVoucherUnits>0){
+let x=q2($,X,X.legacyUnattributedArrearsVoucherUnits,q);
+X.legacyUnattributedArrearsVoucherUnits=Math.max(0,X.legacyUnattributedArrearsVoucherUnits-x.attributed)}
+X.arrearsVoucherUnits=V1(X)+(X.legacyUnattributedArrearsVoucherUnits||0),X.cumulativeAccruedVoucherUnits+=G;
+let J=T9(M,$),F=new Map;
+for(let x of J)F.set(x,(F.get(x)||0)+1);
+let W=[...F.keys()].map((x)=>({
+id:`household:${x}`,maxWheatUnits:D0($,$.households.byId[x],Z,Z.rules.householdFoodReserveDays??30)}
+)),K=Boolean($._deferHouseholdSync);
+$._deferHouseholdSync=!0;
+let L=C7($,X,W,Z,"private_wage_payment",`${Q.name}民营业主偿付具体债权家庭工资`,{
+shortfallPrefix:`private-wage:${M.id}`}
+);
+if($._deferHouseholdSync=K,!K)M0($,Z);
+X.arrearsVoucherUnits=V1(X)+(X.legacyUnattributedArrearsVoucherUnits||0),X.cumulativePaidVoucherUnits+=L.paid,z.push({
+buildingId:M.id,workers:O,dueVoucherUnits:G,paidVoucherUnits:L.paid,arrearsVoucherUnits:X.arrearsVoucherUnits}
+)}
+return z}
+function fQ($,Z,z){
+let N=z.buildings[Z.typeId],M=z.recipes[N.recipeId],{
+workers:Q,batches:_}
+=_Q($,Z,z),f=NQ($,Z),O=Math.min(_,f==null?_:f);
+if(Q<=0||O<=0)return{
+buildingId:Z.id,status:Q<=0?"no_workers":"no_demand",batches:0}
+;
+let Y=T9(Z,$);
+if(!Y.length)return{
+buildingId:Z.id,status:"no_owner",batches:0,reason:"缺少家庭所有者"}
+;
+let G=new Map;
+for(let T of Y)G.set(T,(G.get(T)||0)+1);
+let X=O,q=0,J=[],F=[],W=[],K=[],L=[...G.entries()];
+for(let T=0;
+T<L.length;
+T+=1){
+let[b,y]=L[T],j=$.households?.byId?.[b];
+if(!j)continue;
+let l=T===L.length-1?X:Math.floor(O*y/Y.length);
+if(l=Math.min(l,X),l<=0)continue;
+let e=QQ($,j,N,M,l,z);
+for(let p of e.purchases)W.push({
+ownerHouseholdId:b,...p}
+);
+for(let p of e.shortages)K.push({
+ownerHouseholdId:b,...p}
+);
+let u=l;
+for(let p of M.inputs){
+let a=Q1(p.quantity,z);
+u=Math.min(u,Math.floor(X3($,j,p.itemId,z)/a))}
+if(u<=0)continue;
+let H=$.policy.privateProductionTaxPercent[Z.typeId]??z.rules.privateProductionTaxDefaultPercent??10,k=[],S=[],w={
+}
+;
+for(let p of M.outputs){
+let a=Q1(p.quantity*u,z),L0=`${Z.typeId}|${Z.id}|${b}|${p.itemId}`,G0=$.privateEconomy.taxRemainders[L0]||0,k0=a*Math.round(H*100)+G0,g=Math.floor(k0/1e4);
+w[L0]=k0%1e4;
+let K0=a-g;
+if(K0>0)k.push({
+owner:`household:${b}`,itemId:p.itemId,quantityUnits:K0,type:"private_production_output",source:"private_production"}
+);
+if(g>0)k.push({
+owner:"town",itemId:p.itemId,quantityUnits:g,type:"private_production_tax",source:"private_production",destination:"town"}
+);
+S.push({
+itemId:p.itemId,totalUnits:a,taxUnits:g,residentUnits:K0,ownerHouseholdId:b,carryKey:L0}
+)}
+let s=M.inputs.map((p)=>({
+owner:`household:${b}`,itemId:p.itemId,quantityUnits:Q1(p.quantity*u,z)}
+)),c=M.losses.map((p)=>({
+owner:`household:${b}`,itemId:p.itemId,quantityUnits:Q1(p.quantity*u,z)}
+)),o=K2($,{
+inputs:s,outputs:k,losses:c,protectedOwner:`household:${b}`,minEndingQeqUnits:Y3($,b,z),inputType:"private_process_input",inputDestination:"private_processing",outputType:"private_production_output",outputSource:"private_production",reason:`${j.name}经营${N.name}：${M.name}`,lossReason:M.name+"民营加工损耗"}
+,z);
+if(!o.ok)continue;
+for(let[p,a]of Object.entries(w))$.privateEconomy.taxRemainders[p]=a;
+for(let p of S){
+let a=z.items[p.itemId]?.openingCostWheatPerJin??0;
+n0($,p.itemId,Math.round(p.taxUnits*a)),J.push(p)}
+let Q0=[$.privateEconomy.day,$.privateEconomy.year,$.privateEconomy.cumulative];
+for(let p of S)for(let a of Q0)a.producedUnits[p.itemId]=(a.producedUnits[p.itemId]||0)+p.totalUnits,a.taxedUnits[p.itemId]=(a.taxedUnits[p.itemId]||0)+p.taxUnits,a.outputUnits[p.itemId]=(a.outputUnits[p.itemId]||0)+p.residentUnits;
+for(let p of s)for(let a of Q0)a.inputUnits[p.itemId]=(a.inputUnits[p.itemId]||0)+p.quantityUnits;
+F.push(o.transactionId),q+=u,X-=u}
+if(M0($,z),q<=0){
+let T=K[0],b=T?z.items[T.itemId]?.name||T.itemId:"原料";
+return{
+buildingId:Z.id,status:"no_materials",batches:0,reason:T?`缺${b}：${T.reason}`:"经营家庭没有可用于生产的原料",inputPurchases:W,inputShortages:K}
+}
+let x=[$.privateEconomy.day,$.privateEconomy.year,$.privateEconomy.cumulative],R=Math.round(Q*($.employment.wageRates[N.productionRoleId]||0)*z.precision.inventoryUnitsPerJin);
+for(let T of x)T.internalLaborCostWheatUnits+=R;
+let C=$.privateEconomy?.payrollByBuilding?.[Z.id]?.arrearsVoucherUnits||0,B=K[0],I=B?`缺${z.items[B.itemId]?.name||B.itemId}：${B.reason}`:null;
+return{
+buildingId:Z.id,status:C>0?"wage_arrears":q<O?"limited_materials":O<_?"limited_demand":"ready",reason:q<O?I:null,workers:Q,batches:q,plannedBatches:O,transactionIds:F,taxRows:J,inputPurchases:W,inputShortages:K,wageArrearsVoucherUnits:C}
+}
+function P9($,Z){
+let z=[],N=$.buildings.slice().sort((M,Q)=>["mill","bakery","saltworks","lumberyard"].indexOf(M.typeId)-["mill","bakery","saltworks","lumberyard"].indexOf(Q.typeId));
+for(let M of N){
+if(!G3.has(M.typeId)||!M.ownership?.privateLevels)continue;
+z.push(fQ($,M,Z))}
+return $.privateEconomy.lastDay=z,z}
+function k9($){
+$.privateEconomy.day={
+producedUnits:{
+}
+,taxedUnits:{
+}
+,outputUnits:{
+}
+,inputUnits:{
+}
+,internalLaborCostWheatUnits:0}
+,$.privateEconomy.rightSales.dayWheatUnits=0}
+function j9($){
+$.privateEconomy.year={
+producedUnits:{
+}
+,taxedUnits:{
+}
+,outputUnits:{
+}
+,inputUnits:{
+}
+,internalLaborCostWheatUnits:0}
+,$.privateEconomy.rightSales.yearWheatUnits=0}
+var u5=1000;
+function J3($){
+return $.services||={
+}
+,$.services.demandByHousehold||={
+}
+,$.services.carryByHousehold||={
+}
+,$.services.pricesVoucherPerUse||={
+}
+,$.services.mealsByHousehold||={
+}
+,$.services.rotation||={
+households:0,shops:{
+}
+,services:0}
+,$.services.rotation.shops||={
+}
+,$.services.day||={
+demandedUses:{
+}
+,attemptedUses:{
+}
+,servedUses:{
+}
+,unaffordableUses:{
+}
+,capacityUnmetUses:{
+}
+,spendingVoucherUnits:0}
+,$.services.day.attemptedUses||={
+}
+,$.services.day.unaffordableUses||={
+}
+,$.services.day.capacityUnmetUses||={
+}
+,$.services.history||=[],$.services.latentDays=Math.max(0,Math.floor($.services.latentDays||0)),$.services}
+function q3($,Z){
+if(!$.length)return $;
+let z=((Z||0)%$.length+$.length)%$.length;
+return $.slice(z).concat($.slice(0,z))}
+function U9($,Z){
+if(Z.basis==="household")return 1;
+if(Z.basis==="child")return Math.max(0,$.ageBands?.children||0);
+return f0($)}
+function OQ($,Z,z){
+let N=z.rules.serviceTypes?.[Z];
+if(!N)return 0;
+let M=$.services?.pricesVoucherPerUse?.[Z];
+return Number.isFinite(M)&&M>=0?M:Math.max(0,N.priceVoucher||0)}
+function S9($,Z,z,N){
+let M=N.rules.serviceTypes?.[Z];
+if(!M)return{
+ok:!1,reason:"服务类型不存在"}
+;
+if(!M.adjustablePrice)return{
+ok:!1,reason:"该服务暂不开放调价"}
+;
+let Q=Math.round(Number(z)*1000)/1000;
+if(!Number.isFinite(Q)||Q<0||Q>1e6)return{
+ok:!1,reason:"服务价格须为非负有限数值"}
+;
+return J3($).pricesVoucherPerUse[Z]=Q,{
+ok:!0,serviceId:Z,value:Q}
+}
+function I9($,Z){
+let z=J3($);
+z.day={
+demandedUses:{
+}
+,attemptedUses:{
+}
+,servedUses:{
+}
+,unaffordableUses:{
+}
+,capacityUnmetUses:{
+}
+,spendingVoucherUnits:0}
+,z.mealsByHousehold={
+}
+;
+let N=Z.rules.serviceTypes||{
+}
+;
+if(!Object.values($.shops||{
+}
+).some((f)=>{
+if(["closed","liquidating"].includes(f.status))return!1;
+return Boolean(o0(Z,f.typeId)?.serviceId)}
+)){
+let f=Math.max(1,...Object.values(N).map((O)=>Math.max(1,O.cycleDays||1)*Math.max(1,Z.rules.serviceDemandMaximumCycles||2)));
+return z.latentDays=Math.min(f,z.latentDays+1),z.day.demandedUses}
+let Q=Math.max(1,1+z.latentDays);
+z.latentDays=0;
+let _=new Set;
+for(let f of m($).filter(J0)){
+_.add(f.id);
+let O=z.demandByHousehold[f.id]||={
+}
+,Y=z.carryByHousehold[f.id]||={
+}
+;
+for(let G of Object.values(N)){
+let X=U9(f,G),q=Math.max(1,G.cycleDays),J=Math.max(0,Y[G.id]||0)+X*u5*Q,F=Math.floor(J/q);
+Y[G.id]=J%q;
+let W=X*u5*Math.max(1,Z.rules.serviceDemandMaximumCycles||2),K=Math.max(0,O[G.id]||0);
+O[G.id]=Math.min(W,K+F),z.day.demandedUses[G.id]=(z.day.demandedUses[G.id]||0)+F/u5}
+}
+for(let[f,O]of Object.entries(z.demandByHousehold)){
+if(_.has(f))continue;
+for(let Y of Object.keys(O||{
+}
+))O[Y]=0}
+return z.day.demandedUses}
+function XQ($,Z,z,N=null){
+let M=$0(z),Q=t6(Z,7,z),_=Math.max(1,Q.days||1),f=Math.max(0,((Q.incomeVoucherUnits||0)-(Q.lifeExpenseVoucherUnits||0))/_),O=Math.max(0,(v1(Z,z).day.incomeVoucherUnits||0)-(v1(Z,z).day.lifeExpenseVoucherUnits||0)),Y=Math.max(f,O)+w$($,Z,z,N),G=Math.max(0,Math.min(100,z.rules.serviceBudgetSharePercent||35))/100,X=Math.floor(Y*G);
+if(X<=0)return 0;
+let q=`household:${Z.id}`,J=N8($,Z,z,z.rules.householdFoodReserveDays??30),F=D0($,Z,z,J),W=N5($,q,z,{
+maxWheatUnits:F}
+),K=j1($,q,P0($,q,z),z,{
+maxWheatUnits:F,paymentContext:W}
+);
+return Math.max(0,Math.min(X,K,Number.MAX_SAFE_INTEGER))}
+function GQ($,Z,z){
+return Object.values($.shops||{
+}
+).filter((N)=>N.status==="open"&&o0(z,N.typeId)?.serviceId===Z).sort((N,M)=>N.id.localeCompare(M.id))}
+function YQ($,Z,z){
+return Math.max(0,$.services?.demandByHousehold?.[Z]?.[z]||0)}
+function qQ($,Z,z){
+let N=v1($,z),M=Math.max(0,z.rules.serviceComfortDailyMaximum||3);
+N.day.serviceComfortPoints=Math.min(M,Math.max(0,N.day.serviceComfortPoints||0)+Math.max(0,Z||0))}
+function b9($,Z){
+let z=J3($),N=Object.values(Z.rules.serviceTypes||{
+}
+);
+if(!N.length)return{
+servedUses:{
+}
+,spendingVoucherUnits:0}
+;
+let M=m($).filter(J0);
+if(!M.length)return{
+servedUses:{
+}
+,spendingVoucherUnits:0}
+;
+let Q=u2($,Z),_=new Map(M.map((X)=>[X.id,XQ($,X,Z,Q)])),f=q3(M,z.rotation.households||0),O=q3(N,z.rotation.services||0),Y=0;
+for(let X of O){
+let q=GQ($,X.id,Z);
+if(!q.length)continue;
+q=q3(q,z.rotation.shops[X.id]||0);
+let J=new Map(q.map((K)=>[K.id,K.accounts?.day?.serviceUses?.[X.id]||0])),F=Math.round(Math.max(0,OQ($,X.id,Z))*$0(Z));
+if(F<=0)continue;
+let W=0;
+for(let K of f){
+let L=Math.floor(YQ($,K.id,X.id)/u5);
+if(L<=0)continue;
+let x=Math.min(L,Math.max(1,U9(K,X)));
+z.day.attemptedUses[X.id]=(z.day.attemptedUses[X.id]||0)+x;
+let R=Math.max(0.25,Number(X.incomeSensitivity)||1),C=_.get(K.id)||0,B=Math.ceil(F*R),I=Math.floor(C/Math.max(F,B)),T=Math.min(x,Math.max(0,I));
+z.day.unaffordableUses[X.id]=(z.day.unaffordableUses[X.id]||0)+Math.max(0,x-T);
+while(T>0){
+let b=null;
+for(let j=0;
+j<q.length;
+j+=1){
+let l=(W+j)%q.length,e=q[l];
+if((J.get(e.id)||0)<h2($,e,Z)){
+b={
+shop:e,index:l}
+;
+break}
+}
+if(!b){
+z.day.capacityUnmetUses[X.id]=(z.day.capacityUnmetUses[X.id]||0)+T;
+break}
+let y=s7($,b.shop.id,K.id,X.id,Z);
+if(!y.ok){
+z.day.unaffordableUses[X.id]=(z.day.unaffordableUses[X.id]||0)+T;
+break}
+if($.services.demandByHousehold[K.id][X.id]=Math.max(0,$.services.demandByHousehold[K.id][X.id]-u5),_.set(K.id,Math.max(0,(_.get(K.id)||0)-y.paidValueUnits)),J.set(b.shop.id,(J.get(b.shop.id)||0)+1),z.day.servedUses[X.id]=(z.day.servedUses[X.id]||0)+1,Y+=y.paidValueUnits,qQ(K,X.comfort,Z),X.mealReplacement)z.mealsByHousehold[K.id]=(z.mealsByHousehold[K.id]||0)+1;
+W=(b.index+1)%q.length,T-=1}
+}
+if((z.day.servedUses[X.id]||0)>0)z.rotation.shops[X.id]=(z.rotation.shops[X.id]||0)+1}
+z.rotation.households=(z.rotation.households||0)+1,z.rotation.services=(z.rotation.services||0)+1,z.day.spendingVoucherUnits=Y,z.history.push({
+year:$.year,day:$.day+1,demandedUses:{
+...z.day.demandedUses}
+,attemptedUses:{
+...z.day.attemptedUses}
+,servedUses:{
+...z.day.servedUses}
+,unaffordableUses:{
+...z.day.unaffordableUses}
+,capacityUnmetUses:{
+...z.day.capacityUnmetUses}
+,spendingVoucherUnits:Y}
+);
+let G=Math.max(14,(Z.rules.operatingObservationDays||7)*4);
+if(z.history.length>G)z.history.splice(0,z.history.length-G);
+return{
+servedUses:{
+...z.day.servedUses}
+,unaffordableUses:{
+...z.day.unaffordableUses}
+,capacityUnmetUses:{
+...z.day.capacityUnmetUses}
+,spendingVoucherUnits:Y}
+}
+function JQ($,Z,z,N){
+let M=(Z.voucherUnits||0)/$0(z);
+for(let[Q,_]of Object.entries(Z.inventory||{
+}
+)){
+if(!(_>0)||!z.items[Q])continue;
+M+=_/z.precision.inventoryUnitsPerJin*(N[Q]??0)}
+return M}
+function J5($,Z,z,N,M){
+let Q=M*Z,_=M*z,f=0,O=0,Y=0;
+for(let G of $){
+let X=Math.max(f,Q),q=Math.min(f+G.people,_);
+if(q>X)O+=G[N]/G.people*(q-X),Y+=q-X;
+if(f+=G.people,f>=_)break}
+return Y>0?O/Y:0}
+function a$($,Z){
+let z=Object.fromEntries(Object.keys(Z.items).map((J)=>[J,W0($,J,Z)])),N=$0(Z),M=z.wheat??1,Q=[];
+for(let J of m($)){
+if(!J0(J))continue;
+let F=f0(J),W=J.life||{
+}
+,K=(W.year?.incomeVoucherUnits||0)/N+(W.year?.inKindIncomeQeqUnits||0)/Z.precision.qeqUnitsPerJin*M;
+Q.push({
+people:F,wealth:JQ($,J,Z,z),income:K}
+)}
+let _=Q.reduce((J,F)=>J+F.people,0);
+if(_<=0)return null;
+let f=Q.reduce((J,F)=>J+F.wealth,0),O=Q.slice().sort((J,F)=>J.wealth/J.people-F.wealth/F.people),Y=Q.slice().sort((J,F)=>J.income/J.people-F.income/F.people),G=0,X=0;
+for(let J of O){
+let F=Math.max(G,_*0.9),W=G+J.people;
+if(W>F)X+=J.wealth*(W-F)/J.people;
+G+=J.people}
+let q=(J)=>Math.round(J*10)/10;
+return{
+households:Q.length,people:_,wealthPerCapita:q(f/_),poorWealthPerCapita:q(J5(O,0,0.1,"wealth",_)),medianWealthPerCapita:q(J5(O,0.45,0.55,"wealth",_)),richWealthPerCapita:q(J5(O,0.9,1,"wealth",_)),richWealthSharePercent:f>0?q(X/f*100):0,poorIncomePerCapita:q(J5(Y,0,0.1,"income",_)),medianIncomePerCapita:q(J5(Y,0.45,0.55,"income",_)),richIncomePerCapita:q(J5(Y,0.9,1,"income",_))}
+}
+var WQ=["harvestQeq","consumptionQeq","operatingWagesQeq","constructionPayQeq","reliefQeq","processingLossQeq","unemploymentPaidQeq","wagePaidQeq","wageArrearsQeq"];
+function m1($){
+if($===void 0)return;
+if(typeof globalThis.structuredClone==="function")return globalThis.structuredClone($);
+return JSON.parse(JSON.stringify($))}
+function H1($){
+if(!$||typeof $!=="object")return{
+}
+;
+return m1($.year&&typeof $.year==="object"?$.year:$)||{
+}
+}
+function n$($){
+if(!$||typeof $!=="object")return null;
+return{
+totalVoucherUnits:$.totalVoucherUnits||$.distributedVoucherUnits||0,townVoucherUnits:$.townVoucherUnits||0,residentVoucherUnits:$.residentVoucherUnits||0,retainedBeforeVoucherUnits:$.retainedBeforeVoucherUnits||0,lastYearNetProfitVoucherUnits:$.lastYearNetProfitVoucherUnits||0,workingCapitalReserveVoucherUnits:$.workingCapitalReserveVoucherUnits||$.workingCapitalTargetVoucherUnits||0,debtPaidVoucherUnits:$.debtPaidVoucherUnits||0}
+}
+function W3($,Z=null){
+return{
+id:$.id,name:$.name,typeId:$.typeId,buildingId:$.buildingId,listedLevels:$.listedLevels||0,listed:Boolean($.listing?.listed),ticker:$.listing?.ticker||null,accounts:H1($.accounts),distribution:n$(Z)}
+}
+function g9($){
+let Z=H1($.accounts),z=Object.prototype.hasOwnProperty.call(Z,"distributedVoucherUnits");
+return{
+id:$.id,name:$.name,typeId:$.typeId,buildingId:$.buildingId,ownerHouseholdId:$.ownerHouseholdId,status:$.status,accounts:Z,distributedVoucherUnits:z?Z.distributedVoucherUnits||0:null}
+}
+function FQ($,Z=[]){
+let z=new Map,N=(M,Q)=>{
+let _=Number(Q?.year);
+if(!M||!Number.isInteger(_)||_<1)return;
+z.set(`${_}:${M}`,n$(Q))}
+;
+for(let M of Object.values($?.companies||{
+}
+))for(let Q of M.dividendHistory||[])N(M.id,Q);
+for(let M of Z||[])for(let[Q,_]of Object.entries(M?.companies||{
+}
+)){
+for(let f of _?.dividendHistory||[])N(Q,f);
+if(_?.distribution&&Number.isInteger(M?.year))z.set(`${M.year}:${Q}`,n$(_.distribution))}
+return z}
+function v9($,Z,{
+householdLifeYear:z,peopleBefore:N,peopleAfter:M,demography:Q,closingQeq:_}
+){
+let f={
+}
+;
+for(let G of Object.values($.companies||{
+}
+))f[G.id]=W3(G);
+let O={
+}
+;
+for(let G of Object.values($.shops||{
+}
+))O[G.id]=g9(G);
+let Y={
+}
+;
+for(let[G,X]of Object.entries($.industries||{
+}
+))Y[G]=H1(X);
+return{
+summaryVersion:1,year:$.year,...m1($.yearTotals),business:H1($.business),payroll:H1($.payroll),industries:Y,privateEconomy:{
+year:m1($.privateEconomy?.year||{
+}
+),rightSalesYearWheatUnits:$.privateEconomy?.rightSales?.yearWheatUnits||0}
+,agricultureTax:m1(($.agriculture?.taxHistory||[]).filter((G)=>G.year===$.year)),financialFlows:H1($.financialFlows),fiscal:H1($.fiscal),salt:H1($.salt),companies:f,shops:O,householdLife:m1(z),populationAtClose:N.total,populationAfterAging:M.total,births:Q.births,deaths:Q.deaths,marriages:Q.marriages,laborChange:m1(Q.laborChange),wealth:a$($,Z),closingQeq:_}
+}
+function y9($,Z,z){
+let N=($.annualReports||[]).find((M)=>M.year===Z);
+if(!N||N.summaryVersion!==1)return;
+N.companies||={
+}
+;
+for(let M of z||[]){
+let Q=$.companies?.[M.companyId];
+if(!N.companies[M.companyId]&&Q)N.companies[M.companyId]=W3(Q);
+if(N.companies[M.companyId])N.companies[M.companyId].distribution=n$(M)}
+}
+function w9($){
+let Z=Array.isArray($.annualReports)?$.annualReports:[],z=FQ($,Z);
+return Z.map((N)=>{
+if(!N||typeof N!=="object")return N;
+let M={
+}
+;
+for(let[Y,G]of Object.entries(N.companies||{
+}
+)){
+let X=z.get(`${N.year}:${Y}`)||G.distribution||null;
+M[Y]=W3({
+id:Y,...G}
+,X)}
+let Q={
+}
+;
+for(let[Y,G]of Object.entries(N.shops||{
+}
+))Q[Y]=g9({
+id:Y,...G}
+);
+let _={
+}
+;
+for(let[Y,G]of Object.entries(N.industries||{
+}
+))_[Y]=H1(G);
+let f=N.privateEconomy?.year?{
+year:m1(N.privateEconomy.year),rightSalesYearWheatUnits:N.privateEconomy.rightSales?.yearWheatUnits||0}
+:{
+year:m1(N.privateEconomy?.year||N.privateEconomy||{
+}
+),rightSalesYearWheatUnits:N.privateEconomy?.rightSalesYearWheatUnits||0}
+,O=Object.fromEntries(WQ.map((Y)=>[Y,N[Y]||0]));
+return{
+summaryVersion:1,year:N.year,...O,business:H1(N.business),payroll:H1(N.payroll),industries:_,privateEconomy:f,agricultureTax:m1(N.agricultureTax||[]),financialFlows:H1(N.financialFlows),fiscal:H1(N.fiscal),salt:H1(N.salt),companies:M,shops:Q,householdLife:m1(N.householdLife||null),populationAtClose:N.populationAtClose,populationAfterAging:N.populationAfterAging,births:N.births||0,deaths:N.deaths||0,marriages:N.marriages||0,laborChange:m1(N.laborChange||null),...N.wealth!==void 0?{
+wealth:m1(N.wealth)}
+:{
+}
+,closingQeq:N.closingQeq||0}
+}
+)}
+function F3($,Z){
+let z=n2($,Z),N=A0($),M=B9($,N.total,Z);
+$.financialFlows||={
+day:R1(),year:R1(),cumulative:R1()}
+,$.financialFlows.day=R1(),k8($,Z),o7($,Z),k7($,Z),w6($),s6($,Z);
+let Q=$.day===0&&$.year>1?C8($,$.year-1,Z):[];
+if(Q.length)y9($,$.year-1,Q);
+I9($,Z),A7($,Z),A9($,Z),E8($,Z),g0($,Z),h$($,Z),T5($,Z);
+let _=O5($,Z),f=F2($,Z);
+if($.policy.agricultureTaxRecent||=[],$.policy.agricultureTaxRecent.push({
+year:$.year,day:$.day+1,rateBps:Math.round(($.policy.agricultureTaxPercent??50)*100)}
+),$.policy.agricultureTaxRecent=$.policy.agricultureTaxRecent.slice(-(Z.rules.agricultureTaxLookbackDays||30)),$.business){
+$.business.day={
+producedUnits:{
+}
+,soldBreadUnits:0,revenueWheatUnits:0,breadCogsWheatUnits:0,rawInputCostWheatUnits:0,operatingWagesWheatUnits:0,constructionWagesWheatUnits:0,processingLossWheatUnits:0}
+;
+for(let G0 of Object.values($.business.buildings||{
+}
+))G0.todayOutputUnits={
+}
+}
+for(let G0 of Object.values($.industries||{
+}
+))G0.day={
+producedUnits:{
+}
+,soldUnits:0,revenueWheatUnits:0,operatingWagesWheatUnits:0}
+;
+if(k9($),$.fiscal)$.fiscal.day={
+dueWheatUnits:0,collectedWheatUnits:0,waivedWheatUnits:0}
+;
+if($.agriculture?.reclaim)$.agriculture.reclaim.day={
+acres:0,workDays:0,paidVoucherUnits:0}
+;
+let O=t8($,Z),Y=n8($,N.total,Z),G=Q9($,_,Z),X=H8($,Z),q=C9($,Z),J=_9($,_,Z),F=m8($,Z),W=U$($,[],[],Z,{
+includeTownAllocation:!0}
+),K=p8($,Z),L=U$($,K,[],Z,{
+includeTownAllocation:!1}
+),x=P9($,Z),R=U$($,[],x,Z,{
+includeTownAllocation:!1}
+),C=A8($,Z),B=T8($,Z),I={
+allocation:W,town:L,private:R,company:B}
+,T=e7($,Z),b=K9($,f,Z),y=R9($,Z),j=X9($,N.total,Z),l=D9($,Z),e=b9($,Z),u=Y9($,N.total,Z),H=E9($,Z),k=u.moves.reduce(function(G0,k0){
+let g=Z.items[k0.itemId];
+return G0+k0.qeqUnits*(g?.satisfactionPerQeq||0)}
+,0),S=Z.rules.satisfactionUpdateIntervalDays||1,w=($.year-1)*Z.rules.daysPerYear+$.day;
+if(u.missingQeqUnits>0||H.missingUnits>0||f.shortage>0||(G.unpaidCurrentVoucher||0)>0||w%S===0||!$.satisfactionFactors?.householdWeighted)J9($,N.total,k,Z,{
+housing:f,saltCoverage:s$($,Z).coverage,saltGrace:$.salt.graceDaysElapsed<Z.rules.saltGraceDays}
+);
+e6($,Z),H9($,Z);
+let c=t7($,Z,$.day+1>=Z.rules.daysPerYear);
+T7($,Z),b7($,Z),W9($,Z);
+let o=$.day+1>=Z.rules.daysPerYear;
+if(Y7($,Z),$.day+=1,$.day===91)q0($,"春耕已过，麦苗渐渐齐整。",Z);
+if($.day===183)q0($,"暑气渐盛，田间进入拔节时节。",Z);
+if($.day===Z.rules.growingDays)q0($,"秋收将启，田里麦浪金黄。",Z);
+let Q0=null;
+if($.day===Z.rules.growingDays&&$.agriculture.lastHarvestYear!==$.year)Q0=F9($,Z);
+let p=null,a=null;
+if($.day>=Z.rules.daysPerYear){
+let G0=Z7($,Z),k0=A0($);
+p=L9($,Z),g0($,Z);
+let g=A0($);
+if(a=v9($,Z,{
+householdLifeYear:G0,peopleBefore:k0,peopleAfter:g,demography:p,closingQeq:n2($,Z)}
+),$.annualReports.push(a),$.year+=1,$.day=0,$.yearTotals=L4(),$.business){
+$.business.year={
+producedUnits:{
+}
+,soldBreadUnits:0,revenueWheatUnits:0,breadCogsWheatUnits:0,rawInputCostWheatUnits:0,operatingWagesWheatUnits:0,constructionWagesWheatUnits:0,processingLossWheatUnits:0}
+;
+for(let K0 of Object.values($.business.buildings||{
+}
+))K0.yearOutputUnits={
+}
+}
+if($.payroll)$.payroll.year={
+paidWheatUnits:0,currentPaidWheatUnits:0,arrearsPaidWheatUnits:0,unpaidWheatUnits:0,unemploymentPaidWheatUnits:0,accruedWheatUnits:0}
+;
+if($.industries)for(let K0 of Object.values($.industries))K0.year={
+producedUnits:{
+}
+,soldUnits:0,revenueWheatUnits:0,operatingWagesWheatUnits:0}
+;
+if(j9($),j8($,Z,$.year-1),$8($,Z),j7($,Z),e8($),_8($),$.financialFlows.year=R1(),$.fiscal)$.fiscal.year={
+dueWheatUnits:0,collectedWheatUnits:0,waivedWheatUnits:0}
+;
+if($.agriculture?.reclaim)$.agriculture.reclaim.year={
+acres:0,workDays:0,paidVoucherUnits:0}
+;
+if($.salt)$.salt.year={
+demandUnits:0,satisfiedUnits:0,purchasedUnits:0,paidWheatUnits:0}
+;
+h6($),a6($,Z)}
+z9($,Z);
+let L0=n2($,Z);
+return{
+construction:F,production:K,privateProduction:x,companyProduction:C,wholesaleIntake:I,shopPreparation:T,shops:c,relief:Y,neighborAid:O,companyWages:X,privateWages:q,wages:G,unemployment:J,rent:b,saltTrade:y,saltMeal:H,trade:j,repairWood:l,services:e,meal:u,harvest:Q0,demography:p,annualReport:a,yearStartCompanyDistributions:Q,shortageQeq:u.missingQeqUnits,totalChangeQeqUnits:L0-z,population:A0($)}
+}
+function h9($,Z,z){
+let N=Math.max(0,Math.floor(Number(Z)||0)),M=[];
+for(let Q=0;
+Q<N;
+Q+=1)M.push(z($));
+return{
+daysAdvanced:M.length,results:M}
+}
+function m9($,Z){
+return($||[]).map((z)=>({
+owner:"town",itemId:z.itemId,quantityUnits:Q1(z.quantity,Z),sourceOwner:"town"}
+))}
+function u9($,Z){
+return($.projects||[]).filter((z)=>z.buildingId===Z.id||z.plotId===Z.plotId)}
+function l5($,Z,z){
+let N=$.buildings.find((J)=>J.id===Z);
+if(!N)return{
+available:!1,reason:"建筑不存在"}
+;
+let M=z.buildings[N.typeId],Q=M?.upgrade,_=Math.max(1,N.level||1);
+if(!Q)return{
+available:!1,reason:"此建筑不能升级"}
+;
+if(_>=(Q.maxLevel||z.rules.buildingMaxLevel||5))return{
+available:!1,reason:"已达到最高等级",level:_}
+;
+if(u9($,N).length)return{
+available:!1,reason:"这座建筑已有一处工程在施工",level:_}
+;
+let f=m9(Q.materialRequirements,z).map((J)=>{
+let F=z.precision.inventoryUnitsPerJin,W=$.accounts.town[J.itemId]||0,K=Math.max(0,J.quantityUnits-W),L=S2($,J.itemId,K,z);
+return{
+...J,name:z.items[J.itemId]?.name||J.itemId,unit:z.items[J.itemId]?.unit||"单位",required:J.quantityUnits/F,available:W/F,marketAvailable:L.companyAvailableUnits/F,marketPurchasable:L.purchasableUnits/F,marketCostVoucher:L.costVoucherUnits/z.precision.currencyUnitsPerVoucher,missing:Math.max(0,J.quantityUnits-W-L.purchasableUnits)/F}
+}
+),O=Q.recommendedWorkers||M.construction.recommendedWorkers,Y=O5($,z),G=$.employment.wageRates?.builders??10,X=Math.max(0,Math.min(O,Y.idle)),q=X>0?Math.ceil(Q.workDays/X):null;
+return{
+available:!0,buildingId:Z,name:M.name,currentLevel:_,nextLevel:_+1,workDays:Q.workDays,recommendedWorkers:Q.recommendedWorkers||M.construction.recommendedWorkers,estimatedDays:q,estimatedWageJin:q?q*X*G:0,availableBuilders:X,waitingForWorkers:X<=0,materials:f,materialsAffordable:f.every((J)=>J.missing<=1/z.precision.inventoryUnitsPerJin)}
+}
+function l9($,Z,z,N={
+}
+){
+let M=l5($,Z,z);
+if(!M.available)return{
+ok:!1,reason:M.reason}
+;
+if(!M.materialsAffordable){
+let J=M.materials.find((F)=>F.missing>0);
+return{
+ok:!1,reason:`镇库及企业市场${J.name}不足或镇库粮券不足，尚缺${J.missing}${J.name}`}
+}
+let Q=$.buildings.find((J)=>J.id===Z),_=z.buildings[Q.typeId],f=m9(_.upgrade.materialRequirements,z),O=Q3($,f,z);
+if(!O.ok)return O;
+for(let J of M.materials){
+let F=Math.max(0,J.required-J.available);
+if(F>0&&J.itemId==="wood"){
+let W=Math.round(F*z.precision.inventoryUnitsPerJin);
+if(S2($,J.itemId,W,z).purchasableUnits<W)return{
+ok:!1,reason:`企业市场${J.name}或镇库粮券不足，无法完成采购`}
+;
+if(i$($,J.itemId,W,z).boughtUnits<W)return{
+ok:!1,reason:`采购${J.name}未完整成交，升级未开工`}
+}
+}
+if(f.length){
+let J=K2($,{
+inputs:f.map(({
+owner:F,itemId:W,quantityUnits:K}
+)=>({
+owner:F,itemId:W,quantityUnits:K}
+)),inputType:"construction_material",inputDestination:"construction_asset",reason:`${_.name}升至${M.nextLevel}级；材料开工时一次性入工程`}
+,z);
+if(!J.ok)return{
+ok:!1,reason:J.reason||"升级材料扣除失败"}
+;
+for(let F of f)F.transactionId=J.transactionId}
+let Y=`upgrade-${Q.id}-level-${M.nextLevel}`,G={
+kind:"upgrade",instanceId:Y,buildingId:Q.id,typeId:Q.typeId,plotId:Q.plotId,targetLevel:M.nextLevel,workDone:0,workRequired:_.upgrade.workDays,recommendedWorkers:_.upgrade.recommendedWorkers||_.construction.recommendedWorkers,workers:0,prepaidWageCreditUnits:0,materialsConsumed:f.map((J)=>({
+itemId:J.itemId,quantityUnits:J.quantityUnits,sourceOwner:J.sourceOwner,transactionId:J.transactionId}
+)),started:{
+year:$.year,day:Math.min(z.rules.daysPerYear,$.day+1)}
+}
+;
+$.projects.push(G);
+let X=Number.isFinite(N.workers)?N.workers:G.recommendedWorkers,q=r$($,G,X,z);
+return q0($,`${_.name}开始原地扩建至${M.nextLevel}级；原有岗位与产能在施工期间保持不变。`,z,{
+day:$.day+1}
+),Y5($,"wood"),{
+ok:!0,projectId:Y,assignedBuilders:q.assigned,workers:q.assigned,preview:M}
+}
+function p5($,Z,z){
+let N=$.buildings.find((G)=>G.id===Z);
+if(!N)return{
+available:!1,reason:"建筑不存在"}
+;
+if(u9($,N).length)return{
+available:!1,reason:"这座建筑仍在施工或升级，请工程完成后再拆除"}
+;
+if((N.ownership?.listedLevels||0)>0)return{
+available:!1,reason:"建筑仍有公司经营等级，请先划回或完成公司清算"}
+;
+if((N.ownership?.privateLevels||0)>0)return{
+available:!1,reason:"建筑含有民营经营权，本轮暂不能拆除或回购"}
+;
+if(N.typeId==="bank"&&($.monetaryReform?.stage||"wheat")!=="wheat")return{
+available:!1,reason:"货币改革进行中或已完成，银行承担粮券印制与换券，不能拆除"}
+;
+if(N.typeId==="stock_exchange"&&Object.values($.companies||{
+}
+).some((G)=>G.listing?.listed))return{
+available:!1,reason:"仍有上市公司，交易所承担挂牌与股权记录，不能拆除"}
+;
+if(N.typeId==="commercial_street"&&Object.values($.shops||{
+}
+).some((G)=>G.buildingId===Z&&G.status!=="closed"))return{
+available:!1,reason:"请先关闭商业街内的店铺"}
+;
+if(["field","granary","houses"].includes(N.typeId))return{
+available:!1,reason:"基础村舍、麦田和粮仓不能拆除"}
+;
+let M=z.buildings[N.typeId],Q=(N.materialInvestments||[]).filter((G)=>G.quantityUnits>0).map((G)=>({
+itemId:G.itemId,owner:G.sourceOwner||"town",quantityUnits:G.quantityUnits}
+)),_=new Map;
+for(let G of Q){
+let X=`${G.owner}|${G.itemId}`;
+_.set(X,(_.get(X)||0)+G.quantityUnits)}
+let f=Array.from(_,([G,X])=>{
+let[q,J]=G.split("|");
+return{
+owner:q,itemId:J,quantityUnits:X,name:z.items[J]?.name||J,unit:z.items[J]?.unit||"单位",quantity:X/z.precision.inventoryUnitsPerJin}
+}
+),O=m($).reduce((G,X)=>G+Object.entries(X.jobs||{
+}
+).filter(([q])=>q.startsWith(Z+"::")).reduce((q,[,J])=>q+J,0),0),Y=0;
+if(M?.housingCapacity){
+let X=F2($,z).capacity-M.housingCapacity*Math.max(1,N.level||1);
+Y=Math.max(0,A0($).total-X)}
+return{
+available:Y===0,reason:Y?`拆除后还差${Y}个住房名额，暂不能安置全镇人口`:null,buildingId:Z,name:M?.name||N.typeId,level:N.level||1,workers:O,refund:f,housingShortage:Y}
+}
+function p9($,Z,z){
+let N=p5($,Z,z);
+if(!N.available)return{
+ok:!1,reason:N.reason}
+;
+let M=$.buildings.find((Q)=>Q.id===Z);
+for(let Q of N.refund){
+let _=P6($,M.id,Q.owner,Q.itemId,Q.quantityUnits,`${N.name}拆除：返还可追溯的实际建筑材料`,z);
+if(!_.ok)return{
+ok:!1,reason:_.reason}
+}
+$.demolishedBuildings||=[],$.demolishedBuildings.push({
+id:M.id,typeId:M.typeId,plotId:M.plotId,level:M.level||1,materialInvestments:M.materialInvestments||[],demolished:{
+year:$.year,day:Math.min(z.rules.daysPerYear,$.day+1)}
+}
+);
+for(let Q of m($))for(let _ of Object.keys(Q.jobs||{
+}
+))if(_.startsWith(Z+"::"))C5($,Q.id,_);
+return $.buildings=$.buildings.filter((Q)=>Q.id!==Z),q0($,`${N.name}已拆除，${N.workers}名工人转为待业；工资、欠薪与经营历史继续保留。`,z,{
+day:$.day+1}
+),{
+ok:!0,preview:N}
+}
+var VQ=new Set(["mill","bakery","lumberyard","saltworks"]);
+function d9($,Z){
+let z=$.accounts.town[Z]||0,N=Object.values($.companies||{
+}
+).reduce((M,Q)=>M+(Q.inventory?.[Z]||0),0);
+return z+N}
+function xQ($,Z){
+let z=Z.precision.inventoryUnitsPerJin,N=A0($).total,M=W0($,"bread",Z),Q=Math.min(Z.rules.breadTargetShareMaximum,Z.rules.breadTargetShareAtBasePrice*Math.pow(Z.rules.breadBasePriceWheatPerJin/M,Z.rules.breadPriceElasticity)),_=Math.round(N*Z.rules.foodPerPersonDay*Q*1.2*z),f=Math.max(0,_-($.accounts.residents.bread||0)),O=d9($,"bread"),Y=Math.max(0,f-O);
+return{
+demandUnits:f,competitionUnits:O,opportunityUnits:Y,reason:f<=0?"居民自有面包已满足参考需求":Y<=0?"现有竞争库存已覆盖居民需求":"存在居民未满足面包需求"}
+}
+function LQ($,Z){
+let z=Z.precision.inventoryUnitsPerJin,N=A0($).total,M=Math.round(N*Z.rules.saltAnnualDemandJinPerPerson/Z.rules.daysPerYear*z),Q=Math.max(0,M-($.accounts.residents.salt||0)),_=d9($,"salt"),f=Math.max(0,Q-_);
+return{
+demandUnits:Q,competitionUnits:_,opportunityUnits:f,reason:Q<=0?"居民自有食盐已满足当日需求":f<=0?"现有竞争库存已覆盖食盐需求":"存在居民未满足食盐需求"}
+}
+function KQ($,Z){
+let z=Z.precision.inventoryUnitsPerJin,N=W0($,"flour",Z),M=0;
+for(let G of $.buildings.filter((X)=>X.typeId==="bakery"&&(X.ownership?.privateLevels||0)>0)){
+let X=Z.buildings.bakery,q=Z.recipes[X.recipeId],J=X.jobs[0],F=O0($,G1(G.id,J.id));
+M+=Math.round(F*q.batchesPerWorkerDay*q.inputs[0].quantity*z)}
+M=Math.max(0,M-($.accounts.residents.flour||0));
+let Q=0;
+for(let G of Object.values($.companies||{
+}
+).filter((X)=>X.typeId==="bakery")){
+let X=Z.buildings.bakery,q=Z.recipes[X.recipeId],J=X.jobs[0],F=O0($,N1(G.buildingId,J.id)),W=Math.round(F*q.batchesPerWorkerDay*q.inputs[0].quantity*z),K=Math.max(0,W-(G.inventory?.flour||0)),L=j1($,`company:${G.id}`,P0($,`company:${G.id}`,Z),Z),x=N>0?Math.floor(L*Z.precision.inventoryUnitsPerJin/(N*Z.precision.currencyUnitsPerVoucher)):0;
+Q+=Math.min(K,x)}
+let _=($.accounts.town.flour||0)+Object.values($.companies||{
+}
+).reduce((G,X)=>G+(X.typeId==="bakery"?0:X.inventory?.flour||0),0),f=Math.max(0,Q-_),O=M+f,Y=M+Q;
+return{
+demandUnits:Y,competitionUnits:_,opportunityUnits:O,reason:Y<=0?"暂无面粉需求":O<=0?"面粉库存已满足需求":"有面粉需求"}
+}
+function DQ($,Z){
+let z=c$($,"wood",Z);
+if(!z.active)return{
+demandUnits:0,competitionUnits:0,opportunityUnits:0,reason:"暂无采购需求",procurement:z}
+;
+if(z.fundedUnits<=0)return{
+demandUnits:z.wantedUnits,competitionUnits:0,opportunityUnits:0,reason:z.reason,procurement:z}
+;
+let N=($.accounts.residents.wood||0)+Object.values($.companies||{
+}
+).reduce((Q,_)=>Q+(_.inventory?.wood||0),0),M=Math.max(0,z.fundedUnits-N);
+return{
+demandUnits:z.fundedUnits,competitionUnits:N,opportunityUnits:M,reason:M<=0?"现有民营/企业木材库存已足以覆盖采购需求":z.reason,procurement:z}
+}
+function BQ($,Z,z){
+if(Z==="bakery")return xQ($,z);
+if(Z==="saltworks")return LQ($,z);
+if(Z==="mill")return KQ($,z);
+if(Z==="lumberyard")return DQ($,z);
+return{
+demandUnits:0,competitionUnits:0,opportunityUnits:0,reason:"暂无需求"}
+}
+function W5($,Z,z,N){
+let M=m$($),Q=$.buildings.find((C0)=>C0.id===Z);
+if(!Q)return{
+available:!1,reason:"建筑不存在"}
+;
+if(!VQ.has(Q.typeId))return{
+available:!1,reason:"该建筑不开放经营权出售"}
+;
+if(($.projects||[]).some((C0)=>C0.buildingId===Z||C0.plotId===Q.plotId))return{
+available:!1,reason:"施工或升级期间不能出售经营权"}
+;
+let _=Q.ownership?.townLevels??Q.level??1,f=Q.ownership?.privateLevels||0;
+if(_<=0)return{
+available:!1,reason:"没有可出售的镇营等级"}
+;
+let O=z.buildings[Q.typeId],Y=O.jobs[0],G=z.recipes[O.recipeId],X=$.policy.privateProductionTaxPercent?.[Q.typeId]??z.rules.privateProductionTaxDefaultPercent??10,q=G.outputs[0],J=W0($,q.itemId,z),F=BQ(M,Q.typeId,z),W=z.precision.inventoryUnitsPerJin,K=z.precision.currencyUnitsPerVoucher||W,L=$1($,z),x=Q.id+"::"+Y.id,R=O0($,x),C=Y.slots*Math.max(0,_-1),B=Math.max(0,R-C),I=Math.min(Y.slots,B+L.idle),T=Math.round(q.quantity*W),b=Math.max(0,1-X/100),y=Math.max(0,Math.floor(T*b)),j=I*G.batchesPerWorkerDay,l=y>0?Math.floor(F.opportunityUnits/y):0,e=Math.max(0,Math.min(j,l)),u=e>0?Math.ceil(e/G.batchesPerWorkerDay):0,H=e*q.quantity*J*(1-X/100),k=G.inputs.reduce((C0,I1)=>C0+e*I1.quantity*W0($,I1.itemId,z),0),S=$.employment.wageRates?.[Y.id]??Y.wagePerWorkerDay??0,w=u*S,s=H-k-w,c=Number.isFinite(s)?s*z.rules.daysPerYear:0,o=Object.values($.companies||{
+}
+).find((C0)=>C0.buildingId===Z)||null,Q0=o?G5($,o,z):null,p=0,a="利润法资料不足；理论满产估算单独列示。",L0=0,G0=Q0?.observedDays||0,k0=0;
+if(Q0&&Q0.observedDays>0)if(L0=Q0.actualProfitVoucherUnits/K,k0=Q0.annualizedProfitVoucherUnits/K/Math.max(1,o.listedLevels||1),Q0.validProfitMethod)p=Math.max(0,k0*5),a=`最近${Q0.observedDays}个日历日实际净利润（含停工日）年化后×5年；按公司每级平均折算。`;
+else a=`已观察${Q0.observedDays}个日历日，实际净利润未形成正的利润法参考价；理论估算仅作旁注。`;
+let g=Math.max(0,c*5);
+if(p<=0&&G0===0)p=g;
+if(!Number.isFinite(p))p=0;
+let K0=$.market.operatingRightPrices?.[Z],M1=N??(Number.isSafeInteger(K0)?K0/K:Math.floor(p*100)/100),B1=A0($).total,P=Math.round(B1*z.rules.foodPerPersonDay*z.rules.operatingRightReserveDays*z.precision.qeqUnitsPerJin),t=z1($,"residents",z),z0=Math.round(M1*K),T0=z.rules.householdLiving?.difficultPerCapitaVoucher??30,r0=m($).filter(J0).map((C0)=>{
+let I1=D0($,C0,z,z.rules.householdFoodReserveDays??30),h=B0($,`household:${C0.id}`)+Math.floor(I1*K/W),b2=Math.round((C0.ageBands?.children||0)+(C0.ageBands?.workers||0)+(C0.ageBands?.elders||0))*T0*K,Z$=Math.max(0,h-b2),_4=Z$>=z0&&A2(M,`household:${C0.id}`,F0(M,z0),z,{
+maxWheatUnits:I1}
+).full;
+return{
+household:C0,maxWheatUnits:I1,roughValue:Z$,canPayPrice:_4}
+}
+),N0=r0.some((C0)=>C0.canPayPrice),m0=r0.reduce((C0,I1)=>C0+I1.roughValue,0)/K,l1=r0.reduce((C0,I1)=>Math.max(C0,I1.roughValue),0)/K,F1=t>=P,I0=p>0&&M1<=p,H0=!N0?"购买力不足":!F1?"居民基本口粮不足90天储备":!I0?"预期收益缺乏吸引力":null,s0=F.demandUnits>0?Math.max(0,Math.min(1,F.opportunityUnits/F.demandUnits)):0,d0=K7($,Q.typeId,z);
+return{
+available:M1>0&&N0&&F1&&I0,reason:H0,buildingId:Z,typeId:Q.typeId,level:Q.level||1,townLevels:_,privateLevels:f,townCapacityBefore:_*Y.slots,townCapacityAfter:Math.max(0,_-1)*Y.slots,privateCapacityBefore:f*Y.slots,privateCapacityAfter:(f+1)*Y.slots,publicWorkers:R,transferableWorkers:B,privateWorkers:O0($,G1(Z,Y.id)),workersAvailable:I,priceWheatJin:M1,maximumPriceWheatJin:p,referencePriceWheatJin:p,actualObservedDays:G0,actualProfitObservedWheatJin:L0,annualizedActualProfitWheatJin:k0,theoreticalAnnualProfitWheatJin:c,theoreticalFiveYearWheatJin:g,dailyNetWheatJin:Number.isFinite(s)?s:0,annualReferenceNetWheatJin:k0||c,estimatedAnnualReferenceReturn:k0||c,outputItemId:q.itemId,outputPriceVoucherPerUnit:J,itemPriceVoucher:J,inputPricesVoucherPerUnit:Object.fromEntries(G.inputs.map((C0)=>[C0.itemId,W0($,C0.itemId,z)])),inputPricesVoucher:Object.fromEntries(G.inputs.map((C0)=>[C0.itemId,W0($,C0.itemId,z)])),taxPercent:X,wageRateVoucher:S,demandFactor:s0,demandUnits:F.demandUnits,competitionUnits:F.competitionUnits,opportunityUnits:F.opportunityUnits,dailyDemandJin:F.demandUnits/W,competitionStockJin:F.competitionUnits/W,unmetDemandJin:F.opportunityUnits/W,demandReason:F.reason,demandBasis:a,valuationBasis:a,theoreticalFullSaleProfitPerWorkerVoucher:d0?.profitVoucher??0,canPay:N0,keepsReserve:F1,attractive:I0,residentInvestableFundsVoucher:m0,maxHouseholdPayVoucher:l1,residentWheatJin:($.accounts.residents.wheat||0)/W,residentVoucher:B0($,"residents")/K,reserveDays:z.rules.operatingRightReserveDays,maxWilling:p>0}
+}
+function RQ($,Z,z){
+let N=z.precision.currencyUnitsPerVoucher,M=z.rules.householdLiving?.difficultPerCapitaVoucher??30;
+return m($).filter((Q)=>{
+let _=Math.round(f0(Q)*M*N),f=D0($,Q,z,z.rules.householdFoodReserveDays??30),O=B0($,`household:${Q.id}`)+l0(f,z,"floor");
+return J0(Q)&&O>=Z+_}
+).sort((Q,_)=>{
+let f=B0($,`household:${Q.id}`)+l0(D0($,Q,z,z.rules.householdFoodReserveDays??30),z,"floor");
+return B0($,`household:${_.id}`)+l0(D0($,_,z,z.rules.householdFoodReserveDays??30),z,"floor")-f||Q.id.localeCompare(_.id)}
+)[0]||null}
+function c9($,Z,z){
+let N=W5($,Z,z);
+if(!N.available)return{
+ok:!1,reason:N.reason,preview:N}
+;
+let M=$.buildings.find((L)=>L.id===Z),Q=z.buildings[M.typeId],_=Q.jobs[0],f=Math.round(N.priceWheatJin*z.precision.currencyUnitsPerVoucher),O=RQ($,f,z);
+if(!O)return{
+ok:!1,reason:"没有家庭能在保留生活资金后买下经营权",preview:N}
+;
+let Y=x0($,`household:${O.id}`,"town",F0($,f),z,"operating_right_sale",`${O.name}购买${Q.name}一级经营权`,{
+requireFull:!0,maxWheatUnits:D0($,O,z,z.rules.householdFoodReserveDays??30)}
+);
+if(!Y.ok)return{
+ok:!1,reason:Y.reason}
+;
+let G=h1(Z,_.id),X=G1(Z,_.id),q=O0($,G),J=Math.max(0,(M.ownership?.townLevels||1)-1)*_.slots,F=Math.max(0,q-J);
+U0($,G,Math.min(q,J),z);
+let W=O0($,X);
+U0($,X,Math.min(W+F,((M.ownership?.privateLevels||0)+1)*_.slots),z,{
+type:"private",id:Z}
+),M.ownership||={
+townLevels:M.level||1,privateLevels:0,listedLevels:0}
+,M.ownership.townLevels-=1,M.ownership.privateLevels+=1,M.privateOwners||=[],M.privateOwners.push(O.id),O.operatingRights||=[],O.operatingRights.push({
+buildingId:Z,level:M.privateOwners.length}
+);
+let K=$.privateEconomy.rightSales;
+if(K.dayWheatUnits+=f,K.yearWheatUnits+=f,K.cumulativeWheatUnits+=f,$.market?.operatingPlan)$.market.operatingPlan.updatedSerial=-1;
+return q0($,`${O.name}以${N.priceWheatJin.toLocaleString("zh-CN")}斤小麦等值购入${Q.name}一级经营权。`,z,{
+day:$.day+1}
+),{
+ok:!0,preview:N,ownerHouseholdId:O.id,transferredWorkers:F,transactionId:Y.transactionId}
+}
+function x3($){
+return($.buildings||[]).some((Z)=>Z.typeId==="stock_exchange")||Boolean($.stockExchange?.legacyAccess)}
+function V3($){
+return $.stockExchange||={
+legacyAccess:!1,rotation:0}
+,$.stockExchange.rotation||=0,$.stockExchange}
+function EQ($,Z){
+let z=Math.max(1,Math.floor(Number($)||1)),N=Math.max(z,Math.floor(Number(Z)||z)),M=Math.max(z,Math.floor(N/z)*z),Q=Math.max(z,Math.ceil(N/z)*z);
+return[...new Set([M,Q,Math.max(z,M-z),Q+z])].sort((_,f)=>Math.abs(_-N)-Math.abs(f-N)||_-f).slice(0,3)}
+function L3($){
+if(!x3($))return"尚未建成交易所";
+if($.monetaryReform?.stage!=="voucher")return"须先完成货币改革，上市与股票交易只使用粮券";
+return null}
+function i9($,Z,z,N){
+V3($);
+let M=$.companies?.[Z];
+if(!M)return{
+ok:!1,reason:"公司不存在"}
+;
+let Q=L3($);
+if(Q)return{
+ok:!1,reason:Q}
+;
+if(M.listing?.listed)return{
+ok:!1,reason:"公司已经上市；再次售股沿用现有总股本"}
+;
+let _=String(z?.ticker??"").trim();
+if(!/^\d{
+3}
+$/.test(_))return{
+ok:!1,reason:"股票代码必须是三位数字，可保留前导零"}
+;
+if(Object.values($.companies||{
+}
+).some((G)=>G.id!==Z&&G.listing?.ticker===_))return{
+ok:!1,reason:"股票代码已被使用"}
+;
+let f=Math.floor(Number(z?.totalShares)||0);
+if(!Number.isSafeInteger(f)||f<=0)return{
+ok:!1,reason:"总股本必须为正整数"}
+;
+if(f%M.listedLevels!==0)return{
+ok:!1,reason:`总股本必须能被公司${M.listedLevels}级整除`,nearby:EQ(M.listedLevels,f)}
+;
+let O=Math.round(Number(z?.priceVoucherPerShare)*$0(N)),Y=Math.floor(Number(z?.offeredShares)||0);
+if(!Number.isSafeInteger(O)||O<=0)return{
+ok:!1,reason:"每股价格必须大于0"}
+;
+if(!Number.isSafeInteger(Y)||Y<0||Y>f)return{
+ok:!1,reason:"本次出售股数不能超过镇库持股"}
+;
+return M.totalShares=f,M.townShares=f,M.residentShares=0,M.householdShares={
+}
+,M.listing={
+listed:!0,ticker:_,listedAt:{
+year:$.year,day:Math.min(N.rules.daysPerYear,$.day+1)}
+}
+,M.shareSale||={
+}
+,M.shareSale.offeredShares=Y,M.shareSale.sharePriceVoucherUnits=O,M.shareSale.cumulativeProceedsVoucherUnits||=0,M.shareSale.lastSaleVoucherUnits||=0,M.shareSale.lastSoldShares||=0,q0($,`${M.name}（${_}）在交易所挂牌，总股本${f.toLocaleString("zh-CN")}股；挂牌不代表已全部售出。`,N,{
+day:$.day+1}
+),{
+ok:!0,ticker:_,totalShares:f,offeredShares:Y,priceVoucherUnits:O,townShares:f}
+}
+function r9($,Z,z,N,M){
+let Q=$.companies?.[Z];
+if(!Q)return{
+ok:!1,reason:"公司不存在"}
+;
+let _=L3($);
+if(_)return{
+ok:!1,reason:_}
+;
+if(!Q.listing?.listed)return{
+ok:!1,reason:"公司尚未上市"}
+;
+let f=Math.floor(Number(z)||0),O=Math.round(Number(N)*$0(M));
+if(f<0||f>Q.townShares)return{
+ok:!1,reason:"出售股数不能超过镇库持股"}
+;
+if(!Number.isSafeInteger(O)||O<=0)return{
+ok:!1,reason:"每股售价须大于0"}
+;
+return Q.shareSale.offeredShares=f,Q.shareSale.sharePriceVoucherUnits=O,{
+ok:!0,offeredShares:f,priceVoucherUnits:O}
+}
+function K3($,Z,z){
+let N=$0(z),M=G5($,Z,z),Q=M.referenceCompanyValueVoucherUnits||0;
+return{
+...M,bookAssetsVoucherUnits:0,referenceCompanyValueVoucherUnits:Q,referencePerShareVoucherUnits:Z.totalShares>0?Math.floor(Q/Z.totalShares):0,basis:M.validProfitMethod?`最近${M.observedDays}个日历日真实净利润与投入资本利润率统一估值；停工日计入观察窗口`:M.observedDays>0?`${M.performanceStatus||"观察中"}；库存不计入公司估值`:"暂无业绩；库存不计入公司估值",scale:N}
+}
+function D3($,Z,z,N){
+let M=$.companies?.[Z];
+if(!M)return{
+available:!1,reason:"公司不存在"}
+;
+let Q=L3($);
+if(Q)return{
+available:!1,reason:Q}
+;
+if(!M.listing?.listed)return{
+available:!1,reason:"公司尚未上市"}
+;
+let _=Math.max(0,Math.floor(Number(z?.shares)||0)),f=Math.round(Number(z?.priceVoucherPerShare)*$0(N));
+if(!_||!Number.isSafeInteger(f)||f<=0)return{
+available:!1,reason:"请输入回购股数和正的每股价格"}
+;
+let O=K3($,M,N),Y=[],G=0;
+for(let J of m($)){
+let F=Math.max(0,M.householdShares?.[J.id]||0);
+if(!F)continue;
+if(f>=O.referencePerShareVoucherUnits)Y.push({
+householdId:J.id,shares:F}
+),G+=F}
+let X=Math.floor(P0($,"town",N)/f),q=Math.min(_,G,X);
+return{
+available:q>0,reason:q>0?null:G<=0?"当前回购价下没有居民自愿出售":"镇库粮券不足",requestedShares:_,priceVoucherUnits:f,willingShares:G,affordableShares:X,executableShares:q,costVoucherUnits:q*f,reference:O}
+}
+function s9($,Z,z,N){
+let M=$.companies?.[Z],Q=D3($,Z,z,N);
+if(!M||!Q.available)return{
+ok:!1,reason:Q.reason||"当前无可回购股份",preview:Q}
+;
+let _=Q.executableShares,f=0,O=[],Y=m($).filter((J)=>(M.householdShares?.[J.id]||0)>0).sort((J,F)=>J.id.localeCompare(F.id)),G=V3($).rotation%Math.max(1,Y.length),X=Y.slice(G).concat(Y.slice(0,G));
+for(let J of X){
+if(_<=0)break;
+let F=M.householdShares?.[J.id]||0;
+if(F<=0)continue;
+if(Q.priceVoucherUnits<Q.reference.referencePerShareVoucherUnits)continue;
+let W=Math.min(F,_),K=W*Q.priceVoucherUnits;
+if(!x0($,"town",`household:${J.id}`,F0($,K),N,"town_share_buyback",`镇库回购${M.name}股份`,{
+requireFull:!0}
+).ok)break;
+if(M.householdShares[J.id]-=W,M.householdShares[J.id]<=0)delete M.householdShares[J.id];
+if(J.shares||={
+}
+,J.shares[M.id]=Math.max(0,(J.shares[M.id]||0)-W),J.shares[M.id]<=0)delete J.shares[M.id];
+M.residentShares-=W,M.townShares+=W,_-=W,f+=K,O.push({
+householdId:J.id,shares:W,voucherUnits:K}
+)}
+V3($).rotation=Y.length?(G+1)%Y.length:0;
+let q=Q.executableShares-_;
+if(q<=0)return{
+ok:!1,reason:"回购未成交",preview:Q}
+;
+return q0($,`镇库以玩家定价回购${M.name}${q.toLocaleString("zh-CN")}股。`,N,{
+day:$.day+1}
+),{
+ok:!0,boughtShares:q,paidVoucherUnits:f,sellers:O,preview:Q}
+}
+function a9($,Z,z,N){
+let M=Number(z);
+if(!(Object.values(N.roles).some((_)=>_.id===Z)||Object.values(N.buildings).some((_)=>_.jobs.some((f)=>f.id===Z))))return{
+ok:!1,reason:"未知工种"}
+;
+if(Z==="farmers")return{
+ok:!1,reason:"农民按收成分粮，不另发镇库日薪"}
+;
+if(!Number.isFinite(M)||M<0||M>1e5)return{
+ok:!1,reason:"日薪须为有限的非负数"}
+;
+return $.employment.wageRates[Z]=M,{
+ok:!0,roleId:Z,dailyJin:M}
+}
+function n9($,Z,z){
+let N=Number(Z);
+if(!Number.isFinite(N)||N<=0||N>1e6)return{
+ok:!1,reason:"售价须为正的有限数值"}
+;
+return S5($,"bread",N,z)}
+function o9($,Z){
+let z=Z.enabled===void 0?$.policy.unemploymentBenefit.enabled:Boolean(Z.enabled),N=Z.dailyPerWorkerJin===void 0?$.policy.unemploymentBenefit.dailyPerWorkerJin:Number(Z.dailyPerWorkerJin);
+if(!Number.isFinite(N)||N<0||N>1e5)return{
+ok:!1,reason:"每日失业金须为有限的非负数"}
+;
+return $.policy.unemploymentBenefit={
+enabled:z,dailyPerWorkerJin:N}
+,{
+ok:!0,...$.policy.unemploymentBenefit}
+}
+function e9($,Z){
+let z=Number(Z);
+if(!Number.isFinite(z)||z<0||z>80)return{
+ok:!1,reason:"农业税率须为0%—80%"}
+;
+return $.policy.agricultureTaxPercent=Math.round(z*100)/100,{
+ok:!0,value:$.policy.agricultureTaxPercent}
+}
+function t9($,Z,z,N){
+if(!["mill","bakery","lumberyard","saltworks"].includes(Z)||!N.buildings[Z])return{
+ok:!1,reason:"该产业不开放民营生产税设置"}
+;
+let M=Number(z);
+if(!Number.isFinite(M)||M<0||M>80)return{
+ok:!1,reason:"民营生产税率须为0%—80%"}
+;
+return $.policy.privateProductionTaxPercent[Z]=Math.round(M*100)/100,{
+ok:!0,typeId:Z,value:$.policy.privateProductionTaxPercent[Z]}
+}
+function $Z($,Z,z){
+let N=Number(z);
+if(!Number.isFinite(N)||N<=0||N>1e9)return{
+ok:!1,reason:"经营权售价须为正的有限数值"}
+;
+return $.market.operatingRightPrices[Z]=Math.round(N*3000),{
+ok:!0,buildingId:Z,priceWheatJin:$.market.operatingRightPrices[Z]/3000}
+}
+function ZZ($,Z,z,N){
+return O8($,Z,z,N)}
+function zZ($,Z,z,N,M){
+return h8($,Z,z,N,M)}
+function NZ($,Z,z,N){
+return l9($,Z,z,N)}
+function MZ($,Z,z,N){
+return w8($,Z,z,N)}
+function QZ($,Z,z){
+return p9($,Z,z)}
+function _Z($,Z,z){
+return c9($,Z,z)}
+function fZ($,Z,z){
+return s8($,Z,z)}
+function OZ($,Z){
+return a8($,Z)}
+function XZ($,Z,z,N){
+if(Z==="town"){
+let Q=Math.round(Number(z)*$0(N));
+if(!Number.isSafeInteger(Q)||Q<=0)return{
+ok:!1,reason:"发行数量必须大于0"}
+;
+return Q7($,Q,N)}
+let M=Math.round(Number(z)*N.precision.inventoryUnitsPerJin);
+if(!Number.isSafeInteger(M)||M<=0)return{
+ok:!1,reason:"换券数量必须大于0"}
+;
+return R$($,Z,M,N)}
+function GZ($,Z,z,N){
+let M=Math.round(Number(z)*$0(N));
+if(!Number.isSafeInteger(M)||M<=0)return{
+ok:!1,reason:"兑换数量必须大于0"}
+;
+return E$($,Z,M,N)}
+function YZ($,Z,z,N){
+return z3($,Z,z,N)}
+function qZ($,Z,z,N){
+return z3($,Z,z,N)}
+function JZ($,Z,z,N){
+return i9($,Z,z,N)}
+function WZ($,Z,z,N,M){
+return r9($,Z,z,N,M)}
+function FZ($,Z,z){
+return B8($,Z,z)}
+function VZ($,Z,z,N){
+return R8($,Z,z,N)}
+function xZ($,Z,z,N){
+return q8($,Z,z,N)}
+function LZ($,Z,z,N){
+return J8($,Z,z,N)}
+function KZ($,Z,z,N,M){
+return W8($,Z,z,N,M)}
+function DZ($,Z,z){
+return V8($,Z,z)}
+function BZ($,Z,z){
+return x8($,Z,z)}
+function RZ($,Z,z){
+return L8($,Z,z)}
+function EZ($,Z,z,N){
+return s9($,Z,z,N)}
+function HZ($,Z,z){
+return K8($,Z,z)}
+function AZ($,Z,z,N){
+return D8($,Z,z,N)}
+function TZ($,Z,z){
+return g8($,Z,z)}
+function CZ($,Z){
+return Y5($,Z)}
+function PZ($,Z){
+return x7($,Z)}
+function kZ($,Z){
+return L7($,Z)}
+function jZ($,Z,z){
+let N=Number(Z);
+if(!Number.isFinite(N)||N<(z.rules.employmentExchangeMinimumJin??0)||N>(z.rules.employmentExchangeMaximumJin??10))return{
+ok:!1,reason:"每日换券额度须为0—10斤"}
+;
+return $.policy.employmentExchangeJin=Math.round(N*100)/100,{
+ok:!0,value:$.policy.employmentExchangeJin}
+}
+function UZ($,Z){
+let z=Number(Z);
+if(!Number.isFinite(z)||z<0||z>1e5)return{
+ok:!1,reason:"店租须为非负数"}
+;
+return $.policy.shopRentVoucher=Math.round(z*100)/100,{
+ok:!0,value:$.policy.shopRentVoucher}
+}
+function SZ($,Z,z){
+let N=Number(Z),M=z.rules.shopProfitTaxMaximumPercent??80;
+if(!Number.isFinite(N)||N<0||N>M)return{
+ok:!1,reason:`商业利润税须为0%—${M}%`}
+;
+return $.policy.shopProfitTaxPercent=Math.round(N*100)/100,{
+ok:!0,value:$.policy.shopProfitTaxPercent}
+}
+function IZ($,Z,z,N,M){
+return p7($,Z,z,M,N||null)}
+function bZ($,Z,z,N){
+return d7($,Z,z,N)}
+function gZ($,Z,z,N){
+return b$($,Z,z,N)}
+function vZ($,Z,z){
+return o4($,Z,z,!1)}
+function yZ($,Z,z){
+return Z8($,Z,z)}
+function wZ($,Z,z,N){
+return j$($,Z,z,N)}
+function hZ($,Z,z,N){
+return U7($,Z,z,N)}
+function mZ($,Z,z,N){
+return g7($,Z,z,N)}
+function uZ($,Z,z,N){
+return v7($,Z,z,N)}
+function lZ($,Z,z,N){
+return l8($,Z,z,N)}
+function pZ($,Z,z,N){
+return S9($,Z,z,N)}
+function dZ($,Z){
+return q7($,Z)}
+function cZ($,Z){
+return J7($,Z)}
+function iZ($,Z){
+return W7($,Z)}
+function rZ($,Z){
+return F7($,Z)}
+function sZ($,Z,z,N){
+return V7($,N,{
+acres:Z,workers:z}
+)}
+function c2($,Z){
+let z=[],N=J$(Z);
+z.push(...N.errors);
+let M=Z.rules.saveVersion||3;
+if(!$||$.schemaVersion!==M||$.version!==M)return z.push("存档版本不是"+M),{
+valid:!1,errors:z}
+;
+if(!Number.isInteger($.year)||$.year<1||!Number.isInteger($.day)||$.day<0||$.day>=Z.rules.daysPerYear)z.push("日期字段无效");
+if(!Array.isArray($.cohorts)||!Array.isArray($.buildings)||!Array.isArray($.plots)||!Array.isArray($.ledger)||!Array.isArray($.annualReports)||!Array.isArray($.events))return z.push("人口、建筑、地图或账目结构缺失"),{
+valid:!1,errors:z}
+;
+if($.events.some((W)=>!Number.isInteger(W?.year)||W.year<1||!Number.isInteger(W?.day)||W.day<1||W.day>Z.rules.daysPerYear||typeof W?.text!=="string"))z.push("事件日期或内容无效");
+if($.ledger.some((W)=>!Number.isInteger(W?.year)||W.year<1||!Number.isInteger(W?.day)||W.day<1||W.day>Z.rules.daysPerYear))z.push("账目日期无效");
+for(let W of["residents","town"]){
+let K=$.accounts?.[W];
+if(!K){
+z.push("缺少物品账户："+W);
+continue}
+for(let L of Object.keys(Z.items)){
+let x=K[L];
+if(!Number.isSafeInteger(x)||x<0)z.push("库存无效："+W+"/"+L)}
+for(let L of Object.keys(K))if(!Z.items[L])z.push("存档含未注册物品："+L)}
+let Q=$.households?.byId?m($):[];
+if(!Q.length)z.push("缺少家庭账户");
+else{
+if($.households.members!==void 0||$.households.nextMemberNumber!==void 0)z.push("v11 存档仍含逐人家庭数据");
+let W=A0($),K=e1($);
+if(K.children!==W.children||K.workers!==W.workers||K.elders!==W.elders)z.push("家庭年龄段汇总与人口 cohort 不一致");
+for(let L of Q){
+if(!L.inventory||!Number.isSafeInteger(L.voucherUnits)||L.voucherUnits<0){
+z.push("家庭账户无效："+(L.id||"未知"));
+continue}
+for(let x of["children","workers","elders"])if(!Number.isInteger(L.ageBands?.[x])||L.ageBands[x]<0)z.push("家庭年龄段无效："+L.id+"/"+x);
+for(let[x,R]of Object.entries(L.jobs||{
+}
+))if(!Number.isInteger(R)||R<0)z.push("家庭岗位数量无效："+L.id+"/"+x);
+if(y0(L)>i1(L))z.push("家庭就业超过劳动年龄人数："+L.id);
+for(let x of Object.keys(Z.items))if(!Number.isSafeInteger(L.inventory[x]||0)||(L.inventory[x]||0)<0)z.push("家庭库存无效："+L.id+"/"+x);
+if(!J0(L)&&y0(L)>0)z.push("无人家庭仍占用岗位："+L.id)}
+for(let L of Object.keys(Z.items))if(Q.reduce((R,C)=>R+(C.inventory[L]||0),0)!==($.accounts?.residents?.[L]||0))z.push("居民汇总库存与家庭不一致："+L)}
+if(!Number.isFinite($.policy?.employmentExchangeJin)||$.policy.employmentExchangeJin<0||$.policy.employmentExchangeJin>10)z.push("就业换券额度无效");
+if(!Number.isFinite($.policy?.shopRentVoucher)||$.policy.shopRentVoucher<0)z.push("店租设置无效");
+if(!Number.isFinite($.policy?.shopProfitTaxPercent)||$.policy.shopProfitTaxPercent<0||$.policy.shopProfitTaxPercent>(Z.rules.shopProfitTaxMaximumPercent||80))z.push("商业利润税设置无效");
+if(!$.employment||!$.employment.wageRates)z.push("缺少就业工资设置");
+else{
+for(let x of["roles","byBuilding","privateByBuilding","listedByBuilding"])if($.employment[x]!==void 0)z.push("v11 存档仍含旧就业计数："+x);
+for(let[x,R]of Object.entries($.employment.wageRates||{
+}
+))if(!Number.isFinite(R)||R<0)z.push("工种日薪无效："+x);
+if(!Number.isInteger($.employment.targets?.farmers)||$.employment.targets.farmers<0)z.push("农业目标用工无效");
+let W=A0($),K=$1($,Z);
+if(W.total!==W.children+W.workers+W.elders)z.push("年龄人口总数不一致");
+if(K.householdWorkingAge!==W.workers)z.push("家庭劳动年龄人口与 cohort 不一致");
+if(K.employed>W.workers)z.push("就业人数超过劳动年龄人口");
+for(let x of K.rows)if(x.count>x.capacity)z.push("岗位超过容量："+x.key);
+let L=K.rows.find((x)=>x.roleId==="farmers"&&x.scope==="core");
+if(L&&$.employment.targets.farmers>L.capacity)z.push("农业目标用工超过土地容量")}
+if(!$.services||typeof $.services!=="object"||Array.isArray($.services)||!$.services.demandByHousehold||!$.services.carryByHousehold||!$.services.rotation)z.push("服务需求状态无效");
+else for(let[W,K]of Object.entries($.services.demandByHousehold||{
+}
+)){
+if(!$.households?.byId?.[W])z.push("服务需求引用未知家庭："+W);
+for(let[L,x]of Object.entries(K||{
+}
+))if(!Z.rules.serviceTypes?.[L]||!Number.isSafeInteger(x)||x<0)z.push("服务需求无效："+W+"/"+L)}
+let _=new Set;
+for(let W of $.cohorts){
+if(!Number.isInteger(W.age)||_.has(W.age))z.push("年龄组重复或无效");
+_.add(W.age);
+for(let K of["m","f","marriedM","marriedF"])if(!Number.isInteger(W[K])||W[K]<0)z.push("年龄组数量无效："+K);
+if(W.marriedM>W.m||W.marriedF>W.f)z.push("婚姻人数超过性别人数")}
+if(!$.agriculture||!Number.isInteger($.agriculture.workUnits)||$.agriculture.workUnits<0||!Number.isInteger($.agriculture.lastHarvestYear))z.push("农业投入记录无效");
+if(!Number.isInteger($.agriculture?.reclaimedAcres)||$.agriculture.reclaimedAcres<0||$.agriculture.reclaimedAcres>(Z.agriculture.acresMaximum??Z.agriculture.acres))z.push("已开荒耕地亩数无效");
+if(!$.rng||$.rng.algorithm!=="lcg32-v1"||!Number.isInteger($.rng.state)||$.rng.state<0||$.rng.state>4294967295)z.push("随机数状态无效");
+if(!Number.isFinite($.satisfaction)||$.satisfaction<0||$.satisfaction>100)z.push("满意度无效");
+if(!$.yearTotals||!Number.isFinite($.yearTotals.harvestQeq)||!Number.isFinite($.yearTotals.consumptionQeq))z.push("年度账目无效");
+if(!Number.isFinite($.market?.breadPriceWheatPerJin)||$.market.breadPriceWheatPerJin<=0)z.push("面包售价必须为正的有限数值");
+for(let W of["wheat","flour","bread","wood","salt"]){
+let K=$.market?.pricesVoucherPerUnit?.[W];
+if(!Number.isFinite(K)||K<=0)z.push("统一商品价格无效："+W)}
+if(!Number.isFinite($.policy?.agricultureTaxPercent)||$.policy.agricultureTaxPercent<0||$.policy.agricultureTaxPercent>80)z.push("农业税率无效");
+for(let W of["mill","bakery","lumberyard","saltworks"]){
+let K=$.policy?.privateProductionTaxPercent?.[W];
+if(!Number.isFinite(K)||K<0||K>80)z.push("民营生产税率无效："+W)}
+for(let W of $.buildings||[]){
+let K=W.ownership?.townLevels,L=W.ownership?.privateLevels,x=W.ownership?.listedLevels??0;
+if(!Number.isInteger(K)||K<0||!Number.isInteger(L)||L<0||!Number.isInteger(x)||x<0||K+L+x!==(W.level||1))z.push("建筑经营权等级无效："+W.id)}
+if(!Array.isArray($.agriculture?.taxDays)||$.agriculture.taxDays.some((W)=>!Number.isInteger(W.rateBps)||W.rateBps<0||W.rateBps>8000))z.push("农业税日记录无效");
+if(!Array.isArray($.policy?.agricultureTaxRecent)||$.policy.agricultureTaxRecent.some((W)=>!Number.isInteger(W.rateBps)||W.rateBps<0||W.rateBps>8000))z.push("农业税舒心值记录无效");
+let f=$.policy?.unemploymentBenefit;
+if(!f||typeof f.enabled!=="boolean"||!Number.isFinite(f.dailyPerWorkerJin)||f.dailyPerWorkerJin<0)z.push("失业金政策设置无效");
+if(!$.payroll||!$.payroll.arrearsWheatUnits||Object.values($.payroll.arrearsWheatUnits||{
+}
+).some((W)=>!Number.isSafeInteger(W)||W<0))z.push("欠薪账目无效");
+if(!$.business?.inventoryCostWheatUnits?.town||Object.values($.business.inventoryCostWheatUnits.town).some((W)=>!Number.isSafeInteger(W)||W<0))z.push("作坊库存成本账无效");
+if(!Number.isInteger($.housing?.villageCapacity)||$.housing.villageCapacity<=0)z.push("村舍基础住房容量无效");
+if(!$.salt||!Number.isInteger($.salt.demandCarry)||$.salt.demandCarry<0||$.salt.demandCarry>=Z.rules.daysPerYear||!Number.isInteger($.salt.graceDaysElapsed)||$.salt.graceDaysElapsed<0||!Array.isArray($.salt.history))z.push("食盐需求结算状态无效");
+else for(let W of $.salt.history)if(!Number.isSafeInteger(W.demandUnits)||W.demandUnits<0||!Number.isSafeInteger(W.satisfiedUnits)||W.satisfiedUnits<0||W.satisfiedUnits>W.demandUnits)z.push("食盐日保障记录无效");
+for(let W of["forestry","salt"]){
+let K=$.industries?.[W];
+if(!K){
+z.push("缺少行业经营账："+W);
+continue}
+for(let L of["day","year","cumulative"]){
+let x=K[L];
+if(!x||!x.producedUnits||!Number.isSafeInteger(x.soldUnits||0)||(x.soldUnits||0)<0||!Number.isSafeInteger(x.revenueWheatUnits||0)||(x.revenueWheatUnits||0)<0||!Number.isSafeInteger(x.operatingWagesWheatUnits||0)||(x.operatingWagesWheatUnits||0)<0)z.push("行业经营账字段无效："+W+"/"+L)}
+}
+for(let W of["day","year","cumulative"]){
+let K=$.fiscal?.[W];
+if(!K||["dueWheatUnits","collectedWheatUnits","waivedWheatUnits"].some((L)=>!Number.isSafeInteger(K[L])||K[L]<0))z.push("公租房财政账无效："+W)}
+let O=$.monetaryReform;
+if(!O||!["wheat","transition","voucher"].includes(O.stage)||!Number.isInteger(O.targetVoucherBps)||O.targetVoucherBps<0||O.targetVoucherBps>1e4||typeof O.residentExchangeEnabled!=="boolean"||typeof O.legacyBankAccess!=="boolean"||!Array.isArray(O.paymentHistory)||!O.voucherShortfallByKey||Array.isArray(O.voucherShortfallByKey))z.push("货币改革状态无效");
+else{
+for(let W of O.paymentHistory)if(!Number.isInteger(W?.serial)||W.serial<=0||!Number.isInteger(W?.year)||W.year<=0||!Number.isInteger(W?.day)||W.day<=0||W.day>Z.rules.daysPerYear||["paidValueUnits","voucherValueUnits","wheatValueUnits","fallbackWheatValueUnits","unpaidAttemptValueUnits"].some((K)=>!Number.isSafeInteger(W?.[K]||0)||(W?.[K]||0)<0)){
+z.push("货币改革支付历史无效");
+break}
+if(Object.values(O.voucherShortfallByKey).some((W)=>!Number.isSafeInteger(W)||W<0))z.push("缺券未付记录无效")}
+if(!z5($,Z).valid)z.push("粮券总账不守恒：账户余额与未注销发行量不一致");
+if(!$.stockExchange||typeof $.stockExchange!=="object"||Array.isArray($.stockExchange)||typeof $.stockExchange.legacyAccess!=="boolean")z.push("交易所状态无效");
+if($.buildings.filter((W)=>W.typeId==="stock_exchange").length>1)z.push("全镇交易所超过一座");
+if(!$.companies||typeof $.companies!=="object"||Array.isArray($.companies))z.push("上市企业账结构无效");
+else{
+let W=new Set;
+for(let[L,x]of Object.entries($.companies)){
+let R=$.buildings.find((B)=>B.id===x.buildingId);
+if(!R||!["mill","bakery","lumberyard","saltworks"].includes(x.typeId)||R.typeId!==x.typeId){
+z.push("企业引用了无效建筑："+L);
+continue}
+if(W.has(x.buildingId))z.push("同一建筑存在多家公司："+x.buildingId);
+if(W.add(x.buildingId),!Number.isInteger(x.listedLevels)||x.listedLevels<=0||x.listedLevels!==(R.ownership?.listedLevels||0))z.push("公司等级与建筑归属不一致："+L);
+if(!x.settings||!Number.isFinite(x.settings.wagePerWorkerDay)||x.settings.wagePerWorkerDay<0||!Number.isInteger(x.settings.targetWorkers)||x.settings.targetWorkers<0)z.push("公司经营设置无效："+L);
+let C=(Z.buildings[x.typeId]?.jobs?.[0]?.slots||0)*x.listedLevels;
+if((x.settings?.targetWorkers||0)>C)z.push("公司目标用工超过容量："+L);
+if(!x.listing||typeof x.listing.listed!=="boolean")z.push("公司上市状态无效："+L);
+if(x.listing?.listed){
+if(!/^\d{
+3}
+$/.test(x.listing.ticker||""))z.push("公司股票代码无效："+L);
+if(!Number.isInteger(x.totalShares)||x.totalShares<=0||x.totalShares%x.listedLevels!==0||!Number.isInteger(x.townShares)||x.townShares<0||!Number.isInteger(x.residentShares)||x.residentShares<0||x.townShares+x.residentShares!==x.totalShares)z.push("上市公司股份总数或持股结构无效："+L);
+if(Object.values(x.householdShares||{
+}
+).reduce((I,T)=>I+Math.max(0,T||0),0)!==x.residentShares)z.push("居民逐户持股与公司居民持股不一致："+L)}
+else if((x.totalShares||0)!==0||(x.townShares||0)!==0||(x.residentShares||0)!==0||Object.values(x.householdShares||{
+}
+).some((B)=>B))z.push("未上市公司不应存在股票："+L);
+if(!Number.isSafeInteger(x.cashVoucherUnits)||x.cashVoucherUnits<0)z.push("企业粮券余额无效："+L);
+if(!Number.isSafeInteger(x.cashWheatUnits||0)||(x.cashWheatUnits||0)<0)z.push("企业支付小麦余额无效："+L);
+for(let B of Object.keys(Z.items)){
+if(!Number.isSafeInteger(x.inventory?.[B])||x.inventory[B]<0)z.push("企业库存无效："+L+"/"+B);
+if(!Number.isSafeInteger(x.inventoryCostVoucherUnits?.[B])||x.inventoryCostVoucherUnits[B]<0)z.push("企业库存成本无效："+L+"/"+B)}
+if(!Number.isSafeInteger(x.payroll?.arrearsVoucherUnits)||x.payroll.arrearsVoucherUnits<0)z.push("企业欠薪无效："+L);
+if(!Number.isSafeInteger(x.retainedEarningsVoucherUnits))z.push("企业未分配利润无效："+L);
+if(!Number.isInteger(x.shareSale?.offeredShares)||x.shareSale.offeredShares<0||x.shareSale.offeredShares>x.townShares||!Number.isSafeInteger(x.shareSale?.sharePriceVoucherUnits||0)||(x.shareSale?.sharePriceVoucherUnits||0)<0||!Number.isSafeInteger(x.shareSale?.cumulativeProceedsVoucherUnits||0)||(x.shareSale?.cumulativeProceedsVoucherUnits||0)<0)z.push("企业股份出售记录无效："+L);
+for(let B of["day","year","cumulative"]){
+let I=x.accounts?.[B];
+if(!I||["revenueVoucherUnits","cogsVoucherUnits","wageExpenseVoucherUnits","wagesPaidVoucherUnits","inputPurchaseVoucherUnits","taxCostVoucherUnits","processingLossVoucherUnits","profitVoucherUnits"].some((T)=>!Number.isSafeInteger(I[T]||0)))z.push("企业核算账无效："+L+"/"+B)}
+}
+let K=new Set;
+for(let L of Object.values($.companies||{
+}
+))if(L.listing?.listed){
+if(K.has(L.listing.ticker))z.push("股票代码重复："+L.listing.ticker);
+K.add(L.listing.ticker)}
+for(let L of $.buildings)if((L.ownership?.listedLevels||0)>0&&!W.has(L.id))z.push("建筑有公司等级但缺少公司："+L.id)}
+if(!$.shops||typeof $.shops!=="object"||Array.isArray($.shops))z.push("店铺账结构无效");
+else{
+for(let W of Object.values($.shops)){
+if(!$.buildings.find((y)=>y.id===W.buildingId&&y.typeId==="commercial_street"))z.push("店铺引用了无效商业街："+W.id);
+let L=$.households?.byId?.[W.ownerHouseholdId];
+if(!L)z.push("店铺缺少家庭所有者："+W.id);
+if(!Z.rules.shopTypes?.[W.typeId])z.push("店铺类型无效："+W.id);
+if(!Number.isSafeInteger(W.cashVoucherUnits)||W.cashVoucherUnits<0)z.push("店铺粮券余额无效："+W.id);
+if(!Number.isSafeInteger(W.cashWheatUnits||0)||(W.cashWheatUnits||0)<0)z.push("店铺支付小麦余额无效："+W.id);
+if(!Number.isSafeInteger(W.retainedEarningsVoucherUnits))z.push("店铺未分配利润无效："+W.id);
+if(!["open","paused","liquidating","closed"].includes(W.status))z.push("店铺状态无效："+W.id);
+for(let y of Object.keys(Z.items))if(!Number.isSafeInteger(W.inventory?.[y]||0)||(W.inventory?.[y]||0)<0)z.push("店铺库存无效："+W.id+"/"+y);
+for(let y of["wageVoucherUnits","rentVoucherUnits","taxVoucherUnits"])if(!Number.isSafeInteger(W.liabilities?.[y]||0)||(W.liabilities?.[y]||0)<0)z.push("店铺欠款无效："+W.id);
+let x=`shop:${W.id}:merchant`,R=`shop:${W.id}:clerk`,C=u0($,x),B=u0($,R);
+if(C>(Z.rules.shopMaxMerchants||4))z.push("商人超过上限："+W.id);
+let I=Z.rules.shopTypes?.[W.typeId],b=(I?.aliasOf?Z.rules.shopTypes?.[I.aliasOf]:I)?.id==="general"?Z.rules.generalStoreMaxClerks||50:Z.rules.shopMaxClerks||20;
+if(B>b)z.push("店员超过上限："+W.id);
+if(W.status==="open"){
+if(!L||!J0(L)||(L.jobs?.[x]||0)<1||C<1)z.push("商人岗位归属无效："+W.id)}
+else if(C||B)z.push("非营业店铺仍保留岗位："+W.id)}
+for(let W of $.buildings.filter((K)=>K.typeId==="commercial_street")){
+let K=Object.values($.shops).filter((I)=>I.buildingId===W.id&&I.status!=="closed"&&I.status!=="liquidating");
+if(K.length>(W.level||1)*2)z.push("商业街店铺超过容量："+W.id);
+let L=Z.buildings?.commercial_street,x=(L?.jobs?.find((I)=>I.id==="merchants")?.slots||(Z.rules.shopMaxMerchants||4)*2)*(W.level||1),R=(L?.jobs?.find((I)=>I.id==="shop_clerks")?.slots||(Z.rules.shopMaxClerks||20)*2)*(W.level||1),C=K.reduce((I,T)=>I+u0($,`shop:${T.id}:merchant`),0),B=K.reduce((I,T)=>I+u0($,`shop:${T.id}:clerk`),0);
+if(C>x)z.push("商业街商人超过容量："+W.id);
+if(B>R)z.push("商业街店员超过容量："+W.id)}
+}
+let X=Math.ceil(A0($).total/(Z.rules.publicServiceDemandPopulation||500));
+for(let W of["civil_servants","police"])if($1($,Z).rows.filter((L)=>L.roleId===W).reduce((L,x)=>L+x.count,0)>X)z.push("公共岗位超过全镇需求："+W);
+if(!Array.isArray($.projects))z.push("在建工程列表无效");
+else{
+let W=new Set,K=new Set;
+for(let L of $.projects){
+if(!L||typeof L!=="object"){
+z.push("在建工程结构无效");
+continue}
+if(!Z.buildings[L.typeId]||!$.plots.some(function(R){
+return R.id===L.plotId}
+)||!Number.isFinite(L.workDone)||!Number.isFinite(L.workRequired)||L.workDone<0||L.workDone>=L.workRequired)z.push("在建工程结构无效："+(L.instanceId||L.plotId||"?"));
+if(!L.instanceId||W.has(L.instanceId))z.push("在建工程实例 ID 重复或缺失");
+if(W.add(L.instanceId),K.has(L.plotId))z.push("同一地块存在多个在建工程");
+if(K.add(L.plotId),!Number.isInteger(L.workers)||L.workers<0)z.push("在建工程投入人数无效："+(L.instanceId||"?"));
+let x=L.kind==="upgrade"?$.buildings.find((R)=>R.id===L.buildingId):null;
+if(L.kind==="upgrade"&&(!x||x.plotId!==L.plotId||L.targetLevel!==(x.level||1)+1))z.push("升级工程与目标建筑不一致");
+if(L.kind&&!["build","upgrade"].includes(L.kind))z.push("工程类型无效");
+if($.buildings.some(function(R){
+return R.plotId===L.plotId}
+)&&L.kind!=="upgrade")z.push("在建工程与已有建筑叠地");
+if(L.materialsConsumed!==void 0&&(!Array.isArray(L.materialsConsumed)||L.materialsConsumed.some((R)=>!Z.items[R.itemId]||!Number.isSafeInteger(R.quantityUnits)||R.quantityUnits<0)))z.push("工程材料记录无效")}
+}
+let q=new Set,J=new Set;
+for(let W of $.plots){
+if(!W?.id||J.has(W.id)||!Number.isFinite(W.x)||!Number.isFinite(W.y))z.push("建设地块 ID 或坐标无效");
+J.add(W.id)}
+let F=new Set;
+for(let W of $.buildings){
+if(!W.id||q.has(W.id)||!Z.buildings[W.typeId])z.push("建筑实例 ID 或类型无效");
+if(q.add(W.id),!Number.isInteger(W.level||1)||(W.level||1)<1||(W.level||1)>(Z.rules.buildingMaxLevel||5))z.push("建筑等级无效："+W.id);
+if(W.materialInvestments!==void 0&&(!Array.isArray(W.materialInvestments)||W.materialInvestments.some((K)=>!Z.items[K.itemId]||!Number.isSafeInteger(K.quantityUnits)||K.quantityUnits<0||!["town","residents"].includes(K.sourceOwner||"town"))))z.push("建筑材料投入记录无效："+W.id);
+if(F.has(W.plotId))z.push("同一地块存在多个建筑");
+if(F.add(W.plotId),!$.plots.some(function(K){
+return K.id===W.plotId}
+))z.push("建筑地块不存在："+W.plotId);
+if(($.projects||[]).some((K)=>K.plotId===W.plotId&&!(K.kind==="upgrade"&&K.buildingId===W.id)))z.push("在建工程与已有建筑叠地")}
+if(!Array.isArray($.demolishedBuildings))z.push("拆除历史记录无效");
+return{
+valid:z.length===0,errors:z}
+}
+function B3($,Z){
+let z=X1($,Z),N=z/Z.agriculture.acresPerFarmer,M=Math.min($.day,Z.rules.growingDays),Q=O0($,"farmers"),_=$.day<Z.rules.growingDays?$.agriculture.workUnits+Q*(Z.rules.growingDays-M):Q*Z.rules.growingDays,f=z*Z.agriculture.yieldPerAcre,O=Math.max(0,Math.min(1,_/(N*Z.rules.growingDays)));
+return Math.round(f*O*100)/100}
+function R3($){
+let Z=m($),z=new Map;
+for(let q of Z)for(let[J,F]of Object.entries(q.jobs||{
+}
+)){
+let W=Math.max(0,Number(F)||0);
+if(W<=0)continue;
+z.set(J,(z.get(J)||0)+W)}
+let N=new Map,M=new Map,Q=new Map,_=new Map;
+for(let q of $.buildings||[]){
+if(N.set(q.id,q),q.plotId)M.set(q.plotId,q);
+if(Q.set(q.typeId,(Q.get(q.typeId)||0)+1),!_.has(q.typeId))_.set(q.typeId,q)}
+let f=new Map,O=new Map,Y=[];
+for(let q of $.plots||[])if(f.set(q.id,q),q.feature){
+let J=O.get(q.feature)||[];
+J.push(q),O.set(q.feature,J)}
+else Y.push(q);
+let G=new Map;
+for(let q of Object.values($.companies||{
+}
+))if(q?.buildingId)G.set(q.buildingId,q);
+let X=new Map(($.privateEconomy?.lastDay||[]).map((q)=>[q.buildingId,q]));
+return{
+households:Z,jobCounts:z,buildingById:N,buildingByPlotId:M,buildingTypeCounts:Q,firstBuildingByType:_,plotById:f,plotsByFeature:O,ordinaryPlots:Y,companyByBuildingId:G,privateDayByBuildingId:X}
+}
+function aZ($,Z,z){
+let N=z?.households||m($),M=$.households?.exchange||null,Q=`${$.year}:${$.day}`,_=M?.dayKey===Q,f=Math.max(Z.rules.employmentExchangeMinimumJin??0,Math.min(Z.rules.employmentExchangeMaximumJin??10,Number($.policy?.employmentExchangeJin??Z.rules.employmentExchangeDefaultJin??2))),O=Z.precision.inventoryUnitsPerJin,Y=0;
+for(let G of N){
+let X=_?Math.max(0,Number(M?.eligibleByHousehold?.[G.id])||0):y0(G),q=_?Math.max(0,Number(M?.usedByHousehold?.[G.id])||0):0,J=Math.round(X*f*O);
+Y+=Math.max(0,J-q)}
+return Y}
+function HQ($){
+if($<91)return{
+key:"spring",name:"春",field:"麦苗返青",index:$+1}
+;
+if($<183)return{
+key:"summer",name:"夏",field:"麦穗抽长",index:$-90}
+;
+if($<274)return{
+key:"autumn",name:"秋",field:"金穗待收",index:$-182}
+;
+return{
+key:"winter",name:"冬",field:"田间休整",index:$-273}
+}
+function AQ($,Z){
+return{
+observedDays:($.history||[]).length,validProfitMethod:!1,basis:"尚未上市；经营业绩仍按实际日历日记录",referenceCompanyValueVoucherUnits:0,referencePerShareVoucherUnits:0,scale:$0(Z)}
+}
+function TQ($,Z){
+let z=X1($,Z),N=A$(Z),M=Z.agriculture.reclaimAcresPerBatch||100,Q=Math.max(0,N-z),_=Math.min(M,Q),f=m4($,Z,_),O=$.agriculture?.reclaim||{
+}
+,Y=$0(Z),G=O.cumulative?.paidVoucherUnits||0;
+return{
+current:z,maximum:N,remaining:Q,batchAcres:M,nextAcres:_,nextWorkDays:f.workDays,nextVoucher:f.estimatedVoucher,wagePerWorkerDay:f.wagePerWorkerDay,wageRoleId:f.wageRoleId,workDaysPerBatch:h4(M,Z),canReclaim:Q>0,day:{
+...O.day||{
+}
+}
+,year:{
+...O.year||{
+}
+}
+,cumulative:{
+...O.cumulative||{
+}
+,paidVoucher:G/Y}
+,last:O.last?{
+...O.last}
+:null,history:(O.history||[]).slice(-5).reverse()}
+}
+function CQ($,Z,z={
+}
+){
+let N=z.runtime||R3($),M=z.labor||$1($,Z,N),Q=O0($,"builders",N),_=$.projects||[];
+return Object.values(Z.buildings).map(function(f){
+let O=_.find((C)=>C.kind!=="upgrade"&&C.typeId===f.id)||null,Y=N.buildingTypeCounts.get(f.id)||0,G=_.filter((C)=>C.kind!=="upgrade"&&C.typeId===f.id).length,X=Z.rules.builderSlots||f.construction.recommendedWorkers,q=_.reduce((C,B)=>C+Math.max(0,Math.floor(B.workers||0)),0),J=Math.max(0,Q-q),F=Math.min(X,Math.max(J,Math.min(f.construction.recommendedWorkers,J+M.idle))),W=F>0?Math.ceil(f.construction.workDays/F):null,K=$.employment.wageRates?.builders??Z.roles.builders?.wagePerWorkerDay??10,L=f.requiredPlotFeature?N.plotsByFeature.get(f.requiredPlotFeature)||[]:N.ordinaryPlots,x=L.filter(function(C){
+return!N.buildingByPlotId.has(C.id)&&!_.some((B)=>B.plotId===C.id)}
+),R=(f.materialRequirements||[]).map(function(C){
+let B=Z.precision.inventoryUnitsPerJin,I=$.accounts.town[C.itemId]||0,T=Math.round(C.quantity*B),b=Math.max(0,T-I),y=S2($,C.itemId,b,Z),j=I+y.purchasableUnits;
+return{
+itemId:C.itemId,name:Z.items[C.itemId]?.name||C.itemId,unit:Z.items[C.itemId]?.unit||"单位",required:C.quantity,available:I/B,marketAvailable:y.totalAvailableUnits/B,wholesaleAvailable:(y.wholesaleAvailableUnits||0)/B,residentMarketAvailable:y.residentAvailableUnits/B,companyMarketAvailable:y.companyAvailableUnits/B,marketPurchasable:y.purchasableUnits/B,marketCostVoucher:y.costVoucherUnits/$0(Z),missing:Math.max(0,T-j)/B}
+}
+);
+return{
+id:f.id,name:f.name,icon:f.icon,description:f.description,built:Y>0,count:Y,pendingCount:G,project:O,unavailable:Y+G>=(f.maxInstances??1/0)||x.length===0,maxInstances:f.maxInstances??1/0,estimatedWageJin:W?F*K*W:0,affordable:!0,workDays:f.construction.workDays,recommendedWorkers:f.construction.recommendedWorkers,constructionCrewDays:W,previewBuilders:F,waitingForWorkers:F<=0,requiredPlotFeature:f.requiredPlotFeature||null,allowedPlotIds:L.map((C)=>C.id),availablePlotCount:x.length,materials:R,materialsAffordable:R.every((C)=>C.missing<=1/Z.precision.inventoryUnitsPerJin),jobs:f.jobs,recipe:Z.recipes[f.recipeId]}
+}
+)}
+function nZ($,Z,z){
+let N=z?.panel||"all",M=N==="all",Q=M||N==="residents",_=M||N==="business",f=M||N==="policy",O=M||N==="build",Y=M||N==="site",G=R3($),X=G.households,q=A0($),J=$1($,Z,G);
+J.dailyWageExpectedWheatJin=J.rows.reduce(function(P,t){
+return P+(t.scope==="private"||t.scope==="listed"||t.roleId==="farmers"?0:t.count*t.wagePerWorkerDay)}
+,0);
+let F=new Map(J.rows.map((P)=>[P.key,P])),W=$9($,Z),L=M||Q||_||Y?F2($,Z):{
+capacity:0,shortage:0,rentals:[],householdHousing:[]}
+,x=new Map((L.rentals||[]).map((P)=>[P.buildingId,P])),R=z?.site?.startsWith("building:")?z.site.slice(9):null,C=$.buildings.map(function(P){
+let t=Z.buildings[P.typeId],z0=P.ownership||{
+townLevels:P.level||1,privateLevels:0,listedLevels:0}
+,T0=M||Y&&R===P.id,r0=T0?x.get(P.id)||null:null,N0=T0?G.privateDayByBuildingId.get(P.id):null,m0=t?t.jobs.map(function(H0){
+let s0=F.get(`${P.id}::${H0.id}`);
+return{
+id:H0.id,name:H0.name,workers:O0($,h1(P.id,H0.id),G),capacity:H0.capacityMode==="building"?H0.slots:H0.slots*Math.max(0,z0.townLevels??P.level??1),wagePerWorkerDay:$.employment.wageRates?.[H0.id]??H0.wagePerWorkerDay??10,poachable:s0?.poachable||0,globalDemandKind:s0?.globalDemandKind||null,globalDemand:s0?.globalDemand??null,globalInPost:s0?.globalInPost??null,globalShortage:s0?.globalShortage??null,outputToday:$.business?.buildings?.[P.id]?.todayOutputUnits||{
+}
+,outputYear:$.business?.buildings?.[P.id]?.yearOutputUnits||{
+}
+,outputLifetime:$.business?.buildings?.[P.id]?.lifetimeOutputUnits||{
+}
+}
+}
+):[],l1=T0&&t?t.jobs.map(function(H0){
+return{
+id:H0.id,name:H0.name,workers:O0($,G1(P.id,H0.id),G),capacity:H0.slots*(z0.privateLevels||0),wagePerWorkerDay:$.employment.wageRates?.[H0.id]??H0.wagePerWorkerDay??0}
+}
+):[],F1=T0&&t?t.jobs.map(function(H0){
+let s0=G.companyByBuildingId.get(P.id);
+return{
+id:H0.id,name:H0.name,workers:O0($,N1(P.id,H0.id),G),capacity:H0.slots*(z0.listedLevels||0),wagePerWorkerDay:Number.isFinite(s0?.settings?.wagePerWorkerDay)?s0.settings.wagePerWorkerDay:$.employment.wageRates?.[H0.id]??H0.wagePerWorkerDay??0}
+}
+):[];
+return{
+id:P.id,typeId:P.typeId,level:Math.max(1,Math.min(Z.rules.buildingMaxLevel||5,P.level||1)),ownership:{
+townLevels:z0.townLevels??P.level??1,privateLevels:z0.privateLevels||0,listedLevels:z0.listedLevels||0}
+,materialInvestments:P.materialInvestments||[],plotId:P.plotId,x:P.x,y:P.y,name:t?t.name:P.typeId,icon:t?t.icon:"\uD83C\uDFDA️",status:t?.housingCapacity?{
+status:"housing",label:"已落成 · 可入住"}
+:u8($,P,Z),housing:r0,jobs:m0,privateJobs:l1,listedJobs:F1,companyId:G.companyByBuildingId.get(P.id)?.id||null,privateStatus:T0?N0?.status||((z0.privateLevels||0)>0?"no_demand":"not_private"):null,privateReason:T0?N0?.reason||null:null,privateInputPurchases:T0?N0?.inputPurchases||[]:[],privateOutputToday:T0?N0?.taxRows||[]:[],privateStock:T0?function(){
+let H0=t?.recipeId?Z.recipes[t.recipeId]:null,s0=new Set([...H0?.inputs||[],...H0?.outputs||[]].map((d0)=>d0.itemId));
+return Object.fromEntries(Array.from(s0,(d0)=>[d0,{
+residents:$.accounts.residents[d0]||0,town:$.accounts.town[d0]||0}
+]))}
+():{
+}
+,operatingRight:T0?W5($,P.id,Z):null,outputTargetJin:P.outputTargetJin||0,mainOutputItemId:t?.recipeId?Z.recipes[t.recipeId]?.outputs?.[0]?.itemId||null:null}
+}
+),B=O||Y?CQ($,Z,{
+runtime:G,labor:J}
+):[],I=$.employment.wageRates?.builders??Z.roles.builders?.wagePerWorkerDay??10,T=($.projects||[]).map(function(P){
+let t=Z.buildings[P.typeId],z0=Math.max(0,Math.floor(P.workers||0)),T0=Math.max(0,P.workRequired-P.workDone);
+return{
+...P,workers:z0,builders:z0,name:t?t.name:P.typeId,icon:t?t.icon:"\uD83E\uDE9A",remaining:T0,percent:P.workRequired?Math.min(100,P.workDone/P.workRequired*100):100,estimatedDays:z0>0?Math.ceil(T0/z0):null,estimatedWageJin:z0>0?Math.ceil(T0/z0)*z0*I:0}
+}
+),b=q.total*Z.rules.foodPerPersonDay,y=HQ($.day),j=$0(Z),l=M||_,e=l?W0($,"bread",Z):0,u=l?Math.max(0,Math.min(Z.rules.breadTargetShareMaximum,Z.rules.breadTargetShareAtBasePrice*Math.pow(Z.rules.breadBasePriceWheatPerJin/e,Z.rules.breadPriceElasticity))):0,H=Z.precision.inventoryUnitsPerJin,k=$.salt||{
+}
+,S=_||Q?s$($,Z):{
+coverage:1,grace:!1,daysObserved:0}
+,w=Y?z5($):{
+balances:0,valid:!0}
+,s=M||Q||_||f||O||Y,c=Q?u6($,Z):null,o=Q?m6($,Z):null,Q0=Q?aZ($,Z,G):0,p=Q?new Map((L.householdHousing||[]).map((P)=>[P.householdId,P])):new Map,a=Q?new Map(($.satisfactionFactors?.rows||[]).map((P)=>[P.householdId,P])):new Map,L0=Q?X.map((P)=>{
+let t=P.life||{
+}
+,z0=$7(P,Z.rules.satisfactionObservationDays||14,Z),T0=a.get(P.id)||t.lastFactors||{
+}
+,r0=p.get(P.id)||{
+unhousedPeople:0,rentalPeople:0}
+,N0=g2($,P,Z),m0=[];
+if((T0.foodCoverage??1)<0.999)m0.push(`缺粮：今日口粮满足${Math.round((T0.foodCoverage||0)*100)}%`);
+if((T0.saltCoverage??1)<0.999)m0.push(`缺盐：今日满足${Math.round((T0.saltCoverage||0)*100)}%`);
+if((r0.unhousedPeople||0)>0)m0.push(`住房不足${r0.unhousedPeople}人`);
+if((T0.wageCoverage??1)<0.999)m0.push(`欠薪：今日到账${Math.round((T0.wageCoverage||0)*100)}%`);
+if(!m0.length&&N0<(Z.rules.householdLiving?.difficultFoodDays||14))m0.push(`口粮储备仅${N0.toFixed(1)}日`);
+return{
+id:P.id,name:P.name,people:f0(P),satisfaction:t.satisfaction??$.satisfaction,voucher:(P.voucherUnits||0)/j,foodDays:N0,saltJin:(P.inventory?.salt||0)/Z.precision.inventoryUnitsPerJin,rentalPeople:r0.rentalPeople||0,unhousedPeople:r0.unhousedPeople||0,issues:m0.slice(0,2),recent:{
+days:z0.days,incomeVoucher:z0.incomeVoucherUnits/j,lifeExpenseVoucher:z0.lifeExpenseVoucherUnits/j,investmentVoucher:z0.investmentVoucherUnits/j,inKindIncomeJin:z0.inKindIncomeQeqUnits/Z.precision.qeqUnitsPerJin,foodConsumedJin:z0.foodConsumedQeqUnits/Z.precision.qeqUnitsPerJin,wageDueVoucher:z0.wageDueVoucherUnits/j,wagePaidVoucher:z0.wagePaidVoucherUnits/j}
+}
+}
+):[],k0=Q?[["农民家庭",(P)=>(P.jobs?.farmers||0)>0],["工人家庭",(P)=>Object.entries(P.jobs||{
+}
+).some(([t,z0])=>z0>0&&t!=="farmers"&&!t.startsWith("shop:"))],["商人家庭",(P)=>(P.shopIds||[]).some((t)=>$.shops?.[t]?.status!=="closed")],["失业者家庭",(P)=>P1(P)>0]].map(([P,t])=>{
+let z0=X.filter(t),T0=z0.reduce((r0,N0)=>r0+f0(N0),0);
+return{
+name:P,households:z0.length,people:T0,satisfaction:T0?z0.reduce((r0,N0)=>r0+(N0.life?.satisfaction??$.satisfaction)*f0(N0),0)/T0:null}
+}
+):[],g=$.satisfactionHistory||[],K0=Q&&g.length>1?$.satisfaction-g[Math.max(0,g.length-8)].value:0,M1=M||f||Y?z8($,Z):[],B1=_?Object.values($.companies||{
+}
+).map((P)=>{
+let t=U8($,P,Z),z0=P.listing?.listed?w5($,P.id,Z):{
+available:!1,reason:"公司尚未上市"}
+,T0=P.listing?.listed?K3($,P,Z):AQ(P,Z),r0=N3(P,$,Z);
+return{
+...t,subscription:z0,stockReference:T0,workingCapitalReserveVoucher:r0/j,lastAnnualSettlement:P.annualSettlement||null,sharePriceVoucher:(P.shareSale?.sharePriceVoucherUnits||0)/j,shareSaleProceedsVoucher:(P.shareSale?.cumulativeProceedsVoucherUnits||0)/j,revenueDayVoucher:(P.accounts?.day?.revenueVoucherUnits||0)/j,cogsDayVoucher:(P.accounts?.day?.cogsVoucherUnits||0)/j,wagesDayVoucher:(P.accounts?.day?.wageExpenseVoucherUnits||0)/j,taxCostDayVoucher:(P.accounts?.day?.taxCostVoucherUnits||0)/j,processingLossDayVoucher:(P.accounts?.day?.processingLossVoucherUnits||0)/j,costsDayVoucher:((P.accounts?.day?.cogsVoucherUnits||0)+(P.accounts?.day?.wageExpenseVoucherUnits||0)+(P.accounts?.day?.taxCostVoucherUnits||0)+(P.accounts?.day?.processingLossVoucherUnits||0))/j,profitDayVoucher:(P.accounts?.day?.profitVoucherUnits||0)/j,taxRowsDay:Object.entries(P.accounts?.day?.taxedUnits||{
+}
+).filter(([,N0])=>N0>0).map(([N0,m0])=>({
+itemId:N0,name:Z.items[N0]?.name||N0,unit:Z.items[N0]?.unit||"单位",quantity:m0/Z.precision.inventoryUnitsPerJin}
+)),producedRowsDay:Object.entries(P.accounts?.day?.producedUnits||{
+}
+).filter(([,N0])=>N0>0).map(([N0,m0])=>({
+itemId:N0,name:Z.items[N0]?.name||N0,unit:Z.items[N0]?.unit||"单位",quantity:m0/Z.precision.inventoryUnitsPerJin}
+)),soldRowsDay:Object.entries(P.accounts?.day?.soldUnits||{
+}
+).filter(([,N0])=>N0>0).map(([N0,m0])=>({
+itemId:N0,name:Z.items[N0]?.name||N0,unit:Z.items[N0]?.unit||"单位",quantity:m0/Z.precision.inventoryUnitsPerJin}
+)),revenueCumulativeVoucher:(P.accounts?.cumulative?.revenueVoucherUnits||0)/j,profitCumulativeVoucher:(P.accounts?.cumulative?.profitVoucherUnits||0)/j,initialCashVoucher:(P.initialInvestment?.cashVoucherUnits||0)/j,inventoryRows:Object.entries(P.inventory||{
+}
+).filter(([,N0])=>N0>0).map(([N0,m0])=>({
+itemId:N0,name:Z.items[N0]?.name||N0,quantity:m0/Z.precision.inventoryUnitsPerJin}
+)),productRows:(Z.recipes[Z.buildings[P.typeId]?.recipeId]?.outputs||[]).map((N0)=>({
+itemId:N0.itemId,name:Z.items[N0.itemId]?.name||N0.itemId,salePrice:P.settings?.salePricesVoucherPerUnit?.[N0.itemId]??W0($,N0.itemId,Z)}
+))}
+}
+):[];
+return{
+year:$.year,day:$.day,season:y,paused:!z||z.paused!==!1,speed:z&&z.speed?z.speed:1,people:q,labor:J,accounts:W,households:{
+count:X.length,living:c,occupations:o,exchangeRemainingJin:Q0/Z.precision.inventoryUnitsPerJin,details:L0,categories:k0,issueCounts:$.satisfactionFactors?.issueCounts||{
+food:0,salt:0,housing:0,wage:0}
+,satisfactionChange:K0}
+,shops:M1,wholesaleMarket:_||Y?I7($,Z):null,servicePricesVoucherPerUse:_||Y?{
+...$.services?.pricesVoucherPerUse||{
+}
+}
+:{
+}
+,residentFoodDays:m5($,Z,!1),totalFoodDays:_?m5($,Z,!0):0,dailyNeed:b,annualNeed:b*Z.rules.daysPerYear,totalQeq:_?Z9($,Z):0,forecast:B3($,Z),satisfaction:$.satisfaction,relief:$.relief?.lastDay||null,neighborAid:$.neighborAid||null,laborMarket:m2($,Z),wealthNow:Q||M?a$($,Z):null,economy:{
+history:$.economyHistory||[],poachYear:$.laborCompetition?.year?.moves||0,recentPoach:($.laborCompetition?.recent||[]).slice(0,5)}
+,autoRelief:$.autoRelief,relief:$.relief?.lastDay||null,buildings:C,constructionOptions:B,projects:T,project:T.length?T[0]:null,yearTotals:_?{
+harvest:_1($.yearTotals.harvestQeq||0,Z),consumption:_1($.yearTotals.consumptionQeq||0,Z),operatingWages:_1($.yearTotals.operatingWagesQeq||0,Z),constructionPay:_1($.yearTotals.constructionPayQeq||0,Z),relief:_1($.yearTotals.reliefQeq||0,Z),processingLoss:_1($.yearTotals.processingLossQeq||0,Z),wagePaid:_1($.yearTotals.wagePaidQeq||0,Z),wageArrears:_1($.yearTotals.wageArrearsQeq||0,Z),unemploymentPaid:_1($.yearTotals.unemploymentPaidQeq||0,Z)}
+:null,annualReports:_||Q?$.annualReports:[],market:_?{
+breadPriceWheatPerJin:W0($,"bread",Z),breadPriceVoucherPerJin:W0($,"bread",Z),pricesVoucherPerUnit:T$($,Z),intermediatePricesVoucherPerUnit:{
+flour:W0($,"flour",Z),wood:W0($,"wood",Z)}
+,priceRecommendation:$.market?.priceRecommendation||{
+pending:!1}
+,publicWoodDemand:c$($,"wood",Z),targetBreadShare:u,residentBreadJin:($.accounts.residents.bread||0)/Z.precision.inventoryUnitsPerJin,townBreadJin:($.accounts.town.bread||0)/Z.precision.inventoryUnitsPerJin,trade:$.market?.lastDay||null,business:$.business}
+:null,policy:f?{
+...$.policy||{
+unemploymentBenefit:{
+enabled:!1,dailyPerWorkerJin:1}
+}
+,unemployed:J.idle,dailyExpectedWheatJin:J.idle*($.policy?.unemploymentBenefit?.dailyPerWorkerJin||0),dailyExpectedVoucher:J.idle*($.policy?.unemploymentBenefit?.dailyPerWorkerJin||0),annualExpectedWheatJin:J.idle*($.policy?.unemploymentBenefit?.dailyPerWorkerJin||0)*Z.rules.daysPerYear,lastDay:$.policy?.lastDay||null}
+:null,agriculturePolicy:f?function(){
+let P=($.agriculture.taxDays||[]).filter((d0)=>d0.year===$.year),t=$.policy?.agricultureTaxPercent??Z.rules.agricultureTaxDefaultPercent??50,z0=P.reduce((d0,C0)=>d0+C0.rateBps,0),T0=$.day<91?1:$.day<183?92:$.day<274?184:1,r0=$.day<91?91:$.day<183?183:$.day<274?274:274,N0=P.filter((d0)=>d0.day>=T0&&d0.day<=r0),m0=N0.length?N0.reduce((d0,C0)=>d0+C0.rateBps,0)/N0.length/100:t,l1=Math.max(0,Z.rules.growingDays-P.length),F1=$.agriculture.lastHarvestYear===$.year?($.agriculture.taxHistory.find((d0)=>d0.year===$.year)?.averageRateBps||0)/100:(z0+l1*t*100)/Z.rules.growingDays/100,I0=Math.round(B3($,Z)*Z.precision.inventoryUnitsPerJin),H0=Math.floor(I0*F1/100),s0=($.agriculture.taxHistory||[]).slice(-1)[0];
+return{
+currentPercent:t,accumulatedAveragePercent:m0,projectedSettlementPercent:F1,farmDays:N0.length,yearAveragePercent:P.length?z0/P.length/100:t,townShareJin:H0/Z.precision.inventoryUnitsPerJin,residentShareJin:(I0-H0)/Z.precision.inventoryUnitsPerJin,lastHarvest:s0?{
+year:s0.year,townJin:s0.townUnits/Z.precision.inventoryUnitsPerJin,residentJin:s0.residentUnits/Z.precision.inventoryUnitsPerJin}
+:null,satisfactionAdjustment:$.satisfactionFactors?.agricultureTaxAdjustment||0,satisfactionAveragePercent:$.satisfactionFactors?.agricultureTaxAveragePercent??t}
+}
+():null,privateEconomy:_?$.privateEconomy:null,financialFlows:_?$.financialFlows:null,payroll:_||Q||Y?$.payroll:null,housing:_||Q||Y||f?{
+...L,rentPerResidentDayWheatJin:Z.rules.rentPerResidentDayWheatJin,rentPerResidentDayVoucher:Z.rules.rentPerResidentDayWheatJin,lastRentDay:$.fiscal?.lastRentDay||null,rentFiscal:$.fiscal||null}
+:null,industries:_?$.industries||{
+}
+:{
+}
+,salt:_?{
+priceWheatPerJin:W0($,"salt",Z),priceVoucherPerJin:W0($,"salt",Z),annualDemandJinPerPerson:Z.rules.saltAnnualDemandJinPerPerson,residentStockJin:($.accounts.residents.salt||0)/H,townStockJin:($.accounts.town.salt||0)/H,todayDemandJin:(k.todayDemandUnits||0)/H,todaySatisfiedJin:(k.todaySatisfiedUnits||0)/H,day:k.day||{
+}
+,year:k.year||{
+}
+,lifetime:k.lifetime||{
+}
+,historyCoverage:S.coverage,grace:S.grace,daysObserved:S.daysObserved,trade:k.market||null}
+:Q?{
+historyCoverage:S.coverage,grace:S.grace,daysObserved:S.daysObserved}
+:{
+}
+,monetaryReform:s?function(){
+let P=y4($,Z),t=P.stage==="wheat"?"粮食结算":P.stage==="transition"?"过渡期":"全粮券结算",z0=G.firstBuildingByType.get("bank")||null;
+return{
+...P,stageName:t,hasBankAccess:b4($),hasPhysicalBank:Boolean(z0),bankBuildingId:z0?.id||null,legacyBankAccess:Boolean($.monetaryReform?.legacyBankAccess),residentExchangeEnabled:Boolean($.monetaryReform?.residentExchangeEnabled),targetPercent:P.targetVoucherBps/100,recentVoucherPercent:P.recentVoucherBps/100,recentPaidValueVoucher:P.recentPaidValueUnits/j,recentFallbackWheatVoucher:P.recentFallbackWheatValueUnits/j,voucherShortfall:P.voucherShortfallValueUnits/j,employmentExchangeJin:$.policy?.employmentExchangeJin??2}
+}
+():null,currency:Y?{
+townVoucher:B0($,"town")/j,residentVoucher:B0($,"residents")/j,issuedVoucher:($.currency?.issuedUnits||0)/j,circulationVoucher:w.balances/j,availableTownWheatJin:($.accounts.town.wheat||0)/Z.precision.inventoryUnitsPerJin,availableResidentWheatJin:($.accounts.residents.wheat||0)/Z.precision.inventoryUnitsPerJin,invariantValid:w.valid,guidancePending:Boolean($.currency?.guidancePending)}
+:null,companies:B1,stockExchange:_?{
+available:x3($),physical:G.buildingTypeCounts.has("stock_exchange"),legacyAccess:Boolean($.stockExchange?.legacyAccess),reformComplete:$.monetaryReform?.stage==="voucher"}
+:null,listableBuildings:_?C.filter((P)=>["mill","bakery","lumberyard","saltworks"].includes(P.typeId)&&P.ownership.townLevels>0&&!P.companyId):[],shareConfig:_?{
+sharesPerListedLevel:Z.rules.sharesPerListedLevel||1000,foodReserveDays:Z.rules.shareFoodReserveDays||90,livingVoucherReserveDays:Z.rules.shareLivingVoucherReserveDays||30,observationDays:Z.rules.sharePerformanceObservationDays||30,targetYieldPercent:Z.rules.shareTargetAnnualYieldPercent||8,companyOperatingReserveDays:Z.rules.companyOperatingReserveDays||30}
+:null,wageRates:O||f||Y?$.employment.wageRates||{
+}
+:{
+}
+,plotCount:$.plots.length,ledger:_?$.ledger:[],inventoryUnitsPerJin:Z.precision.inventoryUnitsPerJin,qeqUnitsPerJin:Z.precision.qeqUnitsPerJin,currencyUnitsPerVoucher:j,events:$.events,plots:$.plots,plotOccupants:M?$.plots.map(function(P){
+let t=T.find((z0)=>z0.plotId===P.id)||null;
+return{
+...P,building:G.buildingByPlotId.get(P.id)||null,project:t,occupied:G.buildingByPlotId.has(P.id)||!!t}
+}
+):[],selectedSite:z?z.site||null:null,buildingDevelopment:Y&&z?.site?.startsWith("building:")?{
+upgrade:l5($,z.site.slice(9),Z),demolition:p5($,z.site.slice(9),Z)}
+:null,selectedResourcePlot:Y&&z?.site?.startsWith("resource:")?G.plotById.get(z.site.slice(9))||null:null,selectedBuild:O&&z?z.build||null:null,selectedPlot:O&&z?.plotId?G.plotById.get(z.plotId)||null:null,constructionCostNote:O?B.map(function(P){
+return P.name+"施工需"+P.workDays+"工日、预计工钱"+P.estimatedWageJin+"粮券"}
+):[],presentation:R6,lastDemography:Q?$.lastDemography:null,housingCapacity:Q||Y?L.capacity:0,daysPerYear:Z.rules.daysPerYear,farmCapacity:X1($,Z)/Z.agriculture.acresPerFarmer,cropWorkUnits:$.agriculture.workUnits,farmWorkDays:Q||Y?$.agriculture.workUnits/(X1($,Z)/Z.agriculture.acresPerFarmer):0,farmWorkPercent:Y?Math.min(100,$.agriculture.workUnits/(X1($,Z)/Z.agriculture.acresPerFarmer*Z.rules.growingDays)*100):0,growingDays:Q||Y?Z.rules.growingDays:0,manualReliefAmountJin:_?Z.rules.manualReliefAmountJin:0,automaticReliefTriggerDays:Z.rules.automaticReliefTriggerDays,automaticReliefTargetDays:Z.rules.automaticReliefTargetDays,farmAcres:X1($,Z),farmAcresMaximum:Z.agriculture.acresMaximum??Z.agriculture.acres,acresPerFarmer:Z.agriculture.acresPerFarmer,farmYieldPerAcre:Z.agriculture.yieldPerAcre,farmMaximumHarvest:X1($,Z)*Z.agriculture.yieldPerAcre,reclaim:Y||Q?TQ($,Z):null,ledgerQuantity:function(P){
+return P.quantityUnits/Z.precision.inventoryUnitsPerJin}
+,qeqQuantity:function(P){
+return _1(P.qeqUnits||0,Z)}
+,itemNames:_||Y?Object.fromEntries(Object.entries(Z.items).map(function(P){
+return[P[0],P[1].name]}
+)):{
+}
+,itemUnits:_||Y?Object.fromEntries(Object.entries(Z.items).map(function(P){
+return[P[0],P[1].unit]}
+)):{
+}
+}
+}
+function PQ($){
+let Z=$||b1,z=J$(Z);
+if(!z.valid)throw Error("模拟内容定义无效："+z.errors.join("；"));
+return{
+content:Z,createInitialState:function(N){
+return B2({
+...N||{
+}
+,content:Z}
+)}
+,advanceDay:function(N){
+return F3(N,Z)}
+,advanceDays:function(N,M){
+return h9(N,M,function(Q){
+return F3(Q,Z)}
+)}
+,setEmployment:function(N,M,Q){
+return ZZ(N,M,Q,Z)}
+,buildAt:function(N,M,Q,_){
+return zZ(N,M,Q,Z,_)}
+,upgradeBuilding:function(N,M,Q){
+return NZ(N,M,Z,Q)}
+,setProjectWorkers:function(N,M,Q){
+return MZ(N,M,Q,Z)}
+,demolishBuilding:function(N,M){
+return QZ(N,M,Z)}
+,selectUpgradePreview:function(N,M){
+return l5(N,M,Z)}
+,selectDemolitionPreview:function(N,M){
+return p5(N,M,Z)}
+,sendRelief:function(N,M){
+return fZ(N,M,Z)}
+,toggleAutomaticRelief:function(N,M){
+return OZ(N,M)}
+,setWageRate:function(N,M,Q){
+return a9(N,M,Q,Z)}
+,setBreadPrice:function(N,M){
+return n9(N,M,Z)}
+,setUnemploymentPolicy:function(N,M){
+return o9(N,M)}
+,setAgricultureTax:function(N,M){
+return e9(N,M)}
+,setPrivateProductionTax:function(N,M,Q){
+return t9(N,M,Q,Z)}
+,setOperatingRightPrice:function(N,M,Q){
+return $Z(N,M,Q)}
+,selectOperatingRightPreview:function(N,M,Q){
+return W5(N,M,Z,Q)}
+,sellOperatingLevel:function(N,M){
+return _Z(N,M,Z)}
+,issueGrainVouchers:function(N,M,Q){
+return XZ(N,M,Q,Z)}
+,redeemGrainVouchers:function(N,M,Q){
+return GZ(N,M,Q,Z)}
+,listCompany:function(N,M,Q){
+return qZ(N,M,Q,Z)}
+,createCompany:function(N,M,Q){
+return YZ(N,M,Q,Z)}
+,listCompanyShares:function(N,M,Q){
+return JZ(N,M,Q,Z)}
+,configureCompanyWage:function(N,M,Q){
+return xZ(N,M,Q,Z)}
+,configureCompanyTargetWorkers:function(N,M,Q){
+return LZ(N,M,Q,Z)}
+,configureCompanySalePrice:function(N,M,Q,_){
+return KZ(N,M,Q,_,Z)}
+,addCompanyOperatingLevel:function(N,M){
+return DZ(N,M,Z)}
+,removeCompanyOperatingLevel:function(N,M){
+return BZ(N,M,Z)}
+,liquidateCompany:function(N,M){
+return RZ(N,M,Z)}
+,previewTownBuyback:function(N,M,Q){
+return D3(N,M,Q,Z)}
+,buybackCompanyShares:function(N,M,Q){
+return EZ(N,M,Q,Z)}
+,previewCompanyLevelChange:function(N,M,Q){
+return d$(N,M,Q,Z)}
+,configureShareOffer:function(N,M,Q,_){
+return WZ(N,M,Q,_,Z)}
+,previewShareSubscription:function(N,M){
+return w5(N,M,Z)}
+,subscribeShares:function(N,M){
+return FZ(N,M,Z)}
+,addCompanyCapital:function(N,M,Q){
+return VZ(N,M,Q,Z)}
+,configureDividend:function(N,M,Q){
+return HZ(N,M,Q)}
+,configureIntermediatePrice:function(N,M,Q){
+return AZ(N,M,Q,Z)}
+,setPublicProcurementIntent:function(N,M){
+return TZ(N,M,Z)}
+,clearPublicProcurementIntent:function(N,M){
+return CZ(N,M)}
+,adoptRecommendedIndustryPrices:function(N){
+return PZ(N,Z)}
+,retainExistingIndustryPrices:function(N){
+return kZ(N,Z)}
+,setEmploymentExchangeQuota:function(N,M){
+return jZ(N,M,Z)}
+,startCurrencyReform:function(N){
+return dZ(N,Z)}
+,setVoucherPaymentTarget:function(N,M){
+return cZ(N,M)}
+,setResidentExchangeEnabled:function(N,M){
+return iZ(N,M)}
+,finishCurrencyReform:function(N){
+return rZ(N,Z)}
+,setShopRent:function(N,M){
+return UZ(N,M)}
+,setShopProfitTax:function(N,M){
+return SZ(N,M,Z)}
+,openResidentShop:function(N,M,Q,_){
+return IZ(N,M,Q,_,Z)}
+,configureShopMerchants:function(N,M,Q){
+return bZ(N,M,Q,Z)}
+,configureShopClerks:function(N,M,Q){
+return gZ(N,M,Q,Z)}
+,closeResidentShop:function(N,M){
+return vZ(N,M,Z)}
+,fundResidentShopLiquidation:function(N,M){
+return yZ(N,M,Z)}
+,configureWholesalePrice:function(N,M,Q){
+return wZ(N,M,Q,Z)}
+,configureWholesaleTownAllocation:function(N,M,Q){
+return hZ(N,M,Q,Z)}
+,stockpileWholesale:function(N,M,Q){
+return mZ(N,M,Q,Z)}
+,releaseWholesale:function(N,M,Q){
+return uZ(N,M,Q,Z)}
+,setOutputTarget:function(N,M,Q){
+return lZ(N,M,Q,Z)}
+,configureServicePrice:function(N,M,Q){
+return pZ(N,M,Q,Z)}
+,reclaimFarmland:function(N,M,Q){
+return sZ(N,M,Q,Z)}
+,validateCurrencyInvariant:function(N){
+return z5(N,Z)}
+,selectDashboard:function(N,M){
+return nZ(N,Z,M)}
+,validateState:function(N){
+return c2(N,Z)}
+,populationStats:A0,selectJobRows:function(N){
+return $1(N,Z)}
+,accountQeq:function(N,M){
+return z1(N,M,Z)/Z.precision.qeqUnitsPerJin}
+,totalQeq:function(N){
+return n2(N,Z)/Z.precision.qeqUnitsPerJin}
+}
+}
+var n=PQ(b1);
+function H3($){
+if(typeof globalThis.structuredClone==="function")return globalThis.structuredClone($);
+return JSON.parse(JSON.stringify($))}
+function eZ($){
+let Z={
+children:0,workers:0,elders:0}
+;
+for(let z of $.cohorts||[]){
+let N=Math.max(0,Number(z.m)||0)+Math.max(0,Number(z.f)||0);
+Z[W$(z.age)]+=N}
+return Z}
+function oZ($,Z){
+let z=(N)=>Number(String(N?.id||N||"").match(/(\d+)$/)?.[1]||Number.MAX_SAFE_INTEGER);
+return z($)-z(Z)||String($?.id||$).localeCompare(String(Z?.id||Z))}
+function kQ($){
+let Z=m($).slice().sort(oZ);
+if(!Z.length)throw Error("v10 存档缺少家庭，无法迁移人口。");
+let z=e1($),N=eZ($),M={
+}
+,Q=(_,f,O)=>{
+if(!O)return;
+_.ageBands[f]+=O,M[_.id]||={
+children:0,workers:0,elders:0}
+,M[_.id][f]+=O}
+;
+for(let _ of["children","workers","elders"]){
+let f=N[_]-Z.reduce((O,Y)=>O+Y.ageBands[_],0);
+if(f>0){
+let O=0;
+while(f>0){
+let Y=Z[O%Z.length];
+Q(Y,_,1),f-=1,O+=1}
+}
+else if(f<0){
+let O=-f;
+while(O>0){
+let Y=Z.filter((G)=>G.ageBands[_]>0).sort((G,X)=>X.ageBands[_]-G.ageBands[_]||oZ(G,X));
+if(!Y.length)throw Error("v10 家庭人口校准失败："+_);
+for(let G of Y){
+if(O<=0)break;
+Q(G,_,-1),O-=1}
+}
+}
+}
+return{
+before:z,target:N,after:e1($),adjustments:M}
+}
+function jQ($,Z){
+let z=H3($);
+if(Math.max(Number(z.schemaVersion)||0,Number(z.version)||0)!==10)throw Error("仅支持从 v10 迁移到 v11。");
+if(!z.households?.byId||!z.households?.members)throw Error("v10 存档缺少家庭成员数据，原存档未更改。");
+let N=z.households.members;
+for(let _ of Object.values(z.households.byId)){
+if(!Array.isArray(_.memberIds))throw Error("v10 家庭成员索引缺失："+_.id);
+let f={
+children:0,workers:0,elders:0}
+,O={
+}
+;
+for(let Y of _.memberIds){
+let G=N[Y];
+if(!G)throw Error("v10 家庭成员引用失效："+Y);
+let X=Number(G.age);
+if(!Number.isInteger(X)||X<0)throw Error("v10 家庭成员年龄无效："+Y);
+if(X<E1)f.children+=1;
+else if(X<c1){
+if(f.workers+=1,G.jobKey)O[G.jobKey]=(O[G.jobKey]||0)+1}
+else f.elders+=1}
+_.ageBands=f,_.jobs=O,delete _.memberIds}
+delete z.households.members,delete z.households.nextMemberNumber,z.households.exchange={
+dayKey:null,eligibleByHousehold:{
+}
+,usedByHousehold:{
+}
+}
+;
+for(let _ of Object.values(z.shops||{
+}
+))delete _.merchantMemberId,delete _.clerkMemberIds;
+let M=kQ(z),Q=P5(z);
+return z.employment={
+wageRates:{
+...L$(Z),...z.employment?.wageRates||{
+}
+}
+}
+,z.version=11,z.schemaVersion=11,z.legacyMigration={
+...z.legacyMigration||{
+}
+,fromVersion:z.legacyMigration?.fromVersion||10,toVersion:11,v11:{
+populationAuthority:"cohort",householdModel:"ageBands+jobs",populationCalibration:M,employmentReleases:Q}
+}
+,g0(z,Z),M0(z,Z),z}
+function tZ($,Z){
+if(Array.isArray(Z.projects))Z.projects=Z.projects.filter((z)=>z&&typeof z==="object");
+else if($?.project&&typeof $.project==="object")Z.projects=[H3($.project)];
+else if(Z.project&&typeof Z.project==="object")Z.projects=[Z.project];
+else Z.projects=[];
+for(let z of Z.projects){
+if(z.kind||="build",!Array.isArray(z.materialsConsumed))z.materialsConsumed=[];
+if(!Number.isInteger(z.workers)||z.workers<0)z.workers=Math.max(0,Math.floor(Number(z.workers)||0));
+if(!Number.isSafeInteger(z.prepaidWageCreditUnits))z.prepaidWageCreditUnits=0;
+if(z.kind==="upgrade")z.targetLevel||=(Z.buildings?.find((N)=>N.id===z.buildingId)?.level||1)+1}
+return C4(Z),Z}
+function UQ($,Z){
+let z=H3($);
+z.version=11,z.schemaVersion=11,tZ($,z),z.accounts||={
+residents:{
+}
+,town:{
+}
+}
+;
+for(let N of["residents","town"]){
+z.accounts[N]||={
+}
+;
+for(let M of Object.keys(Z.items))z.accounts[N][M]??=0}
+if(!z.households?.byId)throw Error("v11 存档缺少家庭账户。");
+z.households.exchange||={
+dayKey:null,eligibleByHousehold:{
+}
+,usedByHousehold:{
+}
+}
+,z.households.exchange.eligibleByHousehold||={
+}
+,z.households.exchange.usedByHousehold||={
+}
+;
+for(let N of Object.values(z.households.byId||{
+}
+)){
+N.ageBands||={
+children:0,workers:0,elders:0}
+,N.jobs||={
+}
+,N.inventory||={
+}
+;
+for(let M of Object.keys(Z.items))N.inventory[M]??=0;
+N.voucherUnits??=0,N.shares||={
+}
+,N.shopIds||=[],N.operatingRights||=[],N.life||={
+day:{
+}
+,year:{
+}
+,cumulative:{
+}
+,recent:[],satisfaction:null,satisfactionHistory:[]}
+}
+for(let N of z.buildings||[])N.ownership||={
+townLevels:N.level||1,privateLevels:0,listedLevels:0}
+,N.ownership.townLevels??=N.level||1,N.ownership.privateLevels??=0,N.ownership.listedLevels??=0,N.privateOwners||=[];
+z.market||={
+}
+,z.market.pricesVoucherPerUnit={
+...Z.rules.marketPricesVoucherPerUnit||{
+}
+,...z.market.pricesVoucherPerUnit||{
+}
+}
+,z.market.operatingPlan||={
+updatedSerial:-1,rotation:{
+}
+,rows:{
+}
+,demand:{
+}
+}
+,z.market.consumerHistory||={
+bread:[],salt:[],wood:[]}
+,z.market.publicProcurementDemand||={
+}
+,z.privateEconomy||={
+}
+,z.privateEconomy.plans||={
+}
+,z.privateEconomy.payrollByBuilding||={
+}
+;
+for(let N of Object.values(z.privateEconomy.payrollByBuilding))if(N.claimsVoucherUnits||={
+}
+,N.legacyUnattributedArrearsVoucherUnits===void 0)N.legacyUnattributedArrearsVoucherUnits=N.arrearsVoucherUnits||0;
+z.payroll||={
+arrearsVoucherUnits:{
+}
+,totals:{
+}
+,year:{
+}
+}
+,z.payroll.creditorClaims||={
+}
+,z.payroll.legacyUnattributedArrearsVoucherUnits||={
+...z.payroll.arrearsVoucherUnits||z.payroll.arrearsWheatUnits||{
+}
+}
+,z.shops||={
+}
+,z.nextShopNumber||=Object.keys(z.shops).length+1;
+for(let N of Object.values(z.shops)){
+N.inventory||={
+}
+;
+for(let M of Object.keys(Z.items))N.inventory[M]??=0;
+if(N.history||=[],N.plan||={
+lastAdjustedSerial:-1}
+,N.retainedEarningsVoucherUnits??=0,N.liabilities||={
+wageVoucherUnits:0,rentVoucherUnits:0,taxVoucherUnits:0}
+,N.liabilities.claimsVoucherUnits||={
+}
+,N.liabilities.legacyUnattributedWageVoucherUnits===void 0)N.liabilities.legacyUnattributedWageVoucherUnits=N.liabilities.wageVoucherUnits||0}
+for(let N of Object.values(z.companies||{
+}
+)){
+N.inventory||={
+}
+;
+for(let M of Object.keys(Z.items))N.inventory[M]??=0;
+if(N.householdShares||={
+}
+,N.history||=[],N.plan||={
+ageDays:0}
+,N.payroll||={
+arrearsVoucherUnits:0,cumulativePaidVoucherUnits:0,cumulativeAccruedVoucherUnits:0}
+,N.payroll.claimsVoucherUnits||={
+}
+,N.payroll.legacyUnattributedArrearsVoucherUnits===void 0)N.payroll.legacyUnattributedArrearsVoucherUnits=N.payroll.arrearsVoucherUnits||0}
+return z.policy||={
+}
+,z.policy.employmentExchangeJin??=Z.rules.employmentExchangeDefaultJin??2,z.policy.shopRentVoucher??=Z.rules.shopRentDefaultVoucher??1,z.policy.shopProfitTaxPercent??=Z.rules.shopProfitTaxDefaultPercent??10,z.employment||={
+}
+,z.employment.wageRates={
+...L$(Z),...z.employment.wageRates||{
+}
+}
+,delete z.employment.roles,delete z.employment.byBuilding,delete z.employment.privateByBuilding,delete z.employment.listedByBuilding,g0(z,Z),M0(z,Z),z}
+function N2($){
+let Z=Math.max(0,Math.round(Number($)||0));
+return{
+valueUnits:Z,wheatValueUnits:0,voucherValueUnits:Z}
+}
+function SQ($,Z,z=!1){
+let N=UQ($,Z);
+if(N.version=12,N.schemaVersion=12,N.monetaryReform||=z?{
+stage:"voucher",targetVoucherBps:1e4,residentExchangeEnabled:!0,legacyBankAccess:!0,started:null,completed:{
+legacy:!0}
+,paymentHistory:[],voucherShortfallByKey:{
+}
+}
+:{
+stage:"wheat",targetVoucherBps:0,residentExchangeEnabled:!1,legacyBankAccess:!1,started:null,completed:null,paymentHistory:[],voucherShortfallByKey:{
+}
+}
+,!["wheat","transition","voucher"].includes(N.monetaryReform.stage))N.monetaryReform.stage=z?"voucher":"wheat";
+N.monetaryReform.targetVoucherBps=Math.max(0,Math.min(1e4,Math.round(Number(N.monetaryReform.targetVoucherBps)||0))),N.monetaryReform.residentExchangeEnabled=Boolean(N.monetaryReform.residentExchangeEnabled),N.monetaryReform.legacyBankAccess=Boolean(N.monetaryReform.legacyBankAccess||z),N.monetaryReform.paymentHistory=Array.isArray(N.monetaryReform.paymentHistory)?N.monetaryReform.paymentHistory:[],N.monetaryReform.voucherShortfallByKey||={
+}
+,N.payroll.creditorPaymentClaims||={
+}
+;
+for(let[M,Q]of Object.entries(N.payroll.creditorClaims||{
+}
+)){
+let _=N.payroll.creditorPaymentClaims[M]||={
+}
+;
+for(let[f,O]of Object.entries(Q||{
+}
+))_[f]||=N2(O)}
+N.payroll.legacyUnattributedPaymentClaims||={
+}
+;
+for(let[M,Q]of Object.entries(N.payroll.legacyUnattributedArrearsVoucherUnits||{
+}
+))N.payroll.legacyUnattributedPaymentClaims[M]||=N2(Q);
+for(let[M,Q]of Object.entries(N.privateEconomy.payrollByBuilding||{
+}
+)){
+Q.claimsPayment||={
+}
+;
+for(let[_,f]of Object.entries(Q.claimsVoucherUnits||{
+}
+))Q.claimsPayment[_]||=N2(f);
+Q.legacyUnattributedPaymentClaim||=N2(Q.legacyUnattributedArrearsVoucherUnits||0)}
+for(let M of Object.values(N.shops||{
+}
+)){
+M.cashWheatUnits??=0,M.liabilities.claimsPayment||={
+}
+;
+for(let[Q,_]of Object.entries(M.liabilities.claimsVoucherUnits||{
+}
+))M.liabilities.claimsPayment[Q]||=N2(_);
+M.liabilities.legacyUnattributedWagePaymentClaim||=N2(M.liabilities.legacyUnattributedWageVoucherUnits||0),M.liabilities.rentPaymentClaim||=N2(M.liabilities.rentVoucherUnits||0),M.liabilities.taxPaymentClaim||=N2(M.liabilities.taxVoucherUnits||0)}
+for(let M of Object.values(N.companies||{
+}
+)){
+M.cashWheatUnits??=0,M.payroll.claimsPayment||={
+}
+;
+for(let[Q,_]of Object.entries(M.payroll.claimsVoucherUnits||{
+}
+))M.payroll.claimsPayment[Q]||=N2(_);
+M.payroll.legacyUnattributedPaymentClaim||=N2(M.payroll.legacyUnattributedArrearsVoucherUnits||0)}
+return N.legacyMigration={
+...N.legacyMigration||{
+}
+,toVersion:12,v12:{
+...N.legacyMigration?.v12||{
+}
+,monetaryReformCompatibility:z?"completed":"native"}
+}
+,g0(N,Z),M0(N,Z),N}
+function IQ($,Z,z=!1){
+let N=SQ($,Z,z);
+if(N.version=13,N.schemaVersion=13,N.employment||={
+}
+,N.employment.targets||={
+}
+,!Number.isInteger(N.employment.targets.farmers))N.employment.targets.farmers=m(N).reduce((M,Q)=>M+Math.max(0,Q.jobs?.farmers||0),0);
+N.services||={
+}
+,N.services.demandByHousehold||={
+}
+,N.services.carryByHousehold||={
+}
+,N.services.rotation||={
+households:0,shops:{
+}
+,services:0}
+,N.services.rotation.shops||={
+}
+,N.services.day||={
+demandedUses:{
+}
+,servedUses:{
+}
+,spendingVoucherUnits:0}
+,N.services.history=Array.isArray(N.services.history)?N.services.history:[];
+for(let M of m(N)){
+N.services.demandByHousehold[M.id]||={
+}
+,N.services.carryByHousehold[M.id]||={
+}
+;
+for(let Q of Object.keys(Z.rules.serviceTypes||{
+}
+))N.services.demandByHousehold[M.id][Q]??=0,N.services.carryByHousehold[M.id][Q]??=0}
+for(let M of Object.values(N.shops||{
+}
+)){
+let Q=M.typeId,_=Z.rules.shopTypes?.[Q],f=_?.aliasOf?_.itemId:null;
+if(_?.aliasOf)M.legacyTypeId||=Q,M.typeId=_.aliasOf,M.primaryItemId||=M.itemId||f||"wheat";
+let O=Z.rules.shopTypes?.[M.typeId];
+M.itemId=M.primaryItemId||M.itemId||O?.itemIds?.[0]||null,M.itemIds=O?.kind==="retail"?[...O.itemIds||[]]:[],M.serviceId=O?.kind==="service"?O.serviceId:null;
+for(let Y of["day","year","cumulative"])M.accounts||={
+}
+,M.accounts[Y]||={
+}
+,M.accounts[Y].soldUnits||={
+}
+,M.accounts[Y].purchasedUnits||={
+}
+,M.accounts[Y].serviceUses||={
+}
+,M.accounts[Y].customerCount||=0;
+M.history=(M.history||[]).map((Y)=>({
+...Y,soldUnitsByItem:{
+...Y.soldUnitsByItem||(M.primaryItemId?{
+[M.primaryItemId]:Y.soldUnits||0}
+:{
+}
+)}
+,serviceUses:{
+...Y.serviceUses||{
+}
+}
+,customerCount:Y.customerCount||0}
+))}
+return N.legacyMigration={
+...N.legacyMigration||{
+}
+,toVersion:13,v13:{
+...N.legacyMigration?.v13||{
+}
+,agricultureTargetFromActual:!0,commercialStreet:"general_store+services"}
+}
+,g0(N,Z),M0(N,Z),N}
+function bQ($,Z){
+let z=Math.abs(Math.trunc($)),N=Math.abs(Math.trunc(Z));
+while(N)[z,N]=[N,z%N];
+return z||1}
+function gQ($,Z,z=!1){
+let N=IQ($,Z,z);
+N.version=14,N.schemaVersion=14,N.stockExchange||={
+legacyAccess:!1,rotation:0}
+,N.stockExchange.rotation||=0;
+let M=new Set,Q=0,_=()=>{
+while(Q<1000){
+let f=String(Q++).padStart(3,"0");
+if(!M.has(f))return M.add(f),f}
+throw Error("旧公司数量超过三位股票代码容量")}
+;
+for(let f of Object.values(N.companies||{
+}
+).sort((O,Y)=>String(O.id).localeCompare(String(Y.id)))){
+f.settings||={
+wagePerWorkerDay:null,targetWorkers:null,salePricesVoucherPerUnit:{
+}
+}
+,f.settings.salePricesVoucherPerUnit||={
+}
+;
+let Y=Z.buildings[f.typeId]?.jobs?.[0];
+if(!Number.isFinite(f.settings.wagePerWorkerDay))f.settings.wagePerWorkerDay=N.employment?.wageRates?.[Y?.id]??Y?.wagePerWorkerDay??10;
+if(!Number.isInteger(f.settings.targetWorkers))f.settings.targetWorkers=Math.min(Y?.slots*f.listedLevels||0,f.plan?.desiredWorkers??Y?.slots*f.listedLevels??0);
+if(f.annualSettlement||={
+lastSettledYear:f.lastDividendYear||0,lastYearNetProfitVoucherUnits:0,workingCapitalTargetVoucherUnits:0,distributedVoucherUnits:0,undistributedVoucherUnits:f.retainedEarningsVoucherUnits||0}
+,Number.isInteger(f.totalShares)&&f.totalShares>0){
+let X=Math.max(1,f.listedLevels||1);
+if(f.totalShares%X!==0){
+let J=X/bQ(f.totalShares,X);
+f.totalShares*=J,f.townShares*=J,f.residentShares*=J;
+for(let F of Object.keys(f.householdShares||{
+}
+))f.householdShares[F]*=J;
+for(let F of m(N))if(F.shares?.[f.id])F.shares[f.id]*=J}
+let q=/^\d{
+3}
+$/.test(f.listing?.ticker||"")?f.listing.ticker:null;
+if(q&&M.has(q))q=null;
+if(q)M.add(q);
+else q=_();
+f.listing={
+listed:!0,ticker:q,listedAt:f.listing?.listedAt||{
+legacy:!0}
+}
+,N.stockExchange.legacyAccess=!0}
+else f.totalShares=0,f.townShares=0,f.residentShares=0,f.householdShares||={
+}
+,f.listing={
+listed:!1,ticker:null,listedAt:null}
+}
+return N.legacyMigration={
+...N.legacyMigration||{
+}
+,toVersion:14,v14:{
+independentCompanies:!0,exchangeCompatibility:N.stockExchange.legacyAccess,integerShareSplit:!0}
+}
+,g0(N,Z),M0(N,Z),N}
+function E3($,Z,z=!1){
+let N=gQ($,Z,z);
+N.version=15,N.schemaVersion=15;
+for(let Q of Object.values(N.shops||{
+}
+))for(let _ of["day","year","cumulative"])Q.accounts||={
+}
+,Q.accounts[_]||={
+}
+,Q.accounts[_].distributedVoucherUnits??=0;
+if(N.currency||={
+}
+,N.currency.reserveModel!=="town-inventory-v1"){
+let Q=Math.max(0,Math.floor(N.currency.reserveWheatUnits||0)),_=Math.max(0,Math.floor(N.currency.reserveWheatCostVoucherUnits||0));
+if(Q>0)N.accounts.town.wheat=(N.accounts.town.wheat||0)+Q,n0(N,"wheat",_);
+N.currency.reserveWheatUnits=0,N.currency.reserveWheatCostVoucherUnits=0,N.currency.reserveModel="town-inventory-v1"}
+N.payroll||={
+}
+,N.payroll.arrearsVoucherUnits||=N.payroll.arrearsWheatUnits||{
+}
+,N.payroll.creditorClaims||={
+}
+,N.payroll.creditorPaymentClaims||={
+}
+,N.payroll.legacyUnattributedArrearsVoucherUnits||={
+}
+;
+for(let Q of N.buildings||[]){
+let _=Z.buildings?.[Q.typeId];
+for(let f of _?.jobs||[]){
+if(f.managedBy!=="shops")continue;
+let O=`${Q.id}::${f.id}`;
+delete N.payroll.arrearsVoucherUnits[O],delete N.payroll.creditorClaims[O],delete N.payroll.creditorPaymentClaims[O],delete N.payroll.legacyUnattributedArrearsVoucherUnits[O];
+for(let Y of Object.keys(N.monetaryReform?.voucherShortfallByKey||{
+}
+))if(Y.startsWith(`town-wage:${O}:`))delete N.monetaryReform.voucherShortfallByKey[Y]}
+}
+N.payroll.arrearsWheatUnits=N.payroll.arrearsVoucherUnits,Y1(N,Z),N.services||={
+}
+,N.services.demandByHousehold||={
+}
+,N.services.carryByHousehold||={
+}
+,N.services.pricesVoucherPerUse||={
+}
+;
+for(let Q of Object.values(Z.rules.serviceTypes||{
+}
+))if(!(Number.isFinite(N.services.pricesVoucherPerUse[Q.id])&&N.services.pricesVoucherPerUse[Q.id]>=0))N.services.pricesVoucherPerUse[Q.id]=Q.priceVoucher||0;
+if(N.services.mealsByHousehold||={
+}
+,N.services.rotation||={
+households:0,shops:{
+}
+,services:0}
+,N.services.rotation.shops||={
+}
+,N.annualReports=w9(N),N.population?.adultAge!==E1){
+let Q=eZ(N),_=e1(N),f=Math.max(0,Math.min(_.children,Q.workers-_.workers));
+if(f>0)F$(N,"children","workers",f);
+N.population={
+...N.population||{
+}
+,adultAge:E1}
+}
+N.agriculture||={
+workUnits:0,lastHarvestYear:0}
+;
+let M=Z.agriculture.acresMaximum??Z.agriculture.acres;
+if(!Number.isInteger(N.agriculture.reclaimedAcres)){
+let Q=Number.isInteger(N.agriculture.acres)?N.agriculture.acres:Z.agriculture.acres;
+N.agriculture.reclaimedAcres=Math.max(0,Math.min(M,Q))}
+N.agriculture.reclaimedAcres=Math.max(0,Math.min(M,Math.floor(N.agriculture.reclaimedAcres))),N.agriculture.reclaim||=j5();
+for(let Q of["day","year","cumulative"])N.agriculture.reclaim[Q]||={
+acres:0,workDays:0,paidVoucherUnits:0}
+;
+if(!Array.isArray(N.agriculture.reclaim.history))N.agriculture.reclaim.history=[];
+return N.legacyMigration={
+...N.legacyMigration||{
+}
+,toVersion:15,v15:{
+annualReportSummary:!0,saveContainerVersion:2,r04TownInventoryExchange:!0,r04ShopPayrollCleanup:!0,reclaimFarmland:!0,parallelConstruction:!0}
+}
+,tZ($,N),g0(N,Z),M0(N,Z),N}
+function $z($,Z){
+let z=Z||b1;
+if(!$||typeof $!=="object"||Array.isArray($))throw Error("存档必须是 JSON 对象。");
+let N=z.rules.saveVersion||15,M=Math.max(Number($.schemaVersion)||0,Number($.version)||0);
+if(M>N)throw Error("该存档来自更高版本，当前版本无法读取。");
+if(M<10)throw Error("旧版存档不兼容，请开始新游戏。");
+let Q;
+if(M===10)Q=E3(jQ($,z),z,!0);
+else if(M===11)Q=E3($,z,!0);
+else if([12,13,14,15].includes(M))Q=E3($,z,!1);
+else throw Error("旧版存档不兼容，请开始新游戏。");
+let _=c2(Q,z);
+if(!_.valid)throw Error("存档校验失败："+_.errors.join("；"));
+return Q}
+var d5="maixiang-town-save-v1";
+function A3($){
+return JSON.stringify($,null,2)}
+function T3($,Z){
+let z=Z||b1;
+if(!$||typeof $!=="object"||Array.isArray($))throw Error("文件不是麦乡存档。");
+let N=z.rules.saveVersion||10,M=Math.max(Number($.version)||0,Number($.schemaVersion)||0);
+if(M<10)throw Error("旧版存档不兼容，请开始新游戏。");
+if(M>N)throw Error("此存档来自更新版本，暂无法读取。");
+return $z($,z)}
+function o$($,Z){
+let z;
+try{
+z=JSON.parse($)}
+catch{
+throw Error("导入文件不是有效 JSON。")}
+return T3(z,Z)}
+var C3=2,P3=1,k3="maixiang-save-catalog-v1",i2="maixiang-save-slot-v1:";
+class S0 extends Error{
+constructor($,Z,z=null){
+super(Z,z?{
+cause:z}
+:void 0);
+this.name="SavePersistenceError",this.code=$,this.originalName=z?.name||null,this.originalMessage=z?.message||null}
+}
+function u1($,Z="访问"){
+if($ instanceof S0)return $;
+let z=String($?.name||""),N=String($?.message||"");
+if(z==="QuotaExceededError"||z==="NS_ERROR_DOM_QUOTA_REACHED"||/quota|storage.*full/i.test(N))return new S0("quota",`本机空间不足（存储配额已满），${Z}未完成。`,$);
+if(["SecurityError","NotAllowedError","InvalidStateError","NotSupportedError"].includes(z)||/denied|permission|access/i.test(N))return new S0("denied",`浏览器拒绝本机存储访问，${Z}未完成。`,$);
+return new S0("program",`本机存储${Z}失败。`,$)}
+function F5($){
+let Z=2166136261;
+for(let z=0;
+z<$.length;
+z+=1)Z=Math.imul(Z^$.charCodeAt(z),16777619);
+return(Z>>>0).toString(16)}
+function A1($,Z="存档"){
+try{
+return JSON.stringify($)}
+catch(z){
+throw new S0("serialization",`${Z}序列化失败，未写入本机存储。`,z)}
+}
+function vQ($,Z){
+let z=c2($,Z);
+if(!z.valid){
+let N=new S0("validation","游戏数据校验失败，原存档未更改。");
+throw N.validationErrors=z.errors.slice(),N}
+}
+function c5($,Z,z,N,M){
+vQ(z,M);
+let Q=A1(z,"游戏数据");
+return A1({
+containerVersion:C3,id:$,name:Z,savedAt:N,checksum:F5(Q)}
+,"存档容器").slice(0,-1)+',"state":'+Q+"}"}
+function yQ($,Z){
+return $&&[1,C3].includes($.containerVersion)&&$.id===Z&&typeof $.name==="string"&&$.name.trim()&&typeof $.savedAt==="string"&&Number.isFinite(Date.parse($.savedAt))&&typeof $.checksum==="string"}
+function wQ($,Z){
+let N=A1({
+containerVersion:Z.containerVersion,id:Z.id,name:Z.name,savedAt:Z.savedAt,checksum:Z.checksum}
+,"存档容器头").slice(0,-1)+',"state":';
+if(!$.startsWith(N)||!$.endsWith("}"))return null;
+return $.slice(N.length,-1)}
+function Zz($,Z){
+let z;
+try{
+z=JSON.parse($)}
+catch{
+throw new S0("corrupt","存档内容损坏。")}
+if(!yQ(z,Z))throw new S0("corrupt","存档内容损坏。");
+if(z.containerVersion===C3){
+let N=wQ($,z);
+if(N===null||z.checksum!==F5(N))throw new S0("corrupt","存档内容损坏。")}
+else{
+let N=A1(z.state,"旧存档校验");
+if(z.checksum!==F5(N))throw new S0("corrupt","存档内容损坏。")}
+return z}
+function e$($,Z){
+let z=Zz($,Z);
+return{
+id:Z,name:z.name,savedAt:z.savedAt,containerVersion:z.containerVersion}
+}
+function V2($,Z,z){
+let N=Zz($,Z),M;
+try{
+M=T3(N.state,z)}
+catch(Q){
+if(Q instanceof S0)throw Q;
+throw new S0("validation",Q.message||"存档数据校验失败。",Q)}
+return{
+id:Z,name:N.name,savedAt:N.savedAt,state:M}
+}
+var b3="maixiang-save-db-v2",hQ=1,q1="slots",Z1="meta",r2="legacy",V5="catalog",mQ="legacyMigration",zz=36;
+function J1($){
+let Z=String($??"");
+try{
+return new TextEncoder().encode(Z).length}
+catch{
+return Z.length*2}
+}
+function j3($){
+let Z=String($??"").trim();
+if(!Z)throw new S0("validation","请输入存档名称。");
+if(Z.length>zz)throw new S0("validation",`名称最多${zz}字。`);
+return Z}
+function $4(){
+return{
+containerVersion:P3,activeId:null,deletedIds:[]}
+}
+function I3($,Z){
+if(!$)return null;
+try{
+return $.getItem(Z)}
+catch(z){
+throw u1(z,"读取遗留 localStorage")}
+}
+function uQ($,Z){
+if(!$)return;
+try{
+$.removeItem(Z)}
+catch(z){
+throw u1(z,"清理遗留 localStorage")}
+}
+function lQ($){
+if(!$)return[];
+try{
+return Array.from({
+length:$.length}
+,(Z,z)=>$.key(z)).filter(Boolean)}
+catch(Z){
+throw u1(Z,"扫描遗留 localStorage")}
+}
+function pQ($){
+if($===d5)return{
+kind:"legacy-single",label:"旧单存档"}
+;
+if($.startsWith(d5+".backup-"))return{
+kind:"legacy-history",label:"旧单存档历史备份"}
+;
+if($===k3)return{
+kind:"r01-catalog",label:"0.1.5-r01 存档目录"}
+;
+if($.startsWith(i2)&&$.endsWith(":backup"))return{
+kind:"r01-backup",label:"0.1.5-r01 自动备份"}
+;
+if($.startsWith(i2))return{
+kind:"r01-primary",label:"0.1.5-r01 主存档"}
+;
+return null}
+function t$($){
+let Z=[],z={
+mainBytes:0,slotPrimaryBytes:0,oldSingleBytes:0,backupBytes:0,catalogBytes:0,totalBytes:0,count:0}
+;
+for(let N of lQ($)){
+let M=pQ(N);
+if(!M)continue;
+let Q=I3($,N)??"",_=J1(N)+J1(Q),f={
+key:N,raw:Q,bytes:_,checksum:F5(Q),...M}
+;
+if(Z.push(f),z.count+=1,z.totalBytes+=_,M.kind==="r01-catalog")z.catalogBytes+=_;
+else if(M.kind.includes("backup")||M.kind==="legacy-history")z.backupBytes+=_;
+else if(M.kind==="legacy-single")z.oldSingleBytes+=_,z.mainBytes+=_;
+else z.slotPrimaryBytes+=_,z.mainBytes+=_}
+return{
+artifacts:Z,stats:z}
+}
+function Nz($){
+return new Promise((Z,z)=>{
+$.onsuccess=()=>Z($.result),$.onerror=()=>z($.error||Error("IndexedDB request failed"))}
+)}
+function s2($){
+return new Promise((Z,z)=>{
+$.oncomplete=()=>Z(),$.onabort=()=>z($.error||Error("IndexedDB transaction aborted")),$.onerror=()=>z($.error||Error("IndexedDB transaction failed"))}
+)}
+function dQ($){
+if(!$?.open)throw new S0("denied","浏览器未提供可用的 IndexedDB 持久存储。");
+return new Promise((Z,z)=>{
+let N;
+try{
+N=$.open(b3,hQ)}
+catch(M){
+z(u1(M,"打开 IndexedDB"));
+return}
+N.onupgradeneeded=()=>{
+let M=N.result;
+if(!M.objectStoreNames.contains(q1))M.createObjectStore(q1,{
+keyPath:"id"}
+);
+if(!M.objectStoreNames.contains(Z1))M.createObjectStore(Z1,{
+keyPath:"key"}
+);
+if(!M.objectStoreNames.contains(r2))M.createObjectStore(r2,{
+keyPath:"key"}
+)}
+,N.onsuccess=()=>Z(N.result),N.onerror=()=>z(u1(N.error,"打开 IndexedDB")),N.onblocked=()=>z(new S0("denied","IndexedDB 升级被其他页面阻塞，请关闭同一游戏的其他标签页后重试。"))}
+)}
+async function U3($,Z){
+let z=$.transaction(Z,"readonly"),N=s2(z),M=z.objectStore(Z),Q=await Nz(M.getAll());
+return await N,Q}
+async function s1($,Z,z){
+let N=$.transaction(Z,"readonly"),M=s2(N),Q=N.objectStore(Z),_=await Nz(Q.get(z));
+return await M,_}
+async function M2($,Z,z){
+let N=$.transaction(Z,"readwrite"),M=s2(N);
+N.objectStore(Z).put(z),await M}
+function cQ($){
+try{
+let Z=JSON.parse($);
+if(Z?.containerVersion!==P3||Z.activeId!==null&&typeof Z.activeId!=="string")return null;
+return{
+...$4(),...Z,deletedIds:Array.isArray(Z.deletedIds)?Z.deletedIds.filter((z)=>typeof z==="string"):[]}
+}
+catch{
+return null}
+}
+function iQ($){
+if(!$.startsWith(i2))return null;
+return $.slice(i2.length).replace(/:backup$/,"")}
+function rQ($,Z){
+try{
+return{
+state:o$($,Z),readable:!0}
+}
+catch(z){
+return{
+state:null,readable:!1,reason:z.message}
+}
+}
+function sQ($,Z,z){
+let N=null,M=!1;
+if($?.primary)try{
+N=V2($.primary,$.id,z)}
+catch(Q){
+if(!["corrupt","validation"].includes(Q.code))throw Q}
+if(!N&&$?.backup)try{
+N=V2($.backup,$.id,z),M=!0}
+catch(Q){
+if(!["corrupt","validation"].includes(Q.code))throw Q}
+if(!N)return{
+id:$.id,name:"损坏的存档",savedAt:null,current:Z.activeId===$.id,damaged:!0}
+;
+return{
+id:$.id,name:N.name,savedAt:N.savedAt,year:N.state.year,day:N.state.day+1,population:(N.state.cohorts||[]).reduce((Q,_)=>Q+_.m+_.f,0),recovered:M,current:Z.activeId===$.id,damaged:!1}
+}
+function aQ($,Z){
+if($?.primary)try{
+return{
+...V2($.primary,$.id,Z),recovered:!1}
+}
+catch(z){
+if(!["corrupt","validation"].includes(z.code))throw z}
+if($?.backup)try{
+return{
+...V2($.backup,$.id,Z),recovered:!0}
+}
+catch(z){
+if(!["corrupt","validation"].includes(z.code))throw z}
+throw new S0("corrupt","存档损坏，且自动备份无法读取。原数据仍保留。")}
+function nQ($){
+let Z;
+do Z=typeof globalThis.crypto?.randomUUID==="function"?globalThis.crypto.randomUUID():`${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+while($.has(Z));
+return Z}
+function S3($,Z){
+return $ instanceof S0?$:u1($,Z)}
+async function oQ($){
+if(!$)return{
+ok:!1,code:"unavailable",message:"localStorage 不可用。"}
+;
+let Z=`maixiang-storage-probe-v2:${Date.now()}:${Math.random().toString(36).slice(2)}`,z="mx-probe";
+try{
+if($.setItem(Z,z),$.getItem(Z)!==z)throw Error("localStorage 写入后读回不一致");
+if($.removeItem(Z),$.getItem(Z)!==null)throw Error("localStorage 探测键删除失败");
+return{
+ok:!0}
+}
+catch(N){
+try{
+$.removeItem(Z)}
+catch{
+}
+let M=u1(N,"localStorage 写入探测");
+return{
+ok:!1,code:M.code,message:M.message,originalName:M.originalName,originalMessage:M.originalMessage}
+}
+}
+async function g3({
+indexedDB:$=globalThis.indexedDB,legacyStorage:Z=null,content:z=b1}
+={
+}
+){
+let N;
+try{
+N=await dQ($)}
+catch(H){
+let k=S3(H,"打开 IndexedDB");
+k.step="indexeddb_open",k.pendingBytes=0;
+try{
+k.storageUsage={
+indexedDB:null,localStorage:t$(Z).stats}
+}
+catch{
+}
+throw k}
+let M=$4(),Q=new Map,_=new Map;
+function f(){
+try{
+return t$(Z).stats}
+catch{
+return{
+mainBytes:0,slotPrimaryBytes:0,oldSingleBytes:0,backupBytes:0,catalogBytes:0,totalBytes:0,count:0,unavailable:!0}
+}
+}
+function O(){
+let H=0,k=0;
+for(let w of Q.values())H+=J1(w.primary||""),k+=J1(w.backup||"");
+let S=0;
+for(let w of _.values())S+=J1(w.raw||"");
+return{
+primaryBytes:H,backupBytes:k,archiveBytes:S,totalBytes:H+k+S,slotCount:Q.size,archiveCount:_.size}
+}
+function Y(H,k,S=0){
+let w=S3(H,"写入 IndexedDB");
+return w.step=w.step||k,w.pendingBytes=Number.isFinite(w.pendingBytes)?w.pendingBytes:S,w.storageUsage={
+indexedDB:O(),localStorage:f()}
+,w}
+async function G(){
+try{
+let[H,k,S]=await Promise.all([U3(N,q1),U3(N,Z1),U3(N,r2)]);
+Q=new Map(H.map((s)=>[s.id,s])),_=new Map(S.map((s)=>[s.key,s]));
+let w=k.find((s)=>s.key===V5);
+M=w?.value&&typeof w.value==="object"?{
+...$4(),...w.value}
+:$4(),M.deletedIds=Array.isArray(M.deletedIds)?M.deletedIds:[]}
+catch(H){
+throw Y(H,"indexeddb_refresh",0)}
+}
+async function X(H,k=null){
+let S={
+key:V5,value:H}
+;
+if(k)k.objectStore(Z1).put(S);
+else await M2(N,Z1,S)}
+async function q(H){
+for(let k of H){
+let S=_.get(k.key);
+if(S?.checksum===k.checksum&&S?.raw===k.raw&&S?.verified)continue;
+let w={
+key:k.key,raw:k.raw,bytes:k.bytes,checksum:k.checksum,kind:k.kind,label:k.label,archivedAt:new Date().toISOString(),verified:!1}
+;
+try{
+await M2(N,r2,w);
+let s=await s1(N,r2,k.key);
+if(!s||s.raw!==k.raw||s.checksum!==k.checksum)throw Error("IndexedDB 遗留数据读回校验不一致");
+s.verified=!0,await M2(N,r2,s),_.set(k.key,s)}
+catch(s){
+throw Y(s,"legacy_archive_verify",k.bytes)}
+}
+}
+async function J(){
+let H;
+try{
+H=t$(Z)}
+catch(a){
+return{
+warning:`无法扫描遗留 localStorage：${a.message}`,migratedCount:0}
+}
+if(!H.artifacts.length)return{
+warning:null,migratedCount:0}
+;
+await q(H.artifacts);
+let k=new Map(H.artifacts.map((a)=>[a.key,a])),S=Q.size,w=0,s=null,c=k.get(k3);
+if(c)s=cQ(c.raw);
+let o=new Set(H.artifacts.map((a)=>iQ(a.key)).filter(Boolean));
+for(let a of o){
+if(Q.has(a))continue;
+let L0=k.get(i2+a)?.raw??null,G0=k.get(i2+a+":backup")?.raw??null,k0=!1;
+if(L0)try{
+V2(L0,a,z),k0=!0}
+catch{
+}
+if(!k0&&G0)try{
+V2(G0,a,z),k0=!0}
+catch{
+}
+if(!k0)continue;
+let g={
+id:a,primary:L0,backup:G0,migratedFrom:"localStorage-r01",migratedAt:new Date().toISOString()}
+;
+try{
+await M2(N,q1,g);
+let K0=await s1(N,q1,a);
+if(!K0||K0.primary!==L0||K0.backup!==G0)throw Error("r01 存档迁移读回校验失败");
+Q.set(a,K0),w+=1}
+catch(K0){
+throw Y(K0,"legacy_r01_slot_verify",J1(L0||"")+J1(G0||""))}
+}
+let Q0=H.artifacts.filter((a)=>a.kind==="legacy-single"||a.kind==="legacy-history");
+for(let a of Q0){
+let L0=rQ(a.raw,z),G0=_.get(a.key);
+if(G0){
+G0.readable=L0.readable,G0.readError=L0.reason||null,_.set(a.key,G0);
+try{
+await M2(N,r2,G0)}
+catch(t){
+throw Y(t,"legacy_archive_metadata",a.bytes)}
+}
+if(!L0.readable)continue;
+let g=`${a.kind==="legacy-single"?"legacy-single":"legacy-history"}-${a.checksum}`;
+if(Q.has(g))continue;
+let K0=a.kind==="legacy-single"?"迁移：旧单存档":`迁移：历史备份 ${a.key.slice(-12)}`,M1=new Date().toISOString(),B1=c5(g,K0,L0.state,M1,z),P={
+id:g,primary:B1,backup:null,migratedFrom:a.key,migratedAt:M1}
+;
+try{
+await M2(N,q1,P);
+let t=await s1(N,q1,g);
+if(!t||t.primary!==B1)throw Error("旧单存档迁移读回校验失败");
+V2(t.primary,g,z),Q.set(g,t),w+=1}
+catch(t){
+throw Y(t,"legacy_single_slot_verify",J1(B1))}
+}
+let p={
+...M,deletedIds:[...new Set(M.deletedIds||[])]}
+;
+if(!p.activeId){
+if(s?.activeId&&Q.has(s.activeId))p.activeId=s.activeId;
+else if(S===0){
+let a=[...Q.values()].find((L0)=>L0.migratedFrom===d5);
+if(a)p.activeId=a.id}
+}
+try{
+await X(p);
+let a=await s1(N,Z1,V5);
+if(!a||A1(a.value)!==A1(p))throw Error("迁移目录读回校验失败");
+M=p;
+let L0=H.artifacts.map((G0)=>({
+key:G0.key,checksum:G0.checksum,bytes:G0.bytes}
+));
+await M2(N,Z1,{
+key:mQ,value:{
+verifiedAt:new Date().toISOString(),fingerprints:L0}
+}
+)}
+catch(a){
+throw Y(a,"legacy_migration_mark",J1(A1(p)))}
+return{
+warning:null,migratedCount:w}
+}
+await G();
+let F={
+warning:null,migratedCount:0,failed:!1}
+;
+try{
+F={
+...await J(),failed:!1}
+}
+catch(H){
+let k=H?.code?H:S3(H,"迁移遗留存档");
+F={
+warning:`遗留 localStorage 迁移未完成：${k.message} 原数据仍保留；现有 IndexedDB 存档仍可读取。可稍后再次打开页面重试迁移。`,migratedCount:0,failed:!0,issue:k}
+}
+await G();
+function W(){
+let H=new Set(M.deletedIds||[]),k=[...Q.values()].filter((S)=>!H.has(S.id)).map((S)=>sQ(S,M,z));
+return k.sort((S,w)=>(w.savedAt||"").localeCompare(S.savedAt||"")),{
+slots:k,activeId:M.activeId,warning:F.warning}
+}
+function K(H){
+let k=Q.get(H);
+if(!k)throw new S0("validation","存档不存在。");
+return aQ(k,z)}
+function L(){
+let H=W();
+if(!M.activeId)return{
+state:null,...H,created:!1}
+;
+try{
+let k=K(M.activeId);
+return{
+state:k.state,...H,warning:k.recovered?"当前存档损坏，已从自动备份恢复；请保存当前进度。":H.warning}
+}
+catch(k){
+if(["quota","denied","program"].includes(k.code))throw k;
+return{
+state:null,...H,warning:"当前存档无法读取，请从列表选择可用存档或备份。"}
+}
+}
+async function x(H,k,S=!0){
+let w=nQ(new Set(Q.keys())),s=new Date().toISOString(),c=c5(w,j3(k),H,s,z),o=S?{
+...M,activeId:w}
+:M,Q0=J1(c)+(S?J1(A1(o)):0),p;
+try{
+p=N.transaction([q1,Z1],"readwrite");
+let a=s2(p);
+if(p.objectStore(q1).put({
+id:w,primary:c,backup:null,createdAt:s}
+),S)p.objectStore(Z1).put({
+key:V5,value:o}
+);
+await a;
+let L0=await s1(N,q1,w);
+if(!L0||L0.primary!==c)throw Error("新存档写入后读回校验失败");
+if(e$(L0.primary,w),Q.set(w,L0),S)M=o;
+return{
+id:w,name:j3(k),savedAt:s,state:H,recovered:!1}
+}
+catch(a){
+try{
+p?.abort()}
+catch{
+}
+throw Y(a,"create_slot_write_verify",Q0)}
+}
+let R=new Map;
+async function C(H,k){
+let S=M.activeId;
+if(!S||S!==k)throw new S0("validation","当前没有可保存的存档，请先选择一局。");
+let w=Q.get(S),s=null,c=w?.backup||null,o=R.get(S);
+if(w?.primary&&o?.primary===w.primary)s=o.meta,c=w.primary;
+else if(w?.primary)try{
+s=e$(w.primary,S),c=w.primary}
+catch{
+}
+if(!s&&w?.backup)try{
+s=e$(w.backup,S)}
+catch{
+}
+if(!s)throw new S0("corrupt","存档损坏，且自动备份无法读取。原数据仍保留。");
+let Q0=new Date().toISOString(),p=c5(S,s.name,H,Q0,z),a={
+...w,id:S,primary:p,backup:c,updatedAt:Q0}
+,L0=J1(p)+J1(c||"");
+try{
+await M2(N,q1,a);
+let G0=await s1(N,q1,S);
+if(!G0||G0.primary!==p||G0.backup!==c)throw Error("存档写入后读回校验失败");
+return Q.set(S,G0),R.set(S,{
+primary:p,meta:{
+id:S,name:s.name,savedAt:Q0,containerVersion:s.containerVersion}
+}
+),{
+id:S,name:s.name,savedAt:Q0,state:H,recovered:!1}
+}
+catch(G0){
+throw Y(G0,"save_current_write_verify",L0)}
+}
+async function B(H){
+if((M.deletedIds||[]).includes(H))throw new S0("validation","该存档已删除。");
+let k=K(H),S={
+...M,activeId:H}
+;
+try{
+await X(S);
+let w=await s1(N,Z1,V5);
+if(!w||w.value?.activeId!==H)throw Error("激活存档目录读回校验失败");
+return M=S,k}
+catch(w){
+throw Y(w,"activate_catalog_write_verify",J1(A1(S)))}
+}
+async function I(H,k){
+let S=Q.get(H),w=K(H),s=c5(H,j3(k),w.state,w.savedAt,z),c={
+...S,primary:s}
+;
+try{
+await M2(N,q1,c);
+let o=await s1(N,q1,H);
+if(!o||o.primary!==s)throw Error("重命名写入后读回校验失败");
+return Q.set(H,o),{
+...V2(s,H,z),recovered:!1}
+}
+catch(o){
+throw Y(o,"rename_slot_write_verify",J1(s))}
+}
+async function T(H){
+if(!Q.has(H)||(M.deletedIds||[]).includes(H))throw new S0("validation","存档不存在。");
+let k=M.activeId===H,S={
+...M,activeId:k?null:M.activeId,deletedIds:[...new Set([...M.deletedIds||[],H])]}
+;
+try{
+let w=N.transaction([q1,Z1],"readwrite"),s=s2(w);
+if(w.objectStore(Z1).put({
+key:V5,value:S}
+),w.objectStore(q1).delete(H),await s,await s1(N,q1,H)!==void 0)throw Error("删除存档后读回仍存在");
+return Q.delete(H),M=S,{
+current:k}
+}
+catch(w){
+throw Y(w,"delete_slot_write_verify",J1(A1(S)))}
+}
+async function b(H,k){
+let S=o$(H,z),w=`导入存档 ${W().slots.length+1}`;
+return x(S,k||w,!1)}
+async function y(){
+let H=`probe:${Date.now()}:${Math.random().toString(36).slice(2)}`,k={
+nonce:Math.random().toString(36).slice(2),at:new Date().toISOString()}
+,S=J1(A1(k));
+try{
+await M2(N,Z1,{
+key:H,value:k}
+);
+let w=await s1(N,Z1,H);
+if(!w||A1(w.value)!==A1(k))throw Error("IndexedDB 探测写入后读回不一致");
+let s=N.transaction(Z1,"readwrite"),c=s2(s);
+if(s.objectStore(Z1).delete(H),await c,await s1(N,Z1,H)!==void 0)throw Error("IndexedDB 探测键删除失败");
+return{
+ok:!0,localStorage:await oQ(Z)}
+}
+catch(w){
+try{
+let s=N.transaction(Z1,"readwrite"),c=s2(s);
+s.objectStore(Z1).delete(H),await c}
+catch{
+}
+throw Y(w,"indexeddb_probe_write_read_delete",S)}
+}
+function j(){
+let H=new Map;
+try{
+H=new Map(t$(Z).artifacts.map((k)=>[k.key,k]))}
+catch{
+}
+return[..._.values()].map((k)=>({
+key:k.key,kind:k.kind,label:k.label,bytes:k.bytes,checksum:k.checksum,verified:Boolean(k.verified),readable:k.readable!==!1,readError:k.readError||null,stillInLocalStorage:H.get(k.key)?.checksum===k.checksum}
+)).sort((k,S)=>k.label.localeCompare(S.label,"zh-CN")||k.key.localeCompare(S.key))}
+function l(H){
+let k=_.get(H);
+if(!k?.verified)throw new S0("validation","该遗留数据尚未完成 IndexedDB 读回校验，不能清理或替代原数据。");
+return k.raw}
+async function e(H){
+let k=_.get(H);
+if(!k?.verified)throw new S0("validation","该遗留数据尚未完成迁移校验，不能清理。");
+let S=I3(Z,H);
+if(S===null)return{
+removed:!1,alreadyMissing:!0}
+;
+if(F5(S)!==k.checksum||S!==k.raw)throw new S0("validation","遗留数据已发生变化，未清理；请先重新载入并再次迁移校验。");
+if(uQ(Z,H),I3(Z,H)!==null)throw new S0("program","遗留数据清理后仍可读，未确认删除成功。");
+return{
+removed:!0}
+}
+function u(){
+return{
+indexedDB:O(),localStorage:f()}
+}
+return{
+backend:"indexedDB",initialize:L,list:W,read:K,createNew:(H)=>x(B2({
+content:z}
+),H),saveCurrent:C,saveAs:(H,k)=>x(H,k),activate:B,rename:I,remove:T,importFile:b,probePersistentStorage:y,legacyArtifacts:j,exportLegacy:l,removeLegacy:e,storageStats:u,close:()=>N.close()}
+}
+function Mz({
+capture:$,save:Z,onSuccess:z=()=>{
+}
+,onFailure:N=()=>{
+}
+}
+){
+let M=null,Q=!1,_=!1,f=0,O=null;
+function Y(x){
+if(!x)return"";
+return`${x.session??0}:${x.slotId??""}:${x.revision??0}`}
+async function G(x=!1){
+let R=$();
+if(!R||!R.dirty&&!x)return!0;
+let C=Y(R);
+if(!x&&O===C)return!1;
+try{
+let B=await Z(R);
+return O=null,z(R,B),!0}
+catch(B){
+return O=C,N(R,B),!1}
+}
+async function X(){
+let x=!0;
+try{
+while(Q&&f===0){
+let R=_;
+if(Q=!1,_=!1,x=await G(R),!x)break}
+return x}
+finally{
+if(M=null,Q&&f===0&&!M)M=X()}
+}
+function q({
+force:x=!1}
+={
+}
+){
+if(Q=!0,_=_||x,f>0)return Promise.resolve(!0);
+if(!M)M=X();
+return M}
+async function J(){
+while(M)await M}
+function F(){
+f+=1}
+function W(){
+if(f=Math.max(0,f-1),f===0&&Q&&!M)M=X()}
+async function K({
+force:x=!1}
+={
+}
+){
+if(f<=0)throw Error("flushSuspended requires autosave suspension");
+await J();
+let R=!0;
+while(!0){
+let C=$();
+if(!C||!C.dirty&&!(x&&R))return!0;
+let B=await G(x&&R);
+if(R=!1,!B)return!1}
+}
+function L(){
+O=null}
+return{
+request:q,waitForIdle:J,suspend:F,resume:W,flushSuspended:K,clearFailure:L,get inFlight(){
+return Boolean(M)}
+,get suspended(){
+return f>0}
+}
+}
+class v3{
+constructor($){
+this.daysPerSecond=$.rules.dailyDaysPerSecond,this.speedChoices=$.rules.speedChoices.slice(),this.speed=1,this.paused=!0,this.fractionalDays=0}
+setSpeed($){
+if(!this.speedChoices.includes($))throw RangeError("不支持的时光速度");
+this.speed=$,this.paused=!1,this.fractionalDays=0}
+pause(){
+this.paused=!0,this.fractionalDays=0}
+resume(){
+this.paused=!1}
+advanceFrame($,Z){
+if(this.paused||$<=0)return 0;
+this.fractionalDays+=$*this.daysPerSecond*this.speed;
+let z=0;
+while(!this.paused&&this.fractionalDays>=1)this.fractionalDays-=1,Z(),z+=1;
+return z}
+}
+function T1($,Z="ui-icon"){
+let z={
+people:'<circle cx="9" cy="8" r="3"/><path d="M3 20c.5-3.4 2.4-5 6-5s5.5 1.6 6 5M16 5.4a3 3 0 0 1 0 5.8M17 15c2.3.4 3.6 2 4 5"/>',idle:'<path d="M5 7h14l-1 14H6L5 7Z"/><path d="M8 7V5a4 4 0 0 1 8 0v2M9 12h6"/>',grain:'<path d="M12 22V3M12 7C7 7 5 4 5 2c4 0 7 2 7 5Zm0 5c5 0 7-3 7-5-4 0-7 2-7 5Zm0 1c-5 0-7-3-7-5 4 0 7 2 7 5Zm0 5c5 0 7-3 7-5-4 0-7 2-7 5Z"/>',store:'<path d="M3 10 5 4h14l2 6M4 10v10h16V10M3 10c0 2 3 2 4 0 1 2 4 2 5 0 1 2 4 2 5 0 1 2 4 2 4 0M9 20v-5h6v5"/>',build:'<path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-7h6v7M3 9h18"/>',residents:'<circle cx="12" cy="7" r="3"/><path d="M5 21c.4-4.5 2.7-7 7-7s6.6 2.5 7 7M5 9H3m18 0h-2"/>',market:'<path d="M4 11c0-4 3.6-7 8-7s8 3 8 7H4Z"/><path d="M5 11v7c0 2 2 3 7 3s7-1 7-3v-7M9 15h6"/>',policy:'<path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.5 2.6-1.7-.6a8 8 0 0 1-1.7 1l-.3 1.8h-3l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.6-1.5-2.6 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.5-2.6 1.7.6a8 8 0 0 1 1.7-1l.3-1.8h3l.3 1.8a8 8 0 0 1 1.7 1l1.7-.6 1.5 2.6-1.4 1.1a7 7 0 0 1 0 2Z"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',pause:'<path d="M8 5v14M16 5v14"/>',play:'<path d="m8 5 11 7-11 7V5Z"/>',reset:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.8M4 4v5h5"/>'}
+;
+return`<svg class="${Z}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${z[$]||z.grain}</svg>`}
+function Qz($,Z="idle",z=!1){
+let N=`building-art ${$} ${Z}${z?" ghost":""}`;
+if($==="mill")return`<g class="${N}">
+      <ellipse class="building-shadow" cx="50" cy="101" rx="38" ry="7"/>
+      <path class="mill-body" d="M22 48 50 31l28 17v45H22Z"/>
+      <path class="mill-roof" d="M14 51 50 28l36 23H14Z"/>
+      <path class="wood-line" d="M23 54h54M29 60v31M70 60v31"/>
+      <rect class="mill-door" x="42" y="69" width="16" height="24" rx="7"/>
+      <rect class="mill-window" x="29" y="62" width="8" height="10" rx="3"/><rect class="mill-window" x="63" y="62" width="8" height="10" rx="3"/>
+      <g class="mill-sails"><path d="M47 4h6l3 27h-12Z"/><path d="M76 30v6L56 54l-4-9Z"/><path d="M47 57h6l-3 27h-6Z"/><path d="M24 30v6l20 18 4-9Z"/><circle cx="50" cy="44" r="6"/></g>
+      <path class="mill-support" d="M47 48 36 91m17-43 11 43"/>
+    </g>`;
+if($==="bakery")return`<g class="${N}">
+      <ellipse class="building-shadow" cx="50" cy="101" rx="39" ry="7"/>
+      <path class="bakery-body" d="M17 50 50 34l34 16v42H17Z"/>
+      <path class="bakery-roof" d="M11 51 50 28l41 23v7H11Z"/>
+      <path class="roof-tile" d="M20 50 50 33l31 17M27 54l28-16m-5 16 29-16"/>
+      <rect class="chimney" x="67" y="15" width="11" height="23"/><path class="chimney-cap" d="M65 15h15"/>
+      <path class="smoke" d="M72 10c-7-7 4-7 0-14m8 13c-6-5 4-8 0-13"/>
+      <rect class="oven-mouth" x="28" y="62" width="23" height="22" rx="10"/><path class="oven-glow" d="M32 77c4-9 11-9 15 0"/>
+      <rect class="bakery-door" x="62" y="68" width="12" height="24" rx="6"/>
+      <path class="bread-shelf" d="M26 89h29m-23-8c2-4 7-4 9 0m2 0c2-4 7-4 9 0"/>
+    </g>`;
+if($==="lumberyard")return`<g class="${N}">
+      <ellipse class="building-shadow" cx="50" cy="101" rx="39" ry="7"/>
+      <path class="bakery-body" d="M18 51 50 35l32 16v40H18Z"/>
+      <path class="bakery-roof" d="M12 52 50 28l39 24v6H12Z"/>
+      <path class="wood-line" d="M25 59h50M31 59v32M69 59v32"/>
+      <path class="timber-stack" d="M21 83h30v6H21Zm4-8h30v6H25Zm4-8h30v6H29Z"/>
+      <path class="axe-handle" d="m66 68 13 19"/><path class="axe-head" d="m65 66 8-5 5 6-8 5Z"/>
+    </g>`;
+if($==="saltworks")return`<g class="${N}">
+      <ellipse class="building-shadow" cx="50" cy="101" rx="39" ry="7"/>
+      <path class="bakery-body" d="M16 50 50 33l34 17v43H16Z"/>
+      <path class="bakery-roof" d="M10 51 50 26l41 25v7H10Z"/>
+      <path class="wood-line" d="M21 57h58M26 58v34M74 58v34"/>
+      <rect class="salt-kiln" x="57" y="61" width="22" height="31" rx="3"/>
+      <path class="salt-mouth" d="M63 83c3-8 8-8 11 0"/>
+      <path class="salt-sack" d="m20 88 3-19h19l4 19-6 6H26Z"/>
+      <path class="salt-mark" d="M32 75v12m0-8c-5 0-6-3-6-5 4 0 6 2 6 5m0 3c4 0 6-3 6-5-4 0-6 2-6 5Z"/>
+      <path class="salt-steam" d="M65 56c-8-8 5-9 0-17m9 16c-6-6 4-9 0-15"/>
+    </g>`;
+if($==="public_housing")return`<g class="${N}">
+      <ellipse class="building-shadow" cx="50" cy="101" rx="42" ry="8"/>
+      <g transform="translate(7 38) scale(.43)"><path class="home-body" d="M8 15 50-4l42 19v55H8Z"/><path class="home-roof" d="M0 18 50-12l50 30-7 8-43-25L7 26Z"/><rect class="home-door" x="43" y="42" width="14" height="28"/><rect class="home-window" x="18" y="31" width="12" height="12"/></g>
+      <g transform="translate(33 23) scale(.47)"><path class="home-body" d="M8 15 50-4l42 19v55H8Z"/><path class="home-roof" d="M0 18 50-12l50 30-7 8-43-25L7 26Z"/><rect class="home-door" x="43" y="42" width="14" height="28"/><rect class="home-window" x="18" y="31" width="12" height="12"/></g>
+      <g transform="translate(60 40) scale(.39)"><path class="home-body" d="M8 15 50-4l42 19v55H8Z"/><path class="home-roof" d="M0 18 50-12l50 30-7 8-43-25L7 26Z"/><rect class="home-door" x="43" y="42" width="14" height="28"/><rect class="home-window" x="18" y="31" width="12" height="12"/></g>
+    </g>`;
+return`<g class="${N}"><ellipse class="building-shadow" cx="50" cy="101" rx="39" ry="7"/>
+    <path class="home-body" d="M15 47 50 25l35 22v47H15Z"/><path class="home-roof" d="M9 48 50 20l42 28-6 8-36-23-35 23Z"/>
+    <rect class="home-door" x="42" y="66" width="16" height="28" rx="8"/><rect class="home-window" x="23" y="59" width="11" height="12" rx="4"/><rect class="home-window" x="66" y="59" width="11" height="12" rx="4"/>
+    <path class="wood-line" d="M18 94h65"/>
+  </g>`}
+function D($){
+return String($??"").replace(/[&<>\"']/g,function(Z){return{"&":"&amp;
+","<":"&lt;
+",">":"&gt;
+",'"':"&quot;","'":"&#39;
+"}[Z]})}function V($,Z){let z=Z??0;return Number($||0).toLocaleString("zh-CN",{maximumFractionDigits:z,minimumFractionDigits:z})}function Q2($,Z=1){return Number($||0).toLocaleString("zh-CN",{maximumFractionDigits:Z})}function _z($,Z){let z=Number($||0)/Number(Z||1);if(z>0&&z<0.01)return"不足0.01斤";return Q2(z,2)+"斤"}function y3($){let Z=Number($||0);if(Z>=1e6)return V(Z/1e4,1)+"万";if(Z>=1e4)return V(Z/1e4,1)+"万";return V(Z)}function i5($){return V(Math.max(0,Math.min(100,$)),0)+"%"}function w3($){return Object.values($.items).filter(function(Z){return Z.quantity>0}).map(function(Z){return D(Z.name)+" "+V(Z.quantity)+D(Z.unit||"斤")}).join(" · ")||"暂无库存"}function w0($){let Z=$?.monetaryReform?.stage||"voucher";return Z==="wheat"?"斤小麦":Z==="voucher"?"粮券":"小麦等值"}function Z4($){let Z=$?.monetaryReform;if(!Z||Z.stage==="wheat")return"新交易以小麦结算";if(Z.stage==="voucher")return"新交易以粮券结算";return`新交易目标${V(Z.targetPercent,2)}%粮券，其余小麦；缺券部分可由付款人自有小麦补付`}function _2($,Z){let z=($.plots||[]).find((N)=>N.id===Z.plotId)?.label;if(!z)return Z.id;return z.replace(/^空地\s*(\d+)$/,"$1号地").replace(/空地$/,"")||z}function r5($,Z,z=2){let N=($||[]).map((G)=>Number(G)||0);if(N.length<2)return"";let M=120,Q=32,_=Math.min(...N),O=Math.max(...N)-_||1,Y=N.map((G,X)=>`${(X/(N.length-1)*M).toFixed(1)},${(Q-2-(G-_)/O*(Q-4)).toFixed(1)}`).join(" ");return`<figure class="sparkline" aria-label="${
+D(Z)}
+近${
+N.length}
+日走势"><svg viewBox="0 0 ${
+M}
+ ${
+Q}
+" preserveAspectRatio="none"><polyline points="${
+Y}
+" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg><figcaption>${D(Z)} ${V(N[0],z)} → ${V(N[N.length-1],z)}</figcaption></figure>`}var eQ=Object.freeze({mill:{name:"磨坊",connected:!0},public_housing:{name:"公租房群",connected:!0},bakery:{name:"面包房",connected:!0},lumberyard:{name:"伐木场",connected:!0},stock_exchange:{name:"交易所",connected:!0},bank:{name:"银行",connected:!0},saltworks:{name:"盐场",connected:!0},wholesale_market:{name:"批发市场",connected:!0},commercial_street:{name:"商业街",connected:!0},town_hall:{name:"政务厅",connected:!0},police_station:{name:"警察局",connected:!0},school:{name:"学堂",connected:!1},clinic:{name:"医馆",connected:!1},restaurant:{name:"饭馆",connected:!1},granary:{name:"粮仓",connected:!1},housing:{name:"民居",connected:!1},tea_house:{name:"茶馆",connected:!1}}),h3=($,Z,z)=>Math.max(Z,Math.min(z,Number($)||Z));function tQ($,Z,z,N){let M="";for(let Q=1;Q<13;Q++){let _=Q/13;M+=`<path d="M${
+$+z*0.2+z*0.69*_}
+ ${
+Z+2}
+L${
+$+z*0.72*_}
+ ${
+Z+N*0.47+N*0.39*_}
+"/>`}return`<g stroke="#555f5d" stroke-width="1.05" stroke-linejoin="round"><path fill="#7e8984" d="M${
+$-7}
+ ${
+Z+N*0.47}
+Q${
+$+z*0.17}
+ ${
+Z+8}
+ ${
+$+z*0.2}
+ ${
+Z-5}
+L${
+$+z*0.94}
+ ${
+Z+2}
+Q${
+$+z*0.93}
+ ${
+Z+N*0.35}
+ ${
+$+z+10}
+ ${
+Z+N*0.56}
+L${
+$+z*0.74}
+ ${
+Z+N}
+Z"/><path fill="#596c68" d="M${
+$-7}
+ ${
+Z+N*0.47}
+L${
+$+z*0.74}
+ ${
+Z+N}
+ ${
+$+z+10}
+ ${
+Z+N*0.56}
+ ${
+$+z*0.76}
+ ${
+Z+N+6}
+Z"/><g opacity=".55" fill="none">${M}<path d="M${
+$+4}
+ ${
+Z+N*0.39}
+l${
+z*0.76}
+ ${
+N*0.49}
+m${
+-z*0.69}
+ ${
+-N*0.58}
+l${
+z*0.76}
+ ${
+N*0.48}
+m${
+-z*0.68}
+ ${
+-N*0.58}
+l${
+z*0.75}
+ ${
+N*0.49}
+"/></g><path d="M${
+$+z*0.2}
+ ${
+Z-5}
+l${
+z*0.74}
+ 7" stroke-width="2.5"/></g>`}function e0($=0,Z=0,z=1,N="",M=!1){let Q=M?23:0;return`<g transform="translate(${
+$}
+ ${
+Z}
+) scale(${
+z}
+)"><path d="M-45 ${
+-27-Q}
+L17 ${
+-5-Q}
+V34L-45 12Z" fill="#f4f0df"/><path d="M17 ${
+-5-Q}
+L48 ${
+-24-Q}
+V15L17 34Z" fill="#d5dbcc"/><path d="M-45 7L17 29 48 10v5L17 34-45 12Z" fill="#b4bbaa"/><path d="M-24-7l19 7v26l-19-7Z" fill="#967e5d"/><path d="M-14-3v26"/><path d="M-39-12l9 3V3l-9-3ZM1 3l9 3v12l-9-3ZM28-1l11-6V6l-11 6Z" fill="#9da48a"/><path d="M-35-10V1M5 5v11m28-19V8" stroke="#687465"/>
+${M?'<path d="M-38-32l11 4v10l-11-4ZM-17-24l11 4v10l-11-4ZM5-16l9 4v10l-9-4ZM27-20l12-7v11l-12 7Z" fill="#a1a68f"/><path d="M-45-9L17 13 48-6" fill="none"/>':""}
+${tQ(-56,-56-Q,102,43)}${N?`<path d="M-27-20l36 12v12L-27-8Z" fill="#52685e"/><text transform="matrix(1 .33 0 1 -9 -4)" text-anchor="middle" fill="#f8efd4" stroke="none" font-size="10" font-family="serif">${N}</text>`:""}</g>`}function x5(){return'<path d="M-67 10L-9-22 71 14 15 51Z" fill="#e2ddc5" stroke="#bfc3ad"/><path d="M-67 10v15l82 35 56-35V14L15 47Z" fill="#eae7d6"/><path d="M-67 10L15 47 71 14" fill="none" stroke="#6e7a6d" stroke-width="4"/>'}function I2($,Z){return`<g transform="translate(${
+$}
+ ${
+Z}
+)"><path d="M-34-5l53 18-10 14-53-18Z" fill="#d0bd91"/><path d="M-44 9v23M9 27v23" stroke="#8c7657" stroke-width="2"/><path d="M-36 25l40 14v6l-40-14Z" fill="#b59c71"/></g>`}function m3(){return`<g fill="#b39b70">${[0,1,2].map(($)=>`<path d="M${
+-55+$*9}
+ 27l27-15 7 5-27 15Z"/><ellipse cx="${
+-51+$*9}
+" cy="30" rx="5" ry="4" fill="#d3c292"/>`).join("")}</g>`}function $_($,Z){switch($){case"public_housing":return x5()+e0(-29,-9,0.58)+e0(27,7,0.58)+e0(-9,31,0.58);case"commercial_street":return e0(-32,-8,0.66,"店")+e0(25,13,0.66,"铺")+I2(-17,5)+I2(36,26);case"wholesale_market":return e0(0,-18,0.88,"集")+I2(-28,13)+I2(31,32)+m3();case"mill":return e0(-4,-3,0.93,"磨")+'<g transform="translate(44 8)" stroke="#716f56" stroke-width="2"><ellipse rx="18" ry="25" fill="#aa9872"/><ellipse rx="12" ry="18" fill="#b9c8b0"/><path d="M0-25v50M-18 0h36M-13-18l26 36M-13 18l26-36" stroke-width="3"/><ellipse rx="3" ry="4" fill="#7a775b"/></g>';case"bakery":return'<path d="M24-52l12-7 9 3v33l-12 6-9-5Z" fill="#b3ac94"/>'+e0(0,0,1,"饼")+I2(-17,8)+'<g fill="#c4a369" stroke="#a58f62"><ellipse cx="-31" cy="36" rx="6" ry="3"/><ellipse cx="-17" cy="41" rx="6" ry="3"/></g>';case"lumberyard":return e0(16,-13,0.72)+'<path d="M-46-9v29M-3 5v30M-46-9l43 14" stroke="#958665" stroke-width="4"/><path d="M-56-10l43 13 19-11-43-13Z" fill="#b6ac87"/>'+m3();case"bank":return x5()+e0(0,-6,0.98,"银号",!0)+'<g fill="#babaa0"><path d="M-46 26l6-12 7 3 2 16Z M26 52l6-12 7 3 2 16Z"/></g>';case"stock_exchange":return x5()+e0(0,-8,1,"交易",!0)+'<path d="M-50-20v48M55-12v44" stroke="#7a7861" stroke-width="2"/><path d="M-50-20l14 5v20l-14-5Z M55-12l14 5v20l-14-5Z" fill="#a9785c"/>';case"saltworks":return e0(16,-19,0.7,"盐")+'<path d="M-61 10l39-20 46 21-39 23Z" fill="#c3d3c5"/><path d="M-54 12l17-9 18 9-17 10ZM-15 29l17-10 19 9-18 10Z" fill="#f9f5de"/><path d="M28 31l12-21 19 31Z" fill="#f3eed8"/>';case"town_hall":return x5()+e0(0,-5,1,"镇署")+'<path d="M-34 20l45 16v8l-45-16Z" fill="#c2c3ac"/>';case"police_station":return x5()+e0(0,-5,0.98,"巡署")+'<path d="M48-29v53" stroke="#79755b" stroke-width="2"/><path d="M48-29l17 5v22l-17-5Z" fill="#9a765c"/>';case"school":return x5()+e0(0,-10,1,"学堂");case"clinic":return e0(0,0,1,"医馆")+I2(-10,8);case"restaurant":return e0(0,0,1,"食肆",!0)+I2(-10,8);case"tea_house":return e0(0,0,1,"茶",!0)+I2(-10,8);case"granary":return e0(0,0,1.08,"粮")+m3();default:return e0(0,0,1,"",Z>=3)}}function N4($,Z={}){let z=Z.status||"complete";if(z==="empty")return"";let N=Math.round(h3(Z.level||1,1,5)),M=h3(Z.scale||1,0.1,4),Q="";if(z==="construction")Q=`<path d="M-57 4L-12-21 62 11 15 40Z" fill="#d8d6b8" stroke-dasharray="4 3"/><g stroke="#a08d67" stroke-width="3" fill="none"><path d="M-43 5v-42M14 26v-44M47 7v-39M-43-26L14-5 47-24M-43 5L14 26 47 7M-43-26L14 26M14-5L47 7"/></g><path d="M-45 45h90" stroke="#d4cfb5" stroke-width="5"/><path d="M-45 45h${
+90*h3(Z.progress||0,0,1)}
+" stroke="#8e9d74" stroke-width="5"/>`;else Q=$_(Object.hasOwn(eQ,$)?$:"housing",N);return`<g class="ink-building" transform="scale(${
+M}
+)" stroke="#7b7c66" stroke-width="1.1" stroke-linejoin="round"><ellipse cx="4" cy="36" rx="66" ry="17" fill="#7c8567" opacity=".10" stroke="none"/>${Q}${z==="complete"&&N>1?`<g fill="#8b9c71" stroke="none">${Array.from({length:N},(_,f)=>`<circle cx="${
+-12+f*6}
+" cy="57" r="1.8"/>`).join("")}</g>`:""}</g>`}var s5="M35 -80 C115 120 -20 320 12 520 S-50 770 -20 950 S160 1210 90 1450 S40 1710 100 1900";function M4($="housing",Z=1){return N4($,{scale:Z})}function fz(){return'<g stroke="#777864" stroke-width="1.5"><ellipse cy="24" rx="27" ry="10" fill="#b9bca5" opacity=".4"/><path d="M-18 5v15Q0 32 18 20V5Z" fill="#c9cab8"/><ellipse cy="5" rx="18" ry="10" fill="#8eaaa1"/><ellipse cy="5" rx="12" ry="6" fill="#658982"/><path d="M-22 8v-42m44 42v-42M-22-31h44M0-31v30" fill="none" stroke="#867657" stroke-width="4"/><path d="M-7-2H7L5 9H-5Z" fill="#a99166"/></g>'}function Z_($,Z,z=1,N=!1){return`<g transform="translate(${
+$}
+ ${
+Z}
+) scale(${
+z}
+)" pointer-events="none"><ellipse cy="10" rx="23" ry="7" fill="#777d60" opacity=".08"/><path d="M0 9Q4-13 0-37M2-13l-13-17M2-21l12-19" fill="none" stroke="#8b8a70" stroke-width="2.4"/>${N?'<path d="M-22-37Q-11-69 10-49Q30-51 27-26Q21-42 19-6Q12-23 12-40Q5-17 6 0Q-3-15 0-40Q-10-25-11-4Q-17-23-14-35Q-25-10-26-18Z" fill="#9eae87" stroke="#849678" stroke-width=".8"/>':'<g fill="#a7b597" stroke="#829879" stroke-width=".6"><path d="M-25-33Q-32-50-14-53Q-15-69 1-63Q18-71 23-51Q38-37 19-27Q-1-19-8-30Q-20-21-25-33Z"/><path d="M-13-53Q0-37 14-49M-11-30Q-4-45 0-59" fill="none" opacity=".4"/></g>'}</g>`}var z4="";function Oz(){if(z4)return z4;let $="",Z=28,z=()=>(Z=Z*1664525+1013904223>>>0,Z/4294967296);for(let N=0;N<250;N++){let M=z()*2400,Q=z()*1800;if(B5.some((_)=>Math.hypot(_.x*12-M,_.y*10-Q)<88)||Math.hypot(M-550,Q-284)<140||Math.hypot(M-779,Q-349)<100||M<450&&Q<410)continue;$+=Z_(M,Q,0.55+z()*0.65,N%4===0)}return z4=`<defs><pattern id="papergrain" width="83" height="71" patternUnits="userSpaceOnUse"><path d="M3 6h2m21 13h1m31 38h2M11 52h1m54-44h1" stroke="#a6aa8b" opacity=".21"/><path d="M12 22l2-4 1 4m40 12 2-4 1 5" stroke="#9bab85" opacity=".22" fill="none"/></pattern><pattern id="seedlings" width="14" height="15" patternUnits="userSpaceOnUse"><path d="M7 13V5M7 10L3 6m4 2 4-6" stroke="#879976" stroke-width="1.5" fill="none"/></pattern></defs>
+<rect width="2400" height="1800" fill="#e7e7ce"/><path d="M0 0H2400V160Q1700 280 1150 120T0 140Z" fill="#dbe0c8"/><path d="M900 1100Q1200 830 1600 1090T2400 1010V1800H800Z" fill="#dde2cb" opacity=".55"/>
+<rect width="2400" height="1800" fill="url(#papergrain)"/>
+<path d="${
+s5}
+" fill="none" stroke="#c5cbb2" stroke-width="82"/><path d="${
+s5}
+" fill="none" stroke="#8fb6b0" stroke-width="70"/><path d="${
+s5}
+" fill="none" stroke="#aac8bd" stroke-width="45" opacity=".6"/><path d="${
+s5}
+" fill="none" stroke="#d7e4d3" stroke-width="1.5" stroke-dasharray="15 36 28 67"/>
+<path d="M130 126L387 94 472 302 187 346Z" fill="#c4cc9a" stroke="#b5b990" stroke-width="6"/><path d="M130 126L387 94 472 302 187 346Z" fill="url(#seedlings)"/><path d="M170 216L430 177" stroke="#e1d7ae" stroke-width="8"/>
+<path d="M1680 30L2220 30 2300 192 1720 192Z" fill="#cbd2a7" stroke="#b5b990" stroke-width="5"/><path d="M1680 30L2220 30 2300 192 1720 192Z" fill="url(#seedlings)"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">${["M70 405Q280 385 480 405T780 383Q970 420 1170 400L2390 420","M480 400Q470 660 480 850L520 1740","M768 400Q785 650 768 900L805 1800","M1056 400L1060 1720","M1250 310L2300 310","M1250 540L2300 540","M1250 770L2300 770","M1250 990L2300 990","M200 1310L2330 1310","M200 1590L2310 1590","M1430 100L1430 1710","M1960 100L1960 1710"].map((N)=>`<path d="${
+N}
+" stroke="#c9c8ab" stroke-width="29"/><path d="${
+N}
+" stroke="#eee4c9" stroke-width="24"/><path d="${
+N}
+" stroke="#f5ecd5" stroke-width="13" opacity=".45"/>`).join("")}</g>
+<g transform="translate(25 403) rotate(-4)" stroke="#9b9e8a"><path d="M-63-15Q0-38 65-15V17Q0-1-63 17Z" fill="#d7d7be"/><path d="M-63 2Q0-22 65 2M-63-15Q0-38 65-15" fill="none" stroke-width="4"/>${[-60,-40,-20,0,20,40,60].map((N)=>`<path d="M${
+N}
+ -14v-17" stroke-width="4"/>`).join("")}</g>
+${$}
+<g fill="#899275" font-family="serif" font-size="19" letter-spacing="5" opacity=".85"><text x="930" y="160">溪 畔</text><text x="1550" y="650">东 坊</text><text x="600" y="1110">南 林</text><text x="1600" y="1680">远 郊</text></g>`,z4}function Xz(){return`<svg id="townMini" viewBox="0 0 2400 1800" aria-label="点击舆图定位地图" role="img"><rect width="2400" height="1800" fill="#e3e5ce"/><path d="${
+s5}
+" fill="none" stroke="#8eb4ac" stroke-width="135"/><g fill="#a9af91">${B5.map(($)=>`<rect x="${
+$.x*12-30}
+" y="${
+$.y*10-25}
+" width="60" height="50" rx="3"/>`).join("")}</g><path d="M480 400H2350M480 400V1700M1060 400V1700M200 1310H2330" stroke="#f8efd7" stroke-width="25" fill="none"/><rect id="miniViewport" x="300" y="100" width="600" height="750" fill="#fff" fill-opacity=".08" stroke="#a35643" stroke-width="20"/></svg>`}var a5=2400,n5=1800;function l3($){if(Array.isArray($.projects))return $.projects;return $.project?[$.project]:[]}function o5($,Z=""){return`<g class="map-label"><rect x="-64" y="-15" width="128" height="26" rx="13"/><text y="3">${D($)}${Z?` · ${D(Z)}`:""}</text></g>`}function u3($,Z,z,N,M,Q){return`<g class="map-site static-site ${
+$}
+${
+Q?" selected":""}
+" data-site="${
+$}
+" role="button" tabindex="0" aria-label="查看${
+D(Z)}
+" transform="translate(${
+z}
+ ${
+N}
+)">
+    <ellipse class="map-hit" cx="0" cy="0" rx="74" ry="61"/>${M}${Q?o5(Z):""}
+  </g>`}function z_($){let Z=`<g class="granary-art ink-site">${M4("granary",1.05)}</g>`,z=`<g class="houses-art ink-site">
+    <g transform="translate(-34 6) scale(.62)">${M4("housing",1)}</g>
+    <g transform="translate(30 12) scale(.52)">${M4("housing",1)}</g>
+  </g>`,N=`<g class="well-art ink-site">${fz()}</g>`;return[`<g class="map-site static-site field${
+$.selectedSite==="field"?" selected":""}
+" data-site="field" role="button" tabindex="0" aria-label="查看镇有麦田"><ellipse class="map-hit" cx="270" cy="250" rx="205" ry="145"/>${$.selectedSite==="field"?`<g transform="translate(270 135)">${o5("镇有麦田")}</g>`:""}</g>`,u3("granary","共用粮仓",550,284,Z,$.selectedSite==="granary"),u3("houses","村舍",779,349,z,$.selectedSite==="houses"),u3("well","古井",502,380,N,$.selectedSite==="well")].join("")}function N_($,Z){let z=$.x*12,N=$.y*10,M=$.feature==="salt_mine",Q=M?'<path class="resource-rock" d="M-20 8-12-10-2-15 10-9 20 8 11 15-14 15Z"/><path class="resource-vein" d="m-8 4 8-12 8 15m-14-1h12"/>':'<path class="resource-log" d="M-22-3h31l12 5v10H-10l-12-5Z"/><ellipse class="resource-log-end" cx="-22" cy="2" rx="5" ry="7"/><path class="resource-sapling" d="M14-2v-19m0 7-8-7m8 11 8-9"/>',_=M?"盐矿资源点":"伐木资源点";return'<g class="map-site resource-site '+(M?"salt":"forest")+(Z?" selected":"")+'" data-site="resource:'+D($.id)+'" role="button" tabindex="0" aria-label="查看'+_+'" transform="translate('+z+" "+N+')"><ellipse class="map-hit" cx="0" cy="2" rx="48" ry="38"/>'+Q+(Z?o5(_):"")+"</g>"}function M_(){return`<g class="villagers" aria-hidden="true">${[{x:456,y:467,cls:"walker-one",coat:"#5e6c53"},{x:647,y:445,cls:"walker-two",coat:"#9a5742"},{x:811,y:470,cls:"walker-three",coat:"#4f7480"},{x:621,y:484,cls:"walker-four",coat:"#b08945"}].map((Z)=>`<g class="villager ${
+Z.cls}
+" transform="translate(${
+Z.x}
+ ${
+Z.y}
+)"><g class="villager-walk"><circle class="villager-head" r="6" cy="-8"/><path class="villager-coat" d="M-6-3Q0-8 6-3l4 16H-10Z" fill="${
+Z.coat}
+"/><path class="villager-leg" d="M-3 12-5 20m8-8 3 8"/><path class="villager-bundle" d="M6-1q8 0 7 10H7Z"/></g></g>`).join("")}</g>`}function Gz($){return["ready","limited_materials"].includes($.status?.status)?"working":"idle"}function Q_($,Z,z){let N=(Number.isFinite($.x)?$.x:Z.x)*12,M=(Number.isFinite($.y)?$.y:Z.y)*10,Q=Gz($),_=$.jobs.reduce((f,O)=>f+O.workers,0);return`<g class="map-site production-site ${
+$.typeId}
+ ${
+Q}
+${
+z?" selected":""}
+" data-site="building:${
+D($.id)}
+" data-building-id="${
+D($.id)}
+" role="button" tabindex="0" aria-label="查看${
+D($.name)}
+，${
+D($.status.label)}
+" transform="translate(${
+N}
+ ${
+M}
+)">
+    <ellipse class="map-hit" cx="0" cy="0" rx="56" ry="58"/><ellipse class="site-halo" cx="0" cy="17" rx="62" ry="45"/>
+    ${N4($.typeId,{level:$.level,scale:1})}<circle class="status-dot" cx="43" cy="-44" r="8"/>${z?`<text class="worker-count" x="0" y="60">${V(_)}工</text>`:""}
+    ${z?o5($.name,$.status.label):""}
+  </g>`}function __($,Z,z){if(!$||!Z)return"";let N=Z.x*12,M=Z.y*10,Q=339*(1-($.percent||0)/100),_=$.kind==="upgrade"?`building:${$.buildingId}`:`project:${$.instanceId}`,f=$.kind==="upgrade"?`${$.name}扩建中`:`${$.name}施工中`;return`<g class="map-site project-site selected${
+$.kind==="upgrade"?" upgrade-site":""}
+" data-site="${
+D(_)}
+" data-project-id="${
+D($.instanceId)}
+" role="button" tabindex="0" aria-label="查看${
+D(f)}
+ ${
+V($.percent,0)}
+%" transform="translate(${
+N}
+ ${
+M}
+)">
+    <ellipse class="map-hit" cx="0" cy="0" rx="58" ry="60"/><ellipse class="worksite-ground" cx="0" cy="17" rx="59" ry="39"/>
+    ${$.kind==="upgrade"?"":N4($.typeId,{status:"construction",progress:($.percent||0)/100})}<circle class="project-ring" cx="0" cy="15" r="54" stroke-dasharray="339" stroke-dashoffset="${
+Q}
+"/>
+    <text class="project-tag" x="0" y="76">${$.kind==="upgrade"?"扩建":"营造中"} ${V($.percent,0)}%</text>${z?o5($.name,$.kind==="upgrade"?"扩建中":"营造中"):""}
+  </g>`}function f_($,Z){let z=$.x*12,N=$.y*10;return`<g class="plot-target${
+Z?" preview":""}
+" data-plot="${
+D($.id)}
+" role="button" tabindex="0" aria-label="选择${
+D($.label)}
+开工" transform="translate(${
+z}
+ ${
+N}
+)">
+    <ellipse class="plot-hit" cx="0" cy="0" rx="53" ry="44"/><ellipse class="plot-outline" cx="0" cy="0" rx="53" ry="41"/>
+    <path class="plot-cross" d="M-9 0h18M0-9v18"/><text class="plot-name" x="0" y="58">${D($.label)}</text>
+  </g>`}function Yz($,Z){let z=Z.activePanel==="build"&&Z.buildType,N=Z.selectedSite,M=$.buildings.map((X)=>{let q=$.plots.find((J)=>J.id===X.plotId)||X;return Q_(X,q,N===`building:${X.id}`)}).join(""),Q=l3($),_=new Set($.buildings.map((X)=>X.plotId));for(let X of Q)_.add(X.plotId);let f=z?$.constructionOptions.find((X)=>X.id===Z.buildType):null,O=z?$.plots.filter((X)=>!_.has(X.id)&&(!f?.allowedPlotIds||f.allowedPlotIds.includes(X.id))).map((X)=>f_(X,X.id===Z.previewPlotId)).join(""):"",Y=!z?$.plots.filter((X)=>X.feature).map((X)=>N_(X,N==="resource:"+X.id)).join(""):"",G=Q.map((X)=>{let q=$.plots.find((F)=>F.id===X.plotId),J=N===`project:${X.instanceId}`||X.kind==="upgrade"&&N===`building:${X.buildingId}`;return __(X,q,J||!N)}).join("");return`<svg class="world-map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${
+a5}
+ ${
+n5}
+" role="img" aria-label="麦乡俯视地图" data-season="${
+$.season.key}
+" data-paused="${
+$.paused}
+">
+    ${Oz()}<g class="static-sites">${z_($)}${Y}</g><g class="walker-layer">${M_()}</g>
+    <g class="buildings-layer">${G}${M}</g><g class="build-sites" style="display:${
+z?"":"none"}
+">${O}</g>
+    <g class="north-mark" transform="translate(1130 95)"><path d="M0 22V-12m0 0-8 13 8-4 8 4Z"/><text y="39">北</text></g>
+  </svg>`}function qz($,Z){let z=Z.activePanel==="build"&&Z.buildType,N=$.buildings.map((Q)=>[Q.id,Q.typeId,Q.plotId,Q.level||1,Q.status?.status||"",Q.status?.label||"",Gz(Q),Q.jobs.map((_)=>`${_.id}:${_.workers}:${_.capacity}`).join(":")].join(",")).join("|"),M=l3($).map((Q)=>[Q.instanceId,Q.kind||"build",Q.buildingId||"",Q.typeId,Q.plotId,Q.workDone??"",Q.workRequired??"",Number(Q.percent||0).toFixed(3)].join(":")).join("|");return[$.season.key,N,M,Z.selectedSite||"",z||"",z?Z.previewPlotId||"":""].join(";
+")}function Jz($,Z){let z=$.querySelector(".world-map");if(!z)return;z.dataset.paused=String(Z.paused);let N=new Map(l3(Z).map((M)=>[M.kind==="upgrade"?`building:${M.buildingId}`:`project:${M.instanceId}`,M]));for(let M of z.querySelectorAll(".project-site[data-site]")){let Q=N.get(M.dataset.site);if(!Q)continue;let _=M.querySelector(".project-ring");if(_)_.setAttribute("stroke-dashoffset",String(339*(1-(Q.percent||0)/100)));let f=M.querySelector(".project-tag");if(f)f.textContent=`${Q.kind==="upgrade"?"扩建":"营造中"} ${V(Q.percent,0)}%`}}function Wz(){return`<details class="town-minimap" open><summary>舆图 <span>⌃</span></summary>${Xz()}</details>`}var Fz=`<main class="shell">
+  <header class="hud">
+    <div class="resource-bar" aria-label="小镇资源">
+      <button class="resource-pill" data-resource="residents" aria-label="查看小镇人口"><span class="resource-icon">${T1("people")}</span><span>人口 <b id="populationStat">1,000</b></span></button>
+      <button class="resource-pill" data-resource="residents" aria-label="查看待业人数"><span class="resource-icon idle-icon">${T1("idle")}</span><span>待业 <b id="idleStat">200</b></span></button>
+      <button class="resource-pill" data-resource="business" aria-label="查看居民口粮"><span class="resource-icon grain-icon">${T1("grain")}</span><span>居民 <b id="residentStat">73万</b></span></button>
+      <button class="resource-pill" data-resource="business" aria-label="查看镇库储备"><span class="resource-icon store-icon">${T1("store")}</span><span>镇库 <b id="townStat">73万</b></span></button>
+    </div>
+    <div class="time-row">
+      <div class="date-block" aria-live="polite"><div class="brand-title">麦乡 <span>镇务簿</span></div><strong id="dateLabel">第1年 · 春 · 第1天</strong><span id="timeLabel">时光暂停</span></div>
+      <div class="time-controls" role="group" aria-label="日期与时光速度">
+        <button id="pauseBtn" class="time-button selected" aria-pressed="true" aria-label="暂停">${T1("pause")}<span>停</span></button>
+        <button data-speed="1" class="time-button" aria-pressed="false" aria-label="1倍速度">1×</button>
+        <button data-speed="4" class="time-button" aria-pressed="false" aria-label="4倍速度">4×</button>
+        <button data-speed="16" class="time-button" aria-pressed="false" aria-label="16倍速度">16×</button>
+        <button id="settingsBtn" class="time-button settings-button" aria-label="设置">${T1("settings")}</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="game-frame" aria-label="麦乡镇务">
+    <section class="map-stage" id="mapStage" data-season="spring" role="region" aria-label="可拖动和缩放的麦乡俯视地图">
+      <div class="map-world" id="mapWorld"></div>
+      ${Wz()}
+      <div class="map-topline">
+        <span class="season-ribbon" id="fieldSign"><span class="season-dot"></span><b>春 · 麦苗返青</b></span>
+        <span class="map-ribbon">秋收预估 <b id="forecastMap">1,600,000斤</b><i></i> 口粮可吃 <b id="daysMap">365天</b></span>
+      </div>
+      <details class="econ-mini" id="econMini"><summary id="econSummary">经济</summary><div class="econ-body" id="econBody"></div></details>
+      <div class="map-hint" id="mapHint">点田地、粮仓或作坊查看</div>
+      <div class="map-zoom" role="group" aria-label="地图缩放">
+        <button data-map-zoom="1" aria-label="放大地图">＋</button><button data-map-reset aria-label="复位地图">${T1("reset")}</button><button data-map-zoom="-1" aria-label="缩小地图">−</button>
+      </div>
+      <div class="event-float" id="eventFloat"><button id="eventToggle" class="event-toggle" aria-expanded="false">镇上近事 <span id="latestEvent">新任镇长上任</span></button><button class="event-close" id="eventClose" aria-label="收起事件">${T1("close")}</button><div class="event-history" id="eventHistory" hidden></div></div>
+      <aside class="panel-surface" id="panelSurface" data-panel-surface hidden aria-label="镇务面板">
+        <div class="panel-grip" aria-hidden="true"><span></span></div>
+        <div class="panel-heading"><span class="panel-kicker" id="panelKicker">镇务</span><button id="panelClose" class="panel-close" aria-label="关闭面板">${T1("close")}</button></div>
+        <div class="panel" id="panel" aria-live="polite"></div>
+      </aside>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+    <nav class="bottom-nav" aria-label="镇务入口">
+      <button class="tab" data-panel="build">${T1("build")}<span>建设</span></button>
+      <button class="tab" data-panel="residents">${T1("residents")}<span>镇民</span></button>
+      <button class="tab" data-panel="business">${T1("market")}<span>经营</span></button>
+      <button class="tab" data-panel="policy">${T1("policy")}<span>政策</span></button>
+    </nav>
+  </section>
+</main>`;var O_=0.42,X_=1.55,Vz=Object.freeze({x:560,y:470});function xz($,Z){let z=$.x-Z.x,N=$.y-Z.y;return Math.hypot(z,N)}function Lz($,Z){return{x:($.x+Z.x)/2,y:($.y+Z.y)/2}}function Kz($,Z){let z=new Map,N=1,M=0,Q=0,_=null,f=!1,O=null,Y=0,G=0,X=!1,q=!1;function J(H){return Math.max(O_,Math.min(X_,H))}function F(){let{clientWidth:H,clientHeight:k}=$,S=a5*N,w=n5*N,s=Math.min(0,H-S),c=Math.max(0,(H-S)/2),o=Math.min(0,k-w),Q0=Math.max(0,(k-w)/2);M=Math.max(s,Math.min(c,M)),Q=Math.max(o,Math.min(Q0,Q))}function W(){if(q)return;F(),Z.style.transform=`translate3d(${M}px, ${Q}px, 0) scale(${N})`;let H=document.getElementById("miniViewport");if(H)H.setAttribute("x",-M/N),H.setAttribute("y",-Q/N),H.setAttribute("width",$.clientWidth/N),H.setAttribute("height",$.clientHeight/N)}function K(){if(!$.clientWidth||!$.clientHeight)return;let H=$.clientWidth/a5,k=$.clientHeight/n5;N=J(Math.max(H*0.94,k*0.92)),M=$.clientWidth/2-Vz.x*N,Q=$.clientHeight/2-Vz.y*N,X=!0,W()}function L(H,k){let S=$.getBoundingClientRect();return{x:H-S.left,y:k-S.top}}function x(H,k){let S=k||{x:$.clientWidth/2,y:$.clientHeight/2},w=(S.x-M)/N,s=(S.y-Q)/N;N=J(H),Y=0,G=0,M=S.x-w*N,Q=S.y-s*N,W()}function R(H,k){x(N*(H>0?1.2:0.8333333333333334),k)}function C(){K(),z.clear(),_=null,Y=0,G=0}function B(H){try{$.setPointerCapture(H)}catch{}}function I(H){if(H.target.closest?.("button, input, [data-panel-surface]")&&!H.target.closest?.("[data-plot], [data-site]"))return;let k=L(H.clientX,H.clientY);if(z.set(H.pointerId,k),$.classList.add("map-drag-ready"),z.size===1){Y=0,G=0,_={mode:"pan",pointerId:H.pointerId,start:k,last:k,originX:M,originY:Q,moved:!1};return}if(z.size>=2){let S=Array.from(z.values()).slice(0,2),w=Lz(S[0],S[1]);_={mode:"pinch",center:w,distance:Math.max(1,xz(S[0],S[1])),scale:N,worldX:(w.x-M)/N,worldY:(w.y-Q)/N,moved:!1},Y=0,G=0;for(let s of z.keys())B(s)}}function T(H){if(!z.has(H.pointerId))return;let k=L(H.clientX,H.clientY);if(z.set(H.pointerId,k),!_)return;if(_.mode==="pinch"&&z.size>=2){let S=Array.from(z.values()).slice(0,2),w=Lz(S[0],S[1]);N=J(_.scale*xz(S[0],S[1])/_.distance),M=w.x-_.worldX*N,Q=w.y-_.worldY*N,_.moved=!0,H.preventDefault(),$.classList.add("is-dragging"),W();return}if(_.mode==="pan"&&_.pointerId===H.pointerId){let S=k.x-_.start.x,w=k.y-_.start.y;if(!_.moved&&Math.hypot(S,w)<5)return;_.moved=!0,Y=Math.max(-34,Math.min(34,k.x-_.last.x)),G=Math.max(-34,Math.min(34,k.y-_.last.y)),_.last=k,B(H.pointerId),M=_.originX+S,Q=_.originY+w,H.preventDefault(),$.classList.add("is-dragging"),W()}}function b(){f=!0,clearTimeout(O),O=setTimeout(()=>{f=!1},350)}function y(H){let k=Boolean(_?.moved);z.delete(H.pointerId);try{$.releasePointerCapture(H.pointerId)}catch{}if(k)b();if(z.size===1){let[S,w]=z.entries().next().value;_={mode:"pan",pointerId:S,start:w,last:w,originX:M,originY:Q,moved:!1},Y=0,G=0}else if(_=null,k&&H.pointerType==="touch"&&z.size===0&&Math.abs(Y)<1&&Math.abs(G)<1)Y=0,G=0;if(!z.size)$.classList.remove("is-dragging","map-drag-ready")}function j(H){H.preventDefault();let k=L(H.clientX,H.clientY);x(N*(H.deltaY<0?1.1:0.9090909090909091),k)}$.addEventListener("pointerdown",I),$.addEventListener("pointermove",T,{passive:!1}),$.addEventListener("pointerup",y),$.addEventListener("pointercancel",y),$.addEventListener("wheel",j,{passive:!1});let l=document.getElementById("townMini");function e(H){let k=l.getBoundingClientRect();if(!k.width||!k.height)return;M=$.clientWidth/2-(H.clientX-k.left)/k.width*a5*N,Q=$.clientHeight/2-(H.clientY-k.top)/k.height*n5*N,Y=0,G=0,W()}if(l)l.addEventListener("click",e);let u=new ResizeObserver(()=>{if(!X)K();else W()});return u.observe($),K(),{zoomBy:R,reset:C,step(){if(q||z.size||Math.abs(Y)<0.22&&Math.abs(G)<0.22)return Y=Math.abs(Y)<0.22?0:Y,G=Math.abs(G)<0.22?0:G,!1;let H=M+Y,k=Q+G;if(M=H,Q=k,F(),M!==H)Y=0;else Y*=0.88;if(Q!==k)G=0;else G*=0.88;return W(),!0},consumeSuppressedClick(){if(!f)return!1;return f=!1,clearTimeout(O),!0},destroy(){if(q=!0,u.disconnect(),clearTimeout(O),l)l.removeEventListener("click",e);$.removeEventListener("pointerdown",I),$.removeEventListener("pointermove",T),$.removeEventListener("pointerup",y),$.removeEventListener("pointercancel",y),$.removeEventListener("wheel",j)}}}var G_=new Set(["build","residents","business","policy","settings"]);function Dz($){return $?.activePanel==="build"&&Boolean($.buildType)&&!$.previewPlotId}function Bz(){let $={activePanel:null,selectedSite:null,buildType:null,previewPlotId:null,returnPanel:null,eventsExpanded:!1,eventsDismissed:!1};function Z(){$.buildType=null,$.previewPlotId=null}return{state:$,openPanel(z,N=!1){if(!G_.has(z))return;if(N&&$.activePanel===z){$.activePanel=null,$.selectedSite=null,Z();return}if($.activePanel=z,$.selectedSite=null,$.returnPanel=null,z!=="build")Z();else $.previewPlotId=null},openSite(z){$.returnPanel=$.activePanel,$.activePanel="site",$.selectedSite=z,Z()},backFromSite(){$.activePanel=$.returnPanel||null,$.returnPanel=null,$.selectedSite=null},closePanel(){$.activePanel=null,$.selectedSite=null,$.returnPanel=null,Z()},chooseBuild(z){$.activePanel="build",$.selectedSite=null,$.buildType=z,$.previewPlotId=null,$.returnPanel=null},choosePlot(z){if($.activePanel==="build"&&$.buildType)$.previewPlotId=z},reselectBuildPlot(){if($.activePanel==="build"&&$.buildType)$.previewPlotId=null},cancelBuild(){Z()},finishBuild(){Z(),$.activePanel="build",$.selectedSite=null},revealEvents(){$.eventsDismissed=!1},dismissEvents(){$.eventsDismissed=!0,$.eventsExpanded=!1},resetView(){$.activePanel=null,$.selectedSite=null,$.returnPanel=null,$.eventsExpanded=!1,$.eventsDismissed=!1,Z()}}}class Rz{constructor(){this.ctx=null,this.isMuted=!1,this.masterGain=null}init(){if(!this.ctx){let $=window.AudioContext||window.webkitAudioContext;if($)this.ctx=new $,this.masterGain=this.ctx.createGain(),this.masterGain.gain.setValueAtTime(0.22,this.ctx.currentTime),this.masterGain.connect(this.ctx.destination)}if(this.ctx&&this.ctx.state==="suspended")this.ctx.resume().catch(()=>{})}restorePreference($=globalThis.localStorage){try{this.isMuted=$?.getItem("maixiang.ui.soundMuted.v1")==="true"}catch{this.isMuted=!1}return this.isMuted}setMuted($,Z=!0){if(this.isMuted=$,this.masterGain&&this.ctx)this.masterGain.gain.setValueAtTime($?0:0.22,this.ctx.currentTime);if(!$)this.init();if(Z)try{globalThis.localStorage?.setItem("maixiang.ui.soundMuted.v1",String($))}catch{}return this.isMuted}toggleMute(){return this.setMuted(!this.isMuted)}destroy(){let $=this.ctx;if(this.ctx=null,this.masterGain=null,$&&$.state!=="closed")$.close().catch(()=>{})}playBuild(){if(this.isMuted)return;if(this.init(),!this.ctx)return;let $=this.ctx.currentTime,Z=this.ctx.createOscillator(),z=this.ctx.createGain();Z.type="sine",Z.frequency.setValueAtTime(140,$),Z.frequency.exponentialRampToValueAtTime(42,$+0.16),z.gain.setValueAtTime(0.7,$),z.gain.exponentialRampToValueAtTime(0.001,$+0.22),Z.connect(z),z.connect(this.masterGain),Z.start($),Z.stop($+0.22);let N=this.ctx.createOscillator(),M=this.ctx.createGain();N.type="triangle",N.frequency.setValueAtTime(320,$),N.frequency.exponentialRampToValueAtTime(90,$+0.08),M.gain.setValueAtTime(0.3,$),M.gain.exponentialRampToValueAtTime(0.001,$+0.09),N.connect(M),M.connect(this.masterGain),N.start($),N.stop($+0.09)}playHarvest(){if(this.isMuted)return;if(this.init(),!this.ctx)return;let $=this.ctx.currentTime,Z=0.25,z=this.ctx.sampleRate*Z,N=this.ctx.createBuffer(1,z,this.ctx.sampleRate),M=N.getChannelData(0);for(let O=0;O<z;O++)M[O]=Math.random()*2-1;let Q=this.ctx.createBufferSource();Q.buffer=N;let _=this.ctx.createBiquadFilter();_.type="bandpass",_.frequency.setValueAtTime(1200,$),_.frequency.exponentialRampToValueAtTime(600,$+Z),_.Q.setValueAtTime(3,$);let f=this.ctx.createGain();f.gain.setValueAtTime(0.01,$),f.gain.linearRampToValueAtTime(0.35,$+0.06),f.gain.exponentialRampToValueAtTime(0.001,$+Z),Q.connect(_),_.connect(f),f.connect(this.masterGain),Q.start($),Q.stop($+Z)}playCoin(){if(this.isMuted)return;if(this.init(),!this.ctx)return;let $=this.ctx.currentTime;[1760,2637].forEach((Z,z)=>{let N=this.ctx.createOscillator(),M=this.ctx.createGain();N.type="sine",N.frequency.setValueAtTime(Z,$+z*0.05),M.gain.setValueAtTime(0.2,$+z*0.05),M.gain.exponentialRampToValueAtTime(0.001,$+z*0.05+0.3),N.connect(M),M.connect(this.masterGain),N.start($+z*0.05),N.stop($+z*0.05+0.3)})}playClick(){if(this.isMuted)return;if(this.init(),!this.ctx)return;let $=this.ctx.currentTime,Z=this.ctx.createOscillator(),z=this.ctx.createGain();Z.type="sine",Z.frequency.setValueAtTime(750,$),Z.frequency.exponentialRampToValueAtTime(450,$+0.04),z.gain.setValueAtTime(0.18,$),z.gain.exponentialRampToValueAtTime(0.001,$+0.04),Z.connect(z),z.connect(this.masterGain),Z.start($),Z.stop($+0.04)}playChime(){if(this.isMuted)return;if(this.init(),!this.ctx)return;let $=this.ctx.currentTime;[523.25,659.25,783.99].forEach((z,N)=>{let M=this.ctx.createOscillator(),Q=this.ctx.createGain();M.type="sine",M.frequency.setValueAtTime(z,$+N*0.06),Q.gain.setValueAtTime(0.15,$+N*0.06),Q.gain.exponentialRampToValueAtTime(0.001,$+N*0.06+0.4),M.connect(Q),Q.connect(this.masterGain),M.start($+N*0.06),M.stop($+N*0.06+0.4)})}}var a1=new Rz;function Ez($){let Z=null,z="",N=0,M=!1;return{show(Q,_=2600,f="info"){if(M||!$)return;let O=String(Q??""),Y=Date.now();if(O===z&&Y-N<500)return;z=O,N=Y,$.textContent=O,$.dataset.kind=f,$.classList.add("show"),clearTimeout(Z),Z=setTimeout(()=>$.classList.remove("show"),_)},destroy(){M=!0,clearTimeout(Z),Z=null,$?.classList.remove("show")}}}var Y_=/^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)$/;function p3($,Z={}){let z=Z.label||"数值",N=String($??"").trim();if(!N)return{ok:!1,reason:`请输入${z}。`};if(!Y_.test(N))return{ok:!1,reason:`${z}格式不正确，请输入数字。`};let M=Number(N.replace(",","."));if(!Number.isFinite(M))return{ok:!1,reason:`${z}必须是有限数值。`};if(Z.integer&&!Number.isInteger(M))return{ok:!1,reason:`${z}必须是整数。`};if(Z.positive&&M<=0)return{ok:!1,reason:`${z}必须大于0。`};if(Z.minimum!==void 0&&M<Z.minimum)return{ok:!1,reason:`${z}不能小于${Z.minimum}。`};if(Z.maximum!==void 0&&M>Z.maximum)return{ok:!1,reason:`${z}不能超过${Z.maximum}。`};return{ok:!0,value:M}}function Hz($,Z){return Boolean($&&Z&&$.contains(Z)&&Z.matches("[data-draft-key]"))}function Az($){return $==="wage"||$==="company-wage"}function h0($,Z){let z=String(Z.key),N=$.numericDrafts?.[z],M=N?N.value:String(Z.value??""),Q=Boolean(Z.disabled),_=['type="text"',`inputmode="${
+Z.integer?"numeric":"decimal"}
+"`,'enterkeyhint="done"','autocomplete="off"','spellcheck="false"',`value="${
+D(M)}
+"`,`aria-label="${
+D(Z.label)}
+"`,`data-draft-key="${
+D(z)}
+"`,`data-draft-kind="${
+D(Z.kind)}
+"`,`data-draft-target="${
+D(Z.target)}
+"`,`data-draft-label="${
+D(Z.label)}
+"`,`data-draft-minimum="${
+Z.minimum??0}
+"`,`data-draft-integer="${
+Boolean(Z.integer)}
+"`,`data-draft-positive="${
+Boolean(Z.positive)}
+"`];if(Z.maximum!==void 0)_.push(`data-draft-maximum="${
+Z.maximum}
+"`);if(Q)_.push("disabled");if(N?.error)_.push('aria-invalid="true"');let f=Z.confirmLabel||"确认";return`<div class="number-editor ${
+D(Z.className||"")}
+">
+    <div class="number-editor-control"><input ${_.join(" ")}><button type="button" class="draft-confirm" data-draft-commit="${
+D(z)}
+" aria-label="确认${
+D(Z.label)}
+" ${Q?"disabled":""}>${D(f)}</button></div>
+    <span class="input-error" data-draft-error="${
+D(z)}
+" aria-live="polite" ${N?.error?"":"hidden"}>${D(N?.error||"")}</span>
+  </div>`}function Tz($){return($||[]).filter((Z)=>Z.missing>0).map((Z)=>`还缺${V(Z.missing)}${D(Z.name)}`).join("、")}function q_($){if(!$.materials?.length)return"无需材料";return $.materials.map((Z)=>{let z=Z.marketPurchasable>0?` · 企业可购${V(Z.marketPurchasable)}${D(Z.unit)}`:"",N=Z.missing>0?` · 还缺${V(Z.missing)}${D(Z.unit)}`:"";return`${D(Z.name)} ${V(Z.required)}${D(Z.unit)}（现有${V(Z.available)}${z}${N}）`}).join("<br>")}function J_($,Z,z,N){let M=$.project,Q=M?`施工中 ${V($.pendingCount)}处 · ${i5(M.workDone/M.workRequired*100)}`:$.count+$.pendingCount>=$.maxInstances?`${V($.count)}座 · 已达上限`:$.availablePlotCount<=0?`${V($.count)}座 · 无可用资源地`:`${V($.count)}座 · 可建`,_=Z===$.id,f=$.jobs.map((G)=>`${D(G.name)} ${V(G.slots)}人 · 日薪${V(z[G.id]??G.wagePerWorkerDay??10,1)}${N}`).join("<br>"),O=$.requiredPlotFeature?$.requiredPlotFeature==="salt_mine"?"盐矿资源点":"南部森林资源点":"任一空地",Y=Tz($.materials);return`<div class="building-option${
+_?" chosen":""}
+">
+    <div class="row"><div class="building-title"><svg class="building-symbol" viewBox="0 0 100 110" aria-hidden="true">${Qz($.id,"idle")}</svg><div><b>${D($.name)}</b><small>${D($.description)}</small></div></div><span class="badge">${Q}</span></div>
+    <div class="row build-key-row"><span class="label">预计工期 / 工资</span><strong class="value">${$.waitingForWorkers?`等待用工 / 0${N}`:`约${V($.constructionCrewDays)}天 / ${V($.estimatedWageJin)}${N}`}</strong></div>
+    <div class="subtle"><b>材料：</b>${q_($)}${Y?`<br><span class="text-danger">${Y}</span>`:""}</div>
+    <details class="detail-block" data-detail-key="build:${
+D($.id)}
+"><summary>施工与岗位</summary><div class="detail-body"><div class="row"><span class="label">选址</span><strong class="value">${O}</strong></div><div class="row"><span class="label">施工量</span><strong class="value">${V($.workDays)}工日</strong></div><div class="subtle">${f}</div></div></details>
+    ${M?`<div class="meter"><span style="width:${
+i5(M.workDone/M.workRequired*100)}
+"></span></div><div class="subtle">在建${V($.pendingCount)}处 · 建筑工${V(M.workers)}人 · ${M.estimatedDays?`预计${V(M.estimatedDays)}天完工`:"缺建筑工"}</div>`:`<button class="${
+_?"secondary":"primary"}
+ choose-build" data-build="${
+D($.id)}
+" ${$.unavailable?"disabled":""}>${$.count+$.pendingCount>=$.maxInstances?"已达数量上限":$.availablePlotCount<=0?"资源地块已占用":_?"取消选址":"选择地块"}</button>`}
+  </div>`}function W_($,Z,z){let N=`project-workers:${$.instanceId}`,M=$.workRequired?$.workDone/$.workRequired*100:0,Q=$.kind==="upgrade"?"扩建":"新建";return`<div class="cardlet project-card" data-project-card="${
+D($.instanceId)}
+">
+    <div class="row"><span class="label">${D($.name)} · ${Q}</span><strong class="value">${i5(M)}</strong></div>
+    <div class="meter"><span style="width:${
+i5(M)}
+"></span></div>
+    <div class="row"><span class="label">投入建筑工</span><strong class="value">${V($.workers)}人</strong></div>
+    <div class="row"><span class="label">预计剩余工期 / 工资</span><strong class="value">${$.estimatedDays?`约${V($.estimatedDays)}天 / 约${V($.estimatedWageJin)}${D(z)}`:"缺建筑工"}</strong></div>
+    <div class="site-worker-actions"><button class="step-btn" data-project-step="${
+D($.instanceId)}
+" data-step="-1" aria-label="减少${
+D($.name)}
+建筑工" ${$.workers<=0?"disabled":""}>−</button>${h0(Z,{key:N,kind:"project-workers",target:$.instanceId,value:$.workers,label:`${$.name}投入建筑工人数`,integer:!0,minimum:0,maximum:Z.labor.idle+$.workers,confirmLabel:"✓",className:"worker-editor site-worker-editor"})}<button class="step-btn" data-project-step="${
+D($.instanceId)}
+" data-step="1" aria-label="增加${
+D($.name)}
+建筑工" ${Z.labor.idle<=0?"disabled":""}>＋</button></div>
+  </div>`}function Cz($){let Z=w0($),z=$.selectedBuild,N=z&&$.selectedPlot?$.constructionOptions.find((f)=>f.id===z):null;if(N&&$.selectedPlot){let f=N.materials?.length?N.materials.map((Y)=>`<div class="build-confirm-material${
+Y.missing>0?" missing":""}
+"><div><strong>${D(Y.name)}</strong><span>需要${V(Y.required)}${D(Y.unit)} · 现有${V(Y.available)}${D(Y.unit)}${Y.marketPurchasable>0?` · 企业可购${V(Y.marketPurchasable)}${D(Y.unit)}（约${V(Y.marketCostVoucher,2)}${Z}）`:""}</span></div><b>${Y.missing>0?`还缺${V(Y.missing)}${D(Y.unit)}`:"已备齐"}</b></div>`).join(""):'<div class="build-confirm-material"><div><strong>材料</strong><span>无需材料</span></div><b>已备齐</b></div>',O=Tz(N.materials);return`<div class="build-confirm-page">
+      <h2>${D(N.name)} · 开工确认</h2>
+      <div class="cardlet build-confirm-card">
+        <div class="row"><span class="label">地块</span><strong class="value">${D($.selectedPlot.label)}</strong></div>
+        <div class="row"><span class="label">预计工期</span><strong class="value">${N.waitingForWorkers?"等待用工":`约${V(N.constructionCrewDays)}天`}</strong></div>
+        <div class="row"><span class="label">预计工资</span><strong class="value">${N.waitingForWorkers?"等待用工后计算":`约${V(N.estimatedWageJin)}${Z}`}</strong></div>
+      </div>
+      <div class="cardlet build-confirm-card">
+        <div class="setting-title">所需材料</div>
+        <div class="build-confirm-materials">${f}</div>
+        ${O?`<div class="notice notice-error build-material-shortage">${O}</div>`:'<div class="subtle">材料已备齐。</div>'}
+      </div>
+      <div class="build-confirm-actions" data-build-confirm-actions>
+        <button class="secondary" data-cancel-build>重新选址</button>
+        <button class="primary" data-start-building ${N.materialsAffordable?"":"disabled"}>确认开工</button>
+      </div>
+    </div>`}let M=z?`<div class="notice">已选${D($.constructionOptions.find((f)=>f.id===z)?.name||"建筑")}，请点地图上的可用地块。</div>`:"",Q=$.buildings.map((f)=>`<button class="secondary" data-open-building="${
+D(f.id)}
+">${D(f.name)} · ${V(f.level||1)}级</button>`).join(""),_=($.projects||[]).length?`<div class="cardlet"><div class="setting-title">在建工程 · ${V($.projects.length)}处</div><div class="subtle">可同时推进多个工程；每个工程各自投入建筑工，工人不足的工程原地等待。</div>${$.projects.map((f)=>W_(f,$,Z)).join("")}</div>`:"";return`<h2>建设</h2>
+    ${Q?`<div class="cardlet"><div class="setting-title">已有建筑</div><div class="site-actions">${Q}</div></div>`:""}
+    ${_}
+    ${M}
+    ${$.constructionOptions.map((f)=>J_(f,z,$.wageRates,Z)).join("")}
+    <details class="detail-block" data-detail-key="production-recipes"><summary>生产方式</summary><div class="detail-body"><div class="subtle">磨坊：100斤小麦→80斤面粉。面包房：100斤面粉→120斤面包。</div></div></details>`}function F_($,Z,z){let N=w0($),M=Z.capacity<=0,Q=`workers:${Z.key}`,_=Z.roleId==="farmers"?Z.targetCount??Z.count:Z.count,f=h0($,{key:Q,kind:"employment",target:Z.key,value:_,label:`${Z.name}人数`,integer:!0,minimum:0,maximum:Z.maxAssignable,disabled:M,confirmLabel:"✓",className:"worker-editor"}),O=Z.roleId==="farmers"?'<span class="badge">秋收分粮</span>':`<div class="wage-setting"><span>薪</span>${h0($,{key:Z.wageKind==="company-wage"?`company:${Z.wageTarget}:wage`:`wage:${Z.roleId}`,kind:Z.wageKind||"wage",target:Z.wageTarget||Z.roleId,value:Z.wagePerWorkerDay,label:`${Z.name}日薪`,minimum:0,maximum:1e5,disabled:Z.wageKind==="company-wage"&&!Z.wageTarget,confirmLabel:"✓",className:"wage-editor"})}<span>${D(N)}</span></div>`,Y=Z.roleId==="farmers"?Z.targetShortage>0?`目标${Z.targetCount??Z.count} · 缺${Z.targetShortage}`:`目标${Z.targetCount??Z.count}`:Z.globalDemandKind==="public_service"?`全镇需${Z.globalDemand} · 缺${Z.globalShortage}`:Z.scope==="listed"?"公司自动用工":Z.scope==="private"?"民营自动用工":"";return`<div class="job-row">
+    <div class="job-row-head"><div class="job-name">${D(Z.buildingName?Z.buildingName+" · "+Z.name:Z.name)}</div><span class="badge">${V(Z.count)} / ${V(Z.capacity)}</span></div>
+    ${Y?`<div class="job-note">${D(Y)}</div>`:""}
+    <div class="job-edit-row"><div class="job-controls"><button class="step-btn" data-job="${
+D(Z.key)}
+" data-step="-1" aria-label="减少${
+D(Z.name)}
+" ${_<=0?"disabled":""}>−</button>${f}<button class="step-btn" data-job="${
+D(Z.key)}
+" data-step="1" aria-label="增加${
+D(Z.name)}
+" ${_>=Z.maxAssignable||Z.roleId!=="farmers"&&z+(Z.poachable||0)<=0?"disabled":""}>＋</button></div><div class="job-wage">${O}</div></div>
+  </div>`}function Pz($){let Z=$.payroll?.lastDay||{},z=w0($);return`<h2>就业</h2>
+    <div class="cardlet job-summary"><div class="row"><span class="label">劳动 / 就业 / 待业</span><strong class="value">${V($.labor.workingAge)} / ${V($.labor.employed)} / ${V($.labor.idle)}人</strong></div><div class="row"><span class="label">每日工资</span><strong class="value">约${V($.labor.dailyWageExpectedWheatJin)}${D(z)}</strong></div>${(Z.arrearsBalanceWheatJin||0)>0?`<div class="shortage-banner visible">欠薪 ${V(Z.arrearsBalanceWheatJin)}小麦等值</div>`:""}</div>
+    <div class="job-list">${$.labor.rows.filter((N)=>N.scope!=="shop").map((N)=>F_($,N,$.labor.idle)).join("")}</div>
+    <details class="detail-block" data-detail-key="payroll-detail"><summary>工资账</summary><div class="detail-body">
+      <div class="row"><span class="label">今日应付 / 已付</span><strong class="value">${V(Z.expectedWheatJin||0)} / ${V(Z.currentPaidWheatJin||0)}小麦等值</strong></div>
+      <div class="row"><span class="label">偿还旧欠薪</span><strong class="value">${V(Z.arrearsPaidWheatJin||0)}小麦等值</strong></div>
+      <div class="subtle">${Z4($)}。旧欠薪保留形成时的支付构成。</div>
+    </div></details>`}function V_($,Z){if(!$)return"";return`<div class="row"><span class="label">${Z}人均家底 穷10% / 中位 / 富10%</span><strong class="value">${V($.poorWealthPerCapita,0)} / ${V($.medianWealthPerCapita,0)} / ${V($.richWealthPerCapita,0)}</strong></div><div class="row"><span class="label">最富10%占全镇家底</span><strong class="value">${V($.richWealthSharePercent,1)}%</strong></div><div class="row"><span class="label">${Z}人均年收入 穷10% / 中位 / 富10%</span><strong class="value">${V($.poorIncomePerCapita,0)} / ${V($.medianIncomePerCapita,0)} / ${V($.richIncomePerCapita,0)}</strong></div>`}function x_($){let Z=$.wealthNow,z=($.annualReports||[]).filter((Q)=>Q.wealth),N=z.at(-1);if(!Z&&!N)return"";let M=z.slice(-5).map((Q)=>`<div class="row"><span class="label">第${V(Q.year)}年 穷10% / 中位 / 富10% 人均家底</span><strong class="value">${V(Q.wealth.poorWealthPerCapita,0)} / ${V(Q.wealth.medianWealthPerCapita,0)} / ${V(Q.wealth.richWealthPerCapita,0)}</strong></div>`).join("");return`<div class="cardlet" style="margin-top:10px"><div class="setting-title">贫富分布</div>${V_(Z,"今年")}<p class="subtle">家底 = 粮券 + 存粮存货按批发价折粮券；收入含秋收分粮。按人口排，“穷10%”是最穷的一成人。</p>${M?`<details class="detail-block" data-detail-key="wealth-history"><summary>历年对比</summary><div class="detail-body">${M}</div></details>`:""}</div>`}function kz($){let Z=$.people,z=Math.max(1,Z.total),N=Math.min(100,Z.total/$.housingCapacity*100),M=$.lastDemography||{births:0,deaths:0,marriages:0},Q=$.annualReports||[],_=M.laborChange||Q.at(-1)?.laborChange||null;return`<h2>人口</h2>
+    <div class="age-bars">
+      <div class="age-line"><span>未成年人</span><div class="meter"><span style="width:${
+Z.children/z*100}
+%"></span></div><strong>${V(Z.children)}人</strong></div>
+      <div class="age-line"><span>劳动年龄</span><div class="meter"><span style="width:${
+Z.workers/z*100}
+%;
+background:linear-gradient(90deg,#557d50,#73975b)"></span></div><strong>${V(Z.workers)}人</strong></div>
+      <div class="age-line"><span>老人</span><div class="meter"><span style="width:${
+Z.elders/z*100}
+%;
+background:linear-gradient(90deg,#ad8d51,#d0b66b)"></span></div><strong>${V(Z.elders)}人</strong></div>
+    </div>
+    ${$.laborMarket?`<div class="cardlet" style="margin-top:10px"><div class="row"><span class="label">失业率</span><strong class="value">${V($.laborMarket.unemploymentRate*100,1)}% · ${$.laborMarket.mood==="slack"?"失业多，商店压工资":$.laborMarket.mood==="tight"?"人手紧，商店加工资":"行情平稳"}</strong></div><div class="row"><span class="label">待业 / 劳动年龄</span><strong class="value">${V($.laborMarket.idle)} / ${V($.laborMarket.workers)}人</strong></div><div class="row"><span class="label">公职平均日薪 / 商店目标日薪</span><strong class="value">${V($.laborMarket.referenceWage,1)} / ${V($.laborMarket.targetShopWage,1)}</strong></div><p class="subtle">失业率高于8%时商店老板压低工资，低于5%时愿意多给；参照你定的公职岗位工资。</p></div>`:""}
+    ${x_($)}
+    <div class="cardlet" style="margin-top:10px"><div class="row"><span class="label">人口 / 住房</span><strong class="value">${V(Z.total)} / ${V($.housingCapacity)}人</strong></div><div class="meter"><span style="width:${
+N}
+%"></span></div><div class="row"><span class="label">住房缺口</span><strong class="value">${V($.housing.shortage)}人</strong></div><div class="row"><span class="label">食盐保障</span><strong class="value">${V($.salt.historyCoverage*100,1)}%</strong></div><div class="row"><span class="label">舒心值</span><strong class="value">${V($.satisfaction)} / 100</strong></div></div>
+    <details class="detail-block" data-detail-key="population-history"><summary>上年人口变化</summary><div class="detail-body"><div class="row"><span class="label">出生 / 死亡</span><strong class="value">${V(M.births)} / ${V(M.deaths)}人</strong></div><div class="row"><span class="label">新结夫妇</span><strong class="value">${V(M.marriages)}对</strong></div>${_?`<div class="row"><span class="label">年初 / 年末劳动力</span><strong class="value">${V(_.openingWorkers)} / ${V(_.closingWorkers)}人</strong></div><div class="row"><span class="label">成年 / 退休</span><strong class="value">${V(_.adults)} / ${V(_.retirees)}人</strong></div>`:'<div class="subtle">完成本年度后显示劳动力变化。</div>'}</div></details>`}function jz($){let Z=$.households?.living?.counts||{困难:0,温饱:0,富裕:0},z=$.households?.issueCounts||{},N=($.households?.categories||[]).map((_)=>`<span class="mini-stat">${D(_.name)} <b>${V(_.households)}户</b>${_.satisfaction==null?"":` · ${V(_.satisfaction,1)}`}</span>`).join(""),Q=($.households?.details||[]).filter((_)=>_.issues?.length).sort((_,f)=>_.satisfaction-f.satisfaction).slice(0,8).map((_)=>`<div class="cardlet"><div class="row"><span class="label">${D(_.name)} · ${V(_.people)}人</span><strong class="value">舒心 ${V(_.satisfaction,1)}</strong></div><div class="subtle">${_.issues.map(D).join(" · ")}</div><div class="row"><span class="label">口粮 / 粮券</span><strong class="value">${V(_.foodDays,1)}日 / ${V(_.voucher,1)}券</strong></div><details class="detail-block" data-detail-key="family-${
+D(_.id)}
+"><summary>近期收支</summary><div class="detail-body"><div class="row"><span class="label">实际到账 / 生活支出</span><strong class="value">${V(_.recent.incomeVoucher,1)} / ${V(_.recent.lifeExpenseVoucher,1)}小麦等值</strong></div><div class="row"><span class="label">实物收入 / 吃掉口粮</span><strong class="value">${V(_.recent.inKindIncomeJin,1)} / ${V(_.recent.foodConsumedJin,1)}斤</strong></div><div class="row"><span class="label">应付工资 / 实发</span><strong class="value">${V(_.recent.wageDueVoucher,1)} / ${V(_.recent.wagePaidVoucher,1)}小麦等值</strong></div><div class="row"><span class="label">投资</span><strong class="value">${V(_.recent.investmentVoucher,1)}小麦等值</strong></div></div></details></div>`).join("");return`<section class="panel-section"><h2>家庭生活</h2>
+    <div class="cardlet"><div class="row"><span class="label">全镇舒心值</span><strong class="value">${V($.satisfaction,1)} / 100 · ${$.households?.satisfactionChange>=0?"+":""}${V($.households?.satisfactionChange||0,1)}</strong></div>
+      <div class="row"><span class="label">缺粮 / 缺盐 / 住房不足 / 欠薪</span><strong class="value">${V(z.food||0)} / ${V(z.salt||0)} / ${V(z.housing||0)} / ${V(z.wage||0)}户</strong></div>
+      <div class="row"><span class="label">生活状况</span><strong class="value">困难${V(Z.困难)} · 温饱${V(Z.温饱)} · 富裕${V(Z.富裕)}</strong></div>
+      <div class="row"><span class="label">今日剩余换券额度</span><strong class="value">${V($.households?.exchangeRemainingJin||0,2)}斤</strong></div>
+      <div class="mini-stats">${N}</div><div class="subtle">职业相关家庭允许重叠；这里按户观察，不把分类人数相加当作全镇人口。</div>
+    </div>${Q||'<div class="cardlet"><div class="subtle">当前没有突出的家庭生活问题。</div></div>'}</section>
+    <section class="panel-section">${Pz($)}</section>
+    <section class="panel-section">${kz($)}</section>`}var L_={wheat:"小麦",flour:"面粉",bread:"面包"};function Uz($){let Z=w0($),z=$.market.trade?.staples||{},N=z.shares||{wheat:0.6,flour:0.2,bread:0.2},M=(z.rows||[]).filter((_)=>_.itemId!=="wheat"),Q=M.length?M.map((_)=>`<div class="row"><span class="label">${L_[_.itemId]||D(_.itemId)} 目标 / 买到</span><strong class="value">${V(_.targetQeqJin)} / ${V(_.purchasedJin,1)}斤 · 付${V(_.paidVoucher,1)}${Z}</strong></div>${_.purchasedJin<=0&&_.limitReason?`<div class="subtle">${D(_.limitReason)}</div>`:""}`).join(""):'<div class="subtle">时光流动后显示当日购买情况。</div>';return`<h2>居民主粮购买</h2>
+    <div class="cardlet">
+      <div class="row"><span class="label">居民 / 镇库面包库存</span><strong class="value">${V($.market.residentBreadJin)} / ${V($.market.townBreadJin)}斤</strong></div>
+      ${Q}
+    </div>
+    <details class="detail-block" data-detail-key="bread-rules"><summary>购买规则</summary><div class="detail-body"><div class="subtle">居民每天按口粮占比补足主粮：小麦${V(N.wheat*100)}%、面粉${V(N.flour*100)}%、面包${V(N.bread*100)}%。家里已有的先算进去；小麦直接向镇库和有余粮的人家买；面粉、面包、食盐、木材在商业街综合商店买，零售价为批发价×1.2。</div></div></details>`}function f2($,Z){return($||0)/Z}function Sz($,Z,z){return Object.entries($||{}).filter(([,M])=>M>0).map(([M,Q])=>`${D(Z[M]||M)} ${V(f2(Q,z))}斤`).join(" · ")||"暂无产出"}function d3($,Z){let z=Z.inventoryUnitsPerJin,N=f2($.revenueWheatUnits,z),M=f2($.breadCogsWheatUnits,z),Q=f2($.processingLossWheatUnits,z),_=f2($.operatingWagesWheatUnits,z),f=f2($.rawInputCostWheatUnits,z);return{revenue:N,cogs:M,waste:Q,wages:_,rawInputCost:f,profit:N-M-Q-_}}function Iz($){let Z=w0($),z=$.market.business,N=d3(z.day,$),M=d3(z.year,$),Q=d3(z.cumulative,$),_=$.inventoryUnitsPerJin,f=f2(z.cumulative.constructionWagesWheatUnits,_),O=Q.profit-f,Y=Object.entries($.accounts.town.items).filter(([,X])=>["wheat","flour","bread"].includes(X.itemId)).map(([,X])=>`${D(X.name)} ${V(X.quantity)}斤`).join(" · "),G=$.buildings.filter((X)=>X.typeId==="mill"||X.typeId==="bakery").map((X)=>{let q=X.jobs.reduce((K,L)=>K+L.workers,0),J=X.jobs.reduce((K,L)=>K+L.capacity,0),W=$.payroll?.lastDay?.workers?.find((K)=>K.buildingId===X.id)?.unpaidCurrentWheatJin||0;return`<div class="cardlet"><div class="row"><strong>${D(X.name)} · ${D(_2($,X))}</strong><span class="badge">${D(X.status.label)}</span></div>
+      <div class="row"><span class="label">人数</span><strong class="value">${V(q)} / ${V(J)}人</strong></div>
+      <div class="row"><span class="label">今日产量</span><strong class="value">${Sz(X.jobs[0]?.outputToday,$.itemNames,_)}</strong></div>
+      ${W>0?`<div class="shortage-banner visible">新增欠薪 ${V(W)}${Z}</div>`:""}</div>`}).join("");return`<h2>镇营作坊</h2>
+    <div class="cardlet"><div class="row"><span class="label">今日产量</span><strong class="value">${Sz(z.day.producedUnits,$.itemNames,_)}</strong></div>
+      <div class="row"><span class="label">面包销量 / 已收入</span><strong class="value">${V(f2(z.day.soldBreadUnits,_))}斤 / ${V(N.revenue)}${Z}</strong></div>
+      <div class="row"><span class="label">今日利润</span><strong class="value">${V(N.profit,1)}${Z}</strong></div>
+      <div class="row"><span class="label">镇库库存</span><strong class="value">${Y}</strong></div></div>
+    <h3>各座作坊</h3>${G||'<div class="cardlet subtle">暂无完工作坊。</div>'}
+    <details class="detail-block" data-detail-key="workshop-costs"><summary>成本与累计数据</summary><div class="detail-body">
+      <div class="row"><span class="label">今日成本</span><strong class="value">已售${V(N.cogs)} · 损耗${V(N.waste)} · 工资${V(N.wages)}${Z}</strong></div>
+      <div class="row"><span class="label">原料投入折算</span><strong class="value">${V(N.rawInputCost)}${Z}</strong></div>
+      <div class="row"><span class="label">本年收入 / 利润</span><strong class="value">${V(M.revenue)} / ${V(M.profit,1)}${Z}</strong></div>
+      <div class="row"><span class="label">累计利润 - 建设工资</span><strong class="value">${V(O,1)}${Z}</strong></div>
+      <div class="row"><span class="label">面粉 / 面包库存成本</span><strong class="value">${V(f2(z.inventoryCostWheatUnits.town.flour,_))} / ${V(f2(z.inventoryCostWheatUnits.town.bread,_))}${Z}</strong></div>
+    </div></details>`}var K_={harvest:"收获",consume:"消耗",relief:"救济",wage:"工资",construction:"建设",process_input:"加工投入",process_output:"加工产出",process_loss:"加工损耗",processing_loss:"加工损耗",wage_expense:"工资计提",wage_payment:"当期工资发放",wage_arrears_payment:"偿还欠薪",wage_prepaid_credit:"旧预付工资抵扣",unemployment_benefit:"失业金发放",unemployment_shortfall:"失业金未足额",construction_material:"施工材料",rent_payment:"租金转账",rent_waiver:"租金减免",salt_consume:"食盐消费",market_trade:"物资买卖",construction_prepaid_remainder:"建设预付款留存",voucher_issue:"粮券印制",voucher_exchange:"粮食换券",voucher_redeem:"粮券注销/兑回",enterprise_capital_injection:"企业营运资金",enterprise_material_contribution:"企业实物投入",enterprise_input_payment:"企业原料采购",enterprise_sale:"企业销售",enterprise_dividend:"企业分红",enterprise_annual_distribution:"企业年度利润分配",enterprise_production_tax:"企业实物税",operating_right_sale:"经营权交易",transfer:"转账",deposit:"入库",withdrawal:"出库",legacy_consume:"旧版消耗",legacy_process:"旧版加工",legacy_loss:"旧版损耗",legacy_transfer:"旧版转账"},bz={town:"镇库",residents:"居民",households:"居民家庭",wholesale_market:"批发市场",field:"麦田",consumed:"消耗",consumption:"消耗",loss:"损耗",currency_issuer:"印制",private_production:"民营生产",wage_expense:"工资计提",unpaid:"未付",waived:"减免",rent_due:"应收租金",construction_payroll:"施工工资",construction_investment:"建设投入"};function D_($,Z){if(!Z)return"";if(bz[Z])return bz[Z];let[z,...N]=String(Z).split(":"),M=N.join(":");if(z==="household")return $.householdNames?.[M]||(/^household-(\d+)$/.test(M)?`第${M.slice(10)}户`:M);if(z==="shop")return($.shops||[]).find((Q)=>Q.id===M)?.name||"店铺";if(z==="company")return($.companies||[]).find((Q)=>Q.id===M)?.name||"公司";if(z==="building")return($.buildings||[]).find((Q)=>Q.id===M)?.name||"建筑";return Z}function gz($){let Z=$.annualReports.at(-1),z=$.ledger.slice(0,42).map((G)=>{let X=K_[G.type]||"记账",q=G.itemId==="grain_voucher",J=q?"粮券":G.itemId?$.itemNames[G.itemId]||G.itemId:"口粮当量",F=q?"券":G.itemId?$.itemUnits[G.itemId]||"斤":"口粮斤",W=G.quantityUnits&&G.itemId?G.quantityUnits/(q?$.currencyUnitsPerVoucher:$.inventoryUnitsPerJin):(G.qeqUnits||0)/$.qeqUnitsPerJin,K=[G.source,G.destination].filter(Boolean).map((L)=>D_($,L)).join(" → ");return`<tr><td>第${V(G.year)}年·${V(G.day)}日</td><td><span class="badge${
+["consume","process_loss","withdrawal","salt_consume","rent_waiver"].includes(G.type)?" red":""}
+">${X}</span><br>${D(J)} · ${D(G.reason||"")}<div class="subtle">${D(K)}${G.legacyDetail?" · "+D(G.legacyDetail):""}</div></td><td class="amount">${V(W)}${D(F)}</td></tr>`}).join(""),N=$.yearTotals,M=$.payroll?.year||{},Q=$.currencyUnitsPerVoucher,_=(M.accruedVoucherUnits||0)/Q,f=(M.paidVoucherUnits||0)/Q,O=(M.unemploymentPaidVoucherUnits||0)/Q,Y=Object.values($.payroll?.arrearsVoucherUnits||{}).reduce((G,X)=>G+X,0)/Q;return`<h2>粮食与粮券账目</h2>
+    <div class="cardlet"><div class="row"><span class="label">居民账（口粮当量）</span><strong class="value">${V($.accounts.residents.qeq)} 斤</strong></div><div class="subtle">${w3($.accounts.residents)}</div><div class="row" style="margin-top:10px"><span class="label">镇库账（口粮当量）</span><strong class="value">${V($.accounts.town.qeq)} 斤</strong></div><div class="subtle">${w3($.accounts.town)}</div><div class="row" style="margin-top:9px;
+padding-top:8px;
+border-top:1px solid #eee9db"><span class="label">全镇可食口粮合计</span><strong class="value">${V($.totalQeq)} 斤</strong></div><div class="subtle">居民每日消费${V($.dailyNeed)}斤；口粮${Q2($.residentFoodDays,1)}天。</div></div>
+    <h3>本年收支（已过${V($.day)}天）</h3>
+    <div class="cardlet"><div class="row"><span class="label">收成入库</span><strong class="value">${V(N.harvest)}斤小麦</strong></div><div class="row"><span class="label">居民口粮消费</span><strong class="value">${V(N.consumption)}口粮斤</strong></div><div class="row"><span class="label">镇营/施工工资计提 · 已付</span><strong class="value">${V(_)} / ${V(f)}小麦等值</strong></div><div class="row"><span class="label">累计欠薪余额 / 本年失业金</span><strong class="value">${V(Y)} / ${V(O)}小麦等值</strong></div><div class="row"><span class="label">实物救济 / 加工损耗</span><strong class="value">${V(N.relief)}斤小麦 / ${V(N.processingLoss)}斤</strong></div><div class="subtle">工资、失业金、租金、商品和股份交易按实际支付媒介分别记账；农业税、救济口粮和生产税仍按实物记账。粮券先由镇库印制，镇库粮券可自由支出；换券时交出的小麦直接进入镇库，不设独立兑付储备。</div></div>
+    ${Z?`<h3>上一年汇总 · 第${V(Z.year)}年</h3><div class="cardlet"><div class="row"><span class="label">年初至年末人口</span><strong class="value">${V(Z.populationAtClose)} → ${V(Z.populationAfterAging)}</strong></div><div class="row"><span class="label">出生 / 死亡</span><strong class="value">${V(Z.births)} / ${V(Z.deaths)} 人</strong></div><div class="subtle">显示上一年人口汇总。</div></div>`:""}
+    <h3>最近账目</h3><div class="ledger-list"><table class="ledger-table"><thead><tr><th>日期</th><th>缘由 / 去向</th><th style="text-align:right">数量</th></tr></thead><tbody>${z||'<tr><td colspan="3">尚无账目。</td></tr>'}</tbody></table></div>`}function L5($,Z,z){return V(($||0)/Z,2)+z}function vz($){let Z=w0($),z=$.inventoryUnitsPerJin,N=$.industries.forestry,M=$.industries.salt,Q=$.housing.rentFiscal,_=Q.year.collectedWheatUnits||0,f=M.year.revenueWheatUnits||0,O=M.year.operatingWagesWheatUnits||0,Y=f-O,G=$.housing.rentals.map((X)=>`<div class="row"><span class="label">${D(X.name)}入住 / 空位</span><strong class="value">${V(X.occupied)} / ${V(X.vacancies)}人</strong></div>`).join("");return`<h2>林业、盐业与住房</h2>
+    <div class="cardlet">
+      <div class="setting-title">资源</div>
+      <div class="row"><span class="label">木材 · 居民 / 镇库</span><strong class="value">${V($.accounts.residents.items.wood.quantity)} / ${V($.accounts.town.items.wood.quantity)}单位</strong></div>
+      <div class="row"><span class="label">食盐 · 居民 / 镇库</span><strong class="value">${V($.salt.residentStockJin,2)} / ${V($.salt.townStockJin,2)}斤</strong></div>
+      <div class="row"><span class="label">今日伐木 / 采盐</span><strong class="value">${L5(N.day.producedUnits.wood,z,"单位")} / ${L5(M.day.producedUnits.salt,z,"斤")}</strong></div>
+    </div>
+    <div class="cardlet">
+      <div class="setting-title">食盐</div>
+      <div class="row"><span class="label">今日需求 / 满足</span><strong class="value">${V($.salt.todayDemandJin,2)} / ${V($.salt.todaySatisfiedJin,2)}斤</strong></div>
+      <div class="row"><span class="label">近30日保障率</span><strong class="value">${V($.salt.historyCoverage*100,1)}%</strong></div>
+      <div class="row"><span class="label">今日销量 / 已收入</span><strong class="value">${L5(M.day.soldUnits,z,"斤")} / ${L5(M.day.revenueWheatUnits,z,Z)}</strong></div>
+      <div class="row"><span class="label">本年利润</span><strong class="value">${L5(Y,z,Z)}</strong></div>
+    </div>
+    <div class="cardlet">
+      <div class="setting-title">住房</div>
+      <div class="row"><span class="label">容量 / 缺口</span><strong class="value">${V($.housing.capacity)} / ${V($.housing.shortage)}人</strong></div>
+      ${G||'<div class="subtle">暂无公租房。</div>'}
+      <div class="row"><span class="label">今日实收 / 减免</span><strong class="value">${V($.housing.lastRentDay?.collectedWheatJin||Q.day.collectedWheatUnits/z)} / ${V($.housing.lastRentDay?.waivedWheatJin||Q.day.waivedWheatUnits/z)}${Z}</strong></div>
+      <div class="row"><span class="label">本年租金</span><strong class="value">${L5(_,z,Z)}</strong></div>
+    </div>`}function e5($,Z,z,N){return Object.entries($||{}).filter(([,M])=>M>0).map(([M,Q])=>`${Z[M]||M} ${V(Q/N)}${z[M]||"单位"}`).join(" · ")||"无"}function yz($){let Z=$.financialFlows?.year||{},z=Z.residents||{},N=Z.town||{},M=$.inventoryUnitsPerJin;return`<section class="panel-section"><h2>本年收支</h2>
+    <div class="cardlet"><h3>居民</h3>
+      <div class="row"><span class="label">农业分粮</span><strong class="value">${V(z.agricultureWheatUnits/M)}斤小麦</strong></div>
+      <div class="row"><span class="label">工资 / 建筑工钱 / 失业金</span><strong class="value">${V(z.wagesWheatUnits/M)} / ${V(z.constructionWagesWheatUnits/M)} / ${V(z.unemploymentWheatUnits/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">面包 / 食盐</span><strong class="value">${V(z.breadPurchaseWheatUnits/M)} / ${V(z.saltPurchaseWheatUnits/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">经营权 / 房租</span><strong class="value">${V(z.operatingRightWheatUnits/M)} / ${V(z.rentWheatUnits/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">口粮消费</span><strong class="value">${V(z.consumptionQeqUnits/$.qeqUnitsPerJin)}斤</strong></div>
+      <div class="row"><span class="label">民营投入 / 所得</span><strong class="value">${e5(z.privateInputs,$.itemNames,$.itemUnits,M)} / ${e5(z.privateOutputs,$.itemNames,$.itemUnits,M)}</strong></div>
+    </div>
+    <div class="cardlet"><h3>镇库</h3>
+      <div class="row"><span class="label">农业税 / 生产税</span><strong class="value">${V(N.agricultureWheatUnits/M)}斤小麦 / ${e5(N.privateTaxes,$.itemNames,$.itemUnits,M)}</strong></div>
+      <div class="row"><span class="label">商品已收入</span><strong class="value">${V((($.market?.business?.year?.revenueWheatUnits||0)+($.salt?.year?.paidWheatUnits||0))/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">租金 / 经营权收入</span><strong class="value">${V(($.housing.rentFiscal?.year?.collectedWheatUnits||0)/M)} / ${V(($.privateEconomy?.rightSales?.yearWheatUnits||0)/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">工资 / 建筑工钱 / 新欠薪</span><strong class="value">${V(z.wagesWheatUnits/M)} / ${V(z.constructionWagesWheatUnits/M)} / ${V(($.payroll?.year?.unpaidWheatUnits||0)/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">失业金</span><strong class="value">${V(N.unemploymentWheatUnits/M)}小麦等值</strong></div>
+      <div class="row"><span class="label">建设投入 / 拆除返还</span><strong class="value">${e5(N.constructionMaterials,$.itemNames,$.itemUnits,M)} / ${e5(N.constructionMaterialsReturned,$.itemNames,$.itemUnits,M)}</strong></div>
+      <div class="row"><span class="label">民营人工折算</span><strong class="value">${V(($.privateEconomy?.year?.internalLaborCostWheatUnits||0)/M)}小麦等值</strong></div>
+          <div class="subtle">货币收支按小麦等值汇总，实际小麦与粮券支付可在账目中逐笔查看。</div>
+    </div></section>`}function B_($,Z,z){return D($.numericDrafts?.[Z]?.value??String(z??""))}function W1($,{key:Z,label:z,value:N=0,integer:M=!1,minimum:Q=0,maximum:_=1e8,positive:f=!1}){return`<input type="text" inputmode="${
+M?"numeric":"decimal"}
+" enterkeyhint="done" autocomplete="off" spellcheck="false"
+    value="${
+B_($,Z,N)}
+" aria-label="${
+D(z)}
+" data-draft-key="${
+D(Z)}
+"
+    data-draft-kind="stage" data-draft-label="${
+D(z)}
+" data-draft-minimum="${
+Q}
+"
+    data-draft-maximum="${
+_}
+" data-draft-integer="${
+M}
+" data-draft-positive="${
+f}
+">`}function R_($){if(!$?.length)return"暂无";return $.map((Z)=>`${D(Z.name)} ${V(Z.quantity,2)}斤`).join(" · ")}function wz($,Z="暂无"){if(!$?.length)return Z;return $.map((z)=>`${D(z.name)} ${V(z.quantity,2)}${D(z.unit)}`).join(" · ")}function hz($){let Z=w0($),z=$.market.intermediatePricesVoucherPerUnit||{},N=$.market.pricesVoucherPerUnit||{};return`<details class="detail-block enterprise-section price-block" data-detail-key="prices"><summary>价格<span class="summary-note">${`小麦${V(N.wheat??1,2)} · 面粉${V(z.flour??1.8,2)} · 面包${V(N.bread??2,2)} · 盐${V(N.salt??10,2)} · 木材${V(z.wood??15,2)}`}</span></summary><div class="detail-body"><div class="cardlet">
+    <div class="row"><span class="label">小麦 / 食盐</span><strong class="value">${V(N.wheat??1,3)} / ${V(N.salt??10,3)}${D(Z)}/斤</strong></div>
+    <div class="row"><span class="label">面粉</span><div class="business-inline-input">${W1($,{key:"intermediate:flour",label:"面粉价格",value:z.flour??1.8,positive:!0})}<b>${D(Z)}/斤</b><button class="secondary" data-intermediate-price="flour">设置</button></div></div>
+    <div class="row"><span class="label">面包</span><div class="business-inline-input">${W1($,{key:"intermediate:bread",label:"面包价格",value:N.bread??2,positive:!0})}<b>${D(Z)}/斤</b><button class="secondary" data-intermediate-price="bread">设置</button></div></div>
+    <div class="row"><span class="label">木材</span><div class="business-inline-input">${W1($,{key:"intermediate:wood",label:"木材价格",value:z.wood??15,positive:!0})}<b>${D(Z)}/单位</b><button class="secondary" data-intermediate-price="wood">设置</button></div></div>
+    <div class="subtle">以上均为批发价；综合商店零售价为批发价×1.2。</div>
+  </div></div></details>`}function E_($,Z){let z=w0($),N=$.listingPreview?.buildingId===Z.id?$.listingPreview:null,M=`company-form:${Z.id}:levels`,Q=`company-form:${Z.id}:capital`,_=`company-form:${Z.id}:material`;return`<div class="cardlet"><div class="row"><strong>${D(Z.name)} · ${D(_2($,Z))}</strong><span class="badge">镇营${V(Z.ownership.townLevels)}级</span></div>
+    <div class="business-form-grid">
+      <label>公司名称<input type="text" maxlength="30" autocomplete="off" value="${
+D(N?.name||`${Z.name}公司`)}
+" data-company-name="${
+D(Z.id)}
+"></label>
+      <label>划入等级${W1($,{key:M,label:"划入公司等级",value:1,integer:!0,minimum:1,maximum:Z.ownership.townLevels})}</label>
+      <label>初始经营资金${W1($,{key:Q,label:"初始经营资金（小麦等值）",value:1000,minimum:0})}<small>${D(z)}</small></label>
+      <label>首批主要原料${W1($,{key:_,label:"首批主要原料数量",value:0,minimum:0})}<small>斤；无原料填0</small></label>
+    </div>
+    <button class="secondary wide" data-company-preview="${
+D(Z.id)}
+">预览成立公司</button>
+    ${N?`<div class="operation-preview"><strong>成立确认</strong>
+      <div class="row"><span class="label">公司 / 划入等级</span><strong class="value">${D(N.name)} · ${V(N.levels)}级</strong></div>
+      <div class="row"><span class="label">镇库投入</span><strong class="value">${V(N.capital,2)}${D(z)} · ${V(N.material,2)}斤主要原料</strong></div>
+      <div class="subtle">成立后由镇库100%持有，但不会生成股票，也不要求先建交易所。</div>
+      <div class="business-sticky-actions"><button class="secondary" data-company-preview-cancel>取消</button><button class="primary" data-company-create="${
+D(Z.id)}
+">确认成立</button></div>
+    </div>`:""}
+  </div>`}function H_($,Z){let z=w0($),N=`company:${Z.id}:wage`,M=`company:${Z.id}:target`,Q=`company:${Z.id}:capital`,_=Z.productRows||[],f=$.companyLevelPreview?.companyId===Z.id?$.companyLevelPreview:null,O=f?.preview||null,Y=f?.direction==="remove"?"划回1级":"划入1级",G=O?.listed?f.direction==="remove"?`注销镇库 ${V(O.cancelledShares||0)} 股`:`向镇库增发 ${V(O.issuedShares||0)} 股`:"未上市，不变更股本";return`<h4>独立经营</h4>
+    <div class="business-form-grid">
+      <label>日薪${W1($,{key:N,label:"公司日薪",value:Z.settings?.wagePerWorkerDay??10,minimum:0})}<small>${D(z)}/人日</small></label>
+      <label>目标用工${W1($,{key:M,label:"公司目标用工",value:Z.plannedWorkers,integer:!0,minimum:0,maximum:Z.capacity})}<small>人</small></label>
+    </div>
+    <div class="business-sticky-actions"><button class="secondary" data-company-wage="${
+D(Z.id)}
+">设置工资</button><button class="secondary" data-company-target="${
+D(Z.id)}
+">设置用工</button></div>
+    ${_.map((X)=>`<div class="business-form-row"><label>${D(X.name)}售价${W1($,{key:`company:${Z.id}:price:${X.itemId}`,label:`${X.name}售价`,value:X.salePrice,positive:!0})}<small>${D(z)}/斤</small></label><button class="secondary" data-company-price="${
+D(Z.id)}
+" data-item-id="${
+D(X.itemId)}
+">设置</button></div>`).join("")}
+    <div class="business-form-row"><label>追加注资${W1($,{key:Q,label:"追加经营资金（小麦等值）",value:1000,positive:!0})}</label><button class="secondary" data-company-capital="${
+D(Z.id)}
+">注资</button></div>
+    <div class="business-sticky-actions"><button class="secondary" data-company-level-preview="${
+D(Z.id)}
+" data-direction="add">划入1级镇营产能</button><button class="secondary" data-company-level-preview="${
+D(Z.id)}
+" data-direction="remove">划回1级</button><button class="secondary danger" data-company-liquidate="${
+D(Z.id)}
+">全部划回并清算</button></div>
+    ${f?`<div class="operation-preview"><strong>${D(Y)} · 变动预览</strong>
+      <div class="row"><span class="label">变动等级</span><strong class="value">${V(O?.levelsBefore??Z.listedLevels)} → ${V(O?.levelsAfter??Z.listedLevels)}级</strong></div>
+      <div class="row"><span class="label">股份变动</span><strong class="value">${D(G)}</strong></div>
+      ${O?.listed?`<div class="row"><span class="label">总股本</span><strong class="value">${V(O.totalSharesBefore||0)} → ${V(O.totalSharesAfter??O.totalSharesBefore??0)}股</strong></div>
+      <div class="row"><span class="label">镇库持股比例</span><strong class="value">${V(O.townPercentBefore||0,2)}% → ${V(O.townPercentAfter??O.townPercentBefore??0,2)}%</strong></div>`:""}
+      ${O?.reason?`<div class="shortage-banner visible">${D(O.reason)}</div>`:""}
+      <div class="business-sticky-actions"><button class="secondary" data-company-level-cancel>取消</button><button class="primary" data-company-level-confirm="${
+D(Z.id)}
+" data-direction="${
+D(f.direction)}
+" ${!O?.available?"disabled":""}>确认${D(Y)}</button></div>
+    </div>`:""}`}function A_($,Z){let z=$.currencyUnitsPerVoucher,N=!$.stockExchange?.available?"尚未建成交易所":!$.stockExchange?.reformComplete?"须先完成货币改革":null;if(!Z.listing?.listed){let J=$.stockListingPreview?.companyId===Z.id?$.stockListingPreview:null,F=`stock-list:${Z.id}:total`,W=`stock-list:${Z.id}:offered`,K=`stock-list:${Z.id}:price`;return`<h4>交易所上市</h4>
+      ${N?`<div class="subtle">${D(N)}。公司仍可继续独立经营。</div>`:`<div class="business-form-grid">
+        <label>三位代码<input type="text" inputmode="numeric" maxlength="3" autocomplete="off" value="${
+D(J?.ticker||"001")}
+" data-stock-ticker="${
+D(Z.id)}
+"></label>
+        <label>总股本${W1($,{key:F,label:"总股本",value:Math.max(1000,Z.listedLevels*1000),integer:!0,minimum:1})}</label>
+        <label>每股价格${W1($,{key:K,label:"每股价格",value:1,positive:!0})}<small>粮券</small></label>
+        <label>本次出售${W1($,{key:W,label:"本次出售股数",value:Math.max(1,Z.listedLevels*100),integer:!0,minimum:0})}</label>
+      </div>
+      <button class="secondary wide" data-stock-list-preview="${
+D(Z.id)}
+">预览上市</button>
+      ${J?`<div class="operation-preview"><strong>${D(J.ticker)} · 上市确认</strong>
+        <div class="row"><span class="label">公司等级 / 总股本</span><strong class="value">${V(Z.listedLevels)}级 / ${V(J.totalShares)}股</strong></div>
+        <div class="row"><span class="label">总估值 / 计划出售收入</span><strong class="value">${V(J.totalValue,2)} / ${V(J.plannedProceeds,2)}粮券</strong></div>
+        <div class="row"><span class="label">计划出售后镇库持股</span><strong class="value">${V(J.townPercentAfter,2)}%</strong></div>
+        ${J.reason?`<div class="shortage-banner visible">${D(J.reason)}</div>`:""}
+        <div class="business-sticky-actions"><button class="secondary" data-stock-list-cancel>取消</button><button class="primary" data-stock-list-confirm="${
+D(Z.id)}
+" ${J.reason?"disabled":""}>确认挂牌</button></div>
+      </div>`:""}`}
+    `}let M=Z.subscription||{},Q=$.sharePreviewCompanyId===Z.id,_=Z.shareSale?.offeredShares||0,f=Z.sharePriceVoucher||0,O=M.subscribedShares||0,Y=(M.proceedsVoucherUnits||0)/z,G=Z.townShares-O,X=Z.totalShares?G/Z.totalShares*100:0,q=Z.stockReference||{};return`<h4>交易所 · ${D(Z.listing.ticker||"---")}</h4>
+    <div class="row"><span class="label">总股本 / 镇库 / 居民</span><strong class="value">${V(Z.totalShares)} / ${V(Z.townShares)} / ${V(Z.residentShares)}股</strong></div>
+    <div class="row"><span class="label">实际累计售股收入</span><strong class="value">${V(Z.shareSaleProceedsVoucher,2)}粮券 · 归镇库</strong></div>
+    <div class="business-form-grid two">
+      <label>出售股数${W1($,{key:`share:${Z.id}:count`,label:"出售股数",value:_,integer:!0,minimum:0,maximum:Z.townShares})}</label>
+      <label>每股价格${W1($,{key:`share:${Z.id}:price`,label:"每股售价",value:f||1,positive:!0})}<small>粮券</small></label>
+    </div>
+    <button class="secondary wide" data-share-preview="${
+D(Z.id)}
+">预览居民认购</button>
+    ${Q?`<div class="operation-preview"><strong>本次售股</strong>
+      <div class="row"><span class="label">计划收入 / 预计实际收入</span><strong class="value">${V(_*f,2)} / ${V(Y,2)}粮券</strong></div>
+      <div class="row"><span class="label">预计成交 / 成交后镇库持股</span><strong class="value">${V(O)}股 / ${V(X,2)}%</strong></div>
+      ${M.reason?`<div class="shortage-banner visible">${D(M.reason)}</div>`:""}
+      <div class="business-sticky-actions"><button class="secondary" data-share-cancel>取消</button><button class="primary" data-share-confirm="${
+D(Z.id)}
+" ${!M.available?"disabled":""}>确认售股</button></div>
+    </div>`:""}
+    <div class="business-form-grid two"><label>回购股数${W1($,{key:`buyback:${Z.id}:count`,label:"镇库回购股数",value:100,integer:!0,minimum:1})}</label><label>回购价${W1($,{key:`buyback:${Z.id}:price`,label:"镇库回购每股价格",value:Math.max(1,(q.referencePerShareVoucherUnits||0)/z),positive:!0})}<small>粮券</small></label></div>
+    <button class="secondary wide" data-company-buyback-preview="${
+D(Z.id)}
+">预览镇库回购</button>
+    ${$.buybackPreview?.companyId===Z.id?`<div class="operation-preview"><strong>回购预览</strong>
+      <div class="row"><span class="label">申请 / 居民愿售</span><strong class="value">${V($.buybackPreview.preview?.requestedShares||0)} / ${V($.buybackPreview.preview?.willingShares||0)}股</strong></div>
+      <div class="row"><span class="label">镇库可负担 / 预计成交</span><strong class="value">${V($.buybackPreview.preview?.affordableShares||0)} / ${V($.buybackPreview.preview?.executableShares||0)}股</strong></div>
+      <div class="row"><span class="label">预计总成本</span><strong class="value">${V(($.buybackPreview.preview?.costVoucherUnits||0)/z,2)}粮券</strong></div>
+      ${$.buybackPreview.preview?.reason?`<div class="shortage-banner visible">${D($.buybackPreview.preview.reason)}</div>`:""}
+      <div class="business-sticky-actions"><button class="secondary" data-company-buyback-cancel>取消</button><button class="primary" data-company-buyback-confirm="${
+D(Z.id)}
+" ${!$.buybackPreview.preview?.available?"disabled":""}>确认回购</button></div>
+    </div>`:""}
+    <details class="detail-block" data-detail-key="stock-ref:${
+D(Z.id)}
+"><summary>估值与业绩</summary><div class="detail-body">
+      <div class="row"><span class="label">业绩估值</span><strong class="value">${q.validProfitMethod?`${V((q.referenceCompanyValueVoucherUnits||0)/z,2)}粮券`:q.observedDays?"观察中/暂无正值":"暂无业绩"}</strong></div>
+      <div class="row"><span class="label">观察 / 年化利润率</span><strong class="value">${V(q.observedDays||0)}日 / ${V((q.annualizedProfitRateBps||0)/100,2)}%</strong></div>
+      <div class="subtle">${D(q.basis||"经营资料待观察")}</div>
+    </div></details>`}function T_($,Z){let z=w0($),N=Z.lastAnnualSettlement||{},M=$.currencyUnitsPerVoucher,Q=!["运营中","生产中","原料有限","按订单生产"].includes(Z.status||"");return`<div class="company-card cardlet">
+    <div class="row"><strong>${D(Z.name)}</strong><span><span class="badge">${Z.listing?.listed?`${D(Z.listing.ticker||"---")} · 已上市`:"未上市"}</span> <span class="badge${
+Q?" red":""}
+">${D(Z.status||"运营中")}</span></span></div>
+    <div class="row"><span class="label">公司等级 / 在岗 / 目标</span><strong class="value">${V(Z.listedLevels)}级 · ${V(Z.workers)} / ${V(Z.plannedWorkers)}人</strong></div>
+    <div class="row"><span class="label">可支付资金 / 欠薪</span><strong class="value">${V(Z.cashVoucher,2)}粮券 + ${V(Z.cashWheatJin||0,2)}斤小麦 / ${V(Z.arrearsVoucher,2)}${D(z)}</strong></div>
+    <div class="row"><span class="label">近期日均销量 / 实际利润</span><strong class="value">${Z.averageDailySales>0?V(Z.averageDailySales,2):"暂无销量"} / ${V(Z.averageDailyProfitVoucher,2)}${D(z)}</strong></div>
+    <div class="row"><span class="label">库存</span><strong class="value">${R_(Z.inventoryRows)}</strong></div>
+    ${H_($,Z)}
+    ${A_($,Z)}
+    <details class="detail-block" data-detail-key="company-detail:${
+D(Z.id)}
+"><summary>账目与年度结算</summary><div class="detail-body">
+      <div class="row"><span class="label">今日产出 / 售出</span><strong class="value">${wz(Z.producedRowsDay)} / ${wz(Z.soldRowsDay)}</strong></div>
+      <div class="row"><span class="label">今日收入 / 净利润</span><strong class="value">${V(Z.revenueDayVoucher,2)} / ${V(Z.profitDayVoucher,2)}${D(z)}</strong></div>
+      <div class="row"><span class="label">今日成本</span><strong class="value">已售${V(Z.cogsDayVoucher,2)} · 工资${V(Z.wagesDayVoucher,2)} · 税${V(Z.taxCostDayVoucher,2)} · 损耗${V(Z.processingLossDayVoucher,2)}${D(z)}</strong></div>
+      <div class="row"><span class="label">360日周转金目标</span><strong class="value">${V(Z.workingCapitalReserveVoucher,2)}${D(z)}</strong></div>
+      <div class="row"><span class="label">上年净利润 / 实际分配</span><strong class="value">${V((N.lastYearNetProfitVoucherUnits||0)/M,2)} / ${V((N.distributedVoucherUnits||0)/M,2)}${D(z)}</strong></div>
+      <div class="row"><span class="label">未分配利润</span><strong class="value">${V(Z.retainedEarningsVoucher,2)}${D(z)}</strong></div>
+    </div></details>
+  </div>`}function mz($){let Z=$.listableBuildings||[],z=$.companies||[],N=Z.length?Z.map((_)=>E_($,_)).join(""):'<div class="subtle">暂无可划入公司的镇营等级。</div>',M=$.stockExchange?.available?$.stockExchange.physical?"交易所已建成":"旧档兼容交易所入口":"尚未建成交易所",Q=z.length||Z.length?`<section class="enterprise-section"><h2>独立公司</h2>
+      ${z.length?z.map((_)=>T_($,_)).join(""):'<div class="cardlet subtle">暂无独立公司。</div>'}
+      <details class="detail-block" data-detail-key="company-formation"><summary>从镇营等级成立公司${Z.length?` · ${V(Z.length)}处可选`:""}</summary><div class="detail-body">${N}</div></details>
+    </section>`:"";if(!$.stockExchange?.available)return`${hz($)}${Q}`;return`${hz($)}${Q}
+    <section class="enterprise-section"><h3>交易所</h3><div class="cardlet"><div class="row"><span class="label">状态</span><strong class="value">${D(M)}</strong></div><div class="row"><span class="label">新上市条件</span><strong class="value">${$.stockExchange?.reformComplete?"货币改革已完成":"须完成货币改革"}</strong></div><div class="subtle">交易所只负责挂牌、认购、回购与股权信息；公司成立和经营不依赖交易所。</div></div></section>`}function t5($,Z,z){return`<details class="detail-block panel-detail" data-detail-key="${
+$}
+"><summary>${Z}</summary><div class="detail-body">${z}</div></details>`}function uz($){let Z=new Set(($.buildings||[]).map((N)=>N.typeId)),z=(...N)=>N.some((M)=>Z.has(M));return`<div class="subtle">${D(Z4($))}；经营收入、成本与利润一律按小麦等值核算，支付媒介不产生利润。</div>
+    <section class="panel-section" id="foodSection"><h2>口粮</h2>
+      ${$.shortageQeq>0?`<div class="shortage-banner visible">口粮短缺 ${_z($.shortageQeq,$.qeqUnitsPerJin)}，时光已暂停。</div>`:""}
+      <div class="cardlet"><div class="row"><span class="label">居民可吃</span><strong class="value">${Q2($.residentFoodDays,1)}天</strong></div><div class="row"><span class="label">每日需要</span><strong class="value">${$.dailyNeed.toLocaleString("zh-CN")}斤</strong></div>
+      <label class="toggle"><input id="autoRelief" type="checkbox" ${$.autoRelief?"checked":""}><span>自动救济</span></label>
+      <div class="settings-actions"><button class="secondary" id="manualAid" ${$.accounts.town.qeq<=0?"disabled":""}>拨粮 ${$.manualReliefAmountJin.toLocaleString("zh-CN")}斤</button></div></div></section>
+    ${mz($)}
+    ${z("commercial_street")?t5("bread-trade","居民主粮购买",Uz($)):""}
+    ${z("lumberyard","saltworks","public_housing")?t5("industry-accounts","林业、盐业与住房",vz($)):""}
+    ${z("mill","bakery")?t5("workshop-accounts","镇营作坊账",Iz($)):""}
+    ${t5("ledger","账目与历史交易",gz($))}
+    ${t5("annual-flows","本年收支明细",yz($))}`}function lz($){let Z=$.policy.unemploymentBenefit,z=$.policy.lastDay||{},N=$.agriculturePolicy,M=[["mill","磨坊"],["bakery","面包房"],["lumberyard","伐木场"],["saltworks","盐场"]],Q=M.map(([T,b])=>`<div class="row"><span class="label">${b}</span><div class="setting-input">${h0($,{key:`private-tax:${T}`,kind:"private-tax-rate",target:T,value:$.policy.privateProductionTaxPercent?.[T]??10,label:`${b}民营生产税率`,minimum:0,maximum:80,className:"setting-editor"})}<b>%</b></div></div>`).join(""),_=$.wageRates.millers??$.wageRates.bakers??10,f=$.wageRates.builders??10,O=($.shops||[]).reduce((T,b)=>T+(b.lastTaxVoucher||0),0),Y=$.relief||{},G=$.monetaryReform,X=$.neighborAid||{},q=X.lastDay||{},J=`<div class="row"><span class="label">今日邻里互助</span><strong class="value">${V(q.donorHouseholds||0)}户接济${V(q.helpedHouseholds||0)}户 · ${V((q.movedQeqUnits||0)/$.qeqUnitsPerJin,1)}斤</strong></div><div class="row"><span class="label">本年邻里接济</span><strong class="value">${V((X.year?.movedQeqUnits||0)/$.qeqUnitsPerJin)}斤</strong></div><div class="subtle">口粮不足3天、又没有粮券可兑的人家，会先得到存粮充裕人家的接济，镇库救济再兜底。</div>`,F=G.stage==="wheat"?"斤小麦":G.stage==="voucher"?"粮券":`小麦等值（目标${V(G.targetPercent,2)}%粮券）`,W=G.stage==="wheat"?`<button class="primary wide" data-reform-start ${G.hasBankAccess?"":"disabled"}>启动货币改革</button><div class="subtle">${G.hasBankAccess?"启动后进入过渡期，初始粮券支付比例为0%。":"需先建成银行后才能启动。"}</div>`:'<button class="secondary wide" data-bank-open>进入银行管理</button>',K=new Set(($.buildings||[]).map((T)=>T.typeId)),L=K.has("commercial_street")||K.has("public_housing")||($.shops||[]).length>0,x=M.some(([T])=>K.has(T)),C=G.stage==="wheat"&&!G.hasBankAccess?'    <div class="cardlet subtle">货币改革：建成银行后可启动。</div>':`
+    <div class="cardlet"><h3>货币改革</h3>
+      <div class="row"><span class="label">当前制度</span><strong class="value">${G.stageName}</strong></div>
+      ${G.stage!=="wheat"?`<div class="row"><span class="label">目标粮券支付比例</span><strong class="value">${V(G.targetPercent,2)}%</strong></div>`:""}
+      ${G.legacyBankAccess&&!G.hasPhysicalBank?'<div class="subtle">旧存档兼容银行入口已启用，不占用地图地块。</div>':""}
+      ${W}
+    </div>`,B=L?`
+    <div class="cardlet"><h3>家庭与商业</h3>
+      <div class="row"><span class="label">营业店铺日租</span><div class="setting-input">${h0($,{key:"shop-rent",kind:"shop-rent",target:"shops",value:$.policy.shopRentVoucher??1,label:"每间营业店铺每日租金",minimum:0,maximum:1e5,className:"setting-editor"})}<b>${F}</b></div></div>
+      <div class="row"><span class="label">商业利润税</span><div class="setting-input">${h0($,{key:"shop-tax",kind:"shop-profit-tax",target:"shops",value:$.policy.shopProfitTaxPercent??10,label:"商业利润税",minimum:0,maximum:80,className:"setting-editor"})}<b>%</b></div></div>
+      <div class="row"><span class="label">今日住宅实收租金</span><strong class="value">${V($.housing.lastRentDay?.collectedVoucher||0,1)}${F}</strong></div>
+      <div class="row"><span class="label">最近店铺利润税</span><strong class="value">${V(O,1)}${F}</strong></div>
+      <div class="subtle">商业金额按小麦等值核算；实际支付媒介由当前货币制度决定。</div>
+    </div>`:"",I=x?`
+    <div class="cardlet"><h3>民营生产税</h3>${Q}</div>`:"";return`<h2>政策</h2>
+    <div class="cardlet"><h3>农业税</h3>
+      <div class="row"><span class="label">当前税率</span><div class="setting-input">${h0($,{key:"agriculture-tax",kind:"agriculture-tax",target:"agriculture",value:N.currentPercent,label:"农业税率",minimum:0,maximum:80,className:"setting-editor"})}<b>%</b></div></div>
+      <div class="row"><span class="label">预计秋收分粮</span><strong class="value">镇库${V(N.townShareJin)} / 居民${V(N.residentShareJin)}斤</strong></div>
+      <div class="subtle">${N.lastHarvest?`上次秋收实际：镇库${V(N.lastHarvest.townJin)} / 居民${V(N.lastHarvest.residentJin)}斤`:"尚未到秋收结算；税率按农事日累计。"}</div>
+    </div>
+    <div class="cardlet"><h3>工资与福利</h3>
+      <div class="row"><span class="label">作坊 / 建筑日薪</span><strong class="value">${V(_)} / ${V(f)}${F}</strong></div>
+      <label class="toggle"><input id="benefitEnabled" type="checkbox" ${Z.enabled?"checked":""}><span>失业金</span></label>
+      <div class="row"><span class="label">每名待业者每日</span><div class="setting-input">${h0($,{key:"unemployment-rate",kind:"unemployment-rate",target:"unemployment",value:Z.dailyPerWorkerJin,label:"每名待业者每日失业金",minimum:0,maximum:1e5,className:"setting-editor"})}<b>${F}</b></div></div>
+      <div class="row"><span class="label">符合 / 已覆盖 / 未覆盖</span><strong class="value">${V(z.eligible??$.policy.unemployed)} / ${V(z.paidPeople||0)} / ${V(z.uncoveredPeople||0)}人</strong></div>
+      <div class="row"><span class="label">应发 / 实发</span><strong class="value">${V(z.expectedVoucher||0,1)} / ${V(z.paidVoucher||0,1)}${F}</strong></div>
+      ${Z.enabled&&(z.shortWheatJin||0)>0?`<div class="shortage-banner visible">今日少发 ${V(z.shortWheatJin)}${F}</div>`:""}
+    </div>
+    <div class="cardlet"><h3>救济</h3><div class="row"><span class="label">需救济 / 已拨家庭</span><strong class="value">${V(Y.eligibleHouseholds||0)} / ${V(Y.servedHouseholds||0)}户</strong></div><div class="row"><span class="label">今日正常兑付 / 救济</span><strong class="value">${V((Y.redeemedWheatUnits||0)/$.inventoryUnitsPerJin,1)} / ${V((Y.movedQeqUnits||0)/$.qeqUnitsPerJin,1)}斤</strong></div>${(Y.missingQeqUnits||0)>0?`<div class="shortage-banner visible">镇库不足，尚缺 ${V(Y.missingQeqUnits/$.qeqUnitsPerJin,1)}斤口粮</div>`:""}${J}</div>
+    ${B}
+    ${I}
+    ${C}
+    <details class="detail-block" data-detail-key="policy-detail"><summary>政策详情</summary><div class="detail-body">
+      <div class="row"><span class="label">本季农业税平均</span><strong class="value">${V(N.accumulatedAveragePercent,2)}%</strong></div>
+      <div class="row"><span class="label">预计结算税率</span><strong class="value">${V(N.projectedSettlementPercent,2)}%</strong></div>
+      <div class="row"><span class="label">本日失业金已发 / 少发</span><strong class="value">${V(z.paidWheatJin||0)} / ${V(z.shortWheatJin||0)}${F}</strong></div>
+      <div class="row"><span class="label">预计年度失业金</span><strong class="value">${V($.policy.annualExpectedWheatJin)}${F}</strong></div>
+    </div></details>`}function C_($,Z,z,N){return Object.entries($||{}).filter(([,Q])=>Q>0).map(([Q,_])=>D(Z[Q]||Q)+" "+V(_/N)+D(z[Q]||"单位")).join(" · ")||"暂无产出"}function dz($,Z,z){let N=w0($);z+=Z.poachable||0;let M=Z.workers+Math.min(Math.max(0,Z.capacity-Z.workers),z);return`<div class="site-worker-control"><span>${D(Z.name)} · ${V(Z.workers)}/${V(Z.capacity)}人 · 日薪${V(Z.wagePerWorkerDay)}${D(N)}</span><div class="site-worker-actions"><button class="step-btn" data-job="${
+D(Z.key)}
+" data-step="-1" aria-label="减少${
+D(Z.name)}
+" ${Z.workers<=0?"disabled":""}>−</button>${h0($,{key:`workers:${Z.key}`,kind:"employment",target:Z.key,value:Z.workers,label:`${Z.name}人数`,integer:!0,minimum:0,maximum:M,confirmLabel:"✓",className:"worker-editor site-worker-editor"})}<button class="step-btn" data-job="${
+D(Z.key)}
+" data-step="1" aria-label="增加${
+D(Z.name)}
+" ${Z.workers>=M||z<=0?"disabled":""}>＋</button></div></div>`}function P_($,Z){if(!Z.mainOutputItemId||!(Z.ownership?.townLevels>0))return"";let z=$.itemNames?.[Z.mainOutputItemId]||Z.mainOutputItemId,N=$.itemUnits?.[Z.mainOutputItemId]||"斤";return`<div class="row"><span class="label">镇营目标日产量</span><div class="setting-input">${h0($,{key:`output-target:${Z.id}`,kind:"output-target",target:Z.id,value:Z.outputTargetJin||0,label:`${z}目标日产量`,minimum:0,maximum:1e9,className:"setting-editor"})}<b>${D(N)}</b></div></div><div class="subtle">${Z.outputTargetJin>0?`每天最多产${D(z)}${V(Z.outputTargetJin)}${D(N)}；用不上的人手仍照常领工资，可在下方减人。`:"0 表示按人手满产。"}</div>`}function c3($,Z){let z=(Z?.jobs||[]).map((Q)=>({...Q,key:`${Z.id}::${Q.id}`}));if(!z.length)return"";let N=z.map((Q)=>dz($,Q,$.labor.idle)).join(""),M=z[0];return`<h3>人员</h3>${N}<div class="site-wage-edit"><span>日薪</span>${h0($,{key:`wage:${M.id}`,kind:"wage",target:M.id,value:M.wagePerWorkerDay,label:`${M.name}日薪`,minimum:0,maximum:1e5,confirmLabel:"✓",className:"wage-editor"})}<span>${D(w0($))}</span></div>`}function k_($,Z,z,N){let M=$.numericDrafts?.[Z]?.value??String(N??"");return`<input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" spellcheck="false"
+    value="${
+D(M)}
+" aria-label="${
+D(z)}
+" data-draft-key="${
+D(Z)}
+"
+    data-draft-kind="stage" data-draft-label="${
+D(z)}
+" data-draft-minimum="0" data-draft-maximum="1000000000"
+    data-draft-integer="false" data-draft-positive="true">`}function pz($,Z=!0){let{monetaryReform:z,currency:N,currencyPreview:M}=$,Q=Boolean($.reformFinishConfirm),_=M?`<div class="operation-preview">
+    <strong>${M.type==="issue"?"印制发行确认":"注销确认"}</strong>
+    <div class="row"><span class="label">数量</span><strong class="value">${V(M.amount,2)}粮券</strong></div>
+    <div class="row"><span class="label">操作后镇库粮券</span><strong class="value">${V(M.afterTownVoucher,2)}粮券</strong></div>
+    <div class="business-sticky-actions"><button class="secondary" data-currency-preview-cancel>取消</button><button class="primary" data-currency-confirm="${
+M.type}
+">确认${M.type==="issue"?"印制发行":"注销"}</button></div>
+  </div>`:"",f=z.stage==="wheat"?'<div class="subtle">银行已具备粮券印制与换券能力。请在政策页启动货币改革；启动时不会自动转换任何家庭或镇库资产。</div><button class="secondary wide" data-go="policy">前往政策</button>':`<label class="toggle"><input id="residentExchangeEnabled" type="checkbox" ${z.residentExchangeEnabled?"checked":""}><span>允许居民以粮食换券</span></label>
+      <div class="row"><span class="label">每名就业者每日换券额度</span><div class="setting-input">${h0($,{key:"employment-exchange",kind:"employment-exchange",target:"households",value:z.employmentExchangeJin,label:"每名就业者每日换券额度",minimum:0,maximum:10,className:"setting-editor"})}<b>斤</b></div></div>
+      ${z.stage==="transition"?`<div class="row"><span class="label">目标粮券支付比例</span><strong class="value">${V(z.targetPercent,2)}%</strong></div>
+        <input class="wide" type="range" min="0" max="100" step="1" value="${
+V(z.targetPercent,2)}
+" data-reform-target-range aria-label="粮券支付比例滑杆">
+        <div class="setting-input">${h0($,{key:"voucher-target",kind:"voucher-target",target:"reform",value:z.targetPercent,label:"粮券支付比例",minimum:0,maximum:100,className:"setting-editor"})}<b>%</b></div>`:'<div class="subtle">全粮券制度已固定为100%，新产生的货币交易不再自动回退小麦。</div>'}
+      <h3>粮券印制与换券</h3>
+      <div class="subtle">镇库先印制粮券。粮券进入镇库后可自由用于工资、采购、福利或换券；换券时对方交出的小麦直接进入镇库。</div>
+      <div class="row"><span class="label">镇库 / 居民粮券</span><strong class="value">${V(N.townVoucher,2)} / ${V(N.residentVoucher,2)}粮券</strong></div>
+      <div class="row"><span class="label">流通粮券</span><strong class="value">${V(N.circulationVoucher,2)}粮券</strong></div>
+      <div class="business-form-row"><label>数量${k_($,"currency-amount","发行或兑付数量",1000)}</label><div class="settings-actions"><button class="secondary" data-currency-preview="issue">印制粮券</button><button class="secondary" data-currency-preview="redeem">注销粮券</button></div></div>
+      ${_}
+      ${z.stage==="transition"?`<h3>过渡进度</h3>
+        <div class="row"><span class="label">最近7日实际粮券占比</span><strong class="value">${z.recentDays?`${V(z.recentVoucherPercent,2)}% · ${V(z.recentDays)}/7日`:"暂无支付窗口"}</strong></div>
+        <div class="row"><span class="label">窗口实际支付</span><strong class="value">${V(z.recentPaidValueVoucher,2)}小麦等值</strong></div>
+        <div class="row"><span class="label">小麦补付 / 缺券未付</span><strong class="value">${V(z.recentFallbackWheatVoucher,2)} / ${V(z.voucherShortfall,2)}小麦等值</strong></div>
+        <div class="subtle">完成条件：目标100%，连续7个游戏日有实际货币支付窗口且无小麦补付，并且没有因缺券形成的未付金额。</div>
+        ${Q?`<div class="operation-preview"><strong>确认结束过渡期？</strong><div class="subtle">确认后固定为全粮券制度，之后新交易不再自动用小麦补付。</div><div class="business-sticky-actions"><button class="secondary" data-reform-finish-cancel>取消</button><button class="primary" data-reform-finish-confirm ${z.eligibleToComplete?"":"disabled"}>确认结束</button></div></div>`:`<button class="primary wide" data-reform-finish-preview ${z.eligibleToComplete?"":"disabled"}>结束过渡期</button>`}`:""}`;return`<div class="status-strip"><span class="status-light working"></span><strong>${Z?"银行":"兼容银行入口"}</strong><span>${z.stageName}</span></div>
+    <div class="row"><span class="label">当前制度</span><strong class="value">${z.stageName}</strong></div>
+    ${f}`}function j_($){let Z=$.reclaim;if(!Z)return"";let z=w0($),N="reclaim-acres",M=Z.last,Q=(Z.history||[]).map((f)=>`${V(f.year)}年${V(f.day)}日 开${V(f.acres)}亩 · ${V(f.workDays)}工日 · 付${V(f.paidVoucherUnits/$.currencyUnitsPerVoucher,2)}${D(z)}`).join("<br>")||"尚无开荒记录",_=Z.canReclaim?"":"disabled";return`<h3>开荒</h3>
+    <div class="row"><span class="label">已开荒 / 上限</span><strong class="value">${V(Z.current)} / ${V(Z.maximum)}亩</strong></div>
+    <div class="row"><span class="label">可开垦余量</span><strong class="value">${V(Z.remaining)}亩</strong></div>
+    <div class="row"><span class="label">开荒比例</span><strong class="value">${V(Z.workDaysPerBatch)}工日 / ${V(Z.batchAcres)}亩</strong></div>
+    <div class="row"><span class="label">开荒工日薪</span><strong class="value">${V(Z.wagePerWorkerDay)}${D(z)}/工日</strong></div>
+    <div class="row"><span class="label">本次 ${V(Z.nextAcres)}亩 预计</span><strong class="value">${V(Z.nextWorkDays)}工日 · 约${V(Z.nextVoucher)}${D(z)}</strong></div>
+    ${Z.canReclaim?`<div class="setting-input"><label>本次开荒亩数</label>${h0($,{key:N,kind:"reclaim-acres",target:"field",value:Z.nextAcres,label:"本次开荒亩数",integer:!0,minimum:1,maximum:Z.remaining,className:"setting-editor"})}<b>亩</b></div>
+    <div class="business-form-row"><label>投入开荒人数<input type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" spellcheck="false" value="${
+D($.numericDrafts?.["reclaim-workers"]?.value??String(Math.max(1,Z.nextWorkDays)))}
+" aria-label="投入开荒人数" data-draft-key="reclaim-workers" data-draft-kind="reclaim-workers" data-draft-target="field" data-draft-label="投入开荒人数" data-draft-minimum="1" data-draft-maximum="100000" data-draft-integer="true" data-draft-positive="true"></label><button class="primary" data-reclaim-submit ${_}>开荒</button></div>
+    <div class="subtle">开荒工资由镇库承担，按实际工日结算并逐笔记账；已开荒耕地按每${V($.acresPerFarmer)}亩 1 人提升可耕种人数上限。</div>`:`<div class="subtle">耕地已达开荒上限 ${V(Z.maximum)}亩。</div>`}
+    <details class="detail-block" data-detail-key="reclaim-history"><summary>开荒账目</summary><div class="detail-body"><div class="row"><span class="label">今日 / 本年 / 累计</span><strong class="value">${V(Z.day?.acres)} / ${V(Z.year?.acres)} / ${V(Z.cumulative?.acres)}亩</strong></div><div class="row"><span class="label">累计工日</span><strong class="value">${V(Z.cumulative?.workDays)}工日</strong></div><div class="row"><span class="label">镇库累计开荒工资</span><strong class="value">${V(Z.cumulative?.paidVoucher,2)}${D(z)}</strong></div>${M?`<div class="row"><span class="label">上次开荒</span><strong class="value">${V(M.year)}年${V(M.day)}日 · ${V(M.acres)}亩 / ${V(M.workDays)}工日</strong></div>`:""}<div class="subtle">${Q}</div></div></details>`}function cz($){let Z=w0($),z=$.selectedSite||"field",N=z.startsWith("building:")?z.slice(9):null,M=z.startsWith("project:")?z.slice(8):null,Q=$.buildings.find((X)=>X.id===N),_=$.buildingDevelopment,f=M?($.projects||[]).find((X)=>X.instanceId===M)||null:null,O="小镇一隅",Y="",G="";if(z==="field"){let X=$.labor.rows.find((q)=>q.roleId==="farmers");Y=`<div class="row"><span class="label">耕地</span><strong class="value">${V($.farmAcres)}亩</strong></div><div class="row"><span class="label">已开荒 / 上限</span><strong class="value">${V($.farmAcres)} / ${V($.farmAcresMaximum)}亩</strong></div><div class="row"><span class="label">农人在岗 / 目标</span><strong class="value">${V(X?.count||0)} / ${V(X?.targetCount??X?.count??0)}人</strong></div><div class="row"><span class="label">可耕种人数上限</span><strong class="value">${V($.farmCapacity)}人</strong></div>${(X?.targetShortage||0)>0?`<div class="shortage-banner visible">农业缺员 ${V(X.targetShortage)}人</div>`:""}<div class="row"><span class="label">今年农事</span><strong class="value">${V($.farmWorkDays)} / ${V($.growingDays)}农人日</strong></div><div class="meter"><span style="width:${
+V($.farmWorkPercent,1)}
+%"></span></div><div class="row"><span class="label">预计净收成</span><strong class="value">${V($.forecast)}斤</strong></div>${j_($)}`,G='<button class="secondary" data-go="residents">安排农人</button>',O="麦田"}else if(z==="granary")O="粮仓",Y=`<div class="row"><span class="label">居民口粮</span><strong class="value">${V($.accounts.residents.qeq)}斤</strong></div><div class="row"><span class="label">镇库口粮</span><strong class="value">${V($.accounts.town.qeq)}斤</strong></div><div class="row"><span class="label">居民可吃</span><strong class="value">${Q2($.residentFoodDays,1)}天</strong></div>`,G='<button class="secondary" data-go="business">查看经营</button>';else if(z==="houses")O="村舍与镇民",Y=`<div class="row"><span class="label">人口 / 住房</span><strong class="value">${V($.people.total)} / ${V($.housingCapacity)}人</strong></div><div class="row"><span class="label">未成年 / 劳动年龄 / 老人</span><strong class="value">${V($.people.children)} / ${V($.people.workers)} / ${V($.people.elders)}人</strong></div><div class="row"><span class="label">待业</span><strong class="value">${V($.labor.idle)}人</strong></div>`,G='<button class="secondary" data-go="residents">查看镇民</button>';else if(z==="well")O="古井与村道",Y='<div class="subtle" style="margin-top:0">镇民沿主路往来，作坊和住宅围着麦田分布。</div>';else if(z.startsWith("resource:")&&$.selectedResourcePlot){let q=$.selectedResourcePlot.feature==="salt_mine",J=q?"saltworks":"lumberyard",F=$.constructionOptions.find((W)=>W.id===J);O=q?"盐矿资源点":"南林资源点",Y=`<div class="row"><span class="label">资源</span><strong class="value">${q?"食盐矿脉":"林木"}</strong></div><div class="row"><span class="label">已建设 / 可建</span><strong class="value">${V($.buildings.filter((W)=>W.typeId===J).length)} / ${V(F?.availablePlotCount||0)}处</strong></div>`,G='<button class="secondary" data-go="build">去建设</button>'}else if(z==="bank-compat"&&$.monetaryReform.legacyBankAccess)O="银行 · 旧存档兼容入口",Y=pz($,!1),G='<button class="secondary" data-go="policy">返回政策</button>';else if(Q?.typeId==="bank")O=`${Q.name} · ${_2($,Q)}`,Y=`${pz($,!0)}${c3($,Q)}${$$($,Q,_)}`,G='<button class="secondary" data-go="policy">查看货币改革政策</button>';else if(Q?.typeId==="wholesale_market"){O=`${Q.name} · ${_2($,Q)}`;let X=$.wholesaleMarket||{inventory:{},pricesVoucherPerUnit:{},dailyTownAllocation:{}},J=["wheat","flour","bread","wood","salt"].map((F)=>{let W=$.itemNames?.[F]||F,K=$.itemUnits?.[F]||"斤",L=X.trends?.[F]||{},x=L.stockDays===null||L.stockDays===void 0?"近7日无销量":`约可售${Q2(L.stockDays,1)}天`,R=`wholesale-move:${F}`,C=$.numericDrafts?.[R]?.value??"1000";return`<div class="cardlet"><div class="row"><span class="label">${D(W)}库存</span><strong class="value">${V(X.inventory?.[F]||0,2)}${D(K)} · ${x}</strong></div>
+        <div class="row"><span class="label">7日均售 / 镇库存</span><strong class="value">${V(L.avgSoldJin||0,1)} / ${V(L.townStockJin||0,1)}${D(K)}</strong></div>
+        ${(L.inventory||[]).length>1?`<div class="trend-pair">${r5(L.inventory,"库存")}${r5(L.price,"批发价")}</div>`:""}
+        <div class="row"><span class="label">批发价</span><div class="setting-input">${h0($,{key:`wholesale-price:${F}`,kind:"wholesale-price",target:F,value:X.pricesVoucherPerUnit?.[F]??1,label:`${W}批发价`,minimum:0.001,maximum:1e6,positive:!0,className:"setting-editor"})}<b>${D(Z)}/${D(K)}</b></div></div>
+        <div class="row"><span class="label">镇库每日固定调拨</span><div class="setting-input">${h0($,{key:`wholesale-allocation:${F}`,kind:"wholesale-allocation",target:F,value:X.dailyTownAllocation?.[F]||0,label:`${W}每日调拨量`,minimum:0,maximum:1e9,className:"setting-editor"})}<b>${D(K)}/日</b></div></div>
+        <div class="business-form-row"><label>单次调运<input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" spellcheck="false" value="${
+D(C)}
+" aria-label="${
+D(W)}
+单次调运量" data-draft-key="${
+D(R)}
+" data-draft-kind="stage" data-draft-label="${
+D(W)}
+单次调运量" data-draft-minimum="0" data-draft-maximum="1000000000" data-draft-integer="false" data-draft-positive="true"></label><div class="settings-actions"><button class="secondary" data-wholesale-stockpile="${
+F}
+">收储入镇库</button><button class="secondary" data-wholesale-release="${
+F}
+">镇库投放</button></div></div></div>`}).join("");Y=`<div class="status-strip"><span class="status-light working"></span><strong>镇营批发市场</strong><span>${V(Q.level)}级</span></div><div class="subtle">镇营、民营和公司产成品汇入这里；综合商店及各类生产者统一从这里采购原料。固定调拨用于把镇库小麦或既有库存每天送入批发市场；单次调运可一次性收储或投放，用来平抑库存。</div>${c3($,Q)}${J}${$$($,Q,_)}`}else if(Q?.typeId==="commercial_street"){O=`${Q.name} · ${_2($,Q)}`;let X=($.shops||[]).filter((x)=>x.buildingId===Q.id&&x.status!=="closed"),q=X.filter((x)=>x.occupiesStreet),J=Q.level*2,F=X.reduce((x,R)=>x+(R.merchants||0),0),W=X.reduce((x,R)=>x+R.clerks,0),K=X.map((x)=>{let R=(x.merchants||0)+x.clerks,C=x.status==="open"?`<div class="site-worker-actions"><button class="step-btn" data-shop-merchant="${
+D(x.id)}
+" data-step="-1" ${x.merchants<=1?"disabled":""}>−</button><strong>商人 ${V(x.merchants)} / ${V(x.maxMerchants||4)}</strong><button class="step-btn" data-shop-merchant="${
+D(x.id)}
+" data-step="1" ${x.merchants>=(x.maxMerchants||4)||$.labor.idle<=0?"disabled":""}>＋</button></div>
+          <div class="site-worker-actions"><button class="step-btn" data-shop-clerk="${
+D(x.id)}
+" data-step="-1" ${x.clerks<=0?"disabled":""}>−</button><strong>店员 ${V(x.clerks)} / ${V(x.maxClerks||20)}</strong><button class="step-btn" data-shop-clerk="${
+D(x.id)}
+" data-step="1" ${x.clerks>=(x.maxClerks||20)||$.labor.idle<=0?"disabled":""}>＋</button></div>`:"",B=x.status==="liquidating"?`<button class="secondary" data-shop-fund="${
+D(x.id)}
+">业主补资清偿</button>`:`<button class="secondary" data-shop-close="${
+D(x.id)}
+">停业</button>`,I=x.kind==="service"?`<div class="row"><span class="label">在岗 / 服务能力</span><strong class="value">${V(R)}人 / ${V(x.serviceCapacity)}次/日</strong></div><div class="row"><span class="label">近期需求 / 成交 / 满足率</span><strong class="value">${V(x.recentDemandUses,2)} / ${V(x.recentServedUses,2)} / ${x.serviceFulfillmentRate===null?"—":V(x.serviceFulfillmentRate*100,1)+"%"}</strong></div>`:`<div class="row"><span class="label">在岗 / 接待能力</span><strong class="value">${V(R)}人 / ${V(x.customerCapacity||0)}客流/日</strong></div><div class="row"><span class="label">近期顾客 / 日均销量</span><strong class="value">${V(x.recentCustomers,2)} / ${V(x.averageDailySales,2)}斤</strong></div>`,T=x.kind==="retail"?`<div class="shop-stock-grid">${(x.inventoryRows||[]).map((l)=>`<div class="row"><span class="label">${D(l.itemName)}</span><strong class="value">库存${V(l.stock,2)}${D($.itemUnits[l.itemId]||"单位")} · 售${V(l.retailVoucher,2)}${D(Z)}</strong></div>`).join("")}</div>`:"",b=x.serviceId==="school"?`<div class="row"><span class="label">每日学费</span><div class="setting-input">${h0($,{key:"service-price:school",kind:"service-price",target:"school",value:$.servicePricesVoucherPerUse?.school??1,label:"学堂每日学费",minimum:0,maximum:1e6,className:"setting-editor"})}<b>${D(Z)}/儿童日</b></div></div>`:"",y=x.serviceId==="school"?'<div class="subtle">每间学堂最多100名儿童；每50名儿童需要1名工作人员承载。</div>':x.serviceId==="restaurant"?`<div class="subtle">每餐4${D(Z)}，消耗2斤小麦；成功用餐可抵1人当日口粮需求，日需求约为人口20%。</div>`:"",j=x.kind==="service"?`<div class="row"><span class="label">服务类型</span><strong class="value">${D(x.serviceName||x.typeName)}</strong></div>${b}${y}`:"";return`<div class="cardlet"><div class="row"><span class="label">${D(x.name)} · ${D(x.typeName)}</span><strong class="value">${D(x.statusReason)}</strong></div><div class="row"><span class="label">业主</span><strong class="value">${D(x.ownerName||x.ownerHouseholdId)}</strong></div>${I}${T}${C}<div class="row"><span class="label">店员日薪</span><strong class="value">${V(x.clerkWageVoucher,1)}粮券${Number.isFinite(x.wageTarget)?` · 行情${V(x.wageTarget,1)}`:""}${x.wageDiagnosis?` · ${D(x.wageDiagnosis)}`:""}</strong></div><details class="detail-block" data-detail-key="shop:${
+D(x.id)}
+"><summary>经营详情</summary><div class="detail-body">${j}${x.kind==="service"?`<div class="row"><span class="label">未成交：没钱 / 容量不足</span><strong class="value">${V(x.recentUnaffordableUses,2)} / ${V(x.recentCapacityUnmetUses,2)}次</strong></div><div class="row"><span class="label">增1店员能力 / 招工判断</span><strong class="value">+${V(x.nextClerkServiceCapacity)}次/日 · ${D(x.staffingDiagnosis||"观察中")}</strong></div>`:""}<div class="row"><span class="label">可支付资金</span><strong class="value">${V(x.cashVoucher,2)}粮券 · ${V(x.cashWheatJin||0,2)}斤小麦</strong></div><div class="row"><span class="label">今日收入 / 成本 / 利润</span><strong class="value">${V(x.revenueDayVoucher,2)} / ${V(x.cogsDayVoucher+x.wageDayVoucher+x.rentDayVoucher,2)} / ${V(x.profitDayVoucher,2)}${D(Z)}</strong></div><div class="row"><span class="label">欠薪 / 欠租 / 欠税</span><strong class="value">${V(x.wageArrearsVoucher,2)} / ${V(x.rentArrearsVoucher,2)} / ${V(x.taxArrearsVoucher,2)}${D(Z)}</strong></div>${B}</div></details></div>`}).join(""),L=q.length<J?`<div class="site-actions"><button class="secondary" data-shop-open="general" data-shop-building="${
+D(Q.id)}
+">开综合商店</button><button class="secondary" data-shop-open="haircut" data-shop-building="${
+D(Q.id)}
+">开理发店</button><button class="secondary" data-shop-open="repair" data-shop-building="${
+D(Q.id)}
+">开修补铺</button><button class="secondary" data-shop-open="tea" data-shop-building="${
+D(Q.id)}
+">开茶馆</button><button class="secondary" data-shop-open="school" data-shop-building="${
+D(Q.id)}
+">开学堂</button><button class="secondary" data-shop-open="restaurant" data-shop-building="${
+D(Q.id)}
+">开饭店</button></div>`:"";Y=`<div class="status-strip"><span class="status-light working"></span><strong>商业街</strong><span>${V(Q.level)}级</span></div><div class="row"><span class="label">占用店铺</span><strong class="value">${V(q.length)} / ${V(J)}间</strong></div><div class="row"><span class="label">实际商人 / 店员</span><strong class="value">${V(F)} / ${V(W)}人</strong></div>${L}${K||'<div class="subtle">暂无居民入驻。</div>'}${$$($,Q,_)}`,G='<button class="secondary" data-go="policy">查看租税政策</button>'}else if(Q?.typeId==="public_housing"){let X=Q.housing;O=`${Q.name} · ${_2($,Q)}`,Y=`<div class="status-strip"><span class="status-light working"></span><strong>已落成</strong><span>${V(Q.level)}级</span></div><div class="row"><span class="label">入住 / 容量 / 空位</span><strong class="value">${V(X?.occupied||0)} / ${V(X?.capacity||1000)} / ${V(X?.vacancies||0)}人</strong></div><div class="row"><span class="label">租金已收 / 减免</span><strong class="value">${V($.housing.lastRentDay?.collectedWheatJin||0)} / ${V($.housing.lastRentDay?.waivedWheatJin||0)}${D(Z)}</strong></div>${c3($,Q)}${$$($,Q,_)}`,G='<button class="secondary" data-go="residents">查看镇民</button>'}else if(Q){O=`${Q.name} · ${_2($,Q)}`;let X=$.payroll?.lastDay?.workers?.find((j)=>j.buildingId===Q.id),q=Q.jobs.map((j)=>({...j,key:`${Q.id}::${j.id}`})),J=Q.privateJobs.map((j)=>({...j,key:`${Q.id}::${j.id}::private`})),F=q.reduce((j,l)=>j+l.workers,0),W=q.reduce((j,l)=>j+l.workers*l.wagePerWorkerDay,0),K=q.find((j)=>j.globalDemandKind==="public_service"),L=X?.unpaidCurrentWheatJin||0,x=q.map((j)=>dz($,j,$.labor.idle)).join(""),R=q.map((j)=>j.outputToday).find((j)=>j&&Object.keys(j).length)||{},C=q[0],B=Q.privateOutputToday.map((j)=>`${D($.itemNames[j.itemId]||j.itemId)} ${V(j.residentUnits/$.inventoryUnitsPerJin)}${D($.itemUnits[j.itemId]||"单位")}`).join(" · ")||"暂无产出",I=Object.entries(Q.privateStock||{}).map(([j,l])=>`${D($.itemNames[j]||j)} 居民${V(l.residents/$.inventoryUnitsPerJin)} / 镇库${V(l.town/$.inventoryUnitsPerJin)}${D($.itemUnits[j]||"单位")}`).join(" · ")||"暂无库存",T=Q.ownership.privateLevels>0?`<h3>民营 · ${V(Q.ownership.privateLevels)}级</h3><div class="row"><span class="label">状态 / 用工</span><strong class="value">${D(Q.privateReason||U_(Q.privateStatus))} · ${V(J.reduce((j,l)=>j+l.workers,0))}/${V(J.reduce((j,l)=>j+l.capacity,0))}人</strong></div><div class="row"><span class="label">今日产出</span><strong class="value">${B}</strong></div><details class="detail-block" data-detail-key="private-stock:${
+D(Q.id)}
+"><summary>原料与库存</summary><div class="detail-body"><div class="row"><span class="label">居民 / 镇库</span><strong class="value">${I}</strong></div></div></details>`:"",b=Q.operatingRight,y=["mill","bakery","lumberyard","saltworks"].includes(Q.typeId)&&Q.ownership.townLevels>0?$.rightSalePreviewId===Q.id?`<div class="cardlet"><h3>出售一级经营权</h3><div class="row"><span class="label">售价 / 参考上限</span><strong class="value">${V(b.priceWheatJin,2)} / ${V(b.maximumPriceWheatJin,2)}${D(Z)}</strong></div><div class="row"><span class="label">预计参考收益</span><strong class="value">${V(b.estimatedAnnualReferenceReturn,2)}${D(Z)}${b.typeId==="lumberyard"?"":"/年"}</strong></div><div class="row"><span class="label">转入民营</span><strong class="value">${V(b.transferableWorkers)}人</strong></div>${b.reason?`<div class="shortage-banner visible">${D(b.reason)}</div>`:""}<details class="detail-block" data-detail-key="right-detail:${
+D(Q.id)}
+"><summary>估值详情</summary><div class="detail-body"><div class="row"><span class="label">产品价 / 税率 / 工资</span><strong class="value">${V(b.itemPriceVoucher,3)}${D(Z)}/${D($.itemUnits[b.outputItemId]||"单位")} · ${V(b.taxPercent,2)}% · ${V(b.wageRateVoucher,2)}${D(Z)}</strong></div><div class="row"><span class="label">需求 / 库存 / 缺口</span><strong class="value">${V(b.dailyDemandJin,2)} / ${V(b.competitionStockJin,2)} / ${V(b.unmetDemandJin,2)}${D($.itemUnits[b.outputItemId]||"单位")}</strong></div><div class="row"><span class="label">预计满产满销人均日利润</span><strong class="value">${V(b.theoreticalFullSaleProfitPerWorkerVoucher,2)}${D(Z)}</strong></div><div class="row"><span class="label">岗位容量</span><strong class="value">镇营${V(b.townCapacityBefore)}→${V(b.townCapacityAfter)} · 民营${V(b.privateCapacityBefore)}→${V(b.privateCapacityAfter)}</strong></div>${b.demandBasis?`<div class="subtle">${D(b.demandBasis)}</div>`:""}<div class="subtle">成交后居民需保留90天基本口粮。</div></div></details><div class="business-sticky-actions"><button class="secondary" data-right-cancel>取消</button><button class="primary" data-right-confirm="${
+D(Q.id)}
+" ${b.available?"":"disabled"}>确认成交</button></div></div>`:`<div class="cardlet"><h3>经营权</h3><div class="row"><span class="label">一级售价</span><strong class="value">${V(b.priceWheatJin,2)}${D(Z)}</strong></div>${h0($,{key:`right-price:${Q.id}`,kind:"operating-right-price",target:Q.id,value:b.priceWheatJin,label:"单级经营权售价",minimum:0.01,maximum:1e9,positive:!0,className:"setting-editor"})}<button class="secondary wide" data-right-preview="${
+D(Q.id)}
+">预览出售</button></div>`:"";Y=`<div class="status-strip"><span class="status-light ${
+["ready","limited_materials"].includes(Q.status.status)?"working":"idle"}
+"></span><strong>${D(Q.status.label)}</strong><span>${V(Q.level)}级</span></div>${K?`<div class="row"><span class="label">全镇需求 / 在岗 / 缺员</span><strong class="value">${V(K.globalDemand)} / ${V(K.globalInPost)} / ${V(K.globalShortage)}人</strong></div>`:`<div class="row"><span class="label">人数 / 岗位</span><strong class="value">${V(F)} / ${V(q.reduce((j,l)=>j+l.capacity,0))}人</strong></div>`}<div class="row"><span class="label">今日产量</span><strong class="value">${C_(R,$.itemNames,$.itemUnits,$.inventoryUnitsPerJin)}</strong></div><div class="row"><span class="label">预计每日工资</span><strong class="value">${V(W)}${D(Z)}</strong></div>${L>0?`<div class="shortage-banner visible">新增欠薪 ${V(L)}${D(Z)}</div>`:""}<h3>镇营排班</h3>${x}${P_($,Q)}<div class="site-wage-edit"><span>日薪</span>${h0($,{key:`wage:${C?.roleId||""}`,kind:"wage",target:C?.roleId||"",value:C?.wagePerWorkerDay||0,label:`${C?.name||"作坊工人"}日薪`,minimum:0,maximum:1e5,confirmLabel:"✓",className:"wage-editor"})}<span>${D(Z)}</span></div><details class="detail-block" data-detail-key="ownership:${
+D(Q.id)}
+"><summary>产权详情</summary><div class="detail-body"><div class="row"><span class="label">镇营 / 民营 / 公司</span><strong class="value">${V(Q.ownership.townLevels)} / ${V(Q.ownership.privateLevels)} / ${V(Q.ownership.listedLevels||0)}级</strong></div></div></details>${T}${y}${$$($,Q,_)}`,G='<button class="secondary" data-go="residents">查看全部岗位</button>'}else if(f){O=`施工中 · ${f.name}`;let X=`project-workers:${f.instanceId}`;Y=`<div class="row"><span class="label">进度</span><strong class="value">${V(f.workDone)} / ${V(f.workRequired)}工日</strong></div><div class="meter"><span style="width:${
+V(f.percent,1)}
+%"></span></div><div class="row"><span class="label">投入建筑工</span><strong class="value">${V(f.workers)}人</strong></div><div class="row"><span class="label">预计剩余工期</span><strong class="value">${f.estimatedDays?`约${V(f.estimatedDays)}天`:"缺建筑工"}</strong></div><div class="row"><span class="label">预计工资</span><strong class="value">约${V(f.estimatedWageJin)}${D(Z)}</strong></div><div class="site-worker-control"><span>投入建筑工 · 待业${V($.labor.idle)}人</span><div class="site-worker-actions"><button class="step-btn" data-project-step="${
+D(f.instanceId)}
+" data-step="-1" aria-label="减少建筑工" ${f.workers<=0?"disabled":""}>−</button>${h0($,{key:X,kind:"project-workers",target:f.instanceId,value:f.workers,label:"投入建筑工人数",integer:!0,minimum:0,maximum:$.labor.idle+f.workers,confirmLabel:"✓",className:"worker-editor site-worker-editor"})}<button class="step-btn" data-project-step="${
+D(f.instanceId)}
+" data-step="1" aria-label="增加建筑工" ${$.labor.idle<=0?"disabled":""}>＋</button></div></div>`,G='<button class="secondary" data-go="residents">查看全部岗位</button>'}else O="空地",Y='<div class="subtle">尚未建设。</div>',G='<button class="secondary" data-go="build">去建设</button>';return`<button class="site-back" data-back>‹ 返回镇图</button><h2>${D(O)}</h2><div class="cardlet">${Y}${G?`<div class="site-actions">${G}</div>`:""}</div>`}function $$($,Z,z){let N=w0($);if(!Z||!z)return"";let M=z.upgrade||{},Q=z.demolition||{},_=($.projects||[]).find((X)=>X.kind==="upgrade"&&X.buildingId===Z.id)||null,f=(M.materials||[]).map((X)=>`${D(X.name)} ${V(X.required)}${D(X.unit)}${X.missing?`（还缺${V(X.missing)}）`:""}`).join(" · ")||"无需材料",O=_?`<div class="cardlet"><div class="setting-title">升级施工中 · ${V(_.workDone)} / ${V(_.workRequired)}工日</div><div class="meter"><span style="width:${
+V(_.percent,1)}
+%"></span></div><div class="subtle">投入建筑工${V(_.workers)}人 · ${_.estimatedDays?`预计${V(_.estimatedDays)}天`:"缺建筑工"}</div></div>`:$.upgradePreviewId===Z.id?`<div class="cardlet"><div class="setting-title">升级至${V(M.nextLevel)}级</div><div class="row"><span class="label">预计工期 / 工资</span><strong class="value">${M.waitingForWorkers?`等待用工 / 0${D(N)}`:`约${V(M.estimatedDays)}天 / ${V(M.estimatedWageJin)}${D(N)}`}</strong></div><div class="subtle">材料：${f}。升级期间原建筑继续生产。</div>${!M.materialsAffordable?'<div class="shortage-banner visible">材料不足</div>':""}<div class="settings-actions"><button class="primary" data-upgrade-start="${
+D(Z.id)}
+" ${M.available&&M.materialsAffordable?"":"disabled"}>确认开工</button><button class="secondary" data-upgrade-cancel>取消</button></div></div>`:`<button class="primary" data-upgrade-preview="${
+D(Z.id)}
+" ${M.available?"":"disabled"}>${M.available?`升级至${V(M.nextLevel)}级`:D(M.reason||"不可升级")}</button>`,Y=(Q.refund||[]).map((X)=>`${D(X.name)} ${V(X.quantity)}${D(X.unit)}`).join(" · ")||"无材料返还",G=$.demolitionPreviewId===Z.id?`<div class="cardlet"><div class="setting-title">拆除确认</div><div class="row"><span class="label">返还材料</span><strong class="value">${Y}</strong></div><div class="row"><span class="label">释放岗位</span><strong class="value">${V(Q.workers)}人</strong></div>${Q.housingShortage?`<div class="shortage-banner visible">拆除后住房缺口 ${V(Q.housingShortage)}人</div>`:""}<div class="settings-actions"><button class="primary danger" data-demolish-confirm="${
+D(Z.id)}
+" ${Q.available?"":"disabled"}>确认拆除</button><button class="secondary" data-demolish-cancel>取消</button></div></div>`:Q.available?`<button class="secondary" data-demolish-preview="${
+D(Z.id)}
+">拆除</button>`:`<div class="subtle">暂不能拆除：${D(Q.reason||"当前条件不允许")}</div>`;return`<h3>建筑管理</h3>${O}<div class="site-actions">${G}</div>`}function U_($){return{ready:"经营中",limited_demand:"按需求限产",no_workers:"缺工人",no_demand:"暂无需求",no_materials:"缺原料",reserve_protected:"口粮储备不足"}[$]||"暂无经营"}var K5="0.1.11",D5="0111-r13-b001";function S_($){return $?new Date($).toLocaleString("zh-CN",{hour12:!1}):"未知"}function n1($){let Z=Math.max(0,Number($)||0);if(Z<1024)return`${Z} B`;if(Z<1048576)return`${(Z/1024).toFixed(1)} KB`;return`${(Z/1048576).toFixed(2)} MB`}function I_($){let Z=D($.id);return`<div class="save-slot${
+$.current?" is-current":""}
+">
+    <div class="save-slot-heading"><strong>${D($.name)}</strong>${$.current?'<span class="current-badge">正在游玩</span>':""}</div>
+    <p class="subtle">${$.damaged?"数据无法读取":`第${$.year}年 · 第${$.day}天　人口 ${$.population?.toLocaleString("zh-CN")??"—"}`}<br>保存于 <time data-slot-time="${
+Z}
+">${S_($.savedAt)}</time>${$.recovered?" · 已从备份读取":""}</p>
+    <div class="save-slot-actions">
+      <button class="secondary" data-load-slot="${
+Z}
+" ${$.current||$.damaged?"disabled":""}>读取</button>
+      <button class="secondary" data-export-slot="${
+Z}
+" ${$.damaged?"disabled":""}>导出</button>
+      <details data-detail-key="rename-${
+Z}
+" class="rename-detail"><summary>重命名</summary>
+        <div class="save-input-row"><input data-rename-input="${
+Z}
+" maxlength="36" aria-label="新存档名称" value="${
+D($.name)}
+"><button class="secondary" data-rename-slot="${
+Z}
+">确定</button></div>
+      </details>
+    </div>
+    <div class="save-danger-row"><button class="danger-button" data-delete-slot="${
+Z}
+">删除此存档</button></div>
+  </div>`}function b_($,Z){if(!$&&!Z)return"";let z=$?.storageUsage?.indexedDB||Z?.indexedDB,N=$?.storageUsage?.localStorage||Z?.localStorage,M=[];if($?.step)M.push(`失败步骤：${D($.step)}`);if(Number.isFinite($?.pendingBytes))M.push(`待写入：${n1($.pendingBytes)}`);if(z)M.push(`IndexedDB：主档 ${n1(z.primaryBytes)}；轮换备份 ${n1(z.backupBytes)}；遗留归档 ${n1(z.archiveBytes)}；合计 ${n1(z.totalBytes)}`);if(N)M.push(`遗留 localStorage：r01 主档 ${n1(N.slotPrimaryBytes)}；旧单存档 ${n1(N.oldSingleBytes)}；历史/自动备份 ${n1(N.backupBytes)}；目录 ${n1(N.catalogBytes)}；合计 ${n1(N.totalBytes)}`);if($?.originalName)M.push(`原始异常：${D($.originalName)}${$.originalMessage?`：${D($.originalMessage)}`:""}`);return M.length?`<details class="cardlet" data-detail-key="storage-diagnostics"><summary>${$?"存储故障详情":"存储详情"}</summary><p class="subtle">${M.join("<br>")}</p><p class="subtle">这里只记录步骤与字节占用，不显示存档正文。</p></details>`:""}function g_($,Z){let z=Z.persistenceIssue;if(!z&&!Z.transientMode&&!Z.persistenceBusy)return"";let N=Z.persistenceBusy?"正在验证 IndexedDB 持久存储的写入、读回与删除。":z?.message||"当前为临时游玩。";return`<div class="cardlet save-recovery">
+    <div class="setting-title">存储恢复</div>
+    <p class="subtle">${D(N)}</p>
+    ${Z.transientMode?'<p class="subtle">当前进度只存在于本页内存中，刷新或关闭页面后不会保留。</p>':""}
+    <div class="settings-actions">
+      <button class="secondary" data-retry-storage ${Z.persistenceBusy?"disabled":""}>真实写入探测</button>
+      ${$?'<button class="secondary" data-export-current>导出当前进度</button>':""}
+      ${Z.transientMode&&$?`<button class="primary" data-persist-temporary ${Z.persistenceBusy?"disabled":""}>保存到本机</button>`:""}
+      ${!$?'<button class="primary" data-start-temporary>临时游玩</button>':""}
+    </div>
+  </div>`}function v_($){if(!$?.length)return"";return`<div class="cardlet"><div class="setting-title">遗留 localStorage 数据</div>
+    <p class="subtle">原数据不会自动删除。只有已写入 IndexedDB 并完成逐字节读回校验的项目，才允许导出归档或清理对应 localStorage。</p>
+    <div class="save-list">${$.map((Z,z)=>{let N=D(Z.key),M=Z.stillInLocalStorage?"仍占用 localStorage":"localStorage 已清理；IndexedDB 归档仍保留",Q=Z.verified?"归档已校验":"归档未完成校验；原数据保留";return`<div class="save-slot"><div class="save-slot-heading"><strong>${D(Z.label)}</strong></div>
+        <p class="subtle">${n1(Z.bytes)} · ${D(M)} · ${D(Q)}${Z.readable?"":` · 无法作为当前版本存档读取${Z.readError?`：${D(Z.readError)}`:""}`}</p>
+        <div class="save-slot-actions">${Z.verified?`<button class="secondary" data-export-legacy="${
+N}
+">导出遗留数据</button>`:""}${Z.verified&&Z.stillInLocalStorage?`<button class="danger-button" data-clean-legacy="${
+N}
+" data-legacy-index="${
+z}
+">清理此项 localStorage</button>`:""}</div>
+      </div>`}).join("")}</div></div>`}function y_($){return`<div class="cardlet build-identity"><div class="setting-title">当前运行版本</div><p class="subtle">麦乡 ${D($.appVersion||K5)} · 构建 ${D($.buildId||D5)}<br>页面：${D($.pageAddress||"未知")}</p></div>`}function i3($,Z=null,z={}){let N=z.slots||[],M=z.managerOpen||!$,Q=z.saveStatus||"尚未保存",_=z.pending,f=_?`<div class="save-confirm" role="group" aria-label="确认操作"><strong>${D(_.title)}</strong>
+    <p>${D(_.message)}</p><div class="settings-actions"><button class="primary" data-confirm-save-action>确认</button><button class="secondary" data-cancel-save-action>取消</button></div></div>`:"",O=Z||z.warning;return`<h2>${M?$?"存档管理":"选择存档":"设置"}</h2>
+    ${O?`<div class="notice notice-error" role="alert">${D(O)}</div>`:""}
+    ${f}
+    ${g_($,z)}
+    ${b_(z.persistenceIssue,z.storageStats)}
+    ${M?`<div class="save-manager">
+      <p class="subtle" id="saveStatus" role="status">${D(Q)}</p>
+      ${$?`<div class="settings-actions">${z.transientMode?`<button class="primary" data-persist-temporary ${z.persistenceBusy?"disabled":""}>保存到本机</button>`:`<button class="primary" data-save-current ${z.persistenceBusy?"disabled":""}>保存当前进度</button>`}<button class="secondary" data-export-current>导出当前进度</button><button class="secondary" data-close-save-manager>返回设置</button></div>
+        ${z.transientMode?"":`<div class="save-input-row"><input id="saveAsName" maxlength="36" placeholder="新存档名称" aria-label="另存为名称"><button class="secondary" data-save-as ${z.persistenceBusy?"disabled":""}>另存为新存档</button></div>`}`:""}
+      <div class="settings-actions"><button class="primary" data-new-game ${z.persistenceBusy?"disabled":""}>新游戏</button><button class="secondary" data-import-save ${z.persistenceIssue||z.persistenceBusy?"disabled":""}>导入存档文件</button><input id="saveImportFile" type="file" accept="application/json,.json" hidden></div>
+      <h3>IndexedDB 本机存档</h3><div class="save-list">${N.length?N.map(I_).join(""):'<p class="subtle">暂无可读取的持久存档。</p>'}</div>
+      ${v_(z.legacyArtifacts)}
+    </div>`:`<div class="cardlet"><div class="setting-title">新游戏</div><p class="subtle">当前进度将保存，新局使用独立存档。</p><button class="primary" data-new-game ${z.persistenceBusy?"disabled":""}>新游戏</button></div>
+      <div class="cardlet"><div class="setting-title">存档管理</div><p class="subtle" id="saveStatus" role="status">${D(Q)}</p><button class="secondary" data-open-save-manager>打开存档管理</button></div>
+      <div class="cardlet"><div class="setting-title">音效</div><button class="secondary" id="soundToggle" aria-pressed="${
+Boolean(z.soundMuted)}
+">${z.soundMuted?"开启音效":"关闭音效"}</button></div>`}
+    ${y_(z)}`}function Q4($,Z,z,N){let M=$.map((Q)=>Q[Z]).filter((Q)=>Number.isFinite(Q));if(M.length<2||Math.min(...M)===Math.max(...M))return"";return r5(M,z,N)}function iz($){let Z=$.laborMarket;if(!Z)return"经济";return`经济 · 失业${V(Z.unemploymentRate*100,1)}%`}function rz($){let Z=$.laborMarket;if(!Z)return"";let z=$.economy?.history||[],N=z.at(-1)||{},M=Z.mood==="slack"?"失业多，商店压工资":Z.mood==="tight"?"人手紧，高薪岗位会挖人":"行情平稳",Q=Number.isFinite(N.shopWage)?`${V(N.shopWage,1)}`:"—",_=$.economy?.recentPoach?.[0];return`<div class="econ-row"><span>失业率</span><b>${V(Z.unemploymentRate*100,1)}%</b></div>
+    <p class="econ-note">${D(M)} · 待业${V(Z.idle)}人</p>
+    ${Q4(z,"unemploymentPercent","失业率%",1)}
+    <div class="econ-row"><span>公职 / 店员均薪</span><b>${V(Z.referenceWage,1)} / ${Q}</b></div>
+    ${Q4(z,"shopWage","店员均薪",1)}
+    <div class="econ-row"><span>小麦批发价</span><b>${V(N.wheatPrice??0,2)}</b></div>
+    ${Q4(z,"wheatPrice","小麦价",2)}
+    <div class="econ-row"><span>镇库小麦</span><b>${V(N.townWheatJin??0)}斤</b></div>
+    ${Q4(z,"townWheatJin","镇库小麦",0)}
+    <div class="econ-row"><span>居民口粮</span><b>${V(N.residentFoodDays??0,0)}天</b></div>
+    ${$.economy?.poachYear?`<p class="econ-note">今年跳槽 ${V($.economy.poachYear)} 人${_?`（最近：${D(_.from)}→${D(_.to)}）`:""}</p>`:""}`}function w_($={}){return[$.panel||"",$.site||"",$.build||"",$.plotId||"",$.paused===!1?"run":"paused",Number($.speed)||1].join("|")}function sz($){let Z=0,z=null,N=0;function M(){Z+=1}function Q(){Z+=1,z=null}function _(O,Y){if(!O)return null;let G=w_(Y);if(z&&z.state===O&&z.stateRevision===Z&&z.selectionKey===G)return z.view;let X=$(O,Y);return N+=1,z={state:O,stateRevision:Z,selectionKey:G,view:X},X}function f(){return{stateRevision:Z,buildCount:N,cached:Boolean(z)}}return{get:_,invalidateState:M,clear:Q,stats:f}}function d($,Z){return $&&typeof $.closest==="function"?$.closest(Z):null}function az($){if(document.title=`麦乡 ${K5} · ${D5}`,$.dataset.appVersion=K5,$.dataset.buildId=D5,$.innerHTML=Fz,window.matchMedia?.("(max-width: 759px), (orientation: landscape) and (max-height: 520px)").matches)$.querySelector(".town-minimap")?.removeAttribute("open");let Z=null,z=null,N=null,M=!0;try{Z=window.localStorage}catch(U){N=u1(U,"访问 localStorage"),console.error("[麦乡存档] localStorage 访问失败",U,U?.cause||"")}let Q=new v3(n.content),_=Bz(),f=sz((U,A)=>n.selectDashboard(U,A)),O=(U)=>$.querySelector(U),Y=Kz(O("#mapStage"),O("#mapWorld"));a1.restorePreference(Z);let G=Ez(O("#toast")),X=null,q=null,J=!1,F=null,W="尚未保存",K=null,L=new Map,x=null,R=!1,C=0,B=0,I=!1,T=!1,b=performance.now(),y=0,j="",l="",e=null,u=null,H=null,k=null,S=null,w=null,s=null,c=null,o=null,Q0=null,p=!1,a=null,L0=!0,G0="maixiang-ui-session";J=!0,_.openPanel("settings"),e=k0(X?.events?.[0]);function k0(U){return U?`${U.year}:${U.day}:${U.mergeKey||U.text}`:""}function g(U,A=2600){G.show(U,A)}let K0=Mz({capture:()=>X&&z&&q&&!T?{state:X,slotId:q,revision:C,session:B,dirty:R}:null,save:(U)=>z.saveCurrent(U.state,U.slotId),onSuccess:(U,A)=>{if(U.session!==B||U.slotId!==q)return;if(U.revision===C)R=!1;I=!1,W=`最近保存：${new Date(A.savedAt).toLocaleString("zh-CN",{hour12:!1})} · 成功`;let i=O("#saveStatus");if(i)i.textContent=W;let R0=$.querySelector(".save-slot.is-current [data-slot-time]");if(R0)R0.textContent=new Date(A.savedAt).toLocaleString("zh-CN",{hour12:!1})},onFailure:(U,A)=>{if(U.session!==B||U.slotId!==q)return;N=A,console.error("[麦乡存档] 保存失败",A,A?.cause||""),W=`保存失败：${A.message}`;let i=O("#saveStatus");if(i)i.textContent=W;if(!I)g(W,5000),I=!0}});async function M1(U=!1){if(!X||!R&&!U)return!0;if(T){R=!0,W="临时游玩：当前进度仅保存在本页内存中；刷新后不会保留。";let A=O("#saveStatus");if(A)A.textContent=W;return!0}if(!z)return!1;return K0.request({force:U})}function B1(){f.invalidateState()}function P(U=!1){if(R=!0,C+=1,B1(),U)M1()}function t(){let U=_.state;return{panel:U.activePanel||"none",site:U.selectedSite,build:U.activePanel==="build"?U.buildType:null,plotId:U.activePanel==="build"?U.previewPlotId:null,paused:Q.paused,speed:Q.speed}}function z0(){if(!X)return null;return{...f.get(X,t()),numericDrafts:Object.fromEntries(L),upgradePreviewId:u,demolitionPreviewId:H,rightSalePreviewId:k,currencyPreview:S,listingPreview:w,stockListingPreview:s,sharePreviewCompanyId:c,buybackPreview:o,companyLevelPreview:Q0,reformFinishConfirm:p}}let T0="";function r0(U){let A=U.season,i=`${A.name} · ${A.field}`;O("#dateLabel").textContent=`第${V(U.year)}年 · ${A.name} · 第${V(A.index)}天`,O("#timeLabel").textContent=U.paused?"时光暂停":`时光流转 · ${U.speed}×`,O("#populationStat").textContent=V(U.people.total),O("#idleStat").textContent=V(U.labor.idle),O("#residentStat").textContent=y3(U.accounts.residents.qeq),O("#townStat").textContent=y3(U.accounts.town.qeq),O("#forecastMap").textContent=`${V(U.forecast)}斤`,O("#daysMap").textContent=`${Q2(U.residentFoodDays,1)}天`,O("#econSummary").textContent=iz(U);let R0=rz(U);if(T0!==R0)O("#econBody").innerHTML=R0,T0=R0;O("#fieldSign").innerHTML=`<span class="season-dot"></span><b>${D(i)}</b>`,O("#mapStage").dataset.season=A.key,O("#pauseBtn").classList.toggle("selected",U.paused),O("#pauseBtn").setAttribute("aria-pressed",String(U.paused)),$.querySelectorAll("[data-speed]").forEach((Y0)=>{let b0=!U.paused&&Number(Y0.dataset.speed)===U.speed;Y0.classList.toggle("selected",b0),Y0.setAttribute("aria-pressed",String(b0))});let X0=_.state,C1=(X0.buildType?U.constructionOptions.find((Y0)=>Y0.id===X0.buildType):null)?.materials?.filter((Y0)=>Y0.missing>0).map((Y0)=>`还缺${V(Y0.missing)}${Y0.name}`).join("、"),_0=X0.activePanel==="build"&&X0.buildType?X0.previewPlotId?C1?`地块已选；${C1}`:"地块已选；可确认开工":"点一处虚线空地选址；再次点“建设”可取消":X0.activePanel==="site"?"点关闭或返回，可继续查看镇图":"点建筑查看详情 · 拖动地图可巡视镇子";O("#mapHint").textContent=_0}function N0(U){let A=_.state,i=U.events[0],R0=k0(i),X0=Boolean(e&&R0&&R0!==e);if(X0)_.revealEvents();let c0=`${A.eventsExpanded}|${A.eventsDismissed}|${U.events.map((Y0)=>`${Y0.year}:${Y0.day}:${Y0.text}`).join("|")}`;if(c0===l)return;l=c0;let C1=O("#eventFloat");if(C1.hidden=A.eventsDismissed,X0&&/收获|秋收/.test(i?.text||""))a1.playHarvest();e=R0,O("#latestEvent").textContent=i?.text||"镇上平静，日子照常向前。",O("#eventToggle").setAttribute("aria-expanded",String(A.eventsExpanded));let _0=O("#eventHistory");_0.hidden=!A.eventsExpanded,_0.innerHTML=A.eventsExpanded?U.events.slice(0,5).map((Y0)=>`<div class="event-line"><time>第${V(Y0.year)}年 · 第${V(Y0.day)}${Y0.untilDay?`–${V(Y0.untilDay)}`:""}日</time>${D(Y0.text)}</div>`).join(""):""}function m0(U){let A=()=>{let i=[];try{i=z?.list().slots||[]}catch(c0){N=c0,console.error("[麦乡存档] 读取存档列表失败",c0,c0?.cause||"")}let R0=[],X0=null;try{R0=z?.legacyArtifacts?.()||[],X0=z?.storageStats?.()||null}catch{}return{soundMuted:a1.isMuted,slots:i,warning:K,saveStatus:W,managerOpen:J,pending:F,transientMode:T,persistenceIssue:N,persistenceBusy:M,legacyArtifacts:R0,storageStats:X0,appVersion:K5,buildId:D5,pageAddress:window.location.href}};if(x||!X)return i3(U,x?.message||null,A());switch(_.state.activePanel){case"build":return Cz(U);case"residents":return jz(U);case"business":return uz(U);case"policy":return lz(U);case"site":return cz(U);case"settings":return i3(U,null,A());default:return""}}function l1(U,A=null){if(A?.dataset?.draftKey===U)return A;return Array.from($.querySelectorAll("[data-draft-key]")).find((i)=>i.dataset.draftKey===U)||null}function F1(U,A,i=null){let R0=L.get(U)||{value:i?.value??""};L.set(U,{...R0,error:A});for(let X0 of $.querySelectorAll("[data-draft-key]"))if(X0.dataset.draftKey===U)X0.setAttribute("aria-invalid","true");for(let X0 of $.querySelectorAll("[data-draft-error]")){if(X0.dataset.draftError!==U)continue;X0.textContent=A,X0.hidden=!1}g(A,3600)}function I0(U,A={}){let i=l1(U),R0=L.has(U)?L.get(U).value:i?.value,X0=p3(R0,{label:A.label||i?.dataset.draftLabel||"数值",minimum:A.minimum??Number(i?.dataset.draftMinimum??0),maximum:A.maximum??(i?.dataset.draftMaximum!==void 0?Number(i.dataset.draftMaximum):void 0),integer:A.integer??i?.dataset.draftInteger==="true",positive:A.positive??i?.dataset.draftPositive==="true"});if(!X0.ok)return F1(U,X0.reason,i),null;return X0.value}function H0(U,A=null){if(!X)return!1;let i=l1(U,A);if(!i)return!1;let R0=L.has(U)?L.get(U).value:i.value,X0=i.dataset.draftKind,c0={label:i.dataset.draftLabel||"数值",minimum:Number(i.dataset.draftMinimum??0),integer:i.dataset.draftInteger==="true",positive:i.dataset.draftPositive==="true"};if(i.dataset.draftMaximum!==void 0)c0.maximum=Number(i.dataset.draftMaximum);let C1=null;if(X0==="employment"){if(C1=z0().labor.rows.find((x2)=>x2.key===i.dataset.draftTarget),!C1)return F1(U,"这个岗位已不可用，请重新打开镇民面板后再试。",i),!1;c0.maximum=C1.maxAssignable}let _0=p3(R0,c0);if(!_0.ok)return F1(U,_0.reason,i),!1;let Y0,b0;if(X0==="employment")Y0=n.setEmployment(X,i.dataset.draftTarget,_0.value),b0=`已安排${V(Y0.assigned)}名${c0.label.replace(/人数$/,"")}。`,j="";else if(X0==="project-workers")Y0=n.setProjectWorkers(X,i.dataset.draftTarget,_0.value),b0=`已将工程投入建筑工调整为${V(Y0.assigned)}人。`,j="";else if(X0==="wage")Y0=n.setWageRate(X,i.dataset.draftTarget,_0.value),b0=`日薪已设为${V(_0.value,2)}小麦等值。`;else if(X0==="company-wage")Y0=n.configureCompanyWage(X,i.dataset.draftTarget,_0.value),b0=`公司日薪已设为${V(_0.value,2)}小麦等值。`;else if(X0==="unemployment-rate")Y0=n.setUnemploymentPolicy(X,{dailyPerWorkerJin:_0.value}),b0=`失业金已设为每人每日${V(_0.value,2)}小麦等值。`;else if(X0==="agriculture-tax")Y0=n.setAgricultureTax(X,_0.value),b0=`农业税已设为${V(_0.value,2)}%。`;else if(X0==="private-tax-rate")Y0=n.setPrivateProductionTax(X,i.dataset.draftTarget,_0.value),b0=`民营生产税已设为${V(_0.value,2)}%。`;else if(X0==="operating-right-price")Y0=n.setOperatingRightPrice(X,i.dataset.draftTarget,_0.value),b0=`该级经营权售价已设为${V(_0.value,2)}小麦等值。`;else if(X0==="employment-exchange")Y0=n.setEmploymentExchangeQuota(X,_0.value),b0=`在岗居民每日换券额度已设为${V(_0.value,2)}斤。`;else if(X0==="voucher-target")Y0=n.setVoucherPaymentTarget(X,_0.value),b0=`目标粮券支付比例已设为${V(_0.value,2)}%。`;else if(X0==="shop-rent")Y0=n.setShopRent(X,_0.value),b0=`营业店铺日租已设为${V(_0.value,2)}小麦等值。`;else if(X0==="shop-profit-tax")Y0=n.setShopProfitTax(X,_0.value),b0=`商业利润税已设为${V(_0.value,2)}%。`;else if(X0==="wholesale-price")Y0=n.configureWholesalePrice(X,i.dataset.draftTarget,_0.value),b0=`批发价已设为${V(_0.value,3)}小麦等值。`;else if(X0==="wholesale-allocation")Y0=n.configureWholesaleTownAllocation(X,i.dataset.draftTarget,_0.value),b0=`镇库每日调拨已设为${V(_0.value,2)}。`;else if(X0==="output-target")Y0=n.setOutputTarget(X,i.dataset.draftTarget,_0.value),b0=_0.value>0?`目标日产量已设为${V(_0.value,2)}。`:"已取消目标日产量，按人手满产。";else if(X0==="service-price")Y0=n.configureServicePrice(X,i.dataset.draftTarget,_0.value),b0=`服务价格已设为${V(_0.value,3)}小麦等值。`;else return F1(U,"无法识别这项设置，请重新打开面板后再试。",i),!1;if(!Y0?.ok)return F1(U,Y0?.reason||"设置未能提交，请检查输入。",i),!1;return L.delete(U),P(!0),h(!0),g(b0),!0}function s0(U){let A=U.target;if(!A.matches("[data-draft-key]"))return;let i=A.dataset.draftKey;L.set(i,{value:A.value,error:""}),A.removeAttribute("aria-invalid");for(let R0 of $.querySelectorAll("[data-draft-error]")){if(R0.dataset.draftError!==i)continue;R0.textContent="",R0.hidden=!0}}function d0(U,A=!1){let i=Boolean(_.state.activePanel||x||!X),R0=Dz(_.state);$.classList.toggle("build-site-picking",R0);let X0=O("#panelSurface");if(X0.hidden=!i,$.classList.toggle("panel-open",i),!i)return;let c0=_.state.activePanel,C1={build:"建设",residents:"镇民与就业",business:"经营与粮账",policy:"政策",settings:"设置",site:"地方详情"};O("#panelKicker").textContent=C1[c0]||"镇务";let _0=O("#panel");if(!A&&Hz(_0,document.activeElement))return;let b0=(_0.dataset.renderedPanel||"")===c0,x2=b0?new Set(Array.from(_0.querySelectorAll("details[data-detail-key][open]")).map((p1)=>p1.dataset.detailKey)):new Set,z$=b0?_0.scrollTop:0;if(_0.innerHTML=m0(U),_0.dataset.renderedPanel=c0||"",x2.size){for(let p1 of _0.querySelectorAll("details[data-detail-key]"))if(x2.has(p1.dataset.detailKey))p1.open=!0}if(b0&&c0!=="build")_0.scrollTop=z$;if(c0==="build"){let p1=_.state.previewPlotId;if(p1&&p1!==a)_0.scrollTop=0;a=p1}else a=null}function C0(){if(!X||!q)return;let U=_.state;try{sessionStorage.setItem(G0,JSON.stringify({slot:q,panel:U.activePanel||null,site:U.selectedSite||null,speed:Q.speed,paused:Q.paused}))}catch{}}function I1(){let U=null;try{U=JSON.parse(sessionStorage.getItem(G0)||"null")}catch{}if(!U||U.slot!==q)return;if(U.site)_.openSite(U.site);else if(U.panel&&U.panel!=="settings")_.openPanel(U.panel);if(Q.speedChoices.includes(U.speed))Q.setSpeed(U.speed);if(U.paused===!1)Q.resume()}function h(U=!1){if($.classList.toggle("booting",L0),$.classList.toggle("no-active-save",!X),!L0)C0();if(!X){d0(null,U);return}let A=z0();r0(A);let i=qz(A,_.state);if(i!==j)O("#mapWorld").innerHTML=Yz(A,_.state),j=i;Jz(O("#mapWorld"),A),N0(A),$.querySelectorAll(".bottom-nav .tab").forEach((R0)=>{let X0=_.state.activePanel==="site"?_.state.returnPanel:_.state.activePanel;R0.classList.toggle("active",R0.dataset.panel===X0),R0.setAttribute("aria-current",R0.dataset.panel===X0?"page":"false")}),d0(A,U)}function b2(U){X=U.state,f.clear(),q=U.id,B+=1,C=0,K0.clearFailure(),T=!1,N=null,L.clear(),u=null,H=null,k=null,S=null,w=null,s=null,c=null,o=null,Q0=null,p=!1,a=null,x=null,K=U.recovered?"此局从自动备份读取；请保存以修复当前存档。":null,F=null,J=!1,Q.pause(),Q.speed=1,R=!1,_.resetView(),Y.reset(),j="",l="",e=k0(X.events?.[0]),W=U.savedAt?`最近保存：${new Date(U.savedAt).toLocaleString("zh-CN",{hour12:!1})} · 成功`:"尚未保存",h(!0)}async function Z$(U){try{if(!z)throw N||Error("本机存储不可用");await z.importFile(U),x=null,K=null,J=!0,_.openPanel("settings"),h(!0),g("已导入为独立存档，可从列表读取。",3500)}catch(A){g("导入失败，当前进度未更改："+A.message,5000)}}function _4(){X=B2({content:n.content}),f.clear(),q=null,B+=1,C=0,K0.clearFailure(),T=!0,x=null,K="临时游玩不会写入本机存储；刷新或关闭页面后进度不会保留。可随时导出当前进度。",W="临时游玩：尚未持久保存",F=null,J=!1,Q.pause(),Q.speed=1,R=!0,_.resetView(),Y.reset(),j="",l="",e=k0(X.events?.[0]),h(!0)}async function f4(){M=!0;try{if(!Z)try{Z=window.localStorage}catch{}if(!z)z=await g3({indexedDB:window.indexedDB,legacyStorage:Z,content:n.content});let U=await z.probePersistentStorage();if(!U?.ok)throw Error("IndexedDB 写入探测未通过");let A=z.list();return N=null,x=null,K=A.warning||(U.localStorage?.ok===!1?"IndexedDB 持久保存可用；遗留 localStorage 仍不可写，可在存档管理中导出并按需清理旧数据。":null),!0}catch(U){return N=U?.code?U:u1(U,"IndexedDB 写入探测"),x=X?null:N,console.error("[麦乡存档] 重试持久存储失败",U,U?.cause||""),!1}finally{M=!1}}function oz(){if(!X)return!1;let U=new Blob([A3(X)],{type:"application/json;
+charset=utf-8"}),A=URL.createObjectURL(U),i=document.createElement("a");return i.href=A,i.download=`maixiang-current-year${X.year}-day${X.day}.json`,i.click(),setTimeout(()=>URL.revokeObjectURL(A),1000),!0}async function r3(U){let A=U.target,i=d(A,"button");if(i&&i.id!=="soundToggle"&&!i.disabled&&!i.matches("[data-start-building]"))a1.playClick();let R0=d(A,"[data-draft-commit]");if(R0){let E=R0.closest(".number-editor")?.querySelector("[data-draft-key]");H0(R0.dataset.draftCommit,E);return}if(d(A,"#soundToggle")){let E=a1.toggleMute();if(!E)a1.playClick();h(),g(E?"音效已静音。":"音效已开启。");return}if(Y.consumeSuppressedClick()&&d(A,"#mapStage")){U.preventDefault();return}if(!i&&d(A,"[data-site], [data-plot]"))a1.playClick();let X0=d(A,"[data-map-zoom]");if(X0){Y.zoomBy(Number(X0.dataset.mapZoom));return}if(d(A,"[data-map-reset]")){Y.reset();return}let c0=d(A,"[data-speed]");if(c0&&X){Q.setSpeed(Number(c0.dataset.speed)),h();return}if(d(A,"#pauseBtn")){Q.pause(),M1(),h();return}if(d(A,"#settingsBtn")){J=!1,F=null,_.openPanel("settings"),h();return}if(d(A,"[data-open-save-manager]")){J=!0,h(!0);return}if(d(A,"[data-close-save-manager]")){J=!1,F=null,h(!0);return}if(d(A,"[data-cancel-save-action]")){F=null,h(!0);return}if(d(A,"[data-start-temporary]")){_4(),g("已进入临时游玩；刷新后进度不会保留。",4200);return}if(d(A,"[data-retry-storage]")){if(!await f4()){h(!0),g(N?.message||"本机存储仍不可用。",5000);return}if(!X)try{let E=z.initialize();if(X=E.state,q=E.activeId,K=E.warning,X&&q){let v=z.read(q);b2(v),g("本机存储已恢复，存档已读取。");return}}catch(E){N=E,x=E,console.error("[麦乡存档] 恢复后初始化失败",E,E?.cause||""),h(!0),g(E.message,5000);return}h(!0),g("本机存储已恢复。",3200);return}if(d(A,"[data-persist-temporary]")&&X&&T){if(!await f4()){h(!0),g(N?.message||"本机存储仍不可用。",5000);return}try{let E=await z.saveAs(X,`临时进度 ${z.list().slots.length+1}`);b2(E),g("临时进度已保存为本机存档。",3600)}catch(E){N=E,console.error("[麦乡存档] 临时进度持久化失败",E,E?.cause||""),h(!0),g(E.message,5000)}return}if(d(A,"[data-export-current]")){if(oz())g("当前进度已导出。",3200);return}let C1=d(A,"[data-export-legacy]");if(C1&&z){try{let E=z.exportLegacy(C1.dataset.exportLegacy),v=new Blob([E],{type:"application/json;
+charset=utf-8"}),r=URL.createObjectURL(v),Z0=document.createElement("a");Z0.href=r,Z0.download=`maixiang-legacy-${Date.now()}.json`,Z0.click(),setTimeout(()=>URL.revokeObjectURL(r),1000),g("遗留数据已导出。",3200)}catch(E){g("导出遗留数据失败："+E.message,5000)}return}let _0=d(A,"[data-clean-legacy]");if(_0&&z){let E=z.legacyArtifacts().find((v)=>v.key===_0.dataset.cleanLegacy);if(!E)return;F={kind:"legacy-clean",key:E.key,title:`清理「${E.label}」？`,message:"只删除这一项 localStorage 原数据。IndexedDB 已校验归档仍会保留；不会自动清理其他进度。"},h(!0);return}if(d(A,"[data-new-game]")){F={kind:"new",title:"开始新游戏？",message:T?"当前为临时游玩，不会自动持久保存；如需保留请先导出。新局将尝试建立独立本机存档。":X?"当前进度将先保存，新局使用独立存档。":"将创建独立本机存档并进入新局。"},h(!0);return}let Y0=d(A,"[data-load-slot]");if(Y0&&z){let E=z.list().slots.find((v)=>v.id===Y0.dataset.loadSlot);if(!E||E.damaged)return;F={kind:"load",id:E.id,title:`读取「${E.name}」？`,message:"当前进度将先保存；读取后时光保持暂停。"},h(!0);return}let b0=d(A,"[data-delete-slot]");if(b0&&z){let E=z.list().slots.find((v)=>v.id===b0.dataset.deleteSlot);if(!E)return;F={kind:"delete",id:E.id,title:`删除「${E.name}」？`,message:"删除后无法在游戏中恢复。"},h(!0);return}if(d(A,"[data-confirm-save-action]")&&F){let E=F,v=E.kind==="new"||E.kind==="load"||E.kind==="delete"&&E.id===q,r=Q.paused;if(v)Q.pause();K0.suspend();try{if(await K0.waitForIdle(),E.kind!=="delete"&&X&&!T&&!await K0.flushSuspended({force:!0})){if(!r&&v)Q.resume();g("当前进度保存失败，未切换存档。",5000);return}if(E.kind==="new"){if(!z&&!await f4())throw N||Error("本机存储不可用");let Z0=await z.createNew(`新游戏 ${z.list().slots.length+1}`);b2(Z0),g("新游戏已开始，时光保持暂停。")}else if(E.kind==="load")b2(await z.activate(E.id)),g("存档已读取，时光保持暂停。");else if(E.kind==="legacy-clean"){let Z0=await z.removeLegacy(E.key);F=null,h(!0),g(Z0.removed?"遗留 localStorage 数据已清理；IndexedDB 归档仍保留。":"该项 localStorage 已不存在。",3800)}else if(E.kind==="delete"){let Z0=await z.remove(E.id);if(F=null,Z0.current)X=null,f.clear(),q=null,B+=1,C=0,K0.clearFailure(),R=!1,Q.pause(),L.clear(),u=null,H=null,k=null,S=null,w=null,s=null,c=null,o=null,Q0=null,p=!1,_.resetView(),_.openPanel("settings"),J=!0,j="",l="";h(!0),g(Z0.current?"已删除当前存档，请选择存档或开始新游戏。":"存档已删除。")}}catch(Z0){if(!r&&v&&X)Q.resume();if(N=Z0?.code?Z0:N,Z0?.code)console.error("[麦乡存档] 存档操作失败",Z0,Z0?.cause||"");F=null,J=!0,_.openPanel("settings"),h(!0),g("操作失败："+Z0.message,5000)}finally{K0.resume()}return}if(d(A,"[data-save-current]")){if(T)g("当前为临时游玩；请选择“保存到本机”或“导出当前进度”。",4200);else if(await M1(!0))h(!0),g("当前进度已保存。");return}if(d(A,"[data-save-as]")&&X&&z&&!T){let E=O("#saveAsName")?.value;if(!E?.trim()){g("请输入新存档名称。");return}let v=Q.paused;Q.pause(),K0.suspend();try{if(await K0.waitForIdle(),!await K0.flushSuspended({force:!0})){if(!v)Q.resume();g("当前进度保存失败，未创建新存档。",5000);return}b2(await z.saveAs(X,E)),g("已另存为独立存档。")}catch(r){if(!v&&X)Q.resume();g("另存失败："+r.message,5000)}finally{K0.resume()}return}let x2=d(A,"[data-rename-slot]");if(x2){let E=Array.from($.querySelectorAll("[data-rename-input]")).find((v)=>v.dataset.renameInput===x2.dataset.renameSlot)?.value;K0.suspend();try{await K0.waitForIdle(),await z.rename(x2.dataset.renameSlot,E),h(!0),g("存档已重命名。")}catch(v){g("重命名失败："+v.message,5000)}finally{K0.resume()}return}let z$=d(A,"[data-export-slot]");if(z$&&z){try{let E=z.read(z$.dataset.exportSlot),v=new Blob([A3(E.state)],{type:"application/json;
+charset=utf-8"}),r=URL.createObjectURL(v),Z0=document.createElement("a");Z0.href=r,Z0.download=`maixiang-save-year${E.state.year}-day${E.state.day}.json`,Z0.click(),setTimeout(()=>URL.revokeObjectURL(r),1000),g("存档文件已导出。")}catch(E){g("导出失败："+E.message,5000)}return}let p1=d(A,"[data-resource]");if(p1){_.openPanel(p1.dataset.resource),h();return}let e3=d(A,".bottom-nav [data-panel]");if(e3){_.openPanel(e3.dataset.panel,!0),h();return}if(d(A,"#panelClose")){if(!X)return;_.closePanel(),h();return}if(d(A,"[data-back]")){_.backFromSite(),u=null,H=null,h();return}let t3=d(A,"[data-go]");if(t3){_.openPanel(t3.dataset.go),h();return}let $6=d(A,"[data-open-building]");if($6){_.openSite(`building:${$6.dataset.openBuilding}`),j="",h();return}if(d(A,"#eventToggle")){_.state.eventsExpanded=!_.state.eventsExpanded,_.state.eventsDismissed=!1,l="",h();return}if(d(A,"#eventClose")){_.dismissEvents(),l="",h();return}if(d(A,"[data-import-save]")){let E=O("#saveImportFile");if(E)E.value="",E.click();return}let X4=d(A,"[data-project-step]");if(X4&&X){let E=X4.dataset.projectStep,v=`project-workers:${E}`;if(L.has(v)){F1(v,"人数草稿尚未确认；请先点“确认”，再使用加减按钮。",l1(v));return}let r=(z0().projects||[]).find((j0)=>j0.instanceId===E);if(!r)return;let Z0=n.setProjectWorkers(X,E,r.workers+Number(X4.dataset.step));if(!Z0.ok)g(Z0.reason);P(!0),j="",h();return}let N$=d(A,"[data-job][data-step]");if(N$&&X){let E=`workers:${N$.dataset.job}`;if(L.has(E)){F1(E,"人数草稿尚未确认；请先点“确认”，再使用加减按钮。",l1(E));return}let r=z0().labor.rows.find((t0)=>t0.key===N$.dataset.job);if(!r)return;let Z0=r.roleId==="farmers"?r.targetCount??r.count:r.count,j0=n.setEmployment(X,r.key,Z0+Number(N$.dataset.step));if(!j0.ok)g(j0.reason);P(!0),j="",h();return}let M$=d(A,"[data-wholesale-stockpile], [data-wholesale-release]");if(M$&&X){let E=M$.hasAttribute("data-wholesale-stockpile"),v=E?M$.dataset.wholesaleStockpile:M$.dataset.wholesaleRelease,r=I0(`wholesale-move:${v}`,{label:"单次调运量",minimum:0,maximum:1e9,positive:!0});if(r===null)return;let Z0=E?n.stockpileWholesale(X,v,r):n.releaseWholesale(X,v,r);if(!Z0.ok){g(Z0.reason);return}P(!0),h(!0),g(`${E?"已从批发市场收储":"已向批发市场投放"}${V(Z0.movedJin,2)}${z0().itemUnits?.[v]||"斤"}。`);return}if(d(A,"[data-reclaim-submit]")&&X){let E=z0(),v=E.reclaim;if(!v)return;let r=I0("reclaim-acres",{label:"本次开荒亩数",minimum:1,maximum:v.remaining,integer:!0,positive:!0});if(r===null)return;let Z0=I0("reclaim-workers",{label:"投入开荒人数",minimum:1,maximum:1e5,integer:!0,positive:!0});if(Z0===null)return;let j0=n.reclaimFarmland(X,r,Z0);if(!j0.ok){g(j0.reason);return}L.clear(),P(!0),j="",h(!0),g(`已开荒${V(j0.acres)}亩，投入${V(j0.workers)}人、${V(j0.workDays)}工日；镇库支付${V(j0.paidVoucher,2)}${w0(E)}工资。`,4200);return}if(d(A,"[data-reform-start]")&&X){let E=n.startCurrencyReform(X);if(!E.ok){g(E.reason);return}p=!1,P(!0),h(!0),g("货币改革已启动，进入过渡期；目标粮券比例初始为0%。",4200);return}if(d(A,"[data-bank-open]")&&X){let E=z0().monetaryReform;_.openSite(E.bankBuildingId?`building:${E.bankBuildingId}`:"bank-compat"),h(!0);return}if(d(A,"[data-reform-finish-preview]")&&X){p=!0,h(!0);return}if(d(A,"[data-reform-finish-cancel]")){p=!1,h(!0);return}if(d(A,"[data-reform-finish-confirm]")&&X){let E=n.finishCurrencyReform(X);if(!E.ok){g(E.reason),p=!1,h(!0);return}p=!1,P(!0),h(!0),g("过渡期已结束，新产生的货币交易固定使用粮券。",4200);return}if(d(A,"#manualAid")&&X){let E=n.sendRelief(X,n.content.rules.manualReliefAmountJin);P(!0),h(),g(E.movedQeqUnits>0?`已向居民账拨出 ${V(E.movedQeqUnits/n.content.precision.qeqUnitsPerJin)}斤口粮。`:"镇库已无可拨口粮。");return}let G4=d(A,"[data-currency-preview]");if(G4&&X){let E=I0("currency-amount",{label:"粮券数量",positive:!0});if(E===null)return;let v=z0();if(G4.dataset.currencyPreview==="redeem"&&E>v.currency.townVoucher+0.000000001){g("镇库粮券余额不足，不能注销这么多粮券。");return}let r=G4.dataset.currencyPreview;S={type:r,amount:E,afterTownVoucher:v.currency.townVoucher+(r==="issue"?E:-E),afterIssued:v.currency.issuedVoucher+(r==="issue"?E:-E)},h(!0);return}if(d(A,"[data-currency-preview-cancel]")){S=null,h(!0);return}let Q$=d(A,"[data-currency-confirm]");if(Q$&&X&&S){let E=Q$.dataset.currencyConfirm==="issue"?n.issueGrainVouchers(X,"town",S.amount):n.redeemGrainVouchers(X,"town",S.amount);if(!E.ok){g(E.reason),h(!0);return}if(Q$.dataset.currencyConfirm==="issue")X.currency.guidancePending=!1;let v=Q$.dataset.currencyConfirm==="issue"?"印制发行":"注销";S=null,L.delete("currency-amount"),P(!0),h(!0),g(`已${v}${V(E.voucherUnits/n.content.precision.currencyUnitsPerVoucher,2)}粮券。`);return}let Z6=d(A,"[data-intermediate-price]");if(Z6&&X){let E=Z6.dataset.intermediatePrice,v=I0(`intermediate:${E}`,{label:"中间品价格",positive:!0});if(v===null)return;let r=n.configureIntermediatePrice(X,E,v);if(!r.ok){g(r.reason);return}L.delete(`intermediate:${E}`),P(!0),h(!0),g(`${{flour:"面粉",bread:"面包",wood:"木材"}[E]||E}批发价已设为${V(r.value,3)}小麦等值/${E==="wood"?"单位":"斤"}。`);return}let z6=d(A,"[data-company-preview]");if(z6&&X){let E=z6.dataset.companyPreview,v=z0().buildings.find((v0)=>v0.id===E);if(!v)return;let r=I0(`company-form:${E}:levels`,{label:"划入公司等级",integer:!0,minimum:1,maximum:v.ownership.townLevels}),Z0=I0(`company-form:${E}:capital`,{label:"初始经营资金（小麦等值）",minimum:0}),j0=I0(`company-form:${E}:material`,{label:"初始原料数量",minimum:0}),t0=($.querySelector(`[data-company-name="${
+CSS.escape(E)}
+"]`)?.value||`${v.name}公司`).trim().slice(0,30);if(r===null||Z0===null||j0===null||!t0)return;w={buildingId:E,name:t0,levels:r,capital:Z0,material:j0},h(!0);return}if(d(A,"[data-company-preview-cancel]")){w=null,h(!0);return}let N6=d(A,"[data-company-create]");if(N6&&X&&w?.buildingId===N6.dataset.companyCreate){let E=n.createCompany(X,w.buildingId,{name:w.name,levels:w.levels,operatingCapitalVoucher:w.capital,initialMaterialQuantity:w.material});if(!E.ok){g(E.reason),h(!0);return}let v=w.buildingId;for(let r of["levels","capital","material"])L.delete(`company-form:${v}:${r}`);w=null,P(!0),j="",h(!0),g(`公司已成立，${V(E.levels)}级产能由公司独立经营；尚未上市。`);return}let M6=d(A,"[data-stock-list-preview]");if(M6&&X){let E=M6.dataset.stockListPreview,v=z0().companies.find((d1)=>d1.id===E);if(!v)return;let r=I0(`stock-list:${E}:total`,{label:"总股本",integer:!0,minimum:1}),Z0=I0(`stock-list:${E}:price`,{label:"每股价格",positive:!0}),j0=I0(`stock-list:${E}:offered`,{label:"本次出售股数",integer:!0,minimum:0}),t0=($.querySelector(`[data-stock-ticker="${
+CSS.escape(E)}
+"]`)?.value||"").trim();if(r===null||Z0===null||j0===null)return;let v0=null;if(!/^\d{3}$/.test(t0))v0="股票代码必须是三位数字";else if(r%v.listedLevels!==0)v0=`总股本须能被${v.listedLevels}级整除`;else if(j0>r)v0="本次出售股数不能超过总股本";s={companyId:E,ticker:t0,totalShares:r,price:Z0,offeredShares:j0,totalValue:r*Z0,plannedProceeds:j0*Z0,townPercentAfter:r?(r-j0)/r*100:0,reason:v0},h(!0);return}if(d(A,"[data-stock-list-cancel]")){s=null,h(!0);return}let Q6=d(A,"[data-stock-list-confirm]");if(Q6&&X&&s?.companyId===Q6.dataset.stockListConfirm){let E=s,v=n.listCompanyShares(X,E.companyId,{ticker:E.ticker,totalShares:E.totalShares,priceVoucherPerShare:E.price,offeredShares:E.offeredShares});if(!v.ok){g(v.reason+(v.nearby?.length?`；可选${v.nearby.join("、")}股`:"")),h(!0);return}for(let r of["total","price","offered"])L.delete(`stock-list:${E.companyId}:${r}`);s=null,P(!0),h(!0),g(`${E.ticker} 已挂牌；股份仍由镇库持有，居民认购后才实际成交。`);return}let _6=d(A,"[data-share-preview]");if(_6&&X){let E=_6.dataset.sharePreview,v=z0().companies.find((t0)=>t0.id===E);if(!v)return;let r=I0(`share:${E}:count`,{label:"出售股数",integer:!0,minimum:0,maximum:v.townShares}),Z0=I0(`share:${E}:price`,{label:"每股售价",positive:!0});if(r===null||Z0===null)return;let j0=n.configureShareOffer(X,E,r,Z0);if(!j0.ok){g(j0.reason);return}c=E,P(!0),h(!0);return}if(d(A,"[data-share-cancel]")){c=null,h(!0);return}let f6=d(A,"[data-share-confirm]");if(f6&&X){let E=f6.dataset.shareConfirm,v=n.subscribeShares(X,E);if(!v.ok){g(v.reason),h(!0);return}c=null,P(!0),h(!0),g(`居民认购${V(v.subscribedShares)}股，实际成交收入${V(v.proceedsVoucherUnits/n.content.precision.currencyUnitsPerVoucher,2)}粮券归镇库。`);return}let O6=d(A,"[data-company-capital]");if(O6&&X){let E=O6.dataset.companyCapital,v=I0(`company:${E}:capital`,{label:"追加经营资金（小麦等值）",positive:!0});if(v===null)return;let r=n.addCompanyCapital(X,E,v);if(!r.ok){g(r.reason);return}L.delete(`company:${E}:capital`),P(!0),h(!0),g(`已向公司注资${V(v,2)}小麦等值。`);return}let X6=d(A,"[data-company-wage]");if(X6&&X){let E=X6.dataset.companyWage,v=I0(`company:${E}:wage`,{label:"公司日薪",minimum:0});if(v===null)return;let r=n.configureCompanyWage(X,E,v);if(!r.ok){g(r.reason);return}L.delete(`company:${E}:wage`),P(!0),h(!0);return}let G6=d(A,"[data-company-target]");if(G6&&X){let E=G6.dataset.companyTarget,v=z0().companies.find((j0)=>j0.id===E);if(!v)return;let r=I0(`company:${E}:target`,{label:"公司目标用工",integer:!0,minimum:0,maximum:v.capacity});if(r===null)return;let Z0=n.configureCompanyTargetWorkers(X,E,r);if(!Z0.ok){g(Z0.reason);return}L.delete(`company:${E}:target`),P(!0),h(!0);return}let Y4=d(A,"[data-company-price]");if(Y4&&X){let E=Y4.dataset.companyPrice,v=Y4.dataset.itemId,r=I0(`company:${E}:price:${v}`,{label:"公司售价",positive:!0});if(r===null)return;let Z0=n.configureCompanySalePrice(X,E,v,r);if(!Z0.ok){g(Z0.reason);return}L.delete(`company:${E}:price:${v}`),P(!0),h(!0);return}let q4=d(A,"[data-company-level-preview]");if(q4&&X){let E=q4.dataset.companyLevelPreview,v=q4.dataset.direction,r=n.previewCompanyLevelChange(X,E,v);Q0={companyId:E,direction:v,preview:r},h(!0);return}if(d(A,"[data-company-level-cancel]")){Q0=null,h(!0);return}let Y6=d(A,"[data-company-level-confirm]");if(Y6&&X&&Q0?.companyId===Y6.dataset.companyLevelConfirm){let{companyId:E,direction:v,preview:r}=Q0,Z0=n.previewCompanyLevelChange(X,E,v),j0=(v0)=>JSON.stringify([v0?.available,v0?.reason||null,v0?.levelsBefore,v0?.levelsAfter,v0?.issuedShares||0,v0?.cancelledShares||0,v0?.totalSharesBefore||0,v0?.totalSharesAfter||0,v0?.townSharesBefore||0,v0?.townSharesAfter||0,Math.round((v0?.townPercentBefore||0)*1e6),Math.round((v0?.townPercentAfter||0)*1e6)]);if(j0(Z0)!==j0(r)){Q0={companyId:E,direction:v,preview:Z0},h(!0),g("等级与股权条件已变化，预览已更新，请再次确认。");return}let t0=v==="remove"?n.removeCompanyOperatingLevel(X,E):n.addCompanyOperatingLevel(X,E);if(!t0.ok){Q0={companyId:E,direction:v,preview:n.previewCompanyLevelChange(X,E,v)},g(t0.reason),h(!0);return}Q0=null,P(!0),h(!0),g(v==="remove"?t0.cancelledShares?`已划回1级并注销镇库${V(t0.cancelledShares)}股。`:"已划回1级。":t0.issuedShares?`已划入1级并向镇库增发${V(t0.issuedShares)}股。`:"已划入1级镇营产能。");return}let a2=d(A,"[data-company-liquidate]");if(a2&&X){if(a2.dataset.confirmLiquidate!=="yes"){a2.dataset.confirmLiquidate="yes",a2.textContent="再次点击确认清算",g("再次点击确认清算；居民股份或工资债务未清时会被拒绝。");return}delete a2.dataset.confirmLiquidate;let E=n.liquidateCompany(X,a2.dataset.companyLiquidate);if(!E.ok){g(E.reason);return}P(!0),h(!0),g("公司已完成清算并将全部等级划回镇营。");return}let q6=d(A,"[data-company-buyback-preview]");if(q6&&X){let E=q6.dataset.companyBuybackPreview,v=I0(`buyback:${E}:count`,{label:"回购股数",integer:!0,minimum:1}),r=I0(`buyback:${E}:price`,{label:"回购价",positive:!0});if(v===null||r===null)return;let Z0=n.previewTownBuyback(X,E,{shares:v,priceVoucherPerShare:r});o={companyId:E,shares:v,price:r,preview:Z0},h(!0);return}if(d(A,"[data-company-buyback-cancel]")){o=null,h(!0);return}let J6=d(A,"[data-company-buyback-confirm]");if(J6&&X&&o?.companyId===J6.dataset.companyBuybackConfirm){let{companyId:E,shares:v,price:r,preview:Z0}=o,j0=n.previewTownBuyback(X,E,{shares:v,priceVoucherPerShare:r}),t0=(d1)=>JSON.stringify([d1?.available,d1?.reason||null,d1?.requestedShares||0,d1?.willingShares||0,d1?.affordableShares||0,d1?.executableShares||0,d1?.costVoucherUnits||0,d1?.priceVoucherUnits||0,d1?.reference?.referencePerShareVoucherUnits||0]);if(t0(j0)!==t0(Z0)){o={companyId:E,shares:v,price:r,preview:j0},h(!0),g("回购条件已变化，成交数量或成本已更新，请再次确认。");return}let v0=n.buybackCompanyShares(X,E,{shares:v,priceVoucherPerShare:r});if(!v0.ok){o={companyId:E,shares:v,price:r,preview:n.previewTownBuyback(X,E,{shares:v,priceVoucherPerShare:r})},g(v0.reason),h(!0);return}o=null,P(!0),h(!0),g(`镇库已回购${V(v0.boughtShares)}股，实际支付${V(v0.paidVoucherUnits/n.content.precision.currencyUnitsPerVoucher,2)}粮券。`);return}let J4=d(A,"[data-shop-open]");if(J4&&X){let E=n.openResidentShop(X,J4.dataset.shopBuilding,J4.dataset.shopOpen);if(!E.ok){g(E.reason);return}P(!0),j="",h(!0),g(`店铺已开业，家庭投入${V(E.startupVoucher,2)}小麦等值。`);return}let W4=d(A,"[data-shop-merchant][data-step]");if(W4&&X){let E=z0().shops.find((r)=>r.id===W4.dataset.shopMerchant);if(!E)return;let v=n.configureShopMerchants(X,E.id,E.merchants+Number(W4.dataset.step));if(!v.ok){g(v.reason);return}P(!0),h(!0);return}let F4=d(A,"[data-shop-clerk][data-step]");if(F4&&X){let E=z0().shops.find((r)=>r.id===F4.dataset.shopClerk);if(!E)return;let v=n.configureShopClerks(X,E.id,E.clerks+Number(F4.dataset.step));if(!v.ok){g(v.reason);return}P(!0),h(!0);return}let W6=d(A,"[data-shop-close]");if(W6&&X){let E=n.closeResidentShop(X,W6.dataset.shopClose);if(!E.ok){g(E.reason);return}P(!0),j="",h(!0),g(E.liquidationPending?"店铺已停业，岗位已释放，剩余债务进入清算。":"店铺已停业并完成清算。");return}let F6=d(A,"[data-shop-fund]");if(F6&&X){let E=n.fundResidentShopLiquidation(X,F6.dataset.shopFund);if(!E.ok){g(E.reason);return}P(!0),j="",h(!0),g(E.liquidationPending?"业主已补资，仍有债务待清偿。":"债务已清偿，剩余资产已返还业主。");return}let _$=d(A,".choose-build[data-build]");if(_$&&X){if(_.state.buildType===_$.dataset.build)_.cancelBuild(),n.clearPublicProcurementIntent(X,"wood"),B1();else _.chooseBuild(_$.dataset.build),n.setPublicProcurementIntent(X,{kind:"build",typeId:_$.dataset.build}),B1();j="",h();return}if(d(A,"[data-cancel-build]")){_.reselectBuildPlot(),j="",h();return}if(d(A,"[data-start-building]")&&X){let{buildType:E,previewPlotId:v}=_.state;if(!E||!v)return;let r=n.buildAt(X,E,v);if(!r.ok){g(r.reason),h(!0);return}let Z0=n.content.buildings[E]?.name||E;_.finishBuild(),P(!0),j="",a1.playBuild(),h(),g(`${Z0}开工，已安排${V(r.assignedBuilders)}名建筑工。`);return}if(d(A,"[data-upgrade-preview]")&&X){u=A.dataset.upgradePreview,H=null,n.setPublicProcurementIntent(X,{kind:"upgrade",buildingId:u}),B1(),h();return}if(d(A,"[data-upgrade-cancel]")){if(u=null,X)n.clearPublicProcurementIntent(X,"wood"),B1();h();return}if(d(A,"[data-upgrade-start]")&&X){let E=A.dataset.upgradeStart,v=n.upgradeBuilding(X,E);if(!v.ok){g(v.reason);return}u=null,P(!0),j="",a1.playBuild(),h(),g("升级已开工；新增岗位完工后开放。");return}if(d(A,"[data-demolish-preview]")&&X){H=A.dataset.demolishPreview,u=null,h();return}if(d(A,"[data-demolish-cancel]")){H=null,h();return}if(d(A,"[data-demolish-confirm]")&&X){let E=A.dataset.demolishConfirm,v=n.demolishBuilding(X,E);if(!v.ok){g(v.reason);return}H=null,_.state.selectedSite="field",P(!0),j="",h(),g(`已拆除${v.preview.name}，返还${v.preview.refund.length}类材料。`);return}if(d(A,"[data-right-preview]")&&X){k=A.dataset.rightPreview,h();return}if(d(A,"[data-right-cancel]")){k=null,h();return}if(d(A,"[data-right-confirm]")&&X){let E=A.dataset.rightConfirm,v=n.sellOperatingLevel(X,E);if(!v.ok){g(v.reason||v.preview?.reason||"经营权未成交"),h();return}k=null,P(!0),h(),g(`居民共同购入一级经营权；${v.transferredWorkers}名原镇营工人转入民营岗位。`);return}let V6=d(A,"[data-plot]");if(V6&&X&&_.state.buildType){_.choosePlot(V6.dataset.plot),j="",h();return}let V4=d(A,"[data-site]");if(V4&&X){if(_.state.activePanel==="build"&&_.state.buildType&&V4.dataset.site==="field")return;_.openSite(V4.dataset.site),j="",h()}}function s3(U){let A=U.target;if(A.matches("[data-draft-key]")&&Az(A.dataset.draftKind)){H0(A.dataset.draftKey,A);return}if(A.matches("[data-reform-target-range]")&&X){let i=n.setVoucherPaymentTarget(X,Number(A.value));if(!i.ok){g(i.reason),h(!0);return}L.delete("voucher-target"),P(!0),h(!0);return}if(A.matches("#residentExchangeEnabled")&&X){let i=n.setResidentExchangeEnabled(X,A.checked);if(!i.ok){g(i.reason),h(!0);return}P(!0),h(!0),g(A.checked?"居民粮食换券已开放。":"居民粮食换券已关闭；已有粮券仍可兑回小麦。");return}if(A.matches("#autoRelief")&&X){n.toggleAutomaticRelief(X,A.checked),P(!0),h(),g(A.checked?"自动救济已开启。":"自动救济已关闭。");return}if(A.matches("#benefitEnabled")&&X){let i=n.setUnemploymentPolicy(X,{enabled:A.checked});if(!i.ok)g(i.reason);P(!0),h();return}if(A.matches("#saveImportFile")&&A.files?.[0])A.files[0].text().then(Z$).catch((i)=>{g("无法读取导入文件："+i.message,5000)})}function a3(U){let A=d(U.target,"[data-draft-key]");if(A&&U.key==="Enter"){U.preventDefault(),H0(A.dataset.draftKey,A);return}if(A&&U.key==="Escape"){U.preventDefault(),L.delete(A.dataset.draftKey),h(!0),l1(A.dataset.draftKey)?.focus({preventScroll:!0});return}if((U.key==="Enter"||U.key===" ")&&d(U.target,'[role="button"][data-site], [role="button"][data-plot]'))U.preventDefault(),U.target.closest('[role="button"][data-site], [role="button"][data-plot]').click()}$.addEventListener("click",r3),$.addEventListener("input",s0),$.addEventListener("change",s3),$.addEventListener("keydown",a3);let n3=()=>{M1()},o3=()=>{if(document.hidden)M1();if(b=performance.now(),document.hidden&&y)cancelAnimationFrame(y),y=0;else if(!document.hidden&&!y)y=requestAnimationFrame(O4)};window.addEventListener("pagehide",n3);let ez=setInterval(()=>{M1()},15000);document.addEventListener("visibilitychange",o3);function O4(U){if(y=0,document.hidden)return;let A=Math.min(0.5,Math.max(0,(U-b)/1000));if(b=U,Y.step(),X){if(Q.advanceFrame(A,()=>{if(n.advanceDay(X),R=!0,C+=1,B1(),X.shortageQeq>0)Q.pause(),g("口粮出现短缺，时光已暂停。请检查居民粮账并拨粮救济。",4200)})>0)h()}y=requestAnimationFrame(O4)}async function tz(){M=!0,h(!0);try{z=await g3({indexedDB:window.indexedDB,legacyStorage:Z,content:n.content});let U=await z.probePersistentStorage();if(!U?.ok)throw Error("IndexedDB 写入探测未通过");let A=z.initialize();X=A.state,f.clear(),q=A.activeId,B+=1,C=0,K0.clearFailure(),K=A.warning||(U.localStorage?.ok===!1?"IndexedDB 持久保存可用；遗留 localStorage 仍不可写，可按需导出并清理旧数据。":null);let i=A.slots.find((R0)=>R0.current);if(W=i?.savedAt?`最近保存：${new Date(i.savedAt).toLocaleString("zh-CN",{hour12:!1})} · 成功`:"尚未保存",x=null,N=null,X)J=!1,_.resetView(),I1();else J=!0,_.openPanel("settings")}catch(U){N=U?.code?U:u1(U,"初始化 IndexedDB"),x=N,console.error("[麦乡存档] IndexedDB 启动失败",U,U?.cause||""),J=!0,_.openPanel("settings")}finally{M=!1,L0=!1,h(!0)}}return h(),tz(),y=requestAnimationFrame(O4),{save:()=>M1(!0),getSaveKey:()=>b3,destroy(){if(clearInterval(ez),G.destroy(),y)cancelAnimationFrame(y);Y.destroy(),a1.destroy(),$.removeEventListener("click",r3),$.removeEventListener("input",s0),$.removeEventListener("change",s3),$.removeEventListener("keydown",a3),window.removeEventListener("pagehide",n3),document.removeEventListener("visibilitychange",o3)}}}var nz=document.getElementById("app");if(!nz)throw Error("缺少游戏页面根容器 #app");az(nz);})();
+

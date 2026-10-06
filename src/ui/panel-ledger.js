@@ -17,6 +17,31 @@ const LABELS = {
   legacy_process: "旧版加工", legacy_loss: "旧版损耗", legacy_transfer: "旧版转账"
 };
 
+const ACCOUNT_NAMES = {
+  town: "镇库", residents: "居民", households: "居民家庭", wholesale_market: "批发市场",
+  field: "麦田", consumed: "消耗", consumption: "消耗", loss: "损耗", currency_issuer: "印制",
+  private_production: "民营生产", wage_expense: "工资计提", unpaid: "未付", waived: "减免",
+  rent_due: "应收租金", construction_payroll: "施工工资", construction_investment: "建设投入"
+};
+
+// 账户名解析（0.1.11 补回）：把内部 token 翻译成中文
+function resolveAccountName(view, token) {
+  if (!token) return "";
+  if (ACCOUNT_NAMES[token]) return ACCOUNT_NAMES[token];
+  const parts = String(token).split(":");
+  const prefix = parts[0];
+  const id = parts.slice(1).join(":");
+  if (prefix === "household") {
+    const m = /^household-(\d+)$/.exec(id);
+    if (m) return `第${m[1]}户`;
+    return view.householdNames?.[id] || id;
+  }
+  if (prefix === "shop") return view.shops?.find(s => s.id === id)?.name || "店铺";
+  if (prefix === "company") return view.companies?.find(c => c.id === id)?.name || "公司";
+  if (prefix === "building") return view.buildings?.find(b => b.id === id)?.name || "建筑";
+  return token;
+}
+
 export function renderLedger(view) {
   const last = view.annualReports.at(-1);
   const rows = view.ledger.slice(0, 42).map(row => {
@@ -27,7 +52,7 @@ export function renderLedger(view) {
     const amount = row.quantityUnits && row.itemId
       ? row.quantityUnits / (isVoucher ? view.currencyUnitsPerVoucher : view.inventoryUnitsPerJin)
       : (row.qeqUnits || 0) / view.qeqUnitsPerJin;
-    const where = [row.source, row.destination].filter(Boolean).join(" → ");
+    const where = [row.source, row.destination].filter(Boolean).map(t => resolveAccountName(view, t)).join(" → ");
     return `<tr><td>第${number(row.year)}年·${number(row.day)}日</td><td><span class="badge${["consume", "process_loss", "withdrawal", "salt_consume", "rent_waiver"].includes(row.type) ? " red" : ""}">${label}</span><br>${escapeHtml(item)} · ${escapeHtml(row.reason || "")}<div class="subtle">${escapeHtml(where)}${row.legacyDetail ? " · " + escapeHtml(row.legacyDetail) : ""}</div></td><td class="amount">${number(amount)}${escapeHtml(unit)}</td></tr>`;
   }).join("");
   const totals = view.yearTotals;
