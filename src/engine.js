@@ -8,7 +8,7 @@ import {
 import {
   setEmployment, buildAt, sendRelief, toggleAutomaticRelief,
   setWageRate, setBreadPrice, setUnemploymentPolicy, setVillaPolicy, setWageControl,
-  setBankPolicy,
+  setBankPolicy, issueGovernmentBond,
   setSocialSecurityPolicy, injectSocialSecurity, setTradeTariffRate, tradeWithOutsideTown, issueWheatLoan, setAgricultureTax,
   setPrivateProductionTax, setOperatingRightPrice, upgradeBuilding, demolishAt, setProjectWorkers,
   sellOperatingLevel, issueGrainVouchers, redeemGrainVouchers, listCompany, createCompany, listCompanyShares,
@@ -88,6 +88,9 @@ export function createSimulation(content) {
     },
     setBankPolicy: function (state, patch) {
       return setBankPolicy(state, patch);
+    },
+    issueGovernmentBond: function (state, options) {
+      return issueGovernmentBond(state, options, definitions);
     },
     setWageControl: function (state, patch) {
       return setWageControl(state, patch);

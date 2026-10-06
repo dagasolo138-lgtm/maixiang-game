@@ -18,6 +18,7 @@ import { computeWealthStats } from "../systems/wealth-stats.js";
 import { currencyScale, validateCurrencyInvariant, voucherBalance } from "../economy/currency.js";
 import { hasBankAccess, monetaryReformProgress } from "../economy/payment.js";
 import { householdLivingSummary, occupationCounts, householdPopulation, householdIdleWorkers } from "../systems/households.js";
+import { bondOutstandingVoucherUnits } from "../systems/bonds.js";
 import { shopSummaries } from "../systems/shops.js";
 import { wholesaleSummary, wholesaleTrends } from "../systems/wholesale-market.js";
 import { selectOutsideTownView } from "../systems/outside-town.js";
@@ -369,7 +370,7 @@ export function selectDashboard(state, content, selection) {
     wheatPrice: Number.isFinite(macroLastHistory.wheatPrice) ? macroLastHistory.wheatPrice : null,
     listedCount: macroListedCount,
     stockMarketCapVoucher: macroMarketCapVoucherUnits / voucherScale,
-    bondOutstandingVoucher: 0,
+    bondOutstandingVoucher: bondOutstandingVoucherUnits(state) / voucherScale,
     depositRateAnnualPercent: state.policy?.bank?.depositRateAnnualPercent ?? null,
     loanRateAnnualPercent: state.policy?.bank?.loanRateAnnualPercent ?? null,
     liquidityLevel: null
@@ -475,6 +476,23 @@ export function selectDashboard(state, content, selection) {
           badDebtVoucher: (bank.stats?.badDebtVoucherUnits || 0) / voucherScale,
           interestEarnedVoucher: (bank.stats?.interestEarnedVoucherUnits || 0) / voucherScale,
           interestPaidVoucher: (bank.stats?.interestPaidVoucherUnits || 0) / voucherScale
+        };
+      })(),
+      // 国债统计（金融扩展三期）：只读
+      bondStats: (function () {
+        const bonds = state.bonds || {};
+        const daysPerYear = content.rules.daysPerYear || 360;
+        const statusLabel = { subscribing: "认购中", active: "存续中", matured: "已兑付", failed: "已流拍", defaulted: "已违约" };
+        return {
+          creditPenaltyBps: bonds.creditPenaltyBps || 0,
+          issues: (bonds.issues || []).slice(-5).reverse().map(issue => ({
+            id: issue.id,
+            status: issue.status,
+            statusLabel: statusLabel[issue.status] || issue.status,
+            totalVoucher: (issue.totalVoucherUnits || 0) / voucherScale,
+            couponRateAnnualPercent: issue.couponRateAnnualPercent,
+            termYears: Math.round((issue.termDays || 0) / daysPerYear)
+          }))
         };
       })()
     } : null,

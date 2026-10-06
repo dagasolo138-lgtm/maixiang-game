@@ -82,6 +82,14 @@ export function renderPolicy(view) {
       <div class="row"><span class="label">累计收息 / 付息</span><strong class="value">${number(view.policy.bankStats?.interestEarnedVoucher || 0, 1)} / ${number(view.policy.bankStats?.interestPaidVoucher || 0, 1)}券</strong></div>
       <div class="subtle">只存粮券不存粮食，按日计息；上市公司现金不足周转金时自动借款（90天期）；逾期30天核销坏账。存贷利差为银行利润（镇营，归镇库）。</div>
     </div></details>` : ""}
+    ${reform.stage === "voucher" ? `<details class="detail-block" data-detail-key="policy-bonds"><summary>国债</summary><div class="detail-body">
+      <div class="row"><span class="label">发行总额</span><div class="setting-input">${renderNumericInput(view, { key: "bond-issue-total", kind: "bond-issue-total", target: "bonds", value: 100000, label: "国债发行总额", minimum: 1, maximum: 1000000000, className: "setting-editor" })}<b>券</b></div></div>
+      <div class="row"><span class="label">期限</span><div class="setting-input">${renderNumericInput(view, { key: "bond-issue-years", kind: "bond-issue-years", target: "bonds", value: 3, label: "国债期限", minimum: 1, maximum: 10, className: "setting-editor" })}<b>年</b><button class="secondary" data-bond-issue>发行</button></div></div>
+      <div class="row"><span class="label">起拍票面年利率</span><div class="setting-input">${renderNumericInput(view, { key: "bond-issue-rate", kind: "bond-issue-rate", target: "bonds", value: 3, label: "国债起拍票面年利率", minimum: 0, maximum: 20, className: "setting-editor" })}<b>%</b></div></div>
+      ${(view.policy.bondStats?.issues || []).map(issue => `<div class="row"><span class="label">${issue.id} · ${issue.statusLabel}</span><strong class="value">${number(issue.totalVoucher)}券 · 票面${number(issue.couponRateAnnualPercent, 2)}% · ${issue.termYears}年</strong></div>`).join("")}
+      ${(view.policy.bondStats?.creditPenaltyBps || 0) > 0 ? `<div class="shortage-banner visible">镇库信用受损，发债利率上浮${number(view.policy.bondStats.creditPenaltyBps / 100, 2)}%</div>` : ""}
+      <div class="subtle">认购期7天，拍卖定价：抢手下调、不足上浮、不足3成流拍退款；每年付息，到期还本；还不上先展期（最多2次）再违约。</div>
+    </div></details>` : ""}
     <details class="detail-block" data-detail-key="policy-agritax"><summary>农业税</summary><div class="detail-body">
       <div class="row"><span class="label">当前税率</span><div class="setting-input">${renderNumericInput(view, { key: "agriculture-tax", kind: "agriculture-tax", target: "agriculture", value: agriculture.currentPercent, label: "农业税率", minimum: 0, maximum: 80, className: "setting-editor" })}<b>%</b></div></div>
       <div class="row"><span class="label">预计秋收分粮</span><strong class="value">镇库${number(agriculture.townShareJin)} / 居民${number(agriculture.residentShareJin)}斤</strong></div>

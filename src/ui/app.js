@@ -410,6 +410,10 @@ export function mountGame(root) {
       // 注资走按钮提交，此处仅做数值校验占位。
       result = { ok: true };
       successMessage = `注资金额已填写${number(parsed.value, 2)}斤，请点击注资按钮确认。`;
+    } else if (kind === "bond-issue-total" || kind === "bond-issue-years" || kind === "bond-issue-rate") {
+      // 国债发行走按钮提交，此处仅做数值校验占位。
+      result = { ok: true };
+      successMessage = "国债参数已填写，请点击发行按钮确认。";
     } else if (kind === "outside-trade-qty") {
       // 外贸数量走卖出/买入按钮提交，此处仅做数值校验占位。
       result = { ok: true };
@@ -1508,6 +1512,33 @@ export function mountGame(root) {
       changed(true);
       render(true);
       showToast(`已向社保基金注资${number(result.injectedJin, 1)}斤小麦等值。`);
+      return;
+    }
+    if (target.matches("[data-bond-issue]") && state) {
+      const readDraft = (key, label, minimum, maximum) => {
+        const input = numericInputFor(key);
+        const rawValue = numericDrafts.has(key) ? numericDrafts.get(key).value : input?.value;
+        return { parsed: parseNumericDraft(rawValue, { label, minimum, maximum }), input, key };
+      };
+      const total = readDraft("bond-issue-total", "发行总额", 1, 1000000000);
+      if (!total.parsed.ok) { setDraftError(total.key, total.parsed.reason, total.input); return; }
+      const years = readDraft("bond-issue-years", "期限", 1, 10);
+      if (!years.parsed.ok) { setDraftError(years.key, years.parsed.reason, years.input); return; }
+      const rate = readDraft("bond-issue-rate", "起拍票面年利率", 0, 20);
+      if (!rate.parsed.ok) { setDraftError(rate.key, rate.parsed.reason, rate.input); return; }
+      const result = simulation.issueGovernmentBond(state, {
+        totalVoucher: total.parsed.value,
+        termYears: years.parsed.value,
+        startRateAnnualPercent: rate.parsed.value
+      });
+      if (!result?.ok) {
+        setDraftError(rate.key, result?.reason || "发行失败", rate.input);
+        return;
+      }
+      for (const key of ["bond-issue-total", "bond-issue-years", "bond-issue-rate"]) numericDrafts.delete(key);
+      changed(true);
+      render(true);
+      showToast(`国债${result.issue.id}已发行，进入${7}天认购期。`);
       return;
     }
     // 用户 0.1.11：批发市场单次调运——收储入镇库 / 镇库投放，用来平抑库存。

@@ -28,6 +28,7 @@ import { refreshOperatingPlan, recordConsumerDay } from "../economy/operating-pl
 import { archiveHouseholdLifeYear, finalizeHouseholdLifeDay, resetHouseholdLifeDay, resetHouseholdLifeYear } from "./household-life.js";
 import { finalizeMonetaryPaymentDay } from "../economy/payment.js";
 import { settleBankDay } from "./bank.js";
+import { settleBondsDay } from "./bonds.js";
 import { accrueServiceDemand, processServiceDemand } from "./services.js";
 import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits, snapshotWholesaleHistory, subsidizeWholesaleWheat } from "./wholesale-market.js";
 import { applyCompanyDistributionsToAnnualReport, buildAnnualReport } from "./annual-reports.js";
@@ -150,6 +151,8 @@ export function settleOneDay(state, content) {
   finalizeMonetaryPaymentDay(state, content);
   // 银行日结算：存款计息/吸储、贷款计息/还款/核销、公司自动借款（金融扩展二期）。
   settleBankDay(state, content);
+  // 国债日结算：认购/拍卖定价、付息、到期还本/展期/违约（金融扩展三期）。
+  settleBondsDay(state, content);
 
   state.day += 1;
   if (state.day === 91) recordEvent(state, "春耕已过，麦苗渐渐齐整。", content);
