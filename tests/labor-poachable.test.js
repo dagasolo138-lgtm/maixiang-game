@@ -10,10 +10,14 @@ import { validateState } from "../src/core/validation.js";
 function stateWithMills(seed = 6101, millCount = 16) {
   const state = legacyVoucherState({ seed });
   const freePlots = state.plots.filter(p => !p.feature && !state.buildings.some(b => b.plotId === p.id));
+  // 开局数值调整（8cf03ae）：劳动力 600→1750、农民 400→1500，待业从 200 涨到 250。
+  // 单层磨坊（12 岗）已不足以吃掉全部待业，故用 5 级建筑（上限）把岗位容量放大到能填满 idle；
+  // setEmployment 只会领取实际待业人数，容量更大不影响"恰好清零"的构造。
+  const level = 5;
   const mk = (id, typeId, i) => {
     const p = freePlots[i];
-    state.buildings.push({ id, typeId, level: 1,
-      ownership: { townLevels: 1, privateLevels: 0, listedLevels: 0 },
+    state.buildings.push({ id, typeId, level,
+      ownership: { townLevels: level, privateLevels: 0, listedLevels: 0 },
       plotId: p.id, x: p.x, y: p.y, materialInvestments: [], completed: { year: 1, day: 1 } });
   };
   mk("bakery-0", "bakery", 0);

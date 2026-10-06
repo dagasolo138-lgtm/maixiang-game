@@ -145,9 +145,10 @@ test("0.1.10-r03 银行、交易所和公租房岗位容量与实际工资一致
   assert.equal(byRole("bank_staff").capacity, 8);
   assert.equal(byRole("exchange_staff").capacity, 8);
   assert.equal(byRole("housing_managers").capacity, 20);
-  assert.equal(byRole("bank_staff").wagePerWorkerDay, 10);
-  assert.equal(byRole("exchange_staff").wagePerWorkerDay, 10);
-  assert.equal(byRole("housing_managers").wagePerWorkerDay, 10);
+  // 默认日薪 10→5 斤（8cf03ae）：旧档缺工资字段时按内容默认 5，而不是 0。
+  assert.equal(byRole("bank_staff").wagePerWorkerDay, 5);
+  assert.equal(byRole("exchange_staff").wagePerWorkerDay, 5);
+  assert.equal(byRole("housing_managers").wagePerWorkerDay, 5);
 
   assert.equal(simulation.setEmployment(state, `${bank.id}::bank_staff`, 8).assigned, 8);
   assert.equal(simulation.setEmployment(state, `${exchange.id}::exchange_staff`, 8).assigned, 8);
@@ -156,12 +157,12 @@ test("0.1.10-r03 银行、交易所和公租房岗位容量与实际工资一致
   const paid = payDailyWages(state, labor, CONTENT);
   const rows = Object.fromEntries(paid.workers.filter(row => ["bank_staff", "exchange_staff", "housing_managers"].includes(row.roleId)).map(row => [row.roleId, row]));
   assert.equal(rows.bank_staff.count, 8);
-  assert.equal(rows.bank_staff.dailyRateVoucher, 10);
+  assert.equal(rows.bank_staff.dailyRateVoucher, 5);
   assert.equal(rows.exchange_staff.count, 8);
-  assert.equal(rows.exchange_staff.dailyRateVoucher, 10);
+  assert.equal(rows.exchange_staff.dailyRateVoucher, 5);
   assert.equal(rows.housing_managers.count, 20);
-  assert.equal(rows.housing_managers.dailyRateVoucher, 10);
-  assert.equal(rows.bank_staff.expectedVoucher + rows.exchange_staff.expectedVoucher + rows.housing_managers.expectedVoucher, 360);
+  assert.equal(rows.housing_managers.dailyRateVoucher, 5);
+  assert.equal(rows.bank_staff.expectedVoucher + rows.exchange_staff.expectedVoucher + rows.housing_managers.expectedVoucher, 180);
 });
 
 test("0.1.10-r05 工资输入在手机 change/失焦时直接提交，构建号可识别", () => {

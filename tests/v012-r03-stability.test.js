@@ -119,8 +119,8 @@ test("r03 负债店铺停业进入待清算，停止新增费用，补资按工�
       "test_drain", "测试抽干店铺现金").ok, true);
   }
   prepareShopsForDay(state, CONTENT);
-  // 基线清理：店主商人不领固定工资，仅店员（10/天）计提，共 10*V。
-  assert.equal(shop.liabilities.wageVoucherUnits, 10 * V);
+  // 基线清理：店主商人不领固定工资，仅店员（5/天，默认日薪 10→5 斤）计提，共 5*V。
+  assert.equal(shop.liabilities.wageVoucherUnits, 5 * V);
   assert.equal(shop.liabilities.rentVoucherUnits, 1 * V);
   shop.settlement.profitVoucherUnits = 100 * V;
   shop.retainedEarningsVoucherUnits = 100 * V;
@@ -157,13 +157,20 @@ test("r03 负债店铺停业进入待清算，停止新增费用，补资按工�
   const partial = simulation.fundResidentShopLiquidation(state, shop.id);
   assert.equal(partial.ok, true);
   assert.equal(partial.liquidationPending, true);
-  // 基线清理：商人（业主本人）与店员同为工资债权人；补资按 waterfall 先偿工资，
-  // 以工资负债减少额为准（业主出资含小麦换券，直接按户余额核对会混入换券收益）。
-  assert.equal(wageLiabilityBefore - shop.liabilities.wageVoucherUnits, partial.contributedVoucherUnits, "补资先全额偿付工资债权");
-  // 基线清理：原断言镇库余额不变，但业主补资时的小麦换券会让镇库付出粮券（收小麦）；
-  // 租税是否被越级支付，应直接看店铺的租税负债是否减少。
-  assert.equal(shop.liabilities.rentVoucherUnits, rentLiabilityBefore, "工资未清前不得支付租金");
-  assert.equal(shop.liabilities.taxVoucherUnits, taxLiabilityBefore, "工资未清前不得缴纳利润税");
+  // 基线清理：补资按 waterfall 先偿工资→租金→税款。contribution 是补资总额，
+  // 未必等于工资减少额（清偿额够多时会顺带清掉租金/税款），所以逐级核对 waterfall 是否被越级：
+  // 工资未清则租税必须原封不动；工资已清才轮到租金；租金已清才轮到税款。
+  const wagePaid = wageLiabilityBefore - shop.liabilities.wageVoucherUnits;
+  const rentPaid = rentLiabilityBefore - shop.liabilities.rentVoucherUnits;
+  const taxPaid = taxLiabilityBefore - shop.liabilities.taxVoucherUnits;
+  assert.ok(partial.contributedVoucherUnits >= wagePaid, "补资先偿付工资债权");
+  assert.ok(wagePaid <= wageLiabilityBefore);
+  if (wagePaid < wageLiabilityBefore) {
+    assert.equal(rentPaid, 0, "工资未清前不得支付租金");
+    assert.equal(taxPaid, 0, "工资未清前不得缴纳利润税");
+  } else if (rentPaid < rentLiabilityBefore) {
+    assert.equal(taxPaid, 0, "租金未清前不得缴纳利润税");
+  }
 
   assert.equal(grantResidentVouchers(state, 100, CONTENT, owner.id).ok, true);
   const finished = simulation.fundResidentShopLiquidation(state, shop.id);
@@ -261,9 +268,11 @@ test("r03 镇库销售统一同步移除库存成本：企业连续采购、店�
 test("r03 建设预览与实际分配共用真实就业：5名待业只安排5人，0待业显示等待用工", () => {
   const state = legacyVoucherState({ seed: 120308 });
   setJobCount(state, "farmers", 0, CONTENT);
-  const listedBuilding = addBuilding(state, "mill", "r03-labor-listed", 50);
-  listedBuilding.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 50 };
-  setJobCount(state, `${listedBuilding.id}::millers::listed`, 595, CONTENT);
+  // 劳动力 600→1750（8cf03ae）：50 级磨坊仅 600 岗位，不足以吃掉新劳动力，
+  // 提升到 146 级（146×12=1752 岗位）才能精确构造"仅剩 5 名待业"。
+  const listedBuilding = addBuilding(state, "mill", "r03-labor-listed", 146);
+  listedBuilding.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 146 };
+  setJobCount(state, `${listedBuilding.id}::millers::listed`, 1745, CONTENT);
   assert.equal(simulation.selectJobRows(state).idle, 5);
   const preview = simulation.selectDashboard(state).constructionOptions.find(row => row.id === "bakery");
   assert.equal(preview.previewBuilders, 5);
@@ -277,9 +286,9 @@ test("r03 建设预览与实际分配共用真实就业：5名待业只安排5�
 
   const noIdle = legacyVoucherState({ seed: 120309 });
   setJobCount(noIdle, "farmers", 0, CONTENT);
-  const full = addBuilding(noIdle, "mill", "r03-labor-full", 50);
-  full.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 50 };
-  setJobCount(noIdle, `${full.id}::millers::listed`, 600, CONTENT);
+  const full = addBuilding(noIdle, "mill", "r03-labor-full", 146);
+  full.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 146 };
+  setJobCount(noIdle, `${full.id}::millers::listed`, 1750, CONTENT);
   assert.equal(simulation.selectJobRows(noIdle).idle, 0);
   const zeroPreview = simulation.selectDashboard(noIdle).constructionOptions.find(row => row.id === "bakery");
   assert.equal(zeroPreview.waitingForWorkers, true);
@@ -295,9 +304,10 @@ test("r03 建设预览与实际分配共用真实就业：5名待业只安排5�
   const existingBuilders = legacyVoucherState({ seed: 120311 });
   setJobCount(existingBuilders, "farmers", 0, CONTENT);
   setJobCount(existingBuilders, "builders", 10, CONTENT);
-  const almostFull = addBuilding(existingBuilders, "mill", "r03-labor-existing-builders", 50);
-  almostFull.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 50 };
-  setJobCount(existingBuilders, `${almostFull.id}::millers::listed`, 590, CONTENT);
+  const almostFull = addBuilding(existingBuilders, "mill", "r03-labor-existing-builders", 146);
+  almostFull.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 146 };
+  // 1740 磨坊 + 10 营造 = 1750，恰好零待业。
+  setJobCount(existingBuilders, `${almostFull.id}::millers::listed`, 1740, CONTENT);
   assert.equal(simulation.selectJobRows(existingBuilders).idle, 0);
   const retainedPreview = simulation.selectDashboard(existingBuilders).constructionOptions.find(row => row.id === "bakery");
   assert.equal(retainedPreview.previewBuilders, 10, "已有建筑工即使没有待业者也应计入施工口径");
@@ -310,9 +320,10 @@ test("r03 建设预览与实际分配共用真实就业：5名待业只安排5�
 
   const upgradeState = legacyVoucherState({ seed: 120310 });
   setJobCount(upgradeState, "farmers", 0, CONTENT);
-  const fullUpgradeLabor = addBuilding(upgradeState, "mill", "r03-upgrade-labor-full", 50);
-  fullUpgradeLabor.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 50 };
-  setJobCount(upgradeState, `${fullUpgradeLabor.id}::millers::listed`, 600, CONTENT);
+  // 同上：劳动力 1750，需 146 级磨坊（1752 岗位）才能构造零待业。
+  const fullUpgradeLabor = addBuilding(upgradeState, "mill", "r03-upgrade-labor-full", 146);
+  fullUpgradeLabor.ownership = { townLevels: 0, privateLevels: 0, listedLevels: 146 };
+  setJobCount(upgradeState, `${fullUpgradeLabor.id}::millers::listed`, 1750, CONTENT);
   const housing = addBuilding(upgradeState, "public_housing", "r03-upgrade-target");
   addInventory(upgradeState, "town", "wood", 2000, "r03升级材料", "test", CONTENT);
   assert.equal(simulation.selectJobRows(upgradeState).idle, 0);

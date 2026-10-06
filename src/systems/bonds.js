@@ -59,7 +59,10 @@ function payToHolder(state, holderKey, units, content = null) {
 }
 
 export function bondOutstandingVoucherUnits(state) {
-  const bonds = ensureBondState(state);
+  // 只读查询：选择器（dashboard/policy 面板）会调用它，绝不能在此初始化 state.bonds，
+  // 否则违反"selector 只读不写"，首次渲染就会给 state 写入新字段。
+  const bonds = state.bonds;
+  if (!bonds || !Array.isArray(bonds.issues)) return 0;
   let total = 0;
   for (const issue of bonds.issues) {
     if (issue.status !== "active") continue;

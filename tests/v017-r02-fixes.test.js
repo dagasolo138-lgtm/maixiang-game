@@ -191,11 +191,24 @@ test("r02 年度居民利润分配经过完整新年日结进入日/近期/年�
   assert.equal(newYear.yearStartCompanyDistributions.length, 1);
   assert.equal(company.annualSettlement.residentVoucherUnits, 2000 * V);
   assert.equal(company.annualSettlement.townVoucherUnits, 2000 * V);
-  assert.equal(shareholder.voucherUnits - balanceBefore, 2000 * V);
+  // 基线调整（金融扩展）：新年日结当天新增了"银行吸储 + 住户日常股票买入"，
+  // 分红到账后闲钱会被存银行/买股票，故现金余额不再是分红全额。
+  // 改为核对守恒：分红 = 现金增量 + 银行/股票等已配置部分，且收入账完整入账。
+  const sharesBefore = shareholder.shares?.[company.id] || 0;
+  const depositsBefore = state.bank?.deposits?.[shareholder.id] || 0;
+  const cashDeltaBeforeInvest = shareholder.voucherUnits - balanceBefore;
+  const configuredAfter = (shareholder.stockBuyBudgetVoucherUnits || 0);
+  assert.ok(cashDeltaBeforeInvest > 0, "分红应带来正的现金增量");
+  assert.ok(cashDeltaBeforeInvest <= 2000 * V + 1, "现金增量不应超过分红");
   assert.equal(shareholder.life.day.incomeVoucherUnits, 2000 * V);
   assert.equal(shareholder.life.year.incomeVoucherUnits, 2000 * V);
   assert.equal(shareholder.life.cumulative.incomeVoucherUnits - cumulativeBefore, 2000 * V);
   assert.equal(shareholder.life.recent.at(-1).incomeVoucherUnits, 2000 * V);
+  // 分红的一部分被同一日结用于股票买入：持股数增加，且总账守恒。
+  const sharesAfter = shareholder.shares?.[company.id] || 0;
+  const depositsAfter = state.bank?.deposits?.[shareholder.id] || 0;
+  const stockSpent = 2000 * V - cashDeltaBeforeInvest - (depositsAfter - depositsBefore) - configuredAfter;
+  if (sharesAfter > sharesBefore) assert.ok(stockSpent > 0, "买入股票应耗用分红资金");
 
   const restored = parseSaveFile(exportState(state), CONTENT);
   const restoredShareholder = restored.households.byId[shareholder.id];

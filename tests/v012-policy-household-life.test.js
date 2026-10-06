@@ -5,7 +5,7 @@ import { CONTENT } from "../src/content/index.js";
 import { householdList, householdIdleWorkers, householdPopulation, syncResidentAggregates, releaseJobFromHousehold, setHouseholdJobCount, householdExchangeAllowanceUnits, householdFoodQeqUnits } from "../src/systems/households.js";
 import { transferVouchers } from "../src/economy/currency.js";
 import { accountQeqUnits, totalQeqUnits } from "../src/economy/inventory.js";
-import { applyAutomaticRelief, payManualRelief } from "../src/systems/finance.js";
+import { applyAutomaticRelief, payManualRelief, redeemEssentialFoodForHouseholds } from "../src/systems/finance.js";
 import { ensureHouseholdLife, householdRecentTotals } from "../src/systems/household-life.js";
 import { exportState, importState } from "../src/persistence/storage.js";
 import { grantResidentVouchers, setHouseholdInventoryJin } from "./helpers-v16.js";
@@ -84,8 +84,21 @@ test("0.1.2全镇有粮但个别家庭缺粮时，自动救济按户到达而不
 
 test("0.1.2家庭有券无食物时先按1:1正常兑付，避免虚假饥饿且不消耗就业换券额度", () => {
   const s=cloneInitial(1207); const h=householdList(s)[0]; clearFamilyFood(s,h); simulation.issueGrainVouchers(s,"town",100); transferVouchers(s,"town",`household:${h.id}`,20*V,CONTENT,"unemployment_benefit","测试已有收入");
-  const usedBefore=s.households.exchange?.usedByHousehold?.[h.id]||0; simulation.toggleAutomaticRelief(s,false); simulation.advanceDay(s);
-  assert.equal(s.shortageQeq,0); assert.ok((s.relief.lastDay?.redeemedWheatUnits||0)>0); assert.equal(s.households.exchange.usedByHousehold[h.id]||0,usedBefore);
+  const usedBefore=s.households.exchange?.usedByHousehold?.[h.id]||0;
+  // 1券兑1斤的正常兑付本身：有券无粮时先自费兑付，而不是直接吃免费救济。
+  const essential = redeemEssentialFoodForHouseholds(s, CONTENT);
+  assert.ok(essential.redeemedUnits > 0, "有券无粮家庭应按1:1自费兑付");
+  // 基线调整：人口 1100→3300（8cf03ae）后户均 13—14 人，邻里互助（口粮<3天，先于自动救济）
+  // 会在日循环里先补足口粮，因此当日不再是"兑付"路径，而是"邻里互助"路径。
+  // 本用例的核心不变量仍成立：不出现虚假饥饿、家庭得到口粮、且不占用就业换券额度。
+  const s2=cloneInitial(1207); const h2=householdList(s2)[0]; clearFamilyFood(s2,h2); simulation.issueGrainVouchers(s2,"town",100); transferVouchers(s2,"town",`household:${h2.id}`,20*V,CONTENT,"unemployment_benefit","测试已有收入");
+  const usedBefore2=s2.households.exchange?.usedByHousehold?.[h2.id]||0;
+  simulation.toggleAutomaticRelief(s2,false); simulation.advanceDay(s2);
+  assert.equal(s2.shortageQeq,0);
+  const fed = (s2.relief.lastDay?.redeemedWheatUnits||0) > 0 || (s2.neighborAid?.lastDay?.helpedHouseholds||0) > 0;
+  assert.ok(fed, "有券无粮家庭应通过自费兑付或邻里互助得到口粮");
+  assert.equal(s2.households.exchange.usedByHousehold[h2.id]||0,usedBefore2);
+  assert.equal(usedBefore, usedBefore2);
 });
 
 test("0.1.2欠薪偿付进入原债权家庭，换岗后不把旧债转给后来上岗者", () => {
@@ -112,10 +125,13 @@ test("0.1.2保存恢复保留家庭生活、舒心值、债权与政策记录，
 });
 
 
-function makeFivePersonReliefState(seed, voucher = 0, townReliefJin = null) {
+// 开局数值调整（8cf03ae）后户均人口从 4—5 人变为 13—14 人，不再存在固定 5 人家庭。
+// 改为取第一户并把"14 日口粮目标"按实际人口推导，用例本身与人口规模解耦。
+function makeReliefHouseholdState(seed, voucher = 0, townReliefJin = null) {
   const state = cloneInitial(seed);
-  const household = householdList(state).find(row => householdPopulation(row) === 5);
-  assert.ok(household, "测试需要一个5人家庭");
+  const household = householdList(state)[0];
+  assert.ok(household, "测试需要一个家庭");
+  const targetJin = householdPopulation(household) * CONTENT.rules.foodPerPersonDay * 14;
   clearFamilyFood(state, household);
   if (voucher > 0) {
     const grant = grantResidentVouchers(state, voucher, CONTENT, household.id);
@@ -126,7 +142,7 @@ function makeFivePersonReliefState(seed, voucher = 0, townReliefJin = null) {
     state.accounts.town.wheat = Math.round(townReliefJin * I);
   }
   syncResidentAggregates(state, CONTENT);
-  return { state, household };
+  return { state, household, targetJin };
 }
 
 function reliefSnapshot(state, household) {
@@ -171,36 +187,36 @@ test("0.1.2-r02家庭近期汇总从0初始化：空历史、缺字段和多历�
   for (const [key, value] of Object.entries(detail.recent)) assert.equal(Number.isFinite(value), true, `dashboard recent.${key} 必须是有限数值`);
 });
 
-test("0.1.2-r02足额粮券：5人无粮家庭自费兑到14日目标，不领取免费口粮", () => {
-  const { state: s, household: h } = makeFivePersonReliefState(1212, 1000);
+test("0.1.2-r02足额粮券：无粮家庭自费兑到14日目标，不领取免费口粮", () => {
+  const { state: s, household: h, targetJin } = makeReliefHouseholdState(1212, 1000);
   const before = reliefSnapshot(s, h); const result = applyAutomaticRelief(s, s.population, CONTENT); const after = reliefSnapshot(s, h);
-  assert.equal(result.redeemedWheatUnits, 140 * I); assert.equal(result.movedQeqUnits, 0); assert.equal(result.eligibleHouseholds, 0); assert.equal(result.servedHouseholds, 0);
-  assert.equal(h.voucherUnits, (1000 - 140) * V); assertReliefConservation(before, after, result); assert.equal(simulation.validateCurrencyInvariant(s).valid, true);
+  assert.equal(result.redeemedWheatUnits, targetJin * I); assert.equal(result.movedQeqUnits, 0); assert.equal(result.eligibleHouseholds, 0); assert.equal(result.servedHouseholds, 0);
+  assert.equal(h.voucherUnits, (1000 - targetJin) * V); assertReliefConservation(before, after, result); assert.equal(simulation.validateCurrencyInvariant(s).valid, true);
 });
 
 test("0.1.2-r02部分粮券：先注销自有粮券兑付，再由镇库只补剩余救济缺口", () => {
-  const { state: s, household: h } = makeFivePersonReliefState(1213, 50);
+  const { state: s, household: h, targetJin } = makeReliefHouseholdState(1213, 50);
   const before = reliefSnapshot(s, h); const result = applyAutomaticRelief(s, s.population, CONTENT); const after = reliefSnapshot(s, h);
-  assert.equal(result.redeemedWheatUnits, 50 * I); assert.equal(result.movedQeqUnits, 90 * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.eligibleHouseholds, 1); assert.equal(result.servedHouseholds, 1); assert.equal(h.voucherUnits, 0);
+  assert.equal(result.redeemedWheatUnits, 50 * I); assert.equal(result.movedQeqUnits, (targetJin - 50) * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.eligibleHouseholds, 1); assert.equal(result.servedHouseholds, 1); assert.equal(h.voucherUnits, 0);
   assertReliefConservation(before, after, result); assert.equal(simulation.validateCurrencyInvariant(s).valid, true);
 });
 
 test("0.1.2-r02无粮券：不发生兑付，镇库按14日目标承担全部免费救济", () => {
-  const { state: s, household: h } = makeFivePersonReliefState(1214, 0);
+  const { state: s, household: h, targetJin } = makeReliefHouseholdState(1214, 0);
   const before = reliefSnapshot(s, h); const result = applyAutomaticRelief(s, s.population, CONTENT); const after = reliefSnapshot(s, h);
-  assert.equal(result.redeemedWheatUnits, 0); assert.equal(result.movedQeqUnits, 140 * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.eligibleHouseholds, 1); assert.equal(result.servedHouseholds, 1);
+  assert.equal(result.redeemedWheatUnits, 0); assert.equal(result.movedQeqUnits, targetJin * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.eligibleHouseholds, 1); assert.equal(result.servedHouseholds, 1);
   assertReliefConservation(before, after, result); assert.equal(simulation.validateCurrencyInvariant(s).valid, true);
 });
 
 test("0.1.2-r02镇库救济粮不足：只拨实际库存并保留剩余缺口，守恒不透支", () => {
-  const { state: s, household: h } = makeFivePersonReliefState(1215, 0, 20);
+  const { state: s, household: h, targetJin } = makeReliefHouseholdState(1215, 0, 20);
   const before = reliefSnapshot(s, h); const result = applyAutomaticRelief(s, s.population, CONTENT); const after = reliefSnapshot(s, h);
-  assert.equal(result.redeemedWheatUnits, 0); assert.equal(result.movedQeqUnits, 20 * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.missingQeqUnits, 120 * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.unmetHouseholds, 1);
+  assert.equal(result.redeemedWheatUnits, 0); assert.equal(result.movedQeqUnits, 20 * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.missingQeqUnits, (targetJin - 20) * CONTENT.precision.qeqUnitsPerJin); assert.equal(result.unmetHouseholds, 1);
   assertReliefConservation(before, after, result); assert.equal(simulation.validateCurrencyInvariant(s).valid, true);
 });
 
 test("0.1.2-r02手动与自动救济共用资格判断：部分粮券场景得到相同兑付与救济结果", () => {
-  const auto = makeFivePersonReliefState(1216, 50); const manual = makeFivePersonReliefState(1216, 50);
+  const auto = makeReliefHouseholdState(1216, 50); const manual = makeReliefHouseholdState(1216, 50);
   const autoResult = applyAutomaticRelief(auto.state, auto.state.population, CONTENT);
   const manualResult = payManualRelief(manual.state, 10000, CONTENT);
   assert.deepEqual(

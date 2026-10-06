@@ -47,8 +47,9 @@ function openBreadShopFixture({ grantResidentVouchers: grantVouchers = 5000 } = 
   assert.equal(setJobCount(state, `shop:${opened.shopId}:clerk`, 20, CONTENT,
     { type: "shop", id: opened.shopId }).ok, true);
   const shop = state.shops[opened.shopId];
-  shop.inventory.bread = 1000 * SCALE;
-  shop.inventoryCostVoucherUnits.bread = 1000 * SCALE * (5 / 6);
+  // 人口 1100→3300（8cf03ae）后单日面包需求升到约 1584 斤，铺货须高于该量才不会被供给卡住。
+  shop.inventory.bread = 3000 * SCALE;
+  shop.inventoryCostVoucherUnits.bread = 3000 * SCALE * (5 / 6);
   if (grantVouchers > 0) assert.equal(grantResidentVouchers(state, grantVouchers, CONTENT).ok, true);
   return { state, shop };
 }
@@ -102,22 +103,23 @@ test("wage arrears keep their old amount and pay separately from current wages",
   changeInventory(state, "town", "wheat", -state.accounts.town.wheat, "empty treasury", "test_adjustment", CONTENT);
   simulation.advanceDay(state);
   const first = state.payroll.lastDay;
-  assert.equal(first.expectedWheatJin, 120);
+  // 默认日薪 10→5 斤（8cf03ae）：12 名建筑工当日应付 120→60 斤。
+  assert.equal(first.expectedWheatJin, 60);
   assert.equal(first.currentPaidWheatJin, 0);
-  assert.equal(first.unpaidCurrentWheatJin, 120);
-  assert.equal(state.payroll.arrearsWheatUnits["builders::" + start.instanceId], 120 * SCALE);
+  assert.equal(first.unpaidCurrentWheatJin, 60);
+  assert.equal(state.payroll.arrearsWheatUnits["builders::" + start.instanceId], 60 * SCALE);
   simulation.setWageRate(state, "builders", 20);
   transferItem(state, "residents", "town", "wheat", 360, "补充镇库小麦", CONTENT);
   assert.equal(simulation.issueGrainVouchers(state, "town", 360).ok, true);
   simulation.advanceDay(state);
   const second = state.payroll.lastDay;
   assert.equal(second.expectedWheatJin, 240);
-  assert.equal(second.arrearsPaidWheatJin, 120);
+  assert.equal(second.arrearsPaidWheatJin, 60);
   assert.equal(second.currentPaidWheatJin, 240);
   assert.equal(second.arrearsBalanceWheatJin, 0);
-  assert.equal(state.payroll.totals.paidWheatUnits / SCALE, 360);
-  assert.equal(state.business.cumulative.constructionWagesWheatUnits / SCALE, 360);
-  assert.equal(totalQeqUnits(state, CONTENT), 13060800000);
+  assert.equal(state.payroll.totals.paidWheatUnits / SCALE, 300);
+  assert.equal(state.business.cumulative.constructionWagesWheatUnits / SCALE, 300);
+  assert.equal(totalQeqUnits(state, CONTENT), 12902400000);
 });
 
 test("unemployment benefit is limited to idle workers, can be disabled, and creates no debt", () => {
@@ -128,12 +130,13 @@ test("unemployment benefit is limited to idle workers, can be disabled, and crea
   addInventory(state, "town", "wheat", 50, "test fund", "test_adjustment", CONTENT);
   assert.equal(simulation.issueGrainVouchers(state, "town", 50).ok, true);
   simulation.advanceDay(state);
-  assert.equal(state.policy.lastDay.eligible, 200);
+  // 人口 1100→3300（8cf03ae）：合格失业劳动力 200→250，镇库 50 斤只够 50 人，缺口 200 斤。
+  assert.equal(state.policy.lastDay.eligible, 250);
   assert.equal(state.policy.lastDay.paidPeople, 50);
   assert.equal(state.policy.lastDay.paidWheatJin, 50);
-  assert.equal(state.policy.lastDay.shortWheatJin, 150);
+  assert.equal(state.policy.lastDay.shortWheatJin, 200);
   assert.equal(rows(state, "unemployment_benefit").reduce((sum, row) => sum + row.quantityUnits, 0) / CONTENT.precision.currencyUnitsPerVoucher, 50);
-  assert.equal(rows(state, "unemployment_shortfall")[0].quantityUnits / CONTENT.precision.currencyUnitsPerVoucher, 150);
+  assert.equal(rows(state, "unemployment_shortfall")[0].quantityUnits / CONTENT.precision.currencyUnitsPerVoucher, 200);
   assert.deepEqual(state.payroll.arrearsWheatUnits, {});
   assert.equal(simulation.setUnemploymentPolicy(state, { dailyPerWorkerJin: 0 }).dailyPerWorkerJin, 0);
 
@@ -141,7 +144,8 @@ test("unemployment benefit is limited to idle workers, can be disabled, and crea
   simulation.setUnemploymentPolicy(funded, { enabled: true, dailyPerWorkerJin: 1 });
   assert.equal(simulation.issueGrainVouchers(funded, "town", 100000).ok, true);
   simulation.advanceDays(funded, 365);
-  assert.equal(funded.annualReports[0].payroll.unemploymentPaidVoucherUnits / CONTENT.precision.currencyUnitsPerVoucher, 73000);
+  // 合格人数扩大后年度失业金同步放大（250 人 × 365 天）。
+  assert.equal(funded.annualReports[0].payroll.unemploymentPaidVoucherUnits / CONTENT.precision.currencyUnitsPerVoucher, 91250);
 });
 
 test("bread barter is atomic, price sensitive, uses existing stock and protects thirty days", () => {
@@ -168,10 +172,12 @@ test("bread barter is atomic, price sensitive, uses existing stock and protects 
     "买面包只是把面包从商店搬到居民，总量不变");
   assert.equal(totalQeqUnits(barterState, CONTENT), voucherBefore);
   const meal = simulation.advanceDay(barterState).meal;
-  assert.equal(meal.consumedQeqUnits / CONTENT.precision.qeqUnitsPerJin, 2200);
-  // 1100人×2斤×0.2面包份额÷(5/6) = 528斤
+  // 人口 1100→3300（8cf03ae）：全镇口粮消耗 2200→6600 斤（逐户取整有微小误差）。
+  assert.ok(Math.abs(meal.consumedQeqUnits / CONTENT.precision.qeqUnitsPerJin - 6600) < 1,
+    `口粮消耗应接近6600，实际${meal.consumedQeqUnits / CONTENT.precision.qeqUnitsPerJin}`);
+  // 3300人×2斤×0.2面包份额÷(5/6) = 1584斤
   const breadMove = meal.moves.find(row => row.itemId === "bread").quantityUnits / SCALE;
-  assert.ok(Math.abs(breadMove - 528) < 5, `面包消耗量应接近528，实际${breadMove}`);
+  assert.ok(Math.abs(breadMove - 1584) < 5, `面包消耗量应接近1584，实际${breadMove}`);
 
   // 居民已有面包时，按"净需求"少买。
   const { state: existing } = openBreadShopFixture();
@@ -238,7 +244,8 @@ test("mill to bakery accounting counts sold stock once and keeps unsold cost in 
   assert.equal(day.producedUnits.bread / SCALE, 72);
   assert.equal(day.rawInputCostWheatUnits / SCALE, 80);
   assert.equal(day.processingLossWheatUnits / SCALE, 16);
-  assert.equal(day.operatingWagesWheatUnits / SCALE, 20);
+  // 默认日薪 10→5 斤（8cf03ae）：磨坊工 + 面包师各 1 人，合计 10 斤。
+  assert.equal(day.operatingWagesWheatUnits / SCALE, 10);
   // 0.2.3 镇营统购统销：产成品无偿调拨进批发市场，成本基础随货转移，镇库不再留存。
   assert.equal(state.accounts.town.flour, 0);
   assert.equal(state.accounts.town.bread, 0);
@@ -253,8 +260,9 @@ test("mill to bakery accounting counts sold stock once and keeps unsold cost in 
   assert.equal(millView.jobs[0].outputToday.flour / SCALE, 64);
   const millPay = view.payroll.lastDay.workers.find(row => row.buildingId === mill.instanceId);
   const bakeryPay = view.payroll.lastDay.workers.find(row => row.buildingId === bakery.instanceId);
-  assert.equal(millPay.currentPaidWheatJin, 10);
-  assert.equal(bakeryPay.currentPaidWheatJin, 10);
+  // 默认日薪 10→5 斤（8cf03ae）：每名工人实发 5 斤。
+  assert.equal(millPay.currentPaidWheatJin, 5);
+  assert.equal(bakeryPay.currentPaidWheatJin, 5);
 });
 
 test("v2旧存档不再自动迁移", () => {

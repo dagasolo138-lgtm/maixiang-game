@@ -92,9 +92,9 @@ test("r04 商业街员工只由店铺支付一次；镇库清理r03聚合幽灵�
   const householdWheatBefore = householdList(state).reduce((sum, h) => sum + (h.inventory.wheat || 0), 0);
   prepareShopsForDay(state, CONTENT);
   const householdWheatAfterShop = householdList(state).reduce((sum, h) => sum + (h.inventory.wheat || 0), 0);
-  // 基线清理：店主本人兼任商人不领固定工资（拿利润），仅店员计 10 券工资。
-  assert.equal(shop.accounts.day.wageExpenseVoucherUnits, 10 * V, "店主商人不领工资，仅1店员计10券工资");
-  assert.equal(householdWheatAfterShop - householdWheatBefore, 10 * I, "店铺工资应真实进入家庭账户");
+  // 基线清理：店主本人兼任商人不领固定工资（拿利润），仅店员计 5 券工资（默认日薪 10→5 斤，8cf03ae）。
+  assert.equal(shop.accounts.day.wageExpenseVoucherUnits, 5 * V, "店主商人不领工资，仅1店员计5券工资");
+  assert.equal(householdWheatAfterShop - householdWheatBefore, 5 * I, "店铺工资应真实进入家庭账户");
 
   state.payroll ||= {};
   state.payroll.arrearsVoucherUnits ||= {};

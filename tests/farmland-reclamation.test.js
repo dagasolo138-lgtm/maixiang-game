@@ -25,12 +25,13 @@ function farmlandTiles(navigation = { activePanel: null, buildType: null }) {
   return tiles.sort();
 }
 
-test("开荒规则：初始 4000 亩、上限 100000 亩、每 100 亩 100 工日", () => {
+test("开荒规则：初始 15000 亩、上限 100000 亩、每 100 亩 100 工日", () => {
   const state = simulation.createInitialState({ seed: 70001 });
-  assert.equal(A.acres, 4000);
+  // 开局数值调整（8cf03ae）：初始耕地 4000→15000 亩（供 1500 农民耕种）。
+  assert.equal(A.acres, 15000);
   assert.equal(A.acresMaximum, 100000);
   assert.equal(A.acresPerFarmer, 10);
-  assert.equal(reclaimedAcres(state, CONTENT), 4000);
+  assert.equal(reclaimedAcres(state, CONTENT), 15000);
   // 每 100 亩 100 工日 ⇒ 1 亩 1 工日，按内容比例换算而非硬编码。
   assert.equal(reclaimWorkDaysForAcres(100, CONTENT), 100);
   assert.equal(reclaimWorkDaysForAcres(1, CONTENT), 1);
@@ -107,17 +108,17 @@ test("开荒工日消耗：投入人数分摊工日，人数不超过工日总�
 
 test("开荒亩数上限 clamp：单次与累计都不超过 100000 亩", () => {
   const state = simulation.createInitialState({ seed: 70004 });
-  assert.equal(reclaimedAcres(state, CONTENT), 4000);
+  assert.equal(reclaimedAcres(state, CONTENT), 15000);
 
   const first = simulation.reclaimFarmland(state, 50000, 100);
   assert.equal(first.ok, true, first.reason);
   assert.equal(first.clamped, false);
-  assert.equal(reclaimedAcres(state, CONTENT), 54000);
+  assert.equal(reclaimedAcres(state, CONTENT), 65000);
 
   // 已开垦余量不足：按余量 clamp
   const second = simulation.reclaimFarmland(state, 80000, 100);
   assert.equal(second.ok, true, second.reason);
-  assert.equal(second.acres, 100000 - 54000);
+  assert.equal(second.acres, 100000 - 65000);
   assert.equal(second.clamped, true);
   assert.equal(reclaimedAcres(state, CONTENT), 100000);
 
@@ -139,38 +140,39 @@ test("开荒亩数上限 clamp：单次与累计都不超过 100000 亩", () => 
 test("亩数提升后耕种人数上限按 10 亩/人 提升，并可直接安排到新上限", () => {
   const state = simulation.createInitialState({ seed: 70005 });
   const farmersBefore = selectJobRows(state, CONTENT).rows.find(row => row.roleId === "farmers");
-  assert.equal(farmersBefore.capacity, 400);
-  assert.equal(jobCount(state, "farmers"), 400);
-  assert.equal(agricultureEmploymentTarget(state, CONTENT), 400);
+  // 初始耕地 15000 亩、农民目标 1500（8cf03ae）。
+  assert.equal(farmersBefore.capacity, 1500);
+  assert.equal(jobCount(state, "farmers"), 1500);
+  assert.equal(agricultureEmploymentTarget(state, CONTENT), 1500);
   const workingAge = selectJobRows(state, CONTENT).workingAge;
-  assert.ok(workingAge > 400);
+  assert.ok(workingAge > 1500);
 
   const result = simulation.reclaimFarmland(state, 10000, 100);
   assert.equal(result.ok, true, result.reason);
-  assert.equal(reclaimedAcres(state, CONTENT), 14000);
+  assert.equal(reclaimedAcres(state, CONTENT), 25000);
 
   const farmersAfter = selectJobRows(state, CONTENT).rows.find(row => row.roleId === "farmers");
-  assert.equal(farmersAfter.capacity, 1400);
-  assert.equal(farmersAfter.maxAssignable, 1400);
+  assert.equal(farmersAfter.capacity, 2500);
+  assert.equal(farmersAfter.maxAssignable, 2500);
 
   // 容量提升后可新增农人；目标可设到新上限，实际在岗受全镇劳动力约束并如实报缺员。
-  const assigned = simulation.setEmployment(state, "farmers", 1400);
+  const assigned = simulation.setEmployment(state, "farmers", 2500);
   assert.equal(assigned.ok, true, assigned.reason);
-  assert.equal(assigned.target, 1400);
-  assert.equal(assigned.assigned, Math.min(1400, workingAge));
-  assert.equal(assigned.shortage, Math.max(0, 1400 - workingAge));
-  assert.equal(agricultureEmploymentTarget(state, CONTENT), 1400);
+  assert.equal(assigned.target, 2500);
+  assert.equal(assigned.assigned, Math.min(2500, workingAge));
+  assert.equal(assigned.shortage, Math.max(0, 2500 - workingAge));
+  assert.equal(agricultureEmploymentTarget(state, CONTENT), 2500);
   const refill = refillAgricultureToTarget(state, CONTENT);
-  assert.equal(refill.target, 1400);
-  assert.equal(jobCount(state, "farmers"), Math.min(1400, workingAge));
+  assert.equal(refill.target, 2500);
+  assert.equal(jobCount(state, "farmers"), Math.min(2500, workingAge));
 
   // 目标不会超过容量。
   const overAssign = simulation.setEmployment(state, "farmers", 99999);
-  assert.equal(overAssign.target, 1400);
+  assert.equal(overAssign.target, 2500);
 
-  // 容量数字本身随亩数线性提升（4000→400、14000→1400）。
+  // 容量数字本身随亩数线性提升（15000→1500、25000→2500）。
   assert.equal(reclaimedAcres(state, CONTENT) / A.acresPerFarmer, farmersAfter.capacity);
-  assert.equal(reclaimedAcres(state, CONTENT) / A.acresPerFarmer, 1400);
+  assert.equal(reclaimedAcres(state, CONTENT) / A.acresPerFarmer, 2500);
 });
 
 test("耕地图形固定大小：开荒不改变地图麦田所占格数与坐标", () => {
@@ -204,7 +206,7 @@ test("镇库不足时开荒工资只支付可支付部分，未付部分不形�
   assert.ok(shortfall, "缺少未付开荒工资记录");
   assert.equal(shortfall.quantityUnits, result.unpaidVoucherUnits);
   // 即使欠薪，已开荒亩数仍然落实（镇库承担的是工资缺口，不是开荒本身）
-  assert.equal(reclaimedAcres(state, CONTENT), 4100);
+  assert.equal(reclaimedAcres(state, CONTENT), 15100);
 });
 
 test("开荒后存档往返与校验保持一致", () => {

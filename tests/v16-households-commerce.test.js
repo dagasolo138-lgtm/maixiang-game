@@ -39,17 +39,18 @@ function fundedHousehold(state, amount = 1000, exclude = new Set()) {
   return household;
 }
 
-test("v16初始家庭保持1100人口、600劳动力和居民总财富汇总一致", () => {
+test("v16初始家庭保持3300人口、1750劳动力和居民总财富汇总一致", () => {
   const state = legacyVoucherState();
   const households = householdList(state);
   assert.equal(households.length, 250);
   assert.equal(state.households.members, undefined);
-  assert.equal(households.reduce((sum, h) => sum + h.ageBands.children + h.ageBands.workers + h.ageBands.elders, 0), 1100);
-  assert.equal(simulation.populationStats(state).children, 300);
-  assert.equal(simulation.populationStats(state).workers, 600);
-  assert.equal(simulation.populationStats(state).elders, 200);
+  // 开局数值调整（8cf03ae）：人口 1100→3300（未成年1050/劳动力1750/老年500）。
+  assert.equal(households.reduce((sum, h) => sum + h.ageBands.children + h.ageBands.workers + h.ageBands.elders, 0), 3300);
+  assert.equal(simulation.populationStats(state).children, 1050);
+  assert.equal(simulation.populationStats(state).workers, 1750);
+  assert.equal(simulation.populationStats(state).elders, 500);
   const occupations = simulation.selectDashboard(state).households.occupations;
-  assert.equal(occupations["农民"], 400);
+  assert.equal(occupations["农民"], 1500);
   const summedWheat = households.reduce((sum, h) => sum + (h.inventory.wheat || 0), 0);
   const summedVouchers = households.reduce((sum, h) => sum + (h.voucherUnits || 0), 0);
   assert.equal(state.accounts.residents.wheat, summedWheat);
@@ -63,12 +64,13 @@ test("就业换券额度按实际在岗成员每日生成，换岗不刷新，�
   // （issueVouchersFromWheat 要求 voucherBalance(town) >= 兑换额）。本用例原先没印券，
   // 镇库余额为 0，换券必然被"镇库已发行粮券余额不足"挡下——是测试夹具缺前置，不是逻辑退化。
   assert.equal(simulation.issueGrainVouchers(state, "town", 5000).ok, true);
-  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 800);
-  assert.equal(simulation.issueGrainVouchers(state, "residents", 800).ok, true);
+  // 换券额度按在岗农人计：农民 400→1500（8cf03ae），基础额度 800→3000 斤。
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 3000);
+  assert.equal(simulation.issueGrainVouchers(state, "residents", 3000).ok, true);
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0);
   assert.equal(simulation.issueGrainVouchers(state, "residents", 1).ok, false);
-  simulation.setEmployment(state, "farmers", 399);
-  simulation.setEmployment(state, "farmers", 400);
+  simulation.setEmployment(state, "farmers", 1499);
+  simulation.setEmployment(state, "farmers", 1500);
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0, "同日离岗再入岗不得刷新额度");
 
   const beforeIncome = state.currency.balances.residents;
@@ -77,43 +79,44 @@ test("就业换券额度按实际在岗成员每日生成，换岗不刷新，�
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0, "工资/收入类转账不应消耗或刷新换券额度");
 
   state.day += 1;
-  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 800, "额度次日重置且不累计");
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 3000, "额度次日重置且不累计");
   assert.equal(simulation.setEmploymentExchangeQuota(state, 0).ok, true);
   state.day += 1;
   assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT), 0);
   assert.equal(simulation.setEmploymentExchangeQuota(state, 10).ok, true);
   state.day += 1;
-  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 4000);
+  assert.equal(maximumResidentExchangeWheatUnits(state, CONTENT) / I, 15000);
 });
 
-test("公务员与警察需求按全镇人口计算，1100人为3、1501人为4且不按建筑重复", () => {
+test("公务员与警察需求按全镇人口计算，3300人为7、3701人为8且不按建筑重复", () => {
   const state = legacyVoucherState();
   const hallA = addCompletedBuilding(state, "town_hall", "hall-a");
   addCompletedBuilding(state, "town_hall", "hall-b");
   const policeA = addCompletedBuilding(state, "police_station", "police-a");
   let jobs = simulation.selectJobRows(state);
-  assert.equal(jobs.publicServiceDemand, 3);
-  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 3);
-  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 3);
+  // 需求 = ceil(人口 / 500)：3300 → 7（8cf03ae 人口调整）。
+  assert.equal(jobs.publicServiceDemand, 7);
+  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 7);
+  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 7);
   assert.equal(simulation.setEmployment(state, "hall-b::civil_servants", 10).assigned, 0, "第二栋不能再复制一份全镇需求");
 
-  // 加401人（1100→1501），跨过1500阈值，需求从3变4
+  // 加401人（3300→3701），跨过3500阈值，需求从7变8
   const workerCohort = state.cohorts.find(row => row.age >= 18 && row.age < 65);
   const extraHousehold = householdList(state)[0];
   workerCohort.m += 401;
   extraHousehold.ageBands.workers += 401;
   jobs = simulation.selectJobRows(state);
-  assert.equal(jobs.publicServiceDemand, 4);
-  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 4);
-  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 4);
+  assert.equal(jobs.publicServiceDemand, 8);
+  assert.equal(simulation.setEmployment(state, `${hallA.id}::civil_servants`, 10).assigned, 8);
+  assert.equal(simulation.setEmployment(state, `${policeA.id}::police`, 10).assigned, 8);
 
   workerCohort.m -= 401;
   extraHousehold.ageBands.workers -= 401;
   reconcileEmployment(state, CONTENT);
   jobs = simulation.selectJobRows(state);
-  assert.equal(jobs.publicServiceDemand, 3);
-  assert.equal(jobs.civilServants, 3);
-  assert.equal(jobs.police, 3);
+  assert.equal(jobs.publicServiceDemand, 7);
+  assert.equal(jobs.civilServants, 7);
+  assert.equal(jobs.police, 7);
 });
 
 test("商业街每级2铺、综合商店每铺最多50店员且所有岗位占用真实唯一劳动力", () => {
@@ -203,8 +206,8 @@ test("店铺欠薪欠租会保留，长期无法经营自动停业并释放商�
     assert.equal(drained.ok, true);
   }
   prepareShopsForDay(state, CONTENT);
-  // 基线清理：店主商人不领固定工资，仅2店员计 20*V。
-  assert.equal(shop.liabilities.wageVoucherUnits, 20 * V);
+  // 基线清理：店主商人不领固定工资，仅2店员计 2×5×V（默认日薪 10→5 斤，8cf03ae）。
+  assert.equal(shop.liabilities.wageVoucherUnits, 10 * V);
   assert.equal(shop.liabilities.rentVoucherUnits, 1 * V);
   shop.badDays = CONTENT.rules.shopClosureBadDays - 1;
   const result = finishShopsDay(state, CONTENT).find(row => row.shopId === shop.id);

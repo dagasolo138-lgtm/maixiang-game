@@ -92,8 +92,10 @@ test("0.1.1多家企业共享同一需求，过剩库存后按周期缩减计划
   assert.ok(rows.reduce((sum, row) => sum + row.plannedBatches, 0) <= maxBatches,
     "全镇需求只能分一次，不能每家复制一份");
   a.plan.ageDays = b.plan.ageDays = CONTENT.rules.newBusinessTrialDays + 1;
-  a.inventory.bread = 1000 * I;
-  b.inventory.bread = 1000 * I;
+  // 人口 1100→3300（8cf03ae）后面包需求放大到约 968 斤/日，"过剩库存"须同步放大：
+  // 目标 = 3×需求 − 市场现货，每户 2000 斤（合计 4000 斤）足以压过 3×968≈2904 斤的目标。
+  a.inventory.bread = 2000 * I;
+  b.inventory.bread = 2000 * I;
   setJobCount(state, `${a.buildingId}::bakers::listed`, 5, CONTENT);
   setJobCount(state, `${b.buildingId}::bakers::listed`, 5, CONTENT);
   refreshOperatingPlan(state, CONTENT, true);
