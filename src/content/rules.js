@@ -173,7 +173,7 @@ export const AGRICULTURE = Object.freeze({
   acres: 15000,
   acresMaximum: 100000,
   acresPerFarmer: 10,
-  yieldPerAcre: 500,
+  yieldPerAcre: 600,
   cropItemId: "wheat",
   farmerRoleId: "farmers",
   // 每 100 亩开荒需 100 工日，即 1 亩 1 工日。
