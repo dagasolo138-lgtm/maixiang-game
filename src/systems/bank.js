@@ -3,7 +3,7 @@ import { recordEvent } from "../economy/ledger.js";
 import { householdList, householdPopulation, isActiveHousehold } from "./households.js";
 import { wholesalePrice } from "./wealth-stats.js";
 import { companyWorkingCapitalReserve } from "./companies.js";
-import { liquidityInvestRatio } from "./liquidity.js";
+import { ensureHouseholdInvestPropensity, householdInvestableVoucherUnits } from "./investment-preference.js";
 
 // 银行系统（金融扩展第二期）：镇营银行，利润归镇库。
 // - 只存粮券不存粮食；存款按日计息；可向上市公司放贷
@@ -239,15 +239,16 @@ function settleBankDepositsDay(state, content, bank, policy, daysPerYear) {
       const shortfall = reserveUnits - cash;
       const canTake = Math.min(shortfall, bank.deposits[household.id] || 0);
       if (canTake > 0) withdrawFromBank(state, household.id, canTake);
+      household.stockBuyBudgetVoucherUnits = 0;
       continue;
     }
-    // 吸储：30 天口粮储备之外的闲钱，按当日流动性投资比例存入（五期算法自动调整）
-    const investRatio = liquidityInvestRatio(state, content);
-    const surplus = cash - reserveUnits;
-    if (surplus > 0) {
-      const amount = Math.floor(surplus * investRatio);
-      if (amount > 0) depositToBank(state, household.id, amount);
-    }
+    // 吸储：可投资金（生活储备之外 × 流动性 50%—80%）按存款倾向存入；
+    // 剩余部分记为本日股票购买预算，由股票日常买入消化（投资倾向模块）。
+    const investable = householdInvestableVoucherUnits(state, content, household);
+    const propensity = ensureHouseholdInvestPropensity(state, content, household);
+    const depositAmount = Math.floor(investable * propensity.deposit);
+    if (depositAmount > 0) depositToBank(state, household.id, depositAmount);
+    household.stockBuyBudgetVoucherUnits = investable - depositAmount;
   }
 }
 

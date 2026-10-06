@@ -29,7 +29,7 @@ import { archiveHouseholdLifeYear, finalizeHouseholdLifeDay, resetHouseholdLifeD
 import { finalizeMonetaryPaymentDay } from "../economy/payment.js";
 import { settleBankDay } from "./bank.js";
 import { settleBondsDay } from "./bonds.js";
-import { settleStockMarketDay } from "./stock-exchange.js";
+import { settleStockMarketDay, settleHouseholdStockBuying } from "./stock-exchange.js";
 import { settleLiquidityDay } from "./liquidity.js";
 import { maybeRefreshHouseholdIncomeExpectations } from "./income-expectation.js";
 import { accrueServiceDemand, processServiceDemand } from "./services.js";
@@ -162,6 +162,8 @@ export function settleOneDay(state, content) {
   settleBondsDay(state, content);
   // 股市日结算：AI 做市商驱动股价向利润锚波动（金融扩展四期）。
   settleStockMarketDay(state, content);
+  // 住户日常股票买入：按存款/股票倾向分流后的预算在二级市场买入（镇库做市）
+  settleHouseholdStockBuying(state, content);
 
   state.day += 1;
   if (state.day === 91) recordEvent(state, "春耕已过，麦苗渐渐齐整。", content);

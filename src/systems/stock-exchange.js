@@ -1,7 +1,8 @@
 import { currencyScale } from "../economy/currency.js";
 import { currentPaymentComposition, maximumPayableValueUnits, settleMonetaryPayment } from "../economy/payment.js";
 import { recordEvent } from "../economy/ledger.js";
-import { householdList } from "./households.js";
+import { householdList, isActiveHousehold } from "./households.js";
+import { consumeHouseholdStockBudget } from "./investment-preference.js";
 import { companyActualProfitValuation } from "./companies.js";
 import { nextRandom } from "../core/random.js";
 
@@ -208,4 +209,46 @@ export function settleStockMarketDay(state, content) {
     if (next !== current) moved.push({ companyId: company.id, from: current, to: next });
   }
   return moved.length ? { moved } : null;
+}
+
+// 住户日常股票买入：按投资倾向把本日股票预算分散买入镇库做市的股份。
+// - 买入对象：已上市、镇库有可售股份（扣除 IPO 发行池）的公司，按实时股价成交
+// - 预算：household.stockBuyBudgetVoucherUnits（银行分流后写入）或无银行时现算
+// - 付款：住户 → 镇库（镇库做市），沿用认购的支付口径；付不起就跳过
+export function settleHouseholdStockBuying(state, content) {
+  if (!hasStockExchange(state)) return null;
+  const listed = Object.values(state.companies || {}).filter(company =>
+    company.listing?.listed && (company.sharePriceVoucherUnits || 0) > 0 &&
+    (company.townShares || 0) - (company.shareSale?.offeredShares || 0) > 0);
+  if (!listed.length) return null;
+  let totalShares = 0;
+  let totalSpentUnits = 0;
+  for (const household of householdList(state)) {
+    if (!isActiveHousehold(household)) continue;
+    const budget = consumeHouseholdStockBudget(state, content, household);
+    if (budget <= 0) continue;
+    const perCompany = Math.floor(budget / listed.length);
+    if (perCompany <= 0) continue;
+    for (const company of listed) {
+      const available = (company.townShares || 0) - (company.shareSale?.offeredShares || 0);
+      if (available <= 0) continue;
+      const priceUnits = company.sharePriceVoucherUnits;
+      const shares = Math.min(available, Math.floor(perCompany / priceUnits));
+      if (shares <= 0) continue;
+      const cost = shares * priceUnits;
+      const payment = settleMonetaryPayment(state, `household:${household.id}`, "town",
+        currentPaymentComposition(state, cost), content, "share_market_buy",
+        `${household.name}二级市场买入${company.name}${shares}股`, { requireFull: true });
+      if (!payment.ok) continue;
+      company.townShares -= shares;
+      company.residentShares = (company.residentShares || 0) + shares;
+      company.householdShares ||= {};
+      company.householdShares[household.id] = (company.householdShares[household.id] || 0) + shares;
+      household.shares ||= {};
+      household.shares[company.id] = (household.shares[company.id] || 0) + shares;
+      totalShares += shares;
+      totalSpentUnits += cost;
+    }
+  }
+  return totalShares > 0 ? { shares: totalShares, spentVoucherUnits: totalSpentUnits } : null;
 }
