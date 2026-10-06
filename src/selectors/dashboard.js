@@ -326,7 +326,7 @@ export function selectDashboard(state, content, selection) {
       stockReference: reference,
       workingCapitalReserveVoucher: reserveUnits / voucherScale,
       lastAnnualSettlement: company.annualSettlement || null,
-      sharePriceVoucher: (company.shareSale?.sharePriceVoucherUnits || 0) / voucherScale,
+      sharePriceVoucher: ((company.sharePriceVoucherUnits || company.shareSale?.sharePriceVoucherUnits || 0)) / voucherScale,
       shareSaleProceedsVoucher: (company.shareSale?.cumulativeProceedsVoucherUnits || 0) / voucherScale,
       revenueDayVoucher: (company.accounts?.day?.revenueVoucherUnits || 0) / voucherScale,
       cogsDayVoucher: (company.accounts?.day?.cogsVoucherUnits || 0) / voucherScale,
@@ -359,7 +359,9 @@ export function selectDashboard(state, content, selection) {
   for (const company of Object.values(state.companies || {})) {
     if (!company.listing?.listed) continue;
     macroListedCount += 1;
-    macroMarketCapVoucherUnits += (company.shareSale?.sharePriceVoucherUnits || 0) * (company.totalShares || 0);
+    // 实时股价（四期）；老数据回退到挂牌价
+    const marketPriceUnits = company.sharePriceVoucherUnits || company.shareSale?.sharePriceVoucherUnits || 0;
+    macroMarketCapVoucherUnits += marketPriceUnits * (company.totalShares || 0);
   }
   const macro = {
     unemploymentRate: laborMarket.unemploymentRate,
