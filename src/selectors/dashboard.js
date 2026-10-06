@@ -149,7 +149,7 @@ export function selectDashboard(state, content, selection) {
   const full = panel === "all";
   const needResidents = full || panel === "residents";
   const needBusiness = full || panel === "business";
-  const needPolicy = full || panel === "policy";
+  const needPolicy = full || panel === "policy" || panel === "settings";
   const needBuild = full || panel === "build";
   const needSite = full || panel === "site";
   const runtime = createDashboardRuntime(state);

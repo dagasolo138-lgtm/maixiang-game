@@ -210,6 +210,7 @@ export function createInitialState(options) {
       employmentExchangeJin: content.rules.employmentExchangeDefaultJin ?? 2,
       shopRentVoucher: content.rules.shopRentDefaultVoucher ?? 1,
       shopProfitTaxPercent: content.rules.shopProfitTaxDefaultPercent ?? 10,
+      autosaveMonths: 1,
       agricultureTaxRecent: Array.from({ length: content.rules.agricultureTaxLookbackDays || 30 }, (_, index) => ({
         year: 0, day: index, rateBps: 5000, baseline: true
       }))

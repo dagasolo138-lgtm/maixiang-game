@@ -100,6 +100,7 @@ export function renderSettings(view, error = null, ui = {}) {
       ${legacyMarkup(ui.legacyArtifacts)}
     </div>` : `<div class="cardlet"><div class="setting-title">新游戏</div><p class="subtle">当前进度将保存，新局使用独立存档。</p><button class="primary" data-new-game ${ui.persistenceBusy ? "disabled" : ""}>新游戏</button></div>
       <div class="cardlet"><div class="setting-title">存档管理</div><p class="subtle" id="saveStatus" role="status">${escapeHtml(status)}</p><button class="secondary" data-open-save-manager>打开存档管理</button></div>
-      <div class="cardlet"><div class="setting-title">音效</div><button class="secondary" id="soundToggle" aria-pressed="${Boolean(ui.soundMuted)}">${ui.soundMuted ? "开启音效" : "关闭音效"}</button></div>`}
+      <div class="cardlet"><div class="setting-title">音效</div><button class="secondary" id="soundToggle" aria-pressed="${Boolean(ui.soundMuted)}">${ui.soundMuted ? "开启音效" : "关闭音效"}</button></div>
+      <div class="cardlet"><div class="setting-title">自动存档</div><p class="subtle">按游戏时间自动保存当前进度。</p><div class="settings-actions">${[["1", "每月"], ["3", "每3月"], ["6", "每半年"]].map(([value, label]) => `<button class="secondary" data-autosave-months="${value}" ${(view?.policy?.autosaveMonths ?? 1) === Number(value) ? "disabled" : ""}>${label}</button>`).join("")}</div></div>`}
     ${buildIdentityMarkup(ui)}`;
 }

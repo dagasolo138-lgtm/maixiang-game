@@ -31,7 +31,7 @@ import { settleBankDay } from "./bank.js";
 import { settleBondsDay } from "./bonds.js";
 import { settleStockMarketDay } from "./stock-exchange.js";
 import { settleLiquidityDay } from "./liquidity.js";
-import { updateHouseholdIncomeExpectations } from "./income-expectation.js";
+import { maybeRefreshHouseholdIncomeExpectations } from "./income-expectation.js";
 import { accrueServiceDemand, processServiceDemand } from "./services.js";
 import { resetWholesaleDay, resetWholesaleYear, runWholesaleIntake, ensureWholesaleWheatForTown, townMillWheatDemandUnits, snapshotWholesaleHistory, subsidizeWholesaleWheat } from "./wholesale-market.js";
 import { applyCompanyDistributionsToAnnualReport, buildAnnualReport } from "./annual-reports.js";
@@ -144,8 +144,8 @@ export function settleOneDay(state, content) {
     });
   }
   finalizeHouseholdLifeDay(state, content);
-  // 收入预期：每户年期望收入（斤），为下版本满意度/消费/跳槽打地基；本期只计算存储。
-  updateHouseholdIncomeExpectations(state, content);
+  // 收入预期：7—30 天随机刷新一次（为下版本满意度/消费/跳槽打地基；本期只计算存储）。
+  maybeRefreshHouseholdIncomeExpectations(state, content);
   finishSaltGraceDay(state, content);
   // 11. Finish shop books after retail demand is known.
   const shops = finishShopsDay(state, content, state.day + 1 >= content.rules.daysPerYear);

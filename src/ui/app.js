@@ -127,6 +127,16 @@ export function mountGame(root) {
     }
   });
 
+  // 自动存档时钟：按游戏时间（每月/每3月/每半年）触发，不再按现实时间频繁写入。
+  let lastAutosaveAbsDay = 0;
+  function absoluteGameDay() {
+    if (!state) return 0;
+    return (state.year - 1) * (simulation.content.rules.daysPerYear || 365) + state.day;
+  }
+  function resetAutosaveClock() {
+    lastAutosaveAbsDay = absoluteGameDay();
+  }
+
   async function saveIfDirty(force = false) {
     if (!state || (!dirty && !force)) return true;
     if (transientMode) {
@@ -557,6 +567,7 @@ export function mountGame(root) {
 
   function adoptSave(entry) {
     state = entry.state;
+    resetAutosaveClock();
     dashboardViews.clear();
     activeId = entry.id;
     saveSession += 1;
@@ -605,6 +616,7 @@ export function mountGame(root) {
 
   function startTemporaryGame() {
     state = createInitialState({ content: simulation.content });
+    resetAutosaveClock();
     dashboardViews.clear();
     activeId = null;
     saveSession += 1;
@@ -681,6 +693,20 @@ export function mountGame(root) {
       showToast(muted ? "音效已静音。" : "音效已开启。");
       return;
     }
+    const autosaveButton = closest(target, "[data-autosave-months]");
+    if (autosaveButton && state) {
+      const result = simulation.setAutosaveMonths(state, autosaveButton.dataset.autosaveMonths);
+      if (result.ok) {
+        dirty = true;
+        resetAutosaveClock();
+        render();
+        const label = { 1: "每月", 3: "每3月", 6: "每半年" }[result.value] || result.value;
+        showToast(`自动存档已设为${label}。`);
+      } else {
+        showToast(result.reason || "设置失败。");
+      }
+      return;
+    }
     if (mapCamera.consumeSuppressedClick() && closest(target, "#mapStage")) {
       event.preventDefault();
       return;
@@ -741,6 +767,7 @@ export function mountGame(root) {
         try {
           const loaded = saves.initialize();
           state = loaded.state; activeId = loaded.activeId; saveWarning = loaded.warning;
+          resetAutosaveClock();
           if (state && activeId) {
             const entry = saves.read(activeId);
             adoptSave(entry);
@@ -1756,7 +1783,14 @@ export function mountGame(root) {
     }
   };
   window.addEventListener("pagehide", pageHideHandler);
-  const saveTimer = setInterval(() => { void saveIfDirty(); }, 650);
+  const saveTimer = setInterval(() => {
+    if (!state || transientMode || !saves) return;
+    const months = state.policy?.autosaveMonths ?? 1;
+    if (absoluteGameDay() - lastAutosaveAbsDay >= months * 30) {
+      lastAutosaveAbsDay = absoluteGameDay();
+      void saveIfDirty();
+    }
+  }, 2000);
   document.addEventListener("visibilitychange", visibilityHandler);
 
   function frame(now) {
@@ -1817,6 +1851,7 @@ export function mountGame(root) {
       if (!probe?.ok) throw new Error("IndexedDB 写入探测未通过");
       const loaded = saves.initialize();
       state = loaded.state;
+      resetAutosaveClock();
       dashboardViews.clear();
       activeId = loaded.activeId;
       saveSession += 1;

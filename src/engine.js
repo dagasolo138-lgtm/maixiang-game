@@ -11,6 +11,7 @@ import {
   setBankPolicy, issueGovernmentBond,
   setSocialSecurityPolicy, injectSocialSecurity, setTradeTariffRate, tradeWithOutsideTown, issueWheatLoan, setAgricultureTax,
   setPrivateProductionTax, setOperatingRightPrice, upgradeBuilding, demolishAt, setProjectWorkers,
+  setAutosaveMonths,
   sellOperatingLevel, issueGrainVouchers, redeemGrainVouchers, listCompany, createCompany, listCompanyShares,
   configureShareOffer, subscribeShares, addCompanyCapital, configureDividend, configureIntermediatePrice,
   configureCompanyWage, configureCompanyTargetWorkers, configureCompanySalePrice, addCompanyOperatingLevel, removeCompanyOperatingLevel, liquidateCompany, buybackCompanyShares,
@@ -88,6 +89,9 @@ export function createSimulation(content) {
     },
     setBankPolicy: function (state, patch) {
       return setBankPolicy(state, patch);
+    },
+    setAutosaveMonths: function (state, months) {
+      return setAutosaveMonths(state, months);
     },
     issueGovernmentBond: function (state, options) {
       return issueGovernmentBond(state, options, definitions);

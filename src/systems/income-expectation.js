@@ -1,4 +1,5 @@
 import { householdList, isActiveHousehold } from "./households.js";
+import { nextRandom } from "../core/random.js";
 
 // 收入预期（为下一版本打地基）：每户每年期望收入（斤，小麦等值）。
 // - 农民：年分粮 = 亩产 × 耕地 × (1 - 农业税率) / 农民总数（以农业税为基准）
@@ -23,10 +24,23 @@ function jobDailyWageJin(state, content, jobKey) {
   return FALLBACK_DAILY_WAGE_JIN;
 }
 
+// 7—30 天随机刷新一次（种子随机，保证读档一致）；首次直接计算。
+export function maybeRefreshHouseholdIncomeExpectations(state, content) {
+  const absDay = (state.year - 1) * (content.rules.daysPerYear || 365) + state.day;
+  if (state.incomeExpectationNextRefreshAbsDay == null) {
+    updateHouseholdIncomeExpectations(state, content);
+  } else if (absDay < state.incomeExpectationNextRefreshAbsDay) {
+    return;
+  } else {
+    updateHouseholdIncomeExpectations(state, content);
+  }
+  state.incomeExpectationNextRefreshAbsDay = absDay + 7 + Math.floor(nextRandom(state) * 24);
+}
+
 export function updateHouseholdIncomeExpectations(state, content) {
   const daysPerYear = content.rules.daysPerYear || 360;
   const acres = state.agriculture?.reclaimedAcres || 0;
-  const yieldPerAcre = content.rules.yieldPerAcre || 0;
+  const yieldPerAcre = content.agriculture?.yieldPerAcre ?? content.rules.yieldPerAcre ?? 0;
   const taxRate = (state.policy?.agricultureTaxPercent ?? content.rules.agricultureTaxDefaultPercent ?? 50) / 100;
   const households = householdList(state);
   let totalFarmers = 0;

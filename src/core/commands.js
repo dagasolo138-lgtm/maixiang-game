@@ -105,6 +105,13 @@ export function setAgricultureTax(state, percent) {
   return { ok: true, value: state.policy.agricultureTaxPercent };
 }
 
+export function setAutosaveMonths(state, months) {
+  const value = Number(months);
+  if (![1, 3, 6].includes(value)) return { ok: false, reason: "自动存档频率只能是每月、每3月或每半年" };
+  state.policy.autosaveMonths = value;
+  return { ok: true, value };
+}
+
 export function setPrivateProductionTax(state, typeId, percent, content) {
   if (!["mill", "bakery", "lumberyard", "saltworks"].includes(typeId) || !content.buildings[typeId]) {
     return { ok: false, reason: "该产业不开放民营生产税设置" };

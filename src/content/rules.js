@@ -18,7 +18,7 @@ export const RULES = Object.freeze({
   neighborAidDonorMinDays: 60,
   neighborAidDonorShare: 0.1,
   maxAge: 105,
-  ledgerLimit: 4000,
+  ledgerLimit: 500,
   breadTargetShareAtBasePrice: 0.25,
   breadPriceElasticity: 0.75,
   breadTargetShareMaximum: 0.5,
