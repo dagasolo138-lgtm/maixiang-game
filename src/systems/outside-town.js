@@ -276,7 +276,9 @@ export function settleOutsideTownYear(state, content) {
       recordEvent(state, `山匪截断商路，今年无法与${OUTSIDE_TOWN_NAME}贸易。`, content, { day: 1 });
     } else {
       eventLabel = "盐荒";
-      recordEvent(state, `${OUTSIDE_TOWN_NAME}闹盐荒，对盐出价高企。`, content, { day: 1 });
+      // 盐荒：盐仓减半；库存挂钩的价格机制会自动推高出价（与播报"出价高企"一致）。
+      ot.saltStockJin = Math.round(ot.saltStockJin * 0.5 * 100) / 100;
+      recordEvent(state, `${OUTSIDE_TOWN_NAME}闹盐荒，盐仓见底，对盐出价高企。`, content, { day: 1 });
     }
   }
   ot.event = eventLabel ? { type: eventLabel, year: state.year } : null;
