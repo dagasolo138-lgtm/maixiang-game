@@ -9315,15 +9315,33 @@ function demandForType(state, typeId, content) {
     return { household, maxWheatUnits, roughValue: investableValue, canPayPrice };
   });
   const canPay = investmentRows.some(row => row.canPayPrice);
+  // 合资购买：一户买不起就多户凑——按可出资额从高到低凑单，每户保留生活储备。
+  // 私有老板 privateOwners 本就是数组，多人成交天然支持。
+  const sortedInvestable = investmentRows
+    .filter(row => row.roughValue > 0)
+    .sort((a, b) => b.roughValue - a.roughValue);
+  const buyerGroup = [];
+  let gatheredVoucherUnits = 0;
+  for (const row of sortedInvestable) {
+    if (gatheredVoucherUnits >= costUnits) break;
+    const take = Math.min(row.roughValue, costUnits - gatheredVoucherUnits);
+    buyerGroup.push({
+      householdId: row.household.id,
+      householdName: row.household.name || `居民户${row.household.id}`,
+      contributionVoucherUnits: Math.round(take)
+    });
+    gatheredVoucherUnits += take;
+  }
+  const groupCanPay = buyerGroup.length > 0 && gatheredVoucherUnits >= costUnits;
   const totalInvestableVoucher = investmentRows.reduce((sum, row) => sum + row.roughValue, 0) / moneyScale;
   const maxHouseholdPayVoucher = investmentRows.reduce((max, row) => Math.max(max, row.roughValue), 0) / moneyScale;
   const keepsReserve = currentResidentQeq >= residentReserveUnits;
   const attractive = referencePriceWheatJin > 0 && priceWheatJin <= referencePriceWheatJin;
-  const reason = !canPay ? "购买力不足" : !keepsReserve ? "居民基本口粮不足90天储备" : !attractive ? "预期收益缺乏吸引力" : null;
+  const reason = !groupCanPay ? "即使多户合资也买不起经营权" : !keepsReserve ? "居民基本口粮不足90天储备" : !attractive ? "预期收益缺乏吸引力" : null;
   const demandFactor = demand.demandUnits > 0 ? Math.max(0, Math.min(1, demand.opportunityUnits / demand.demandUnits)) : 0;
   const theoretical = theoreticalFullSaleProfitPerWorker(state, building.typeId, content);
   return {
-    available: priceWheatJin > 0 && canPay && keepsReserve && attractive,
+    available: priceWheatJin > 0 && groupCanPay && keepsReserve && attractive,
     reason,
     buildingId, typeId: building.typeId, level: building.level || 1,
     townLevels, privateLevels, townCapacityBefore: townLevels * job.slots,
@@ -9348,7 +9366,8 @@ function demandForType(state, typeId, content) {
     dailyDemandJin: demand.demandUnits / scale, competitionStockJin: demand.competitionUnits / scale, unmetDemandJin: demand.opportunityUnits / scale,
     demandReason: demand.reason, demandBasis: valuationBasis, valuationBasis,
     theoreticalFullSaleProfitPerWorkerVoucher: theoretical?.profitVoucher ?? 0,
-    canPay, keepsReserve, attractive,
+    canPay, groupCanPay, buyerGroup,
+    keepsReserve, attractive,
     residentInvestableFundsVoucher: totalInvestableVoucher,
     maxHouseholdPayVoucher,
     residentWheatJin: (state.accounts.residents.wheat || 0) / scale,
@@ -9362,41 +9381,56 @@ return { selectOperatingRightPreview };
 
 // ===== systems/operating-rights.js =====
 const __mxmod39 = (() => {
-const { voucherBalance } = __mxmod19;
-const { currentPaymentComposition, settleMonetaryPayment } = __mxmod20;
-const { voucherUnitsForWheatUnits } = __mxmod18;
+const { currentPaymentComposition, maximumFullyPayableValueUnits, settleMonetaryPayment } = __mxmod20;
 const { recordEvent } = __mxmod8;
 const { selectOperatingRightPreview } = __mxmod38;
-const { householdConvertibleWheatUnits, householdList, householdPopulation, isActiveHousehold, setJobCount } = __mxmod14;
+const { householdConvertibleWheatUnits, setJobCount } = __mxmod14;
 const { readJobCount, jobKeyForBuilding, privateJobKeyForBuilding } = __mxmod28;
-function chooseBuyerHousehold(state, priceUnits, content) {
-  const scale = content.precision.currencyUnitsPerVoucher;
-  const minimumPerCapita = content.rules.householdLiving?.difficultPerCapitaVoucher ?? 30;
-  return householdList(state).filter(household => {
-    const reserve = Math.round(householdPopulation(household) * minimumPerCapita * scale);
-    const wheatUnits = householdConvertibleWheatUnits(state, household, content, content.rules.householdFoodReserveDays ?? 30);
-    const available = voucherBalance(state, `household:${household.id}`) + voucherUnitsForWheatUnits(wheatUnits, content, "floor");
-    return isActiveHousehold(household) && available >= priceUnits + reserve;
-  }).sort((a, b) => {
-    const av = voucherBalance(state, `household:${a.id}`) + voucherUnitsForWheatUnits(householdConvertibleWheatUnits(state, a, content, content.rules.householdFoodReserveDays ?? 30), content, "floor");
-    const bv = voucherBalance(state, `household:${b.id}`) + voucherUnitsForWheatUnits(householdConvertibleWheatUnits(state, b, content, content.rules.householdFoodReserveDays ?? 30), content, "floor");
-    return bv - av || a.id.localeCompare(b.id);
-  })[0] || null;
-}
-
-       function sellOperatingLevel(state, buildingId, content) {
+function sellOperatingLevel(state, buildingId, content) {
   const preview = selectOperatingRightPreview(state, buildingId, content);
   if (!preview.available) return { ok: false, reason: preview.reason, preview };
   const building = state.buildings.find(row => row.id === buildingId);
   const definition = content.buildings[building.typeId];
   const job = definition.jobs[0];
   const priceUnits = Math.round(preview.priceWheatJin * content.precision.currencyUnitsPerVoucher);
-  const buyer = chooseBuyerHousehold(state, priceUnits, content);
-  if (!buyer) return { ok: false, reason: "没有家庭能在保留生活资金后买下经营权", preview };
-  const exchange = settleMonetaryPayment(state, `household:${buyer.id}`, "town", currentPaymentComposition(state, priceUnits), content,
-    "operating_right_sale", `${buyer.name}购买${definition.name}一级经营权`,
-    { requireFull: true, maxWheatUnits: householdConvertibleWheatUnits(state, buyer, content, content.rules.householdFoodReserveDays ?? 30) });
-  if (!exchange.ok) return { ok: false, reason: exchange.reason };
+  // 合资购买：preview 已按出资能力凑好买家团；成交时按精确可付额度逐户落实，
+  // 某户精确额度不足就由后序户补上；全部精确额度加总仍不够则交易失败（不扣任何一户的钱）。
+  const buyerGroup = preview.buyerGroup || [];
+  if (!preview.groupCanPay || buyerGroup.length === 0) {
+    return { ok: false, reason: "即使多户合资也买不起经营权", preview };
+  }
+  const householdById = state.households?.byId || {};
+  const finalMembers = [];
+  let remaining = priceUnits;
+  for (const member of buyerGroup) {
+    if (remaining <= 0) break;
+    const household = householdById[member.householdId];
+    if (!household) return { ok: false, reason: `${member.householdName}已不存在，合资失败`, preview };
+    const maxWheatUnits = householdConvertibleWheatUnits(state, household, content, content.rules.householdFoodReserveDays ?? 30);
+    const preciseMax = maximumFullyPayableValueUnits(state, `household:${member.householdId}`, remaining, content, { maxWheatUnits });
+    const contribution = Math.min(preciseMax, remaining);
+    if (contribution <= 0) continue;
+    finalMembers.push({ household, householdId: member.householdId, householdName: member.householdName, contribution, maxWheatUnits });
+    remaining -= contribution;
+  }
+  if (remaining > 0 || finalMembers.length === 0) {
+    return { ok: false, reason: "合资各户精确出资额度不足，经营权未成交", preview };
+  }
+  const buyerNames = [];
+  let firstTransactionId = null;
+  for (const member of finalMembers) {
+    const exchange = settleMonetaryPayment(state, `household:${member.householdId}`, "town",
+      currentPaymentComposition(state, member.contribution), content,
+      "operating_right_sale", `${member.householdName}合资购买${definition.name}一级经营权`,
+      { requireFull: true, maxWheatUnits: member.maxWheatUnits });
+    if (!exchange.ok) return { ok: false, reason: exchange.reason, preview };
+    if (!firstTransactionId) firstTransactionId = exchange.transactionId;
+    buyerNames.push(member.householdName);
+    building.privateOwners ||= [];
+    building.privateOwners.push(member.householdId);
+    member.household.operatingRights ||= [];
+    member.household.operatingRights.push({ buildingId, level: building.privateOwners.length });
+  }
   const publicKey = jobKeyForBuilding(buildingId, job.id);
   const privateKey = privateJobKeyForBuilding(buildingId, job.id);
   const publicWorkers = readJobCount(state, publicKey);
@@ -9408,17 +9442,14 @@ function chooseBuyerHousehold(state, priceUnits, content) {
   building.ownership ||= { townLevels: building.level || 1, privateLevels: 0, listedLevels: 0 };
   building.ownership.townLevels -= 1;
   building.ownership.privateLevels += 1;
-  building.privateOwners ||= [];
-  building.privateOwners.push(buyer.id);
-  buyer.operatingRights ||= [];
-  buyer.operatingRights.push({ buildingId, level: building.privateOwners.length });
   const period = state.privateEconomy.rightSales;
   period.dayWheatUnits += priceUnits;
   period.yearWheatUnits += priceUnits;
   period.cumulativeWheatUnits += priceUnits;
   if (state.market?.operatingPlan) state.market.operatingPlan.updatedSerial = -1;
-  recordEvent(state, `${buyer.name}以${preview.priceWheatJin.toLocaleString("zh-CN")}斤小麦等值购入${definition.name}一级经营权。`, content, { day: state.day + 1 });
-  return { ok: true, preview, ownerHouseholdId: buyer.id, transferredWorkers: transferred, transactionId: exchange.transactionId };
+  const buyerText = buyerNames.length <= 3 ? buyerNames.join("、") : `${buyerNames.slice(0, 3).join("、")}等${buyerNames.length}户`;
+  recordEvent(state, `${buyerText}合资以${preview.priceWheatJin.toLocaleString("zh-CN")}斤小麦等值购入${definition.name}一级经营权。`, content, { day: state.day + 1 });
+  return { ok: true, preview, ownerHouseholdIds: finalMembers.map(m => m.householdId), transferredWorkers: transferred, transactionId: firstTransactionId };
 }
 return { sellOperatingLevel };
 })();
@@ -16561,7 +16592,7 @@ const { hasBankAccess, monetaryReformProgress } = __mxmod20;
 const { householdLivingSummary, occupationCounts, householdPopulation, householdIdleWorkers } = __mxmod14;
 const { bondOutstandingVoucherUnits } = __mxmod52;
 const { shopSummaries } = __mxmod46;
-const { wholesaleSummary, wholesaleTrends } = __mxmod25;
+const { wholesaleSummary, wholesaleTrends, hasWholesaleMarket, wholesaleUnitPrice, wholesalePurchasePrice } = __mxmod25;
 const { selectOutsideTownView } = __mxmod53;
 const { selectTradeAgreementView } = __mxmod54;
 const { householdRecentTotalsReadonly, householdFoodDays } = __mxmod16;
@@ -16775,6 +16806,27 @@ function companyActualReferencePlaceholder(company, content) {
           residents: state.accounts.residents[itemId] || 0, town: state.accounts.town[itemId] || 0
         }]));
       })() : {},
+      // 民营原料从批发市场采购、产品按批发市场收购价预期：面板不再展示容易误解的"居民/镇库"全局库存，
+      // 改为展示批发市场采购价/市场存货（原料）与预期售价（产品）。
+      privateMarket: includeSiteDetails ? (function () {
+        const recipe = definition?.recipeId ? content.recipes[definition.recipeId] : null;
+        if (!recipe || !hasWholesaleMarket(state)) return [];
+        const market = state.wholesaleMarket || {};
+        const scale = content.precision.inventoryUnitsPerJin;
+        const rows = [];
+        for (const input of recipe.inputs || []) {
+          const itemId = input.itemId;
+          rows.push({
+            itemId, kind: "input",
+            priceVoucherPerJin: wholesaleUnitPrice(state, itemId, content),
+            marketStockJin: (itemId === "wheat" ? (market.cashWheatUnits || 0) : (market.inventory?.[itemId] || 0)) / scale
+          });
+        }
+        for (const output of recipe.outputs || []) {
+          rows.push({ itemId: output.itemId, kind: "output", priceVoucherPerJin: wholesalePurchasePrice(state, output.itemId, content) });
+        }
+        return rows;
+      })() : [],
       operatingRight: includeSiteDetails ? selectOperatingRightPreview(state, building.id, content) : null,
       // 用户 0.1.11：镇营目标日产量（斤，0 表示按人手满产）与主产出品。
       outputTargetJin: building.outputTargetJin || 0,
@@ -22786,15 +22838,16 @@ function reclaimSection(view) {
         <div class="row"><span class="label">镇库每日固定调拨</span><div class="setting-input">${renderNumericInput(view, { key: `wholesale-allocation:${itemId}`, kind: "wholesale-allocation", target: itemId, value: market.dailyTownAllocation?.[itemId] || 0, label: `${name}每日调拨量`, minimum: 0, maximum: 1000000000, className: "setting-editor" })}<b>${escapeHtml(itemUnit)}/日</b></div></div>
         <div class="business-form-row"><label>单次调运<input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" spellcheck="false" value="${escapeHtml(moveShown)}" aria-label="${escapeHtml(name)}单次调运量" data-draft-key="${escapeHtml(moveKey)}" data-draft-kind="stage" data-draft-label="${escapeHtml(name)}单次调运量" data-draft-minimum="0" data-draft-maximum="1000000000" data-draft-integer="false" data-draft-positive="true"></label><div class="settings-actions"><button class="secondary" data-wholesale-stockpile="${escapeHtml(itemId)}">收储入镇库</button><button class="secondary" data-wholesale-release="${escapeHtml(itemId)}">镇库投放</button></div></div></div>`;
     }).join("");
-    // 小麦归镇库直管：只显示库存与调拨/调运，不挂收购价与售价。
+    // 小麦即市场现金：库存读 cashWheatUnits（之前误读 inventory["wheat"] 永远显示 0）。
     const wheatName = view.itemNames?.["wheat"] || "小麦";
     const wheatUnit = view.itemUnits?.["wheat"] || "斤";
     const wheatMoveKey = `wholesale-move:wheat`;
     const wheatMoveShown = view.numericDrafts?.[wheatMoveKey]?.value ?? "";
-    const wheatRow = `<div class="cardlet"><div class="row"><span class="label">${escapeHtml(wheatName)}库存</span><strong class="value">${number(market.inventory?.["wheat"] || 0, 2)}${escapeHtml(wheatUnit)}</strong></div>
+    const wheatCashJin = (market.cashWheatUnits || 0) / (view.inventoryUnitsPerJin || 1);
+    const wheatRow = `<div class="cardlet"><div class="row"><span class="label">${escapeHtml(wheatName)}库存（市场现金）</span><strong class="value">${number(wheatCashJin, 2)}${escapeHtml(wheatUnit)}</strong></div>
         <div class="row"><span class="label">镇库每日固定调拨</span><div class="setting-input">${renderNumericInput(view, { key: `wholesale-allocation:wheat`, kind: "wholesale-allocation", target: "wheat", value: market.dailyTownAllocation?.["wheat"] || 0, label: `${wheatName}每日调拨量`, minimum: 0, maximum: 1000000000, className: "setting-editor" })}<b>${escapeHtml(wheatUnit)}/日</b></div></div>
         <div class="business-form-row"><label>单次调运<input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" spellcheck="false" value="${escapeHtml(wheatMoveShown)}" aria-label="${escapeHtml(wheatName)}单次调运量" data-draft-key="${escapeHtml(wheatMoveKey)}" data-draft-kind="stage" data-draft-label="${escapeHtml(wheatName)}单次调运量" data-draft-minimum="0" data-draft-maximum="1000000000" data-draft-integer="false" data-draft-positive="true"></label><div class="settings-actions"><button class="secondary" data-wholesale-stockpile="wheat">收储入镇库</button><button class="secondary" data-wholesale-release="wheat">镇库投放</button></div></div>
-        <div class="subtle">小麦归镇库直管：只走调拨与调运，不在批发市场挂牌买卖；磨坊用麦走免费内部调拨。</div></div>`;
+        <div class="subtle">小麦即批发市场的现金：镇库补贴/调拨直接进这笔钱；公司、民营可按镇库价从这里采购小麦做原料；镇营磨坊走免费内部调拨。</div></div>`;
     const marketRows = marketRowsAll + wheatRow;
     const cash = market.cashflow || {};
     const cumulative = cash.cumulative || {};
@@ -22854,13 +22907,25 @@ function reclaimSection(view) {
     const output = jobs.map(job => job.outputToday).find(row => row && Object.keys(row).length) || {};
     const wage = jobs[0];
     const privateOutputText = building.privateOutputToday.map(row => `${escapeHtml(view.itemNames[row.itemId] || row.itemId)} ${number(row.residentUnits / view.inventoryUnitsPerJin)}${escapeHtml(view.itemUnits[row.itemId] || "单位")}`).join(" · ") || "暂无产出";
-    const privateStocks = Object.entries(building.privateStock || {}).map(([itemId, stocks]) => `${escapeHtml(view.itemNames[itemId] || itemId)} 居民${number(stocks.residents / view.inventoryUnitsPerJin)} / 镇库${number(stocks.town / view.inventoryUnitsPerJin)}${escapeHtml(view.itemUnits[itemId] || "单位")}`).join(" · ") || "暂无库存";
+    // 民营原料从批发市场采购：展示采购价/市场存货（原料）与预期售价（产品），不再展示易误解的"居民/镇库"全局库存。
+    const privateMarketRows = building.privateMarket || [];
+    const privateMarketText = privateMarketRows.map(row => {
+      const name = escapeHtml(view.itemNames[row.itemId] || row.itemId);
+      const itemUnit = escapeHtml(view.itemUnits[row.itemId] || "斤");
+      if (row.kind === "input") return `${name} 采购${number(row.priceVoucherPerJin, 2)}${escapeHtml(unit)}/${itemUnit} · 市场有货${number(row.marketStockJin, 0)}${itemUnit}`;
+      return `${name} 预期${number(row.priceVoucherPerJin, 2)}${escapeHtml(unit)}/${itemUnit}`;
+    }).join(" · ") || "未建批发市场";
     const privateSection = building.ownership.privateLevels > 0
-      ? `<h3>民营 · ${number(building.ownership.privateLevels)}级</h3><div class="row"><span class="label">状态 / 用工</span><strong class="value">${escapeHtml(building.privateReason || privateStatusLabel(building.privateStatus))} · ${number(privateJobs.reduce((sum, row) => sum + row.workers, 0))}/${number(privateJobs.reduce((sum, row) => sum + row.capacity, 0))}人</strong></div><div class="row"><span class="label">今日产出</span><strong class="value">${privateOutputText}</strong></div><details class="detail-block" data-detail-key="private-stock:${escapeHtml(building.id)}"><summary>原料与库存</summary><div class="detail-body"><div class="row"><span class="label">居民 / 镇库</span><strong class="value">${privateStocks}</strong></div></div></details>` : "";
+      ? `<h3>民营 · ${number(building.ownership.privateLevels)}级</h3><div class="row"><span class="label">状态 / 用工</span><strong class="value">${escapeHtml(building.privateReason || privateStatusLabel(building.privateStatus))} · ${number(privateJobs.reduce((sum, row) => sum + row.workers, 0))}/${number(privateJobs.reduce((sum, row) => sum + row.capacity, 0))}人</strong></div><div class="row"><span class="label">今日产出</span><strong class="value">${privateOutputText}</strong></div><details class="detail-block" data-detail-key="private-stock:${escapeHtml(building.id)}"><summary>原料与预期价格</summary><div class="detail-body"><div class="row"><span class="label">批发市场</span><strong class="value">${privateMarketText}</strong></div><div class="subtle">原料从批发市场按采购价购买；产品预期售价为批发市场当前收购价。</div></div></details>` : "";
     const right = building.operatingRight;
+    const buyerGroupText = (right.buyerGroup || []).length
+      ? (right.buyerGroup.length <= 3
+        ? right.buyerGroup.map(m => escapeHtml(m.householdName)).join("、")
+        : `${right.buyerGroup.slice(0, 3).map(m => escapeHtml(m.householdName)).join("、")}等${right.buyerGroup.length}户`)
+      : "暂无";
     const saleCard = ["mill", "bakery", "lumberyard", "saltworks"].includes(building.typeId) && building.ownership.townLevels > 0
       ? view.rightSalePreviewId === building.id
-        ? `<div class="cardlet"><h3>出售一级经营权</h3><div class="row"><span class="label">售价 / 参考上限</span><strong class="value">${number(right.priceWheatJin, 2)} / ${number(right.maximumPriceWheatJin, 2)}${escapeHtml(unit)}</strong></div><div class="row"><span class="label">预计参考收益</span><strong class="value">${number(right.estimatedAnnualReferenceReturn, 2)}${escapeHtml(unit)}${right.typeId === "lumberyard" ? "" : "/年"}</strong></div><div class="row"><span class="label">转入民营</span><strong class="value">${number(right.transferableWorkers)}人</strong></div>${right.reason ? `<div class="shortage-banner visible">${escapeHtml(right.reason)}</div>` : ""}<details class="detail-block" data-detail-key="right-detail:${escapeHtml(building.id)}"><summary>估值详情</summary><div class="detail-body"><div class="row"><span class="label">产品价 / 税率 / 工资</span><strong class="value">${number(right.itemPriceVoucher, 3)}${escapeHtml(unit)}/${escapeHtml(view.itemUnits[right.outputItemId] || "单位")} · ${number(right.taxPercent, 2)}% · ${number(right.wageRateVoucher, 2)}${escapeHtml(unit)}</strong></div><div class="row"><span class="label">需求 / 库存 / 缺口</span><strong class="value">${number(right.dailyDemandJin, 2)} / ${number(right.competitionStockJin, 2)} / ${number(right.unmetDemandJin, 2)}${escapeHtml(view.itemUnits[right.outputItemId] || "单位")}</strong></div><div class="row"><span class="label">预计满产满销人均日利润</span><strong class="value">${number(right.theoreticalFullSaleProfitPerWorkerVoucher, 2)}${escapeHtml(unit)}</strong></div><div class="row"><span class="label">岗位容量</span><strong class="value">镇营${number(right.townCapacityBefore)}→${number(right.townCapacityAfter)} · 民营${number(right.privateCapacityBefore)}→${number(right.privateCapacityAfter)}</strong></div>${right.demandBasis ? `<div class="subtle">${escapeHtml(right.demandBasis)}</div>` : ""}<div class="subtle">成交后居民需保留90天基本口粮。</div></div></details><div class="business-sticky-actions"><button class="secondary" data-right-cancel>取消</button><button class="primary" data-right-confirm="${escapeHtml(building.id)}" ${right.available ? "" : "disabled"}>确认成交</button></div></div>`
+        ? `<div class="cardlet"><h3>出售一级经营权</h3><div class="row"><span class="label">售价 / 参考上限</span><strong class="value">${number(right.priceWheatJin, 2)} / ${number(right.maximumPriceWheatJin, 2)}${escapeHtml(unit)}</strong></div><div class="row"><span class="label">预计参考收益</span><strong class="value">${number(right.estimatedAnnualReferenceReturn, 2)}${escapeHtml(unit)}${right.typeId === "lumberyard" ? "" : "/年"}</strong></div><div class="row"><span class="label">预计买家（合资）</span><strong class="value">${buyerGroupText}</strong></div><div class="row"><span class="label">转入民营</span><strong class="value">${number(right.transferableWorkers)}人</strong></div>${right.reason ? `<div class="shortage-banner visible">${escapeHtml(right.reason)}</div>` : ""}<details class="detail-block" data-detail-key="right-detail:${escapeHtml(building.id)}"><summary>估值详情</summary><div class="detail-body"><div class="row"><span class="label">产品价 / 税率 / 工资</span><strong class="value">${number(right.itemPriceVoucher, 3)}${escapeHtml(unit)}/${escapeHtml(view.itemUnits[right.outputItemId] || "单位")} · ${number(right.taxPercent, 2)}% · ${number(right.wageRateVoucher, 2)}${escapeHtml(unit)}</strong></div><div class="row"><span class="label">需求 / 库存 / 缺口</span><strong class="value">${number(right.dailyDemandJin, 2)} / ${number(right.competitionStockJin, 2)} / ${number(right.unmetDemandJin, 2)}${escapeHtml(view.itemUnits[right.outputItemId] || "单位")}</strong></div><div class="row"><span class="label">预计满产满销人均日利润</span><strong class="value">${number(right.theoreticalFullSaleProfitPerWorkerVoucher, 2)}${escapeHtml(unit)}</strong></div><div class="row"><span class="label">岗位容量</span><strong class="value">镇营${number(right.townCapacityBefore)}→${number(right.townCapacityAfter)} · 民营${number(right.privateCapacityBefore)}→${number(right.privateCapacityAfter)}</strong></div>${right.demandBasis ? `<div class="subtle">${escapeHtml(right.demandBasis)}</div>` : ""}<div class="subtle">成交后居民需保留90天基本口粮。</div></div></details><div class="business-sticky-actions"><button class="secondary" data-right-cancel>取消</button><button class="primary" data-right-confirm="${escapeHtml(building.id)}" ${right.available ? "" : "disabled"}>确认成交</button></div></div>`
         : `<div class="cardlet"><h3>经营权</h3><div class="row"><span class="label">一级售价</span><strong class="value">${number(right.priceWheatJin, 2)}${escapeHtml(unit)}</strong></div>${renderNumericInput(view, { key: `right-price:${building.id}`, kind: "operating-right-price", target: building.id, value: right.priceWheatJin, label: "单级经营权售价", minimum: 0.01, maximum: 1000000000, positive: true, className: "setting-editor" })}<button class="secondary wide" data-right-preview="${escapeHtml(building.id)}">预览出售</button></div>`
       : "";
     body = `<div class="status-strip"><span class="status-light ${["ready", "limited_materials"].includes(building.status.status) ? "working" : "idle"}"></span><strong>${escapeHtml(building.status.label)}</strong><span>${number(building.level)}级</span></div>${publicService ? `<div class="row"><span class="label">全镇需求 / 在岗 / 缺员</span><strong class="value">${number(publicService.globalDemand)} / ${number(publicService.globalInPost)} / ${number(publicService.globalShortage)}人</strong></div>` : `<div class="row"><span class="label">人数 / 岗位</span><strong class="value">${number(staff)} / ${number(jobs.reduce((sum, job) => sum + job.capacity, 0))}人</strong></div>`}<div class="row"><span class="label">今日产量</span><strong class="value">${outputLines(output, view.itemNames, view.itemUnits, view.inventoryUnitsPerJin)}</strong></div><div class="row"><span class="label">预计每日工资</span><strong class="value">${number(dailyCost)}${escapeHtml(unit)}</strong></div>${wageUnpaid > 0 ? `<div class="shortage-banner visible">新增欠薪 ${number(wageUnpaid)}${escapeHtml(unit)}</div>` : ""}<h3>镇营排班</h3>${jobMarkup}${outputTargetMarkup(view, building)}<div class="site-wage-edit"><span>日薪</span>${renderNumericInput(view, { key: `wage:${wage?.roleId || ""}`, kind: "wage", target: wage?.roleId || "", value: wage?.wagePerWorkerDay || 0, label: `${wage?.name || "作坊工人"}日薪`, minimum: 0, maximum: 100000, confirmLabel: "✓", className: "wage-editor" })}<span>${escapeHtml(unit)}</span></div><details class="detail-block" data-detail-key="ownership:${escapeHtml(building.id)}"><summary>产权详情</summary><div class="detail-body"><div class="row"><span class="label">镇营 / 民营 / 公司</span><strong class="value">${number(building.ownership.townLevels)} / ${number(building.ownership.privateLevels)} / ${number(building.ownership.listedLevels || 0)}级</strong></div></div></details>${privateSection}${saleCard}${developmentMarkup(view, building, development)}`;
