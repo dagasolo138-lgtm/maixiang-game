@@ -233,13 +233,22 @@ function payCoupon(state, issue, content) {
     addTownCashUnits(state, -pay);
     // 按持有比例分摊
     let distributed = 0;
+    let topHolding = null;
+    let topDue = -1;
     for (const holding of issue.holdings) {
       const due = Math.floor((holding.principalVoucherUnits || 0) * issue.couponRateAnnualPercent / 100);
+      if (due > topDue) { topDue = due; topHolding = holding; }
       const part = totalDue > 0 ? Math.floor(pay * due / totalDue) : 0;
       if (part > 0) {
         payToHolder(state, holding.holderKey, part, content);
         distributed += part;
       }
+    }
+    // floor 分摊的余数补给最大持有人：镇库已全额扣款，余数凭空销毁会打破货币守恒。
+    const leftover = pay - distributed;
+    if (leftover > 0 && topHolding) {
+      payToHolder(state, topHolding.holderKey, leftover, content);
+      distributed += leftover;
     }
     issue.stats.couponPaidVoucherUnits += distributed;
   }

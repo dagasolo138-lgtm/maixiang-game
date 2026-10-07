@@ -898,7 +898,9 @@ export function wholesaleSummary(state, content) {
 
 // 批发市场历史快照（0.1.11 机制补回）：每日记录库存/销量/价格，保留30天。
 export function snapshotWholesaleHistory(state, content) {
-  const market = readWholesaleMarket(state, content);
+  if (!hasWholesaleMarket(state)) return;
+  // 注意必须用 ensureWholesaleMarket 拿活对象——readWholesaleMarket 返回拷贝，快照写进去会被丢弃。
+  const market = ensureWholesaleMarket(state, content);
   market.history ||= [];
   const snapshot = {
     year: state.year,
