@@ -1831,7 +1831,7 @@ return { validateContent };
 // ===== content/version.js =====
 const __mxmod12 = (() => {
 const APP_VERSION = "0.2.3";
-       const BUILD_ID = "0203-25caa76";
+       const BUILD_ID = "0203-6983cb6";
 return { APP_VERSION, BUILD_ID };
 })();
 
@@ -9381,7 +9381,7 @@ return { selectOperatingRightPreview };
 
 // ===== systems/operating-rights.js =====
 const __mxmod39 = (() => {
-const { currentPaymentComposition, maximumFullyPayableValueUnits, settleMonetaryPayment } = __mxmod20;
+const { createPaymentCapabilityContext, currentPaymentComposition, maximumFullyPayableValueUnits, settleMonetaryPayment } = __mxmod20;
 const { recordEvent } = __mxmod8;
 const { selectOperatingRightPreview } = __mxmod38;
 const { householdConvertibleWheatUnits, setJobCount } = __mxmod14;
@@ -9407,7 +9407,11 @@ function sellOperatingLevel(state, buildingId, content) {
     const household = householdById[member.householdId];
     if (!household) return { ok: false, reason: `${member.householdName}已不存在，合资失败`, preview };
     const maxWheatUnits = householdConvertibleWheatUnits(state, household, content, content.rules.householdFoodReserveDays ?? 30);
-    const preciseMax = maximumFullyPayableValueUnits(state, `household:${member.householdId}`, remaining, content, { maxWheatUnits });
+    // 保守预检：不依赖镇库共享券池（多人结算时前一户可能耗掉券池，导致后一户预检通过但实扣失败、
+    // 钱扣一半交易却失败）。实际结算时券池是 bonus，只会比预检更宽松。
+    const conservativeCtx = createPaymentCapabilityContext(state, `household:${member.householdId}`, content, { maxWheatUnits });
+    conservativeCtx.exchangeVoucherPoolUnits = 0;
+    const preciseMax = maximumFullyPayableValueUnits(state, `household:${member.householdId}`, remaining, content, { paymentContext: conservativeCtx });
     const contribution = Math.min(preciseMax, remaining);
     if (contribution <= 0) continue;
     finalMembers.push({ household, householdId: member.householdId, householdName: member.householdName, contribution, maxWheatUnits });
@@ -13158,7 +13162,6 @@ function jobStaffRoleId(buildingId) {
   if (ot.saltStockJin <= 0) {
     ot.saltShortageYears = 1;
     ot.prosperity = Math.round(Math.max(5, ot.prosperity - 15) * 10) / 10;
-    ot.population = Math.round(ot.population * 0.97);
     recordEvent(state, `${OUTSIDE_TOWN_NAME}断盐，民心动荡。`, content, { day: 1 });
   }
   if (ot.woodStockUnits <= 0) {
