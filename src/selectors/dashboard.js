@@ -20,7 +20,7 @@ import { hasBankAccess, monetaryReformProgress } from "../economy/payment.js";
 import { householdLivingSummary, occupationCounts, householdPopulation, householdIdleWorkers } from "../systems/households.js";
 import { bondOutstandingVoucherUnits } from "../systems/bonds.js";
 import { shopSummaries } from "../systems/shops.js";
-import { wholesaleSummary, wholesaleTrends, hasWholesaleMarket, wholesaleUnitPrice, wholesalePurchasePrice } from "../systems/wholesale-market.js";
+import { wholesaleSummary, wholesaleTrends, hasWholesaleMarket, purchasePriceFeedback, PURCHASE_PRICE_FLOOR_RATIO, DEFAULT_SALE_PRICES } from "../systems/wholesale-market.js";
 import { selectOutsideTownView } from "../systems/outside-town.js";
 import { selectTradeAgreementView } from "../systems/trade-agreements.js";
 import { householdRecentTotalsReadonly, householdFoodDays } from "../systems/household-life.js";
@@ -237,22 +237,36 @@ export function selectDashboard(state, content, selection) {
       })() : {},
       // 民营原料从批发市场采购、产品按批发市场收购价预期：面板不再展示容易误解的"居民/镇库"全局库存，
       // 改为展示批发市场采购价/市场存货（原料）与预期售价（产品）。
+      // 纯读：不用 wholesaleUnitPrice/wholesalePurchasePrice（内部 ensureWholesaleMarket 会写状态，selector 禁写）。
       privateMarket: includeSiteDetails ? (function () {
         const recipe = definition?.recipeId ? content.recipes[definition.recipeId] : null;
-        if (!recipe || !hasWholesaleMarket(state)) return [];
-        const market = state.wholesaleMarket || {};
+        const market = state.wholesaleMarket;
+        if (!recipe || !hasWholesaleMarket(state) || !market) return [];
         const scale = content.precision.inventoryUnitsPerJin;
+        const salePriceOf = (itemId) => {
+          const v = Number(market.pricesVoucherPerUnit?.[itemId]);
+          if (Number.isFinite(v) && v > 0) return v;
+          if (itemId === "wheat") return content.rules.marketPricesVoucherPerUnit?.[itemId] ?? DEFAULT_SALE_PRICES[itemId] ?? 1;
+          return content.rules.wholesaleDefaultSalePrices?.[itemId]
+            ?? content.rules.marketPricesVoucherPerUnit?.[itemId] ?? DEFAULT_SALE_PRICES[itemId] ?? 1;
+        };
+        const purchasePriceOf = (itemId) => {
+          const reference = Number(market.purchasePriceReferenceVoucherPerUnit?.[itemId] || market.purchasePricesVoucherPerUnit?.[itemId] || 0);
+          if (!(reference > 0)) return 0;
+          const feedback = purchasePriceFeedback(market, itemId, content);
+          return Math.max(reference * PURCHASE_PRICE_FLOOR_RATIO, reference * feedback);
+        };
         const rows = [];
         for (const input of recipe.inputs || []) {
           const itemId = input.itemId;
           rows.push({
             itemId, kind: "input",
-            priceVoucherPerJin: wholesaleUnitPrice(state, itemId, content),
+            priceVoucherPerJin: salePriceOf(itemId),
             marketStockJin: (itemId === "wheat" ? (market.cashWheatUnits || 0) : (market.inventory?.[itemId] || 0)) / scale
           });
         }
         for (const output of recipe.outputs || []) {
-          rows.push({ itemId: output.itemId, kind: "output", priceVoucherPerJin: wholesalePurchasePrice(state, output.itemId, content) });
+          rows.push({ itemId: output.itemId, kind: "output", priceVoucherPerJin: purchasePriceOf(output.itemId) });
         }
         return rows;
       })() : [],

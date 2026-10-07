@@ -227,6 +227,26 @@ for (const full of jsFiles) {
   modules.set(key, { source, parsed: parseModule(key, maskComments(source)), varName: null });
 }
 
+// 打包时给 BUILD_ID 盖构建戳（git short hash），否则线上永远显示同一构建号，用户无法分辨版本。
+{
+  const versionMod = modules.get("content/version.js");
+  if (versionMod) {
+    let hash = "local";
+    try {
+      hash = execFileSync("git", ["rev-parse", "--short", "HEAD"], { cwd: root, encoding: "utf8" }).trim() || "local";
+    } catch { /* 非 git 环境时保留 local */ }
+    const stamped = versionMod.source.replace(
+      /BUILD_ID\s*=\s*["'][^"']*["']/,
+      `BUILD_ID = "0203-${hash}"`
+    );
+    if (stamped !== versionMod.source) {
+      versionMod.source = stamped;
+      versionMod.parsed = parseModule("content/version.js", maskComments(stamped));
+      console.log(`构建戳：BUILD_ID = 0203-${hash}`);
+    }
+  }
+}
+
 // 依赖图 + 校验
 const graph = new Map();
 for (const [key, mod] of modules) {
