@@ -12,7 +12,8 @@ import { jobKeyForBuilding, readJobCount } from "../selectors/labor.js";
 
 export const OUTSIDE_TOWN_NAME = "民镇";
 export const OUTSIDE_TOWN_LEGACY_NAME = "四地主镇";
-export const OUTSIDE_RULERS = ["陈", "王", "李", "赵"];
+export const OUTSIDE_RULERS = ["民镇议事会"];
+export const OUTSIDE_RULERS_LEGACY = ["陈", "王", "李", "赵"];
 export const TRADE_SELL_ITEMS = ["flour", "bread", "salt", "wood"];
 export const TRADE_BUY_ITEMS = ["flour", "bread"];
 // 民镇每年每人的盐、木材需求（零自产，全靠我方贸易供给）。
@@ -84,6 +85,11 @@ function applyOutsideTownDefaults(ot, source) {
   // 老存档迁移：四地主镇已改名民镇（同上，保留玩家自行改过的名字）。
   if (ot.name === OUTSIDE_TOWN_LEGACY_NAME) ot.name = OUTSIDE_TOWN_NAME;
   ot.rulers = ot.rulers ?? (src.rulers ? [...src.rulers] : [...OUTSIDE_RULERS]);
+  // 老存档迁移：四地主已改为民镇议事会。
+  if (Array.isArray(ot.rulers) && ot.rulers.length === OUTSIDE_RULERS_LEGACY.length &&
+      OUTSIDE_RULERS_LEGACY.every((name, i) => ot.rulers[i] === name)) {
+    ot.rulers = [...OUTSIDE_RULERS];
+  }
   ot.landMu = ot.landMu ?? src.landMu ?? 10000;
   ot.laborers = ot.laborers ?? src.laborers ?? 1000;
   ot.population = ot.population ?? src.population ?? 3500;

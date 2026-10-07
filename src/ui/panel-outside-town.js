@@ -92,7 +92,7 @@ export function renderOutsideTown(view) {
       : (ta.activeCount >= ta.capacity ? `<div class="subtle">长协容量已满（在岗${number(ta.staff)}人 × 2笔）。</div>` : ""));
   return `<h2>外贸 · ${escapeHtml(ot.name)}</h2>
     <div class="cardlet">
-      <div class="row"><span class="label">统治者</span><strong class="value">${ot.rulers.map(r => escapeHtml(r) + "地主").join("、")}</strong></div>
+      <div class="row"><span class="label">执政</span><strong class="value">${ot.rulers.map(escapeHtml).join("、")}</strong></div>
       <div class="row"><span class="label">耕地 / 劳动力</span><strong class="value">${number(ot.landMu)}亩 / ${number(ot.laborers)}人</strong></div>
       <div class="row"><span class="label">人口 / 繁荣度</span><strong class="value">${number(ot.population)}人 / ${number(ot.prosperity, 1)}</strong></div>
       <div class="row"><span class="label">小麦库存</span><strong class="value">${number(ot.wheatStockJin)}斤</strong></div>

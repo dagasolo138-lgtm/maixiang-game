@@ -744,7 +744,7 @@ function normalizeV15(raw, definitions, legacyCompleted = false) {
   state.villas.stats.revenueValueUnits ??= 0;
   state.villas.stats.taxCollectedValueUnits ??= 0;
   state.villas.stats.taxArrearsValueUnits ??= 0;
-  state.outsideTown ||= { name: "民镇", rulers: ["陈", "王", "李", "赵"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} };
+  state.outsideTown ||= { name: "民镇", rulers: ["民镇议事会"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} };
   // 民镇（原四地主镇）：老存档补名字迁移与盐/木材库存、外交关系分默认值。
   if (state.outsideTown.name === "四地主镇") state.outsideTown.name = "民镇";
   state.outsideTown.saltStockJin ??= 20000;
@@ -1093,7 +1093,7 @@ function upgradeV5ToV6(raw, content, fromVersion = 5) {
   state.villas.stats.revenueValueUnits ||= 0;
   state.villas.stats.taxCollectedValueUnits ||= 0;
   state.policy.tradeTariffRate ??= 5;
-  state.outsideTown ||= { name: "民镇", rulers: ["陈", "王", "李", "赵"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} };
+  state.outsideTown ||= { name: "民镇", rulers: ["民镇议事会"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} };
   // 民镇（原四地主镇）：老存档补名字迁移与盐/木材库存、外交关系分默认值。
   if (state.outsideTown.name === "四地主镇") state.outsideTown.name = "民镇";
   state.outsideTown.saltStockJin ??= 20000;
