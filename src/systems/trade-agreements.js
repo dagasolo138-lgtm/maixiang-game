@@ -27,9 +27,10 @@ export function ensureTradeAgreements(state) {
   return state.tradeAgreements;
 }
 
-// 只读版本：供 selector/UI 使用，不回写游戏状态。
+// 只读版本：供 selector/UI 使用，不回写游戏状态；脏数据时返回空数组不抛错。
 export function readTradeAgreements(state) {
-  return (state.tradeAgreements || []).filter(row => row && typeof row === "object").map(row => ({ ...row }));
+  const rows = Array.isArray(state.tradeAgreements) ? state.tradeAgreements : [];
+  return rows.filter(row => row && typeof row === "object").map(row => ({ ...row }));
 }
 
 // 月度交付判定：每月只结算一次（按每月天数把一年切 12 段，段首交付）。

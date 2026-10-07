@@ -747,11 +747,16 @@ function normalizeV15(raw, definitions, legacyCompleted = false) {
   state.outsideTown ||= { name: "民镇", rulers: ["民镇议事会"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} };
   // 民镇（原四地主镇）：老存档补名字迁移与盐/木材库存、外交关系分默认值。
   if (state.outsideTown.name === "四地主镇") state.outsideTown.name = "民镇";
+  // 执政迁移：四地主 → 民镇议事会（与改名保持一致，存档本体一次收敛）。
+  if (Array.isArray(state.outsideTown.rulers) &&
+      state.outsideTown.rulers.join("|") === ["陈", "王", "李", "赵"].join("|")) {
+    state.outsideTown.rulers = ["民镇议事会"];
+  }
   state.outsideTown.saltStockJin ??= 20000;
   state.outsideTown.woodStockUnits ??= 8000;
   state.outsideTown.relations ??= 60;
   // 长期贸易协定（民镇）：老存档补空数组，字段由 trade-agreements.js 的 ||= 兜底。
-  state.tradeAgreements ||= [];
+  if (!Array.isArray(state.tradeAgreements)) state.tradeAgreements = [];
   state.outsideTown.stats ||= {};
   // 动态劳动力市场（用户 0.1.11）：挖人竞争统计。
   state.laborCompetition ||= { dayKey: null, day: { moves: 0 }, year: { moves: 0 }, recent: [] };
@@ -1096,11 +1101,16 @@ function upgradeV5ToV6(raw, content, fromVersion = 5) {
   state.outsideTown ||= { name: "民镇", rulers: ["民镇议事会"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} };
   // 民镇（原四地主镇）：老存档补名字迁移与盐/木材库存、外交关系分默认值。
   if (state.outsideTown.name === "四地主镇") state.outsideTown.name = "民镇";
+  // 执政迁移：四地主 → 民镇议事会（与改名保持一致，存档本体一次收敛）。
+  if (Array.isArray(state.outsideTown.rulers) &&
+      state.outsideTown.rulers.join("|") === ["陈", "王", "李", "赵"].join("|")) {
+    state.outsideTown.rulers = ["民镇议事会"];
+  }
   state.outsideTown.saltStockJin ??= 20000;
   state.outsideTown.woodStockUnits ??= 8000;
   state.outsideTown.relations ??= 60;
   // 长期贸易协定（民镇）：老存档补空数组，字段由 trade-agreements.js 的 ||= 兜底。
-  state.tradeAgreements ||= [];
+  if (!Array.isArray(state.tradeAgreements)) state.tradeAgreements = [];
   state.policy.agricultureTaxPercent ??= content.rules.agricultureTaxDefaultPercent ?? 50;
   state.policy.agricultureTaxRecent ||= Array.from({ length: content.rules.agricultureTaxLookbackDays || 30 }, (_, index) => ({
     year: 0, day: index, rateBps: 5000, baseline: true
