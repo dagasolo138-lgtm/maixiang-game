@@ -119,7 +119,7 @@ test("wage arrears keep their old amount and pay separately from current wages",
   assert.equal(second.arrearsBalanceWheatJin, 0);
   assert.equal(state.payroll.totals.paidWheatUnits / SCALE, 300);
   assert.equal(state.business.cumulative.constructionWagesWheatUnits / SCALE, 300);
-  assert.equal(totalQeqUnits(state, CONTENT), 12902400000);
+  assert.equal(totalQeqUnits(state, CONTENT), 53762400000); // 初始库存 73万→300万/账户
 });
 
 test("unemployment benefit is limited to idle workers, can be disabled, and creates no debt", () => {

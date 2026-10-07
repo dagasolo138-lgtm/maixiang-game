@@ -193,8 +193,8 @@ export const PRECISION = Object.freeze({
 export const INITIAL = Object.freeze({
   seed: 917309,
   stocks: Object.freeze({
-    residents: Object.freeze({ wheat: 730000 }),
-    town: Object.freeze({ wheat: 730000 })
+    residents: Object.freeze({ wheat: 3000000 }),
+    town: Object.freeze({ wheat: 3000000 })
   }),
   roleCounts: Object.freeze({ farmers: 1500, builders: 0 }),
   satisfaction: 75
