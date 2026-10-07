@@ -20,7 +20,7 @@ import { hasBankAccess, monetaryReformProgress } from "../economy/payment.js";
 import { householdLivingSummary, occupationCounts, householdPopulation, householdIdleWorkers } from "../systems/households.js";
 import { bondOutstandingVoucherUnits } from "../systems/bonds.js";
 import { shopSummaries } from "../systems/shops.js";
-import { wholesaleSummary, wholesaleTrends } from "../systems/wholesale-market.js";
+import { wholesaleSummary, wholesaleTrends, hasWholesaleMarket, wholesaleUnitPrice, wholesalePurchasePrice } from "../systems/wholesale-market.js";
 import { selectOutsideTownView } from "../systems/outside-town.js";
 import { selectTradeAgreementView } from "../systems/trade-agreements.js";
 import { householdRecentTotalsReadonly, householdFoodDays } from "../systems/household-life.js";
@@ -235,6 +235,27 @@ export function selectDashboard(state, content, selection) {
           residents: state.accounts.residents[itemId] || 0, town: state.accounts.town[itemId] || 0
         }]));
       })() : {},
+      // 民营原料从批发市场采购、产品按批发市场收购价预期：面板不再展示容易误解的"居民/镇库"全局库存，
+      // 改为展示批发市场采购价/市场存货（原料）与预期售价（产品）。
+      privateMarket: includeSiteDetails ? (function () {
+        const recipe = definition?.recipeId ? content.recipes[definition.recipeId] : null;
+        if (!recipe || !hasWholesaleMarket(state)) return [];
+        const market = state.wholesaleMarket || {};
+        const scale = content.precision.inventoryUnitsPerJin;
+        const rows = [];
+        for (const input of recipe.inputs || []) {
+          const itemId = input.itemId;
+          rows.push({
+            itemId, kind: "input",
+            priceVoucherPerJin: wholesaleUnitPrice(state, itemId, content),
+            marketStockJin: (itemId === "wheat" ? (market.cashWheatUnits || 0) : (market.inventory?.[itemId] || 0)) / scale
+          });
+        }
+        for (const output of recipe.outputs || []) {
+          rows.push({ itemId: output.itemId, kind: "output", priceVoucherPerJin: wholesalePurchasePrice(state, output.itemId, content) });
+        }
+        return rows;
+      })() : [],
       operatingRight: includeSiteDetails ? selectOperatingRightPreview(state, building.id, content) : null,
       // 用户 0.1.11：镇营目标日产量（斤，0 表示按人手满产）与主产出品。
       outputTargetJin: building.outputTargetJin || 0,

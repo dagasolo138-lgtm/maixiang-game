@@ -189,15 +189,33 @@ export function selectOperatingRightPreview(state, buildingId, content, requeste
     return { household, maxWheatUnits, roughValue: investableValue, canPayPrice };
   });
   const canPay = investmentRows.some(row => row.canPayPrice);
+  // 合资购买：一户买不起就多户凑——按可出资额从高到低凑单，每户保留生活储备。
+  // 私有老板 privateOwners 本就是数组，多人成交天然支持。
+  const sortedInvestable = investmentRows
+    .filter(row => row.roughValue > 0)
+    .sort((a, b) => b.roughValue - a.roughValue);
+  const buyerGroup = [];
+  let gatheredVoucherUnits = 0;
+  for (const row of sortedInvestable) {
+    if (gatheredVoucherUnits >= costUnits) break;
+    const take = Math.min(row.roughValue, costUnits - gatheredVoucherUnits);
+    buyerGroup.push({
+      householdId: row.household.id,
+      householdName: row.household.name || `居民户${row.household.id}`,
+      contributionVoucherUnits: Math.round(take)
+    });
+    gatheredVoucherUnits += take;
+  }
+  const groupCanPay = buyerGroup.length > 0 && gatheredVoucherUnits >= costUnits;
   const totalInvestableVoucher = investmentRows.reduce((sum, row) => sum + row.roughValue, 0) / moneyScale;
   const maxHouseholdPayVoucher = investmentRows.reduce((max, row) => Math.max(max, row.roughValue), 0) / moneyScale;
   const keepsReserve = currentResidentQeq >= residentReserveUnits;
   const attractive = referencePriceWheatJin > 0 && priceWheatJin <= referencePriceWheatJin;
-  const reason = !canPay ? "购买力不足" : !keepsReserve ? "居民基本口粮不足90天储备" : !attractive ? "预期收益缺乏吸引力" : null;
+  const reason = !groupCanPay ? "即使多户合资也买不起经营权" : !keepsReserve ? "居民基本口粮不足90天储备" : !attractive ? "预期收益缺乏吸引力" : null;
   const demandFactor = demand.demandUnits > 0 ? Math.max(0, Math.min(1, demand.opportunityUnits / demand.demandUnits)) : 0;
   const theoretical = theoreticalFullSaleProfitPerWorker(state, building.typeId, content);
   return {
-    available: priceWheatJin > 0 && canPay && keepsReserve && attractive,
+    available: priceWheatJin > 0 && groupCanPay && keepsReserve && attractive,
     reason,
     buildingId, typeId: building.typeId, level: building.level || 1,
     townLevels, privateLevels, townCapacityBefore: townLevels * job.slots,
@@ -222,7 +240,8 @@ export function selectOperatingRightPreview(state, buildingId, content, requeste
     dailyDemandJin: demand.demandUnits / scale, competitionStockJin: demand.competitionUnits / scale, unmetDemandJin: demand.opportunityUnits / scale,
     demandReason: demand.reason, demandBasis: valuationBasis, valuationBasis,
     theoreticalFullSaleProfitPerWorkerVoucher: theoretical?.profitVoucher ?? 0,
-    canPay, keepsReserve, attractive,
+    canPay, groupCanPay, buyerGroup,
+    keepsReserve, attractive,
     residentInvestableFundsVoucher: totalInvestableVoucher,
     maxHouseholdPayVoucher,
     residentWheatJin: (state.accounts.residents.wheat || 0) / scale,
