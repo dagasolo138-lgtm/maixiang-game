@@ -392,17 +392,18 @@ export function payUnemploymentBenefit(state, laborAtStart, content) {
   const policy = state.policy?.unemploymentBenefit;
   const scale = currencyScale(content);
   const idleRows = householdList(state).map(household => ({ household, idle: householdIdleWorkers(household) }))
-    .filter(row => row.idle > 0)
-    .sort((a, b) => {
-      const af = householdFoodQeqUnits(state, a.household, content) / Math.max(1, householdPopulation(a.household));
-      const bf = householdFoodQeqUnits(state, b.household, content) / Math.max(1, householdPopulation(b.household));
-      return af - bf || (a.household.voucherUnits || 0) - (b.household.voucherUnits || 0) || a.household.id.localeCompare(b.household.id);
-    });
+    .filter(row => row.idle > 0);
   if (!policy?.enabled) {
     state.policy.lastDay = { eligible: laborAtStart.idle, eligibleHouseholds: idleRows.length, paidPeople: 0, uncoveredPeople: laborAtStart.idle, expectedVoucher: 0, paidVoucher: 0, shortVoucher: 0,
       expectedWheatJin: 0, paidWheatJin: 0, shortWheatJin: 0 };
     return state.policy.lastDay;
   }
+  // 政策开启时才按"越穷越先领"排序；关闭时跳过排序省一次 O(n log n)。
+  idleRows.sort((a, b) => {
+    const af = householdFoodQeqUnits(state, a.household, content) / Math.max(1, householdPopulation(a.household));
+    const bf = householdFoodQeqUnits(state, b.household, content) / Math.max(1, householdPopulation(b.household));
+    return af - bf || (a.household.voucherUnits || 0) - (b.household.voucherUnits || 0) || a.household.id.localeCompare(b.household.id);
+  });
   const perWorker = Math.max(0, Number(policy.dailyPerWorkerJin) || 0);
   const expectedUnits = Math.round(laborAtStart.idle * perWorker * scale);
   const perPersonUnits = Math.round(perWorker * scale);
