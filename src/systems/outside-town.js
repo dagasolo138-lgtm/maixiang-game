@@ -5,7 +5,7 @@ import { hasWholesaleMarket, readWholesaleMarket, takeWholesaleInventoryForExpor
 import { jobKeyForBuilding, readJobCount } from "../selectors/labor.js";
 
 // 民镇（原「四地主镇」）：纯贸易伙伴，不做完整模拟，只用动态算法维持基础数值。
-// 陈/王/李/赵四家共治的农业小镇：1万亩、1000劳动力，主产小麦，有面粉店/面包店；
+// 民镇议事会执政的农业小镇：1万亩、1000劳动力，主产小麦，有面粉店/面包店；
 // 盐、木材零自产、按人按年消耗，完全依赖我方贸易；贸易以小麦斤计价：
 // 本镇可卖面粉/面包/盐/木材，可买面粉/面包。
 // 结算走实物小麦（镇小麦库存 <-> 外镇小麦库存），不印新券，不破坏货币恒等式。
@@ -42,6 +42,8 @@ export const RELATIONS_DISTRUST = 40;
 export const RELATIONS_BREAKOFF = 20;
 export const RELATIONS_GAIN_PER_DAY = 0.2;
 export const RELATIONS_LOSS_PER_DAY = 0.5;
+// 长协容量：外贸房每人在岗可跟进的长协笔数（trade-agreements.js 共用）。
+export const AGREEMENTS_PER_STAFF = 2;
 
 // 民镇收购价（我们卖出）：小麦斤/单位。盐、木材零自产，实际价格由库存比驱动。
 // 小麦不做贸易商品（镇库直管的战略物资），只做结算货币；缺粮时走小麦贷款。
@@ -101,8 +103,9 @@ function applyOutsideTownDefaults(ot, source) {
   ot.woodShortageYears = ot.woodShortageYears ?? src.woodShortageYears ?? 0;
   ot.lastYearSaltConsumptionJin = ot.lastYearSaltConsumptionJin ?? src.lastYearSaltConsumptionJin ?? 0;
   ot.lastYearWoodConsumptionUnits = ot.lastYearWoodConsumptionUnits ?? src.lastYearWoodConsumptionUnits ?? 0;
-  // 外交关系分（0—100）：外交房有人值守则缓慢回升，无人则下滑。
-  ot.relations = ot.relations ?? src.relations ?? RELATIONS_DEFAULT;
+  // 外交关系分（0—100）：外交房有人值守则缓慢回升，无人则下滑；脏数据时回落默认值。
+  ot.relations = Number.isFinite(ot.relations) ? ot.relations
+    : (Number.isFinite(src.relations) ? src.relations : RELATIONS_DEFAULT);
   ot.prosperity = ot.prosperity ?? src.prosperity ?? 60;
   ot.saltDemand = ot.saltDemand ?? src.saltDemand ?? 1.4;
   ot.woodDemand = ot.woodDemand ?? src.woodDemand ?? 1.3;
@@ -420,8 +423,8 @@ export function tradeWithOutsideTown(state, direction, itemId, quantityJin, cont
     ot.stats.yearTariffJin = Math.round((ot.stats.yearTariffJin + tariffJin) * 100) / 100;
     ot.stats.trades += 1;
     ot.tradeMemory[itemId] = (ot.tradeMemory[itemId] || 0) + actualJin;
-    // 民镇入库：盐/木材零自产，出口到货即入其库存（木材按单位，其余按斤）。
-    addOutsideTownStock(ot, itemId, itemId === "wood" ? actualUnits : unitsToQuantity(actualUnits, content));
+    // 民镇入库：盐/木材零自产，出口到货即入其库存（统一换算回 斤/单位口径）。
+    addOutsideTownStock(ot, itemId, unitsToQuantity(actualUnits, content));
     if (tariffJin > 0) {
       recordLedger(state, {
         type: "trade_tariff", transactionId, source: "trade", destination: "town",
@@ -598,7 +601,7 @@ export function selectOutsideTownView(state, content) {
     relations: Math.round(ot.relations * 10) / 10,
     foreignTradeOperational: buildingOperational(state, "foreign_trade_house"),
     foreignTradeStaff: buildingStaffOnDuty(state, "foreign_trade_house"),
-    foreignTradeCapacity: buildingStaffOnDuty(state, "foreign_trade_house") * 2,
+    foreignTradeCapacity: buildingStaffOnDuty(state, "foreign_trade_house") * AGREEMENTS_PER_STAFF,
     diplomacyOperational: buildingOperational(state, "diplomacy_house"),
     diplomacyStaff: buildingStaffOnDuty(state, "diplomacy_house")
   };

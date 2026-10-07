@@ -3,7 +3,7 @@ import { addInventory, quantityToUnits, unitsToQuantity } from "../economy/inven
 import { takeWholesaleInventoryForExport, hasWholesaleMarket } from "./wholesale-market.js";
 import {
   addOutsideTownStock, buildingOperational, buildingStaffOnDuty, ensureOutsideTown, readOutsideTown, recomputePrices,
-  tradeTariffRate, OUTSIDE_TOWN_NAME, RELATIONS_TRUSTED, RELATIONS_DISTRUST
+  tradeTariffRate, OUTSIDE_TOWN_NAME, RELATIONS_TRUSTED, RELATIONS_DISTRUST, AGREEMENTS_PER_STAFF
 } from "./outside-town.js";
 
 // 长期贸易协定（民镇）：外贸房签约 -> 每年定额、每月交付 1/12，价格签约时锁定。
@@ -12,7 +12,7 @@ import {
 export const AGREEMENT_ITEM_IDS = Object.freeze(["salt", "wood", "flour", "bread"]);
 export const AGREEMENT_MIN_YEARS = 1;
 export const AGREEMENT_MAX_YEARS = 5;
-export const AGREEMENTS_PER_STAFF = 2;
+// AGREEMENTS_PER_STAFF 见 outside-town.js（两边共用，避免漂移）。
 export const AGREEMENT_BREACH_PENALTY_RATE = 0.1;
 export const AGREEMENT_BREACH_RELATIONS_LOSS = 5;
 export const AGREEMENT_BREACH_LIMIT = 3;
@@ -37,7 +37,8 @@ export function readTradeAgreements(state) {
 function isMonthlySettlementDue(state, content) {
   const daysPerMonth = Math.max(1, Math.floor((content.rules.daysPerYear || 365) / 12));
   const day = Math.max(1, state.day || 1);
-  const monthIndex = Math.floor((day - 1) / daysPerMonth);
+  // 一年 12 段：第 361—365 天归入第 12 段，避免一年交付 13 次。
+  const monthIndex = Math.min(11, Math.floor((day - 1) / daysPerMonth));
   const monthKey = `${state.year}:${monthIndex}`;
   if (state.tradeAgreementMonthKey === monthKey) return false;
   state.tradeAgreementMonthKey = monthKey;
@@ -49,10 +50,6 @@ function nextAgreementId(state) {
   let serial = rows.length + 1;
   while (rows.some(row => row.id === `ta-${state.year}-${serial}`)) serial += 1;
   return `ta-${state.year}-${serial}`;
-}
-
-function relationsOf(state) {
-  return ensureOutsideTown(state).relations;
 }
 
 function agreementPrice(state, itemId, relations) {
@@ -155,7 +152,12 @@ export function settleTradeAgreementsMonth(state, content) {
     const takenUnits = purchaseMarketUnits(state, agreement.itemId, wantUnits, content);
 
     if (takenUnits < wantUnits) {
-      // 批发市场货源不足：把我方违约，违约金 = 年货值 ×10%（关系融洽减半），能扣多少扣多少。
+      // 批发市场货源不足：先把已扣走的部分货回滚，避免货物凭空消失。
+      if (takenUnits > 0) {
+        const market = state.wholesaleMarket;
+        if (market?.inventory) market.inventory[agreement.itemId] = (market.inventory[agreement.itemId] || 0) + takenUnits;
+      }
+      // 我方违约，违约金 = 年货值 ×10%（关系融洽减半），能扣多少扣多少。
       const shortUnits = wantUnits - takenUnits;
       const penaltyRate = AGREEMENT_BREACH_PENALTY_RATE
         * (ot.relations >= RELATIONS_TRUSTED ? RELATIONS_TRUSTED_PENALTY_FACTOR : 1);
@@ -199,8 +201,8 @@ export function settleTradeAgreementsMonth(state, content) {
       addInventory(state, "town", "wheat", unitsToQuantity(proceedsUnits, content),
         `对${OUTSIDE_TOWN_NAME}长期协定交付${item?.name || agreement.itemId}所得`, "trade_export", content);
     }
-    // 民镇入库：盐/木材记库存，面粉/面包是口粮不进库存台账。
-    addOutsideTownStock(ot, agreement.itemId, agreement.itemId === "wood" ? unitsToQuantity(takenUnits, content) : actualJin);
+    // 民镇入库：盐按斤、木材按单位（统一换算回 斤/单位口径）。
+    addOutsideTownStock(ot, agreement.itemId, unitsToQuantity(takenUnits, content));
     // 关税：与现货一致，按出口税率计。
     const tariffJin = Math.round(orderJin * tariffRate / 100 * 100) / 100;
     ot.stats.exportJin = Math.round((ot.stats.exportJin + orderJin) * 100) / 100;
