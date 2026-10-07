@@ -1,4 +1,4 @@
-import { currentPaymentComposition, maximumFullyPayableValueUnits, settleMonetaryPayment } from "../economy/payment.js";
+import { createPaymentCapabilityContext, currentPaymentComposition, maximumFullyPayableValueUnits, settleMonetaryPayment } from "../economy/payment.js";
 import { recordEvent } from "../economy/ledger.js";
 import { selectOperatingRightPreview } from "../selectors/operating-rights.js";
 import { householdConvertibleWheatUnits, setJobCount } from "./households.js";
@@ -25,7 +25,11 @@ export function sellOperatingLevel(state, buildingId, content) {
     const household = householdById[member.householdId];
     if (!household) return { ok: false, reason: `${member.householdName}已不存在，合资失败`, preview };
     const maxWheatUnits = householdConvertibleWheatUnits(state, household, content, content.rules.householdFoodReserveDays ?? 30);
-    const preciseMax = maximumFullyPayableValueUnits(state, `household:${member.householdId}`, remaining, content, { maxWheatUnits });
+    // 保守预检：不依赖镇库共享券池（多人结算时前一户可能耗掉券池，导致后一户预检通过但实扣失败、
+    // 钱扣一半交易却失败）。实际结算时券池是 bonus，只会比预检更宽松。
+    const conservativeCtx = createPaymentCapabilityContext(state, `household:${member.householdId}`, content, { maxWheatUnits });
+    conservativeCtx.exchangeVoucherPoolUnits = 0;
+    const preciseMax = maximumFullyPayableValueUnits(state, `household:${member.householdId}`, remaining, content, { paymentContext: conservativeCtx });
     const contribution = Math.min(preciseMax, remaining);
     if (contribution <= 0) continue;
     finalMembers.push({ household, householdId: member.householdId, householdName: member.householdName, contribution, maxWheatUnits });

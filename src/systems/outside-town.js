@@ -321,7 +321,6 @@ export function settleOutsideTownYear(state, content) {
   if (ot.saltStockJin <= 0) {
     ot.saltShortageYears = 1;
     ot.prosperity = Math.round(Math.max(5, ot.prosperity - 15) * 10) / 10;
-    ot.population = Math.round(ot.population * 0.97);
     recordEvent(state, `${OUTSIDE_TOWN_NAME}断盐，民心动荡。`, content, { day: 1 });
   }
   if (ot.woodStockUnits <= 0) {
