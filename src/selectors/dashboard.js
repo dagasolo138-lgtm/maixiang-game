@@ -22,6 +22,7 @@ import { bondOutstandingVoucherUnits } from "../systems/bonds.js";
 import { shopSummaries } from "../systems/shops.js";
 import { wholesaleSummary, wholesaleTrends } from "../systems/wholesale-market.js";
 import { selectOutsideTownView } from "../systems/outside-town.js";
+import { selectTradeAgreementView } from "../systems/trade-agreements.js";
 import { householdRecentTotalsReadonly, householdFoodDays } from "../systems/household-life.js";
 import { createDashboardRuntime, employmentExchangeRemainingUnits } from "./dashboard-runtime.js";
 import { selectVillaStats } from "../systems/villas.js";
@@ -446,6 +447,7 @@ export function selectDashboard(state, content, selection) {
       business: state.business
     } : null,
     outsideTown: needBusiness ? selectOutsideTownView(state, content) : null,
+    tradeAgreements: needBusiness ? selectTradeAgreementView(state, content) : null,
     policy: needPolicy ? {
       ...(state.policy || { unemploymentBenefit: { enabled: false, dailyPerWorkerJin: 1 } }),
       unemployed: labor.idle,

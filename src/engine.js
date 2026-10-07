@@ -9,7 +9,7 @@ import {
   setEmployment, buildAt, sendRelief, toggleAutomaticRelief,
   setWageRate, setBreadPrice, setUnemploymentPolicy, setVillaPolicy, setWageControl,
   setBankPolicy, issueGovernmentBond,
-  setSocialSecurityPolicy, injectSocialSecurity, setTradeTariffRate, tradeWithOutsideTown, issueWheatLoan, setAgricultureTax,
+  setSocialSecurityPolicy, injectSocialSecurity, setTradeTariffRate, tradeWithOutsideTown, issueWheatLoan, signTradeAgreement, terminateTradeAgreement, setAgricultureTax,
   setPrivateProductionTax, setOperatingRightPrice, upgradeBuilding, demolishAt, setProjectWorkers,
   setAutosaveMonths,
   sellOperatingLevel, issueGrainVouchers, redeemGrainVouchers, listCompany, createCompany, listCompanyShares,
@@ -113,6 +113,12 @@ export function createSimulation(content) {
     },
     issueWheatLoan: function (state, principalJin, annualRatePercent) {
       return issueWheatLoan(state, principalJin, annualRatePercent, definitions);
+    },
+    signTradeAgreement: function (state, options) {
+      return signTradeAgreement(state, options, definitions);
+    },
+    terminateTradeAgreement: function (state, id) {
+      return terminateTradeAgreement(state, id, definitions);
     },
     setAgricultureTax: function (state, percent) { return setAgricultureTax(state, percent); },
     setPrivateProductionTax: function (state, typeId, percent) { return setPrivateProductionTax(state, typeId, percent, definitions); },

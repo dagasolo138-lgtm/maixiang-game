@@ -5,8 +5,8 @@ import { renderNumericInput } from "./numeric-drafts.js";
 // 建筑分类页签（纯展示层状态，刷新页面后回到默认）。
 const BUILD_CATEGORIES = [
   { id: "production", name: "生产", types: ["mill", "bakery", "lumberyard", "saltworks"] },
-  { id: "commercial", name: "商业", types: ["wholesale_market", "commercial_street", "bank", "stock_exchange"] },
-  { id: "government", name: "政务", types: ["town_hall", "police_station"] },
+  { id: "commercial", name: "商业", types: ["wholesale_market", "commercial_street", "bank", "stock_exchange", "foreign_trade_house"] },
+  { id: "government", name: "政务", types: ["town_hall", "police_station", "diplomacy_house"] },
   { id: "housing", name: "住宅", types: ["public_housing", "villa_complex"] }
 ];
 let activeBuildCategory = "production";

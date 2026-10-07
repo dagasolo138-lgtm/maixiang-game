@@ -19,7 +19,7 @@ export function renderEconomy(view) {
       <label class="toggle"><input id="autoRelief" type="checkbox" ${view.autoRelief ? "checked" : ""}><span>自动救济</span></label>
       <div class="settings-actions"><button class="secondary" id="manualAid" ${view.accounts.town.qeq <= 0 ? "disabled" : ""}>拨粮 ${view.manualReliefAmountJin.toLocaleString("zh-CN")}斤</button></div></div></section>
     ${detail("bread-trade", "居民主粮购买", renderTrade(view))}
-    ${detail("outside-town", "外贸 · 四地主镇", renderOutsideTown(view))}
+    ${detail("outside-town", "外贸 · 民镇", renderOutsideTown(view))}
     ${detail("industry-accounts", "林业、盐业与住房", renderIndustryAccounts(view))}
     ${detail("workshop-accounts", "镇营作坊账", renderBusiness(view))}
     ${detail("ledger", "账目与历史交易", renderLedger(view))}

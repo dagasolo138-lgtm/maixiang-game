@@ -306,7 +306,9 @@ export function createInitialState(options) {
     housing: { villageCapacity: content.rules.housingCapacity },
     villas: { sold: [], taxArrearsValueUnits: {}, stats: { soldTotal: 0, revenueValueUnits: 0, taxCollectedValueUnits: 0, taxArrearsValueUnits: 0 } },
     socialSecurity: { enabled: false, balanceUnits: 0, dailyPerWorkerJin: 1, pensionPerElderJin: 2, totalInjectedUnits: 0, totalCollectedUnits: 0, totalPaidUnits: 0 },
-    outsideTown: { name: "四地主镇", rulers: ["陈", "王", "李", "赵"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} },
+    outsideTown: { name: "民镇", rulers: ["陈", "王", "李", "赵"], landMu: 10000, laborers: 1000, population: 3500, wheatStockJin: 3000000, saltStockJin: 20000, woodStockUnits: 8000, relations: 60, prosperity: 60, saltDemand: 1.4, woodDemand: 1.3, grainDemand: 0.7, weather: 1.0, event: null, tradeClosed: false, stats: {} },
+    // 长期贸易协定（民镇）：外贸房签约，每月从批发市场交货。
+    tradeAgreements: [],
     laborCompetition: { dayKey: null, day: { moves: 0 }, year: { moves: 0 }, recent: [] },
     salt: {
       demandCarry: 0,

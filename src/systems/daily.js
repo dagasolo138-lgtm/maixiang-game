@@ -17,6 +17,7 @@ import { settleHousingRent, buyRepairWoodForResidents } from "./housing.js";
 import { settleVillaPurchases, settleVillaPropertyTax } from "./villas.js";
 import { payPensions } from "./social-security.js";
 import { advanceOutsideTownDay, settleOutsideTownYear, settleWheatLoansYear } from "./outside-town.js";
+import { settleTradeAgreementsMonth, settleTradeAgreementsYear } from "./trade-agreements.js";
 import { resetLaborCompetitionYear } from "./labor-market.js";
 import { recordEconomyHistory } from "./wealth-stats.js";
 import { accrueSaltNeed, buySaltForResidents, consumeDailySalt, finishSaltGraceDay, selectSaltCoverage } from "./salt.js";
@@ -227,6 +228,9 @@ export function settleOneDay(state, content) {
   const outsideTownYear = isNewYearDay ? settleOutsideTownYear(state, content) : null;
   // 小麦贷款年结：计息 + 外镇用结余小麦还款（放在年事件之后，有当年收成可还）
   const wheatLoanYear = isNewYearDay ? settleWheatLoansYear(state, content) : null;
+  // 长期贸易协定：每月交付 1/12（只从批发市场扣货），年结递减剩余年限。
+  const tradeAgreementMonth = settleTradeAgreementsMonth(state, content);
+  const tradeAgreementYear = isNewYearDay ? settleTradeAgreementsYear(state, content) : null;
   const outsideTownDay = advanceOutsideTownDay(state, content);
   // 经济历史曲线（用户 0.1.11）：每日收盘后记录，供地图"经济"面板画走势。
   recordEconomyHistory(state, content);
@@ -253,6 +257,8 @@ export function settleOneDay(state, content) {
     villaTax,
     outsideTownYear,
     outsideTownDay,
+    tradeAgreementMonth,
+    tradeAgreementYear,
     saltTrade,
     saltMeal,
     trade,

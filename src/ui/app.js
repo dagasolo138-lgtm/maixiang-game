@@ -1656,8 +1656,8 @@ export function mountGame(root) {
       render(true);
       const itemName = { wheat: "小麦", flour: "面粉", bread: "面包", salt: "食盐", wood: "木材" }[itemId] || itemId;
       showToast(direction === "sell"
-        ? `已向四地主镇卖出${number(result.quantityJin, 1)}${itemId === "wood" ? "单位" : "斤"}${itemName}，得小麦${number(result.valueJin, 1)}斤（含关税${number(result.tariffJin, 1)}斤）。`
-        : `已从四地主镇买入${number(result.quantityJin, 1)}斤${itemName}，支付小麦${number(result.valueJin, 1)}斤。`);
+        ? `已向民镇卖出${number(result.quantityJin, 1)}${itemId === "wood" ? "单位" : "斤"}${itemName}，得小麦${number(result.valueJin, 1)}斤（含关税${number(result.tariffJin, 1)}斤）。`
+        : `已从民镇买入${number(result.quantityJin, 1)}斤${itemName}，支付小麦${number(result.valueJin, 1)}斤。`);
       return;
     }
     const wheatLoanButton = closest(target, "[data-wheat-loan-issue]");
@@ -1687,7 +1687,53 @@ export function mountGame(root) {
       numericDrafts.delete(rateKey);
       changed(true);
       render(true);
-      showToast(`已向四地主镇发放小麦贷款${number(result.loan.principalJin)}斤，年利率${number(result.loan.annualRatePercent, 1)}%。`);
+      showToast(`已向民镇发放小麦贷款${number(result.loan.principalJin)}斤，年利率${number(result.loan.annualRatePercent, 1)}%。`);
+      return;
+    }
+    // 长期贸易协定（民镇）：签约与解约。
+    const agreementSignButton = closest(target, "[data-agreement-sign]");
+    if (agreementSignButton && state) {
+      const itemKey = "trade-agreement-item";
+      const annualKey = "trade-agreement-annual";
+      const yearsKey = "trade-agreement-years";
+      const itemSelect = document.querySelector(`[data-draft-key="${itemKey}"]`);
+      const annualInput = numericInputFor(annualKey);
+      const yearsInput = numericInputFor(yearsKey);
+      const annualRaw = numericDrafts.has(annualKey) ? numericDrafts.get(annualKey).value : annualInput?.value;
+      const yearsRaw = numericDrafts.has(yearsKey) ? numericDrafts.get(yearsKey).value : yearsInput?.value;
+      const annualParsed = parseNumericDraft(annualRaw, { label: "年供货量", minimum: 0, maximum: 5000000 });
+      if (!annualParsed.ok) {
+        setDraftError(annualKey, annualParsed.reason, annualInput);
+        return;
+      }
+      const yearsParsed = parseNumericDraft(yearsRaw, { label: "年限", minimum: 1, maximum: 5, integer: true });
+      if (!yearsParsed.ok) {
+        setDraftError(yearsKey, yearsParsed.reason, yearsInput);
+        return;
+      }
+      const itemId = itemSelect?.value || "salt";
+      const result = simulation.signTradeAgreement(state, { itemId, annualJin: annualParsed.value, years: yearsParsed.value });
+      if (!result?.ok) {
+        setDraftError(annualKey, result?.reason || "签约失败", annualInput);
+        return;
+      }
+      numericDrafts.delete(annualKey);
+      numericDrafts.delete(yearsKey);
+      changed(true);
+      render(true);
+      showToast(`已签署长期协定：年供${number(result.agreement.annualJin)}，锁定单价${number(result.agreement.pricePerUnit, 2)}，为期${result.agreement.yearsTotal}年。`);
+      return;
+    }
+    const agreementTerminateButton = closest(target, "[data-agreement-terminate]");
+    if (agreementTerminateButton && state) {
+      const result = simulation.terminateTradeAgreement(state, agreementTerminateButton.dataset.agreementTerminate);
+      if (!result?.ok) {
+        showToast(result?.reason || "解约失败");
+        return;
+      }
+      changed(true);
+      render(true);
+      showToast(`已解除长期协定，赔付小麦${number(result.paidJin, 1)}斤。`);
       return;
     }
   }

@@ -25,6 +25,7 @@ import { issueGovernmentBond as issueGovernmentBondSystem } from "../systems/bon
 import { setWageControlPolicy as setWageControlPolicySystem } from "../systems/payroll.js";
 import { setSocialSecurityPolicy as setSocialSecurityPolicySystem, injectSocialSecurity as injectSocialSecuritySystem } from "../systems/social-security.js";
 import { setTradeTariffRate as setTradeTariffRateSystem, tradeWithOutsideTown as tradeWithOutsideTownSystem, issueWheatLoan as issueWheatLoanSystem } from "../systems/outside-town.js";
+import { signTradeAgreement as signTradeAgreementSystem, terminateTradeAgreement as terminateTradeAgreementSystem } from "../systems/trade-agreements.js";
 
 export function setWageRate(state, roleId, dailyJin, content) {
   const value = Number(dailyJin);
@@ -92,6 +93,15 @@ export function tradeWithOutsideTown(state, direction, itemId, quantityJin, cont
 
 export function issueWheatLoan(state, principalJin, annualRatePercent, content) {
   return issueWheatLoanSystem(state, principalJin, annualRatePercent, content);
+}
+
+// 长期贸易协定（民镇）：外贸房在岗才能签约；主动解约收违约金。
+export function signTradeAgreement(state, options, content) {
+  return signTradeAgreementSystem(state, { ...(options || {}), content });
+}
+
+export function terminateTradeAgreement(state, id, content) {
+  return terminateTradeAgreementSystem(state, id, content);
 }
 
 export function injectSocialSecurity(state, amountJin, content) {
